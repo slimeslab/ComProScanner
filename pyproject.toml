@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=64", "wheel>=0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "comproscanner"
+version = "0.1.0"
+description = "Multi-agent system for extracting and processing structured composition-property data from scientific literature"
+readme = "README.md"
+authors = [{ name = "Aritra Roy", email = "contact@aritraroy.live" }]
+license = "MIT"
+requires-python = ">=3.12"
+dependencies = ["requests>=2.32.3"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Materials Science",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+[project.urls]
+"Homepage" = "https://github.com/aritraroy24/comproscanner"
+"Bug Tracker" = "https://github.com/aritraroy24/comproscanner/issues"
+[tool.setuptools]
+package-dir = { "" = "src" }
+packages = ["comproscanner"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
