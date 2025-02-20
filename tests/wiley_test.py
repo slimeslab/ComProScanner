@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Specify the URL
-url = f"https://api.wiley.com/onlinelibrary/tdm/v1/articles/10.1111/1467-923X.12168"
+url = f"https://api.wiley.com/onlinelibrary/tdm/v1/articles/10.1002/adma.202417761"
 
 headers = {"Wiley-TDM-Client-Token": os.getenv("WILEY_API_KEY")}
 

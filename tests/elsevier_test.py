@@ -7,7 +7,7 @@ load_dotenv()
 scopus_api_key = os.getenv("SCOPUS_API_KEY")
 
 # Specify the URL
-url = "https://api.elsevier.com/content/article/doi/10.1016/j.mattod.2023.03.011"
+url = "https://api.elsevier.com/content/article/doi/10.1016/j.mattod.2024.11.015"
 
 # Specify the headers
 headers = {"X-ELS-APIKey": scopus_api_key, "Accept": "application/xml"}
