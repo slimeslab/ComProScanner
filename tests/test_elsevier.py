@@ -1,3 +1,12 @@
+"""
+test_elsevier.py
+
+Author: Aritra Roy
+Email: contact@aritraroy.live
+Website: https://aritraroy.live
+Date: 20-02-2025
+"""
+
 import os
 from dotenv import load_dotenv
 import requests
