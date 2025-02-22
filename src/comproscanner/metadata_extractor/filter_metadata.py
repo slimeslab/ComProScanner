@@ -39,6 +39,15 @@ logger = setup_logger("metadata_collector.log")
 
 ######## Class to filter metadata ########
 class FilterMetadata:
+    """Class to filter metadata based on only articles and letters, remove duplicates, and update missing publisher information
+
+    Args:
+        main_property_keyword (str): Main property keyword to filter metadata
+
+    Raises:
+        ValueError: If the main property keyword is not provided
+        ValueError: If the SCOPUS_API_KEY is not set in the environment variables
+    """
 
     def __init__(self, main_property_keyword: str = None):
         if main_property_keyword is None:
@@ -287,7 +296,7 @@ class FilterMetadata:
             return False
         return True
 
-    def process_journal(self, issn, scopus_id, df, publication_name):
+    def _process_journal(self, issn, scopus_id, df, publication_name):
         """Processes journal information, retrieves publisher, and handles API errors
 
         Args:
@@ -319,7 +328,60 @@ class FilterMetadata:
         except Exception as e:
             logger.error(f"An error occurred. {e}")
 
-    def update_publisher_information(self):
+    def _update_from_existing_data(self, df, df_missing):
+        """
+        Update missing publisher information using existing entries in the DataFrame
+
+        Args:
+            df (pd.DataFrame): Complete DataFrame
+            df_missing (pd.DataFrame): DataFrame with missing publisher information
+
+        Returns:
+            tuple: (updated DataFrame, remaining missing entries DataFrame)
+        """
+        df_valid = df[
+            (df["metadata_publisher"].notna()) | (df["general_publisher"].notna())
+        ].copy()
+
+        issn_publisher_map = {}
+        scopus_publisher_map = {}
+
+        for _, row in df_valid.iterrows():
+            publisher = row["metadata_publisher"] or row["general_publisher"]
+            if pd.notna(row["issn"]):
+                issn_publisher_map[row["issn"]] = publisher
+            if pd.notna(row["scopus_id"]):
+                scopus_publisher_map[row["scopus_id"]] = publisher
+
+        updated_indices = []
+
+        # Update missing entries using existing data
+        for idx, row in df_missing.iterrows():
+            publisher = None
+
+            if pd.notna(row["issn"]) and row["issn"] in issn_publisher_map:
+                publisher = issn_publisher_map[row["issn"]]
+            elif (
+                pd.notna(row["scopus_id"]) and row["scopus_id"] in scopus_publisher_map
+            ):
+                publisher = scopus_publisher_map[row["scopus_id"]]
+
+            if publisher:
+                df.loc[idx, "metadata_publisher"] = publisher
+                df.loc[idx, "general_publisher"] = publisher
+                updated_indices.append(idx)
+
+        # Log the number of entries updated from existing data
+        if updated_indices:
+            logger.info(
+                f"Updated {len(updated_indices)} entries using existing publisher information.\n"
+            )
+
+        # Return remaining missing entries
+        remaining_missing = df_missing.drop(updated_indices)
+        return df, remaining_missing
+
+    def filter_metadata(self):
         """Main function to update missing publisher information in the DataFrame"""
         try:
             # Read the existing CSV
@@ -343,24 +405,29 @@ class FilterMetadata:
             df_missing = self._get_missing_publisher_entries(df)
 
             if len(df_missing) > 0:
-                # Get unique identifiers for missing entries
-                issn_list, scopus_id_list, publication_names = (
-                    self._get_unique_identifiers_for_missing(df_missing)
-                )
+                # First update from existing data and save intermediate results
+                df, remaining_missing = self._update_from_existing_data(df, df_missing)
+                df.to_csv(self.filepath, index=False)
+                logger.info("Saved DataFrame after updating from existing data.")
 
-                # Process only the missing entries
-                for issn, scopus_id, publication_name in tqdm(
-                    zip(issn_list, scopus_id_list, publication_names),
-                    total=len(issn_list),
-                    colour="#d6adff",
-                ):
-                    self.process_journal(issn, scopus_id, df, publication_name)
+                # Process remaining missing entries
+                if len(remaining_missing) > 0:
+                    issn_list, scopus_id_list, publication_names = (
+                        self._get_unique_identifiers_for_missing(remaining_missing)
+                    )
+                    for issn, scopus_id, publication_name in tqdm(
+                        zip(issn_list, scopus_id_list, publication_names),
+                        total=len(issn_list),
+                        colour="#d6adff",
+                    ):
+                        self._process_journal(issn, scopus_id, df, publication_name)
+                else:
+                    logger.info("All missing entries updated using existing data.")
             else:
-                logger.warning(f"No missing publisher information found.")
+                logger.warning("No missing publisher information found.")
 
-        except FileNotFoundError as e:
-            logger.error(f"File not found. {e}")
-            raise FileNotFoundErrorHandler(f"File not found. {e}")
+            return df
+
         except Exception as e:
-            logger.error(f"An error occurred. {e}")
-            sys.exit(1)
+            logger.error(f"Error in filter_metadata: {str(e)}")
+            raise
