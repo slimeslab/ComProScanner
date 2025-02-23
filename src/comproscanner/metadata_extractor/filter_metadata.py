@@ -253,6 +253,8 @@ class FilterMetadata:
             else:
                 logger.error(f"ISSN API Error: {response.status_code}")
                 return False
+        except CustomErrorHandler:
+            raise
         except Exception as e:
             logger.error(f"Error processing ISSN {issn}: {e}")
             return False
@@ -339,46 +341,38 @@ class FilterMetadata:
         Returns:
             tuple: (updated DataFrame, remaining missing entries DataFrame)
         """
-        df_valid = df[
-            (df["metadata_publisher"].notna()) | (df["general_publisher"].notna())
-        ].copy()
-
-        issn_publisher_map = {}
-        scopus_publisher_map = {}
-
-        for _, row in df_valid.iterrows():
-            publisher = row["metadata_publisher"] or row["general_publisher"]
-            if pd.notna(row["issn"]):
-                issn_publisher_map[row["issn"]] = publisher
-            if pd.notna(row["scopus_id"]):
-                scopus_publisher_map[row["scopus_id"]] = publisher
-
+        # Get entries with valid publisher information
+        df_valid = df[df["metadata_publisher"].notna()].copy()
         updated_indices = []
 
-        # Update missing entries using existing data
-        for idx, row in df_missing.iterrows():
-            publisher = None
+        # For each missing entry, try to find a match
+        for idx in df_missing.index:
+            row = df_missing.loc[idx]
 
-            if pd.notna(row["issn"]) and row["issn"] in issn_publisher_map:
-                publisher = issn_publisher_map[row["issn"]]
-            elif (
-                pd.notna(row["scopus_id"]) and row["scopus_id"] in scopus_publisher_map
-            ):
-                publisher = scopus_publisher_map[row["scopus_id"]]
+            # Try to find a matching record with valid publisher info
+            matching_entry = df_valid[
+                (df_valid["issn"] == row["issn"])
+                | (df_valid["scopus_id"] == row["scopus_id"])
+            ]
 
-            if publisher:
-                df.loc[idx, "metadata_publisher"] = publisher
-                df.loc[idx, "general_publisher"] = publisher
+            if not matching_entry.empty:
+                # Update both publisher fields
+                df.loc[idx, "metadata_publisher"] = matching_entry.iloc[0][
+                    "metadata_publisher"
+                ]
+                if pd.notna(matching_entry.iloc[0]["general_publisher"]):
+                    df.loc[idx, "general_publisher"] = matching_entry.iloc[0][
+                        "general_publisher"
+                    ]
                 updated_indices.append(idx)
 
-        # Log the number of entries updated from existing data
         if updated_indices:
             logger.info(
-                f"Updated {len(updated_indices)} entries using existing publisher information.\n"
+                f"Updated {len(updated_indices)} entries using existing publisher information"
             )
 
         # Return remaining missing entries
-        remaining_missing = df_missing.drop(updated_indices)
+        remaining_missing = df_missing.drop(index=updated_indices)
         return df, remaining_missing
 
     def filter_metadata(self):
@@ -430,4 +424,3 @@ class FilterMetadata:
 
         except Exception as e:
             logger.error(f"Error in filter_metadata: {str(e)}")
-            raise
