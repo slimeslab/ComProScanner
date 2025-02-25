@@ -16,6 +16,13 @@ dependencies = [
     "tqdm>=4.67.1",
     "lxml>=5.3.1",
     "pandas>=2.2.3",
+    "torch>=2.6.0",
+    "langchain>=0.3.19",
+    "transformers>=4.49.0",
+    "mysql>=0.0.3",
+    "mysql-connector>=2.2.9",
+    "langchain_community>=0.3.18",
+    "chromadb>=0.6.3",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
