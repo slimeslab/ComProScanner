@@ -147,8 +147,9 @@ class CSVDatabaseManager:
     def __init__(self):
         pass
 
-    def write_to_csv(self, final_df, filepath, keyword, source):
-
+    def write_to_csv(self, final_df, filepath, keyword, source, csv_batch_size):
+        if csv_batch_size > 1:
+            logger.info("Writing to CSV...")
         try:
             if not os.path.exists(filepath):
                 os.makedirs(filepath)

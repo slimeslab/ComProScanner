@@ -57,7 +57,7 @@ class ElsevierArticleProcessor:
             "substring_keywords": [" example 1 ", " example 2 "],
         }
         sql_batch_size (int): The number of rows to write to the database at once (Applicable only if is_sql_db is True) (default: 500)
-        csv_batch_size (int): The number of rows to write to the CSV file at once (default: 2000)
+        csv_batch_size (int): The number of rows to write to the CSV file at once (default: 1)
         start_row (int): The row number to start processing from (default: None)
         end_row (int): The row number to end processing at (default: None)
         doi_list (list): A list of DOIs to process (default: None)
@@ -71,7 +71,7 @@ class ElsevierArticleProcessor:
         main_property_keyword: str = None,
         property_keywords: dict = None,
         sql_batch_size: int = 500,
-        csv_batch_size: int = 2000,
+        csv_batch_size: int = 1,
         start_row: int = None,
         end_row: int = None,
         doi_list: list = None,
@@ -134,10 +134,10 @@ class ElsevierArticleProcessor:
                 "comp_methods",
                 "results_discussion",
                 "conclusion",
-                "is_d33_mentioned",
+                "is_property_mentioned",
             ]
         )
-        self.valid_d33_articles = 0
+        self.valid_property_articles = 0
         self.source = "elsevier"
         self.csv_filepath = (
             f"{self.csv_path}/{self.source}_{self.keyword}_paragraphs.csv"
@@ -477,7 +477,7 @@ class ElsevierArticleProcessor:
             "comp_methods": "",
             "results_discussion": "",
             "conclusion": "",
-            "is_d33_mentioned": "0",
+            "is_property_mentioned": "0",
         }
         if abstract:
             if abstract[0].text:
@@ -548,17 +548,17 @@ class ElsevierArticleProcessor:
             tables_content = "\n".join(tables)
             all_req_data["results_discussion"] += "\n" + tables_content
 
-        # Check if d33 is mentioned in the article
+        # Check if property is mentioned in the article
         total_text = f"# ABSTRACT:\n{all_req_data["abstract"]}# INTRODUCTION:\n{all_req_data["introduction"]}# EXPERIMENTAL SYNTHESIS:\n{all_req_data["exp_methods"]}# COMPUTATIONAL METHODOLOGY:\n{all_req_data["comp_methods"]}# RESULTS AND DISCUSSION:\n{all_req_data["results_discussion"]}# CONCLUSION\n{all_req_data["conclusion"]}"
         for item in self.property_keywords.values():
             for keyword in item:
                 if keyword in total_text:
-                    all_req_data["is_d33_mentioned"] = "1"
+                    all_req_data["is_property_mentioned"] = "1"
                     modified_doi = doi.replace("/", "_")
                     created_db_names = _get_folder_names()
                     if modified_doi not in created_db_names:
                         logger.info(
-                            f"d33 is mentioned in {doi}...Creating vector database..."
+                            f"Target property is mentioned in {doi}...Creating vector database..."
                         )
                         self.vector_db_manager.create_database(
                             db_name=modified_doi, article_text=total_text
@@ -568,7 +568,7 @@ class ElsevierArticleProcessor:
                         logger.warning(
                             f"Vector Database already exists for {doi}...Skipping..."
                         )
-        if all_req_data["is_d33_mentioned"] == "0":
+        if all_req_data["is_property_mentioned"] == "0":
             all_req_data["abstract"] = ""
             all_req_data["introduction"] = ""
             all_req_data["exp_methods"] = ""
@@ -576,7 +576,6 @@ class ElsevierArticleProcessor:
             all_req_data["results_discussion"] = ""
             all_req_data["conclusion"] = ""
 
-        # Returning dataframe (appended dictionary for one article)
         return pd.DataFrame([all_req_data])
 
     def _process_entries(self, entries):
@@ -741,6 +740,7 @@ class ElsevierArticleProcessor:
         """
         Main function to process the Elsevier articles and save the required sections to the MySQL database and CSV files and create a vector store if the relevant data is present in the article.
         """
+        logger.debug(f"\nProcessing new articles...")
         self._load_and_preprocess_data()
         dataframes = []
 
@@ -810,17 +810,22 @@ class ElsevierArticleProcessor:
                 )
 
                 dataframes.append(row)
-                if row["is_d33_mentioned"].iloc[0] == "1":
-                    self.valid_d33_articles += 1
+                if row["is_property_mentioned"].iloc[0] == "1":
+                    self.valid_property_articles += 1
                 if len(dataframes) == self.sql_batch_size:
-                    final_df = pd.concat(dataframes, ignore_index=True)
+                    final_sql_df = pd.concat(dataframes, ignore_index=True)
                     if self.is_sql_db:
                         self.sql_db_manager.write_to_sql_db(
-                            self.paperdata_table_name, final_df
+                            self.paperdata_table_name, final_sql_df
                         )
                 if len(dataframes) == self.csv_batch_size:
+                    final_csv_df = pd.concat(dataframes, ignore_index=True)
                     self.csv_db_manager.write_to_csv(
-                        final_df, self.csv_path, self.keyword, self.source
+                        final_csv_df,
+                        self.csv_path,
+                        self.keyword,
+                        self.source,
+                        self.csv_batch_size,
                     )
                     dataframes = []
                     time.sleep(5)
@@ -836,24 +841,25 @@ class ElsevierArticleProcessor:
                 )
                 continue
 
-            # Append any remaining dataframes at the last
-            if dataframes:
-                remaining_df = pd.concat(dataframes, ignore_index=True)
-                if self.is_sql_db:
-                    self.sql_db_manager.write_to_sql_db(
-                        self.paperdata_table_name, remaining_df
-                    )
-                self.csv_db_manager.write_to_csv(
-                    remaining_df, self.csv_path, self.keyword, self.source
+        # Append any remaining dataframes at the last
+        if dataframes:
+            remaining_df = pd.concat(dataframes, ignore_index=True)
+            if self.is_sql_db:
+                self.sql_db_manager.write_to_sql_db(
+                    self.paperdata_table_name, remaining_df
                 )
+            self.csv_db_manager.write_to_csv(
+                remaining_df,
+                self.csv_path,
+                self.keyword,
+                self.source,
+                self.csv_batch_size,
+            )
 
     def _process_with_timeout_handling(self):
         """Process articles and handle any timeouts"""
-        # Initial processing
-        self._process_articles()
-
-        # Handle timeout DOIs if any
         while os.path.isfile(self.timeout_file):
+            logger.debug(f"\nProcessing articles with timeout handling...")
             with open(self.timeout_file, "r") as file:
                 timeout_dois = [line.strip() for line in file]
 
@@ -870,9 +876,7 @@ class ElsevierArticleProcessor:
     def process_elsevier_articles(self):
         """Run Elsevier article processing workflow"""
         logger.verbose(f"\n\nElsevier articles processing started...\n\n")
-        logger.debug(f"\nProcessing articles for the first time...")
         self._process_articles()
-        logger.debug(f"\nProcessing articles with timeout handling...")
         self._process_with_timeout_handling()
         logger.verbose(f"\n\nElsevier articles processing completed...\n\n")
-        logger.info(f"\nTotal valid d33 articles: {self.valid_d33_articles}")
+        logger.info(f"\nTotal valid property articles: {self.valid_property_articles}")
