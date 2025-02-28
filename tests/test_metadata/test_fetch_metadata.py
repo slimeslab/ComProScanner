@@ -1,8 +1,14 @@
 import pytest
 import time
-from comproscanner.utils.error_handler import BaseError
+import sys
+from unittest.mock import MagicMock
+from comproscanner.utils.error_handler import (
+    BaseError,
+    KeyboardInterruptHandler,
+    ValueErrorHandler,
+    CustomErrorHandler,
+)
 from comproscanner.metadata_extractor.fetch_metadata import FetchMetadata
-from comproscanner.utils.error_handler import ValueErrorHandler
 
 SAMPLE_SCOPUS_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
 <search-results xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -172,9 +178,6 @@ def test_missing_api_key(monkeypatch):
     # Explicitly remove the SCOPUS_API_KEY from environment
     monkeypatch.delenv("SCOPUS_API_KEY", raising=False)
 
-    # Mock the exit_program method to prevent system exit during test
-    monkeypatch.setattr(BaseError, "exit_program", lambda self: None)
-
     with pytest.raises(ValueErrorHandler) as exc_info:
         FetchMetadata(main_property_keyword="test")
     assert "SCOPUS_API_KEY is not set in the environment variables" in str(
@@ -209,9 +212,6 @@ def test_validation_errors(
     """Test various validation error cases"""
     monkeypatch.setenv("SCOPUS_API_KEY", share_scopus_api_key)
 
-    # Mock the exit_program method in BaseError
-    monkeypatch.setattr(BaseError, "exit_program", lambda self: None)
-
     with pytest.raises(ValueErrorHandler) as exc_info:
         FetchMetadata(**test_input)
     assert expected_error in str(exc_info.value)
@@ -237,3 +237,161 @@ def test_headers_setup(metadata_fetcher):
     """Test that headers are properly set up"""
     assert metadata_fetcher.headers["X-ELS-APIKey"] == "dummy_scopus_api_key"
     assert metadata_fetcher.headers["Accept"] == "application/xml"
+
+
+def test_write_error_logs_with_all_parameters(metadata_fetcher, monkeypatch):
+    """Test _write_error_logs method with all parameters."""
+    logger_mock = MagicMock()
+    monkeypatch.setattr(
+        "comproscanner.metadata_extractor.fetch_metadata.logger", logger_mock
+    )
+
+    # Call the method with all parameters
+    metadata_fetcher._write_error_logs(
+        year=2023, query="test_query", special_query="test_special", page_number=1
+    )
+
+    # Verify logger.error was called with expected parameters
+    logger_mock.error.assert_called_once()
+    assert "Year: 2023" in logger_mock.error.call_args[0][0]
+    assert "Query: test_query" in logger_mock.error.call_args[0][0]
+    assert "Special Query: test_special" in logger_mock.error.call_args[0][0]
+    assert "Page Number: 1" in logger_mock.error.call_args[0][0]
+
+
+def test_write_error_logs_with_status_code(metadata_fetcher, monkeypatch):
+    """Test _write_error_logs method with status code."""
+    logger_mock = MagicMock()
+    monkeypatch.setattr(
+        "comproscanner.metadata_extractor.fetch_metadata.logger", logger_mock
+    )
+
+    # Call the method with status_code
+    metadata_fetcher._write_error_logs(status_code=429)
+
+    # Verify logger.error was called with expected parameters
+    logger_mock.error.assert_called_once()
+    assert "Status Code: 429" in logger_mock.error.call_args[0][0]
+
+
+def test_write_error_logs_with_exception(metadata_fetcher, monkeypatch):
+    """Test _write_error_logs method with exception."""
+    logger_mock = MagicMock()
+    monkeypatch.setattr(
+        "comproscanner.metadata_extractor.fetch_metadata.logger", logger_mock
+    )
+
+    test_exception = Exception("Test Exception")
+    # Call the method with exception
+    metadata_fetcher._write_error_logs(exception=test_exception)
+
+    # Verify logger.error was called with expected parameters
+    logger_mock.error.assert_called_once()
+    assert "Exception: Test Exception" in logger_mock.error.call_args[0][0]
+
+
+@pytest.mark.integration
+def test_api_rate_limit_handling(metadata_fetcher, mocker):
+    """Test handling of API rate limit (429) responses"""
+    # Mock the requests.get to return a 429 response
+    mock_response = mocker.Mock()
+    mock_response.status_code = 429
+    mocker.patch("requests.get", return_value=mock_response)
+
+    # Mock sys.exit to prevent actual exit
+    exit_mock = mocker.patch("sys.exit")
+
+    # Call a method that would make API calls
+    metadata_fetcher.main_fetch()
+
+    # Check if is_exceeded flag was set and sys.exit was called
+    assert metadata_fetcher.is_exceeded is True
+    exit_mock.assert_called()
+
+
+@pytest.mark.integration
+def test_exception_handling_in_main_fetch(metadata_fetcher, mocker):
+    """Test exception handling in main_fetch method"""
+    # Mock requests.get to raise an exception when called
+    mocker.patch("requests.get", side_effect=Exception("Test exception"))
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch("comproscanner.metadata_extractor.fetch_metadata.logger")
+
+    # Execute main_fetch which should handle the exception
+    metadata_fetcher.main_fetch()
+
+    # Check that the error was logged
+    logger_mock.error.assert_called()
+
+
+@pytest.mark.integration
+def test_value_error_handling_in_main_fetch(metadata_fetcher, mocker):
+    """Test ValueError handling in main_fetch method"""
+    # Mock requests.get response
+    mock_response = mocker.Mock()
+    mock_response.status_code = 200
+    # Return an invalid XML that would trigger ValueError during parsing
+    mock_response.text = "Invalid XML that will cause ValueError"
+    mocker.patch("requests.get", return_value=mock_response)
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch("comproscanner.metadata_extractor.fetch_metadata.logger")
+
+    # Execute main_fetch
+    metadata_fetcher.main_fetch()
+
+    # Check that the error was logged
+    logger_mock.error.assert_called()
+
+
+@pytest.mark.integration
+def test_keyboard_interrupt_handling(metadata_fetcher, mocker):
+    """Test KeyboardInterrupt handling in main_fetch method"""
+    # Mock requests.get to raise KeyboardInterrupt
+    mocker.patch("requests.get", side_effect=KeyboardInterrupt())
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch("comproscanner.metadata_extractor.fetch_metadata.logger")
+
+    # Test that KeyboardInterruptHandler is raised
+    with pytest.raises(KeyboardInterruptHandler):
+        metadata_fetcher.main_fetch()
+
+    # Check that the error was logged
+    logger_mock.error.assert_called()
+
+
+@pytest.mark.parametrize(
+    "status_code,expected_flag",
+    [
+        (200, False),  # Success case
+        (429, True),  # Rate limit case
+        (404, False),  # Not found case
+        (500, False),  # Server error case
+    ],
+)
+def test_various_api_responses(metadata_fetcher, mocker, status_code, expected_flag):
+    """Test handling of various API response status codes"""
+    # Mock the requests.get response
+    mock_response = mocker.Mock()
+    mock_response.status_code = status_code
+    if status_code == 200:
+        mock_response.text = SAMPLE_SCOPUS_RESPONSE
+    mocker.patch("requests.get", return_value=mock_response)
+
+    # Skip actual exit calls for testing
+    mocker.patch("sys.exit")
+
+    # For non-200 status, mock the write_error_logs method to verify it's called
+    write_error_mock = mocker.patch.object(metadata_fetcher, "_write_error_logs")
+
+    # Call main_fetch which should process the response
+    metadata_fetcher.main_fetch()
+
+    # Check that is_exceeded flag was set as expected
+    assert metadata_fetcher.is_exceeded is expected_flag
+
+    # For non-200 responses, error logs should be written
+    if status_code != 200:
+        write_error_mock.assert_called()

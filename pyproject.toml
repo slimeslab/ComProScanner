@@ -24,6 +24,8 @@ dependencies = [
     "langchain_community>=0.3.18",
     "chromadb>=0.6.3",
 ]
+[project.optional-dependencies]
+dev = ["pytest>=8.3.4", "pytest-mock>=3.14.0", "pytest-cov>=6.0.0"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",

@@ -55,7 +55,6 @@ def filter_metadata(monkeypatch, share_scopus_api_key):
 def test_init_without_api_key(monkeypatch):
     """Test initialization without API key"""
     monkeypatch.delenv("SCOPUS_API_KEY", raising=False)
-    monkeypatch.setattr(BaseError, "exit_program", lambda self: None)
 
     with pytest.raises(ValueErrorHandler) as exc_info:
         FilterMetadata(main_property_keyword="test")
@@ -67,7 +66,6 @@ def test_init_without_api_key(monkeypatch):
 def test_init_without_keyword(monkeypatch, share_scopus_api_key):
     """Test initialization without main property keyword"""
     monkeypatch.setenv("SCOPUS_API_KEY", share_scopus_api_key)
-    monkeypatch.setattr(BaseError, "exit_program", lambda self: None)
 
     with pytest.raises(ValueErrorHandler) as exc_info:
         FilterMetadata()
@@ -122,7 +120,6 @@ def test_get_publisher_from_issn_rate_limit(filter_metadata, monkeypatch, mocker
     mock_response.status_code = 429
 
     mocker.patch("requests.get", return_value=mock_response)
-    monkeypatch.setattr(BaseError, "exit_program", lambda self: None)
 
     with pytest.raises(CustomErrorHandler) as exc_info:
         filter_metadata._get_publisher_from_issn("1234-5678", pd.DataFrame())
@@ -186,3 +183,329 @@ def test_publisher_mapping(filter_metadata):
         "wiley": "wiley",
     }
     assert filter_metadata.publisher_mapping == expected_publishers
+
+
+def test_remove_duplicate_doi_rows_exception(filter_metadata, monkeypatch, mocker):
+    """Test exception handling in _remove_duplicate_doi_rows method"""
+    # Create a DataFrame that will cause an exception
+    df = mocker.Mock()
+    df.drop_duplicates.side_effect = Exception("Test exception")
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch(
+        "comproscanner.metadata_extractor.filter_metadata.logger"
+    )
+
+    # Call the method which should handle the exception
+    result = filter_metadata._remove_duplicate_doi_rows(df)
+
+    # Verify error was logged and None was returned
+    logger_mock.error.assert_called_once()
+    assert "An error occurred" in logger_mock.error.call_args[0][0]
+    assert result is None
+
+
+def test_get_unique_identifiers_for_missing_exception(
+    filter_metadata, monkeypatch, mocker
+):
+    """Test exception handling in _get_unique_identifiers_for_missing method"""
+    # Create a DataFrame that will cause an exception
+    df_missing = mocker.Mock()
+    df_missing.groupby.side_effect = Exception("Test exception")
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch(
+        "comproscanner.metadata_extractor.filter_metadata.logger"
+    )
+
+    # Call the method which should handle the exception
+    result = filter_metadata._get_unique_identifiers_for_missing(df_missing)
+
+    # Verify error was logged and None was returned
+    logger_mock.error.assert_called_once()
+    assert "Error getting unique identifiers" in logger_mock.error.call_args[0][0]
+    assert result is None
+
+
+def test_add_publisher_to_df_and_save_publisher_found_no_mask(
+    filter_metadata, monkeypatch, mocker
+):
+    """Test _add_publisher_to_df_and_save method when publisher is found but no rows match"""
+    # Create a mock response with publisher information
+    mock_response = mocker.Mock()
+    mock_response.text = """<?xml version="1.0" encoding="UTF-8"?>
+        <serial-metadata-response xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <entry>
+                <dc:title>Test Journal</dc:title>
+                <dc:publisher>Elsevier</dc:publisher>
+            </entry>
+        </serial-metadata-response>"""
+
+    # Mock DataFrame operations
+    mock_df = pd.DataFrame({"scopus_id": ["123"], "issn": ["1234-5678"]})
+    mocker.patch("pandas.read_csv", return_value=mock_df)
+    mocker.patch("pandas.DataFrame.to_csv")
+
+    # Mock etree operations to return a proper root with publisher element
+    root_mock = mocker.Mock()
+    publisher_element_mock = mocker.Mock()
+    publisher_element_mock.text = "Elsevier"
+    root_mock.find.return_value = publisher_element_mock
+
+    mocker.patch("lxml.etree.XMLParser")
+    mocker.patch("lxml.etree.fromstring", return_value=root_mock)
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch(
+        "comproscanner.metadata_extractor.filter_metadata.logger"
+    )
+
+    # Call the method with a Scopus ID that doesn't match any rows
+    filter_metadata._add_publisher_to_df_and_save(
+        mock_response, scopus_id="nonexistent_id"
+    )
+
+    # Verify warning was logged
+    logger_mock.warning.assert_called_once()
+    assert (
+        "No matching rows found for Scopus ID: nonexistent_id"
+        in logger_mock.warning.call_args[0][0]
+    )
+
+
+def test_add_publisher_to_df_and_save_publisher_not_found(
+    filter_metadata, monkeypatch, mocker
+):
+    """Test _add_publisher_to_df_and_save method when publisher element is not found"""
+    # Create a mock response without publisher information
+    mock_response = mocker.Mock()
+    mock_response.text = """<?xml version="1.0" encoding="UTF-8"?>
+        <serial-metadata-response xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <entry>
+                <dc:title>Test Journal</dc:title>
+            </entry>
+        </serial-metadata-response>"""
+
+    # Mock etree operations
+    mocker.patch("lxml.etree.XMLParser")
+    mocker.patch("lxml.etree.fromstring")
+
+    # Create a mock root with find that returns None
+    mock_root = mocker.Mock()
+    mock_root.find.return_value = None
+    mocker.patch("lxml.etree.fromstring", return_value=mock_root)
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch(
+        "comproscanner.metadata_extractor.filter_metadata.logger"
+    )
+
+    # Call the method with ISSN
+    filter_metadata._add_publisher_to_df_and_save(mock_response, issn="1234-5678")
+
+    # Verify error was logged
+    logger_mock.error.assert_called_once()
+    assert (
+        "Publisher not found for the journal with ISSN: 1234-5678"
+        in logger_mock.error.call_args[0][0]
+    )
+
+
+def test_get_publisher_from_scopus_id_success(filter_metadata, monkeypatch, mocker):
+    """Test successful publisher retrieval from Scopus ID"""
+    # Mock successful response
+    mock_response = mocker.Mock()
+    mock_response.status_code = 200
+    mock_response.text = """<?xml version="1.0" encoding="UTF-8"?>
+        <serial-metadata-response xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <entry>
+                <dc:publisher>Test Publisher</dc:publisher>
+            </entry>
+        </serial-metadata-response>"""
+
+    # Mock requests.get to return our mock response
+    mocker.patch("requests.get", return_value=mock_response)
+
+    # Mock _add_publisher_to_df_and_save to avoid actual XML parsing
+    add_publisher_mock = mocker.patch.object(
+        filter_metadata, "_add_publisher_to_df_and_save"
+    )
+
+    # Mock DataFrame
+    mock_df = mocker.Mock()
+
+    # Call the method
+    result = filter_metadata._get_publisher_from_scopus_id("123456789", mock_df)
+
+    # Verify the method returned True and _add_publisher_to_df_and_save was called
+    assert result is True
+    add_publisher_mock.assert_called_once_with(mock_response, scopus_id="123456789")
+
+
+def test_get_publisher_from_scopus_id_404(filter_metadata, monkeypatch, mocker):
+    """Test handling of 404 response for Scopus ID"""
+    # Mock 404 response
+    mock_response = mocker.Mock()
+    mock_response.status_code = 404
+
+    # Mock requests.get to return our mock response
+    mocker.patch("requests.get", return_value=mock_response)
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch(
+        "comproscanner.metadata_extractor.filter_metadata.logger"
+    )
+
+    # Mock DataFrame
+    mock_df = mocker.Mock()
+
+    # Call the method
+    result = filter_metadata._get_publisher_from_scopus_id("123456789", mock_df)
+
+    # Verify the method returned False and error was logged
+    assert result is False
+    logger_mock.error.assert_called_once()
+    assert "URL not found for Scopus ID: 123456789" in logger_mock.error.call_args[0][0]
+
+
+def test_get_publisher_from_scopus_id_other_status(
+    filter_metadata, monkeypatch, mocker
+):
+    """Test handling of other status codes for Scopus ID"""
+    # Mock 500 response
+    mock_response = mocker.Mock()
+    mock_response.status_code = 500
+
+    # Mock requests.get to return our mock response
+    mocker.patch("requests.get", return_value=mock_response)
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch(
+        "comproscanner.metadata_extractor.filter_metadata.logger"
+    )
+
+    # Mock DataFrame
+    mock_df = mocker.Mock()
+
+    # Call the method
+    result = filter_metadata._get_publisher_from_scopus_id("123456789", mock_df)
+
+    # Verify the method returned False and error was logged
+    assert result is False
+    logger_mock.error.assert_called_once()
+    assert "Scopus ID API Error: 500" in logger_mock.error.call_args[0][0]
+
+
+def test_get_publisher_from_scopus_id_exception(filter_metadata, monkeypatch, mocker):
+    """Test exception handling in _get_publisher_from_scopus_id method"""
+    # Mock requests.get to raise exception
+    mocker.patch("requests.get", side_effect=Exception("Test exception"))
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch(
+        "comproscanner.metadata_extractor.filter_metadata.logger"
+    )
+
+    # Mock DataFrame
+    mock_df = mocker.Mock()
+
+    # Call the method
+    result = filter_metadata._get_publisher_from_scopus_id("123456789", mock_df)
+
+    # Verify the method returned False and error was logged
+    assert result is False
+    logger_mock.error.assert_called_once()
+    assert "Error processing Scopus ID 123456789" in logger_mock.error.call_args[0][0]
+
+
+def test_process_journal_exceeded_from_scopus_id(filter_metadata, monkeypatch, mocker):
+    """Test _process_journal when API rate limit is exceeded from Scopus ID call"""
+    # Mock _get_publisher_from_issn to return False but not exceed rate limit
+    mocker.patch.object(filter_metadata, "_get_publisher_from_issn", return_value=False)
+
+    # Mock _get_publisher_from_scopus_id to indicate API rate limit exceeded
+    mocker.patch.object(
+        filter_metadata, "_get_publisher_from_scopus_id", return_value=False
+    )
+
+    # Set up to exceed rate limit after _get_publisher_from_scopus_id call
+    def set_exceeded(*args, **kwargs):
+        filter_metadata.is_exceeded = True
+        return False
+
+    mocker.patch.object(
+        filter_metadata, "_get_publisher_from_scopus_id", side_effect=set_exceeded
+    )
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch(
+        "comproscanner.metadata_extractor.filter_metadata.logger"
+    )
+
+    # Mock sys.exit to prevent actual exit
+    sys_exit_mock = mocker.patch("sys.exit")
+
+    # Mock DataFrame
+    mock_df = mocker.Mock()
+
+    # Call the method
+    filter_metadata._process_journal("1234-5678", "123456789", mock_df, "Test Journal")
+
+    # Verify sys.exit was called and critical log was made
+    sys_exit_mock.assert_called_once()
+    logger_mock.critical.assert_called_once()
+
+
+def test_process_journal_both_methods_fail(filter_metadata, monkeypatch, mocker):
+    """Test _process_journal when both ISSN and Scopus ID methods fail"""
+    # Mock both methods to return False but not exceed rate limit
+    mocker.patch.object(filter_metadata, "_get_publisher_from_issn", return_value=False)
+    mocker.patch.object(
+        filter_metadata, "_get_publisher_from_scopus_id", return_value=False
+    )
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch(
+        "comproscanner.metadata_extractor.filter_metadata.logger"
+    )
+
+    # Mock time.sleep to speed up test
+    mocker.patch("time.sleep")
+
+    # Mock DataFrame
+    mock_df = mocker.Mock()
+
+    # Call the method
+    filter_metadata._process_journal("1234-5678", "123456789", mock_df, "Test Journal")
+
+    # Verify warning was logged
+    logger_mock.warning.assert_called_once()
+    assert (
+        "Unable to retrieve publisher for Test Journal"
+        in logger_mock.warning.call_args[0][0]
+    )
+
+
+def test_process_journal_exception(filter_metadata, monkeypatch, mocker):
+    """Test exception handling in _process_journal method"""
+    # Mock _get_publisher_from_issn to raise exception
+    mocker.patch.object(
+        filter_metadata,
+        "_get_publisher_from_issn",
+        side_effect=Exception("Test exception"),
+    )
+
+    # Mock logger to capture log calls
+    logger_mock = mocker.patch(
+        "comproscanner.metadata_extractor.filter_metadata.logger"
+    )
+
+    # Mock DataFrame
+    mock_df = mocker.Mock()
+
+    # Call the method
+    filter_metadata._process_journal("1234-5678", "123456789", mock_df, "Test Journal")
+
+    # Verify error was logged
+    logger_mock.error.assert_called_once()
+    assert "An error occurred" in logger_mock.error.call_args[0][0]
