@@ -176,6 +176,7 @@ cython_debug/
 # IDE
 .vscode/
 
-# Remove results and logs folder from tests directory
+# Remove results, logs and db folder from tests directory
 tests/results/
 tests/logs/
+tests/db/
