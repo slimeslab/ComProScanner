@@ -549,7 +549,7 @@ class ElsevierArticleProcessor:
             all_req_data["results_discussion"] += "\n" + tables_content
 
         # Check if property is mentioned in the article
-        total_text = f"# ABSTRACT:\n{all_req_data["abstract"]}# INTRODUCTION:\n{all_req_data["introduction"]}# EXPERIMENTAL SYNTHESIS:\n{all_req_data["exp_methods"]}# COMPUTATIONAL METHODOLOGY:\n{all_req_data["comp_methods"]}# RESULTS AND DISCUSSION:\n{all_req_data["results_discussion"]}# CONCLUSION\n{all_req_data["conclusion"]}"
+        total_text = f"#TITLE:\n{all_req_data['article_title']}\n\n# ABSTRACT:\n{all_req_data["abstract"]}\n\n# INTRODUCTION:\n{all_req_data["introduction"]}\n\n# EXPERIMENTAL SYNTHESIS:\n{all_req_data["exp_methods"]}\n\n# COMPUTATIONAL METHODOLOGY:\n{all_req_data["comp_methods"]}\n\n# RESULTS AND DISCUSSION:\n{all_req_data["results_discussion"]}\n\n# CONCLUSION\n{all_req_data["conclusion"]}"
         for item in self.property_keywords.values():
             for keyword in item:
                 if keyword in total_text:
