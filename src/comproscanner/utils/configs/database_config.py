@@ -5,7 +5,9 @@ from ..error_handler import ValueErrorHandler
 class DatabaseConfig:
     def __init__(self, main_property_keyword, is_sql_db=None):
         self.PAPERDATA_TABLE_NAME = f"{main_property_keyword}_data"
-        self.EXTRACTED_CSV_FOLDERPATH = f"results/extracted_data"
+        self.EXTRACTED_CSV_FOLDERPATH = (
+            f"results/extracted_data/{main_property_keyword}"
+        )
         if is_sql_db:
             db_user = os.getenv("DATABASE_USER")
             db_password = os.getenv("DATABASE_PASSWORD")
