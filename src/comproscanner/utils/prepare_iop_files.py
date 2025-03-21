@@ -1,5 +1,5 @@
 """
-get_iop_filepaths.py
+prepare_iop_files.py
 
 Author: Aritra Roy
 Email: contact@aritraroy.live
