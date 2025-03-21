@@ -23,9 +23,9 @@ dependencies = [
     "mysql-connector>=2.2.9",
     "langchain_community>=0.3.18",
     "chromadb>=0.6.3",
+    "pdf2doi @ git+https://github.com/MicheleCotrufo/pdf2doi.git", # pdfminer.six>=20231228 is needed for CrewAI, it is updated in the repo but not released yet by pdf2doi as a package
+    "docling>=2.28.0",
 ]
-[project.optional-dependencies]
-dev = ["pytest>=8.3.4", "pytest-mock>=3.14.0", "pytest-cov>=6.0.0"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -40,6 +40,11 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Physics",
     "Topic :: Scientific/Engineering :: Materials Science",
     "Topic :: Scientific/Engineering :: Information Analysis",
+]
+[project.optional-dependencies]
+dev = ["pytest>=8.3.4", "pytest-mock>=3.14.0", "pytest-cov>=6.0.0"]
+cuda = [
+    "torchaudio>=2.6.0+cu121; platform_system=='Linux' or platform_system=='Windows'",
 ]
 [project.urls]
 "Homepage" = "https://github.com/aritraroy24/comproscanner"
