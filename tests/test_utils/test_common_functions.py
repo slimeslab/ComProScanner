@@ -1,3 +1,12 @@
+"""
+test_common_functions.py
+
+Author: Aritra Roy
+Email: contact@aritraroy.live
+Website: https://aritraroy.live
+Date: 26-02-2025
+"""
+
 import pytest
 import os
 import requests
@@ -16,7 +25,6 @@ class TestGetPaperMetadataFromOAWorks:
     @patch("requests.request")
     def test_successful_request(self, mock_request):
         """Test a successful API request"""
-        # Mock the response
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = {
@@ -25,13 +33,9 @@ class TestGetPaperMetadataFromOAWorks:
             "publisher": "Test Publisher",
         }
         mock_request.return_value = mock_response
-
-        # Call the function
         title, journal_name, publisher = get_paper_metadata_from_oaworks(
             "10.1000/test.doi"
         )
-
-        # Verify the results
         assert title == "Test Paper Title"
         assert journal_name == "Test Journal"
         assert publisher == "Test Publisher"
@@ -42,17 +46,12 @@ class TestGetPaperMetadataFromOAWorks:
     @patch("requests.request")
     def test_failed_request(self, mock_request):
         """Test a failed API request"""
-        # Mock the response
         mock_response = MagicMock()
         mock_response.status_code = 404
         mock_request.return_value = mock_response
-
-        # Call the function
         title, journal_name, publisher = get_paper_metadata_from_oaworks(
             "10.1000/test.doi"
         )
-
-        # Verify the results
         assert title == ""
         assert journal_name == ""
         assert publisher == ""
@@ -60,15 +59,10 @@ class TestGetPaperMetadataFromOAWorks:
     @patch("requests.request")
     def test_exception_handling(self, mock_request):
         """Test exception handling"""
-        # Make the request raise an exception
         mock_request.side_effect = Exception("Connection error")
-
-        # Call the function
         title, journal_name, publisher = get_paper_metadata_from_oaworks(
             "10.1000/test.doi"
         )
-
-        # Verify the results
         assert title == ""
         assert journal_name == ""
         assert publisher == ""
@@ -76,22 +70,15 @@ class TestGetPaperMetadataFromOAWorks:
     @patch("requests.request")
     def test_missing_data_fields(self, mock_request):
         """Test handling of missing data fields"""
-        # Mock the response with missing fields
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = {
-            # No title
             "container-title": "Test Journal",
-            # No publisher
         }
         mock_request.return_value = mock_response
-
-        # Call the function
         title, journal_name, publisher = get_paper_metadata_from_oaworks(
             "10.1000/test.doi"
         )
-
-        # Verify the results
         assert title == ""
         assert journal_name == "Test Journal"
         assert publisher == ""
@@ -149,13 +136,8 @@ class TestWriteTimeoutFile:
         self, mock_sleep, mock_file, mock_makedirs, mock_exists
     ):
         """Test writing DOI to timeout file when directory exists"""
-        # Mock os.path.exists to return True
         mock_exists.return_value = True
-
-        # Call the function
         write_timeout_file("10.1000/test.doi", "/path/to/timeout.txt")
-
-        # Verify the results
         mock_exists.assert_called_once_with("/path/to")
         mock_makedirs.assert_not_called()
         mock_file.assert_called_once_with("/path/to/timeout.txt", "a")
@@ -170,13 +152,8 @@ class TestWriteTimeoutFile:
         self, mock_sleep, mock_file, mock_makedirs, mock_exists
     ):
         """Test writing DOI to timeout file with directory creation"""
-        # Mock os.path.exists to return False
         mock_exists.return_value = False
-
-        # Call the function
         write_timeout_file("10.1000/test.doi", "/path/to/timeout.txt")
-
-        # Verify the results
         mock_exists.assert_called_once_with("/path/to")
         mock_makedirs.assert_called_once_with("/path/to")
         mock_file.assert_called_once_with("/path/to/timeout.txt", "a")

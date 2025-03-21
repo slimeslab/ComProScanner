@@ -1,3 +1,12 @@
+"""
+test_elsevier_processor.py
+
+Author: Aritra Roy
+Email: contact@aritraroy.live
+Website: https://aritraroy.live
+Date: 02-03-2025
+"""
+
 import pytest
 import os
 import pandas as pd
@@ -290,8 +299,6 @@ def test_extract_paragraphs(elsevier_processor):
     </section>
     """
     section = etree.fromstring(section_xml)
-
-    # Ensure the COMP_KEYWORDS list includes words from test paragraph
     with patch.object(
         elsevier_processor.article_related_keywords,
         "COMP_KEYWORDS",
@@ -398,9 +405,9 @@ def test_process_articles(
             "create_database",
         ) as mock_create_db,
         patch("comproscanner.article_processors.elsevier_processor.tqdm") as mock_tqdm,
-        patch("os.path.isdir", return_value=False),  # Database directory doesn't exist
-        patch("os.listdir", return_value=[]),  # Empty folder list
-        patch("time.sleep", return_value=None),  # Skip sleep calls
+        patch("os.path.isdir", return_value=False),
+        patch("os.listdir", return_value=[]),
+        patch("time.sleep", return_value=None),
     ):
         elsevier_processor.df = pd.DataFrame(
             {
@@ -474,7 +481,6 @@ def test_process_elsevier_articles(
 
 def test_keyboard_interrupt_handling(elsevier_processor, sample_df, monkeypatch):
     """Test handling of keyboard interrupts during processing"""
-    # Mock read_csv to return sample DataFrame
     monkeypatch.setattr(pd, "read_csv", lambda *args, **kwargs: sample_df)
 
     call_count = [0]
@@ -659,14 +665,14 @@ def test_generate_tables_with_list_items(elsevier_processor):
     )
     assert len(tables) == 1
     assert "Table 1.Table with List" in tables[0]
-    assert "['List Item 1', 'List Item 2']" in tables[0]  # List converted to string
+    assert "['List Item 1', 'List Item 2']" in tables[0]
 
 
 def test_generate_tables_mismatch(elsevier_processor):
     """Test the _generate_tables method with mismatched data."""
     header_data = [["Header 1", "Header 2"]]
     column_number = [2]
-    all_table_data = []  # Empty table data, causing mismatch
+    all_table_data = []
     caption_data = ["Mismatched Table"]
     result = elsevier_processor._generate_tables(
         header_data, column_number, all_table_data, caption_data

@@ -1,3 +1,12 @@
+"""
+test_embeddings.py
+
+Author: Aritra Roy
+Email: contact@aritraroy.live
+Website: https://aritraroy.live
+Date: 27-02-2025
+"""
+
 import os
 import pytest
 import torch
@@ -16,16 +25,12 @@ def mock_huggingface_model():
         patch("transformers.AutoTokenizer.from_pretrained") as mock_tokenizer,
         patch("transformers.AutoModel.from_pretrained") as mock_model,
     ):
-
-        # Configure mock tokenizer
         mock_tokenizer_instance = MagicMock()
         mock_tokenizer_instance.return_value = {
             "input_ids": torch.ones((1, 10), dtype=torch.long),
             "attention_mask": torch.ones((1, 10), dtype=torch.long),
         }
         mock_tokenizer.return_value = mock_tokenizer_instance
-
-        # Configure mock model
         mock_model_instance = MagicMock()
         mock_outputs = MagicMock()
         mock_outputs.last_hidden_state = torch.ones((1, 10, 768), dtype=torch.float)
@@ -42,8 +47,6 @@ def mock_sentence_transformers(monkeypatch):
     mock_st_instance = MagicMock()
     mock_st_instance.encode.return_value = np.ones(768, dtype=np.float32)
     mock_st.return_value = mock_st_instance
-
-    # Set global flag
     monkeypatch.setattr(
         "comproscanner.utils.embeddings.HAVE_SENTENCE_TRANSFORMERS", True
     )
@@ -55,7 +58,6 @@ def mock_sentence_transformers(monkeypatch):
 @pytest.fixture
 def mock_openai(monkeypatch):
     """Fixture to mock OpenAI API"""
-    # Set up the mock client
     mock_client = MagicMock()
     mock_embeddings = MagicMock()
     mock_data = MagicMock()
@@ -64,16 +66,10 @@ def mock_openai(monkeypatch):
     mock_response.data = [mock_data]
     mock_embeddings.create.return_value = mock_response
     mock_client.embeddings = mock_embeddings
-
-    # Mock OpenAI class
     mock_openai_class = MagicMock()
     mock_openai_class.return_value = mock_client
-
-    # Set global flag and inject mocks
     monkeypatch.setattr("comproscanner.utils.embeddings.HAVE_OPENAI", True)
     monkeypatch.setattr("comproscanner.utils.embeddings.OpenAI", mock_openai_class)
-
-    # Set environment variable
     monkeypatch.setenv("OPENAI_API_KEY", "test-api-key")
 
     yield mock_client
@@ -103,15 +99,12 @@ def test_init_sentence_transformers(mock_sentence_transformers):
 
 def test_init_openai(mock_openai):
     """Test initialization with OpenAI model"""
-    # Test with direct model name
     config = RAGConfig(embedding_model="text-embedding-ada-002")
     embeddings = MultiModelEmbeddings(config)
 
     assert embeddings.model_type == "openai"
     assert embeddings.rag_config == config
     assert embeddings.openai_model == "text-embedding-ada-002"
-
-    # Test with prefixed model name
     config = RAGConfig(embedding_model="openai:text-embedding-3-small")
     embeddings = MultiModelEmbeddings(config)
 
@@ -133,10 +126,7 @@ def test_init_unsupported_model():
 
 def test_init_openai_without_api_key(monkeypatch):
     """Test initialization with OpenAI model without API key"""
-    # Set global flag
     monkeypatch.setattr("comproscanner.utils.embeddings.HAVE_OPENAI", True)
-
-    # Ensure API key is not set
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     config = RAGConfig(embedding_model="text-embedding-ada-002")
 
@@ -148,7 +138,6 @@ def test_init_openai_without_api_key(monkeypatch):
 
 def test_init_openai_import_error(monkeypatch):
     """Test initialization with OpenAI when package is not available"""
-    # Set global flag
     monkeypatch.setattr("comproscanner.utils.embeddings.HAVE_OPENAI", False)
 
     config = RAGConfig(embedding_model="text-embedding-ada-002")
@@ -161,7 +150,6 @@ def test_init_openai_import_error(monkeypatch):
 
 def test_init_sentence_transformers_import_error(monkeypatch):
     """Test initialization with SentenceTransformers when package is not available"""
-    # Set global flag to indicate SentenceTransformers is not available
     monkeypatch.setattr(
         "comproscanner.utils.embeddings.HAVE_SENTENCE_TRANSFORMERS", False
     )
@@ -178,8 +166,6 @@ def test_embed_documents_huggingface(mock_huggingface_model):
     """Test embedding documents with HuggingFace model"""
     config = RAGConfig(embedding_model="huggingface:bert-base-uncased")
     embeddings = MultiModelEmbeddings(config)
-
-    # Create a mock for torch.no_grad to avoid issues with context manager
     with patch("torch.no_grad"):
         result = embeddings.embed_documents(["This is a test", "Another test"])
 
@@ -228,8 +214,6 @@ def test_embed_query_huggingface():
     """Test query embedding with HuggingFace model"""
     config = RAGConfig(embedding_model="huggingface:bert-base-uncased")
     embeddings = MultiModelEmbeddings(config)
-
-    # Patch the internal method to verify it's called correctly
     with patch.object(embeddings, "_embed_document_huggingface") as mock_embed:
         mock_embed.return_value = [0.1] * 768
         result = embeddings.embed_query("This is a query")
@@ -243,8 +227,6 @@ def test_embed_query_sentence_transformers():
     """Test query embedding with SentenceTransformers model"""
     config = RAGConfig(embedding_model="sentence-transformers:all-MiniLM-L6-v2")
     embeddings = MultiModelEmbeddings(config)
-
-    # Patch the internal method to verify it's called correctly
     with patch.object(
         embeddings, "_embed_document_sentence_transformers"
     ) as mock_embed:
@@ -260,8 +242,6 @@ def test_embed_query_openai(mock_openai):
     """Test query embedding with OpenAI model"""
     config = RAGConfig(embedding_model="text-embedding-ada-002")
     embeddings = MultiModelEmbeddings(config)
-
-    # Patch the internal method to verify it's called correctly
     with patch.object(embeddings, "_embed_document_openai") as mock_embed:
         mock_embed.return_value = [0.1] * 1536
         result = embeddings.embed_query("This is a query")
@@ -301,15 +281,12 @@ def test_determine_model_type(monkeypatch, model_name, expected_type):
 @pytest.mark.integration
 def test_huggingface_actual_embedding():
     """Integration test for actual embedding with HuggingFace (when available)"""
-    # Skip this test if torch is not available
     pytest.importorskip("torch")
     pytest.importorskip("transformers")
 
     try:
         config = RAGConfig(embedding_model="sentence-transformers:all-MiniLM-L6-v2")
         embeddings = MultiModelEmbeddings(config)
-
-        # Only run the actual embedding if the model is successfully initialized
         if hasattr(embeddings, "model"):
             result = embeddings.embed_query("This is an integration test")
             assert isinstance(result, list)
@@ -321,14 +298,11 @@ def test_huggingface_actual_embedding():
 @pytest.mark.integration
 def test_sentence_transformers_actual_embedding():
     """Integration test for actual embedding with SentenceTransformers (when available)"""
-    # Skip this test if sentence-transformers is not available
     pytest.importorskip("sentence_transformers")
 
     try:
         config = RAGConfig(embedding_model="sentence-transformers:all-MiniLM-L6-v2")
         embeddings = MultiModelEmbeddings(config)
-
-        # Only run the actual embedding if the model is successfully initialized
         if hasattr(embeddings, "model"):
             result = embeddings.embed_query("This is an integration test")
             assert isinstance(result, list)
