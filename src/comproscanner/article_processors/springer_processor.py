@@ -894,10 +894,6 @@ class SpringerArticleProcessor:
         """Process articles and handle any timeouts"""
         if self.is_exceeded:
             return
-        # Initial processing
-        self._process_articles()
-
-        # Handle timeout DOIs if any
         while os.path.isfile(self.timeout_file):
             logger.debug(f"\nProcessing articles with timeout handling...")
             with open(self.timeout_file, "r") as file:
