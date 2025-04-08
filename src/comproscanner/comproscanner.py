@@ -26,6 +26,7 @@ from .utils.data_preparator import MatPropDataPreparator
 from .extract_flow.main_extraction_flow import DataExtractionFlow
 from .post_processing.get_paper_data import PaperMetadataExtractor
 from .post_processing.save_results import SaveResults
+from .post_processing.create_kg import CreateKG
 from .post_processing.data_cleaner import calculate_resolved_compositions
 
 # utils
@@ -464,6 +465,22 @@ class ComProScanner:
                         f"Error saving results for DOI: {paper_data['doi']}. {e}"
                     )
                     continue
+
+                # Create knowledge graph if asked
+                if is_create_kg:
+                    if (
+                        is_only_relevant_kg
+                        and not composition_data
+                        and not synthesis_data
+                    ):
+                        continue
+                    try:
+                        with CreateKG() as kg_creator:
+                            kg_creator.process_paper_data(
+                                synthesis_data, composition_data, paper_metadata
+                            )
+                    except Exception as e:
+                        logger.error(f"Error creating knowledge graph: {e}")
 
                 # Delay before next paper
                 time.sleep(5)  # 5-second delay
