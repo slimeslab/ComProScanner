@@ -43,7 +43,7 @@ logger = setup_logger("article_processor.log")
 
 
 ######## Class to process PDFs in a folder ########
-class PDFsFolderProcessor:
+class PDFsProcessor:
     def __init__(
         self,
         folder_path: str = None,

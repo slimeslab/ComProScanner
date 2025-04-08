@@ -1,0 +1,17 @@
+format_composition_property:
+  description: |
+    **Task**: Format Material Compositions and Properties
+    **Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {extracted_composition_data}. You MUST use the final output from the tool as the final answer for such cases - don't calculate the composition percentage by yourself.
+    - If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+
+    **Parameters**:
+    - Extracted composition-property dictionary-
+    {extracted_composition_data}
+
+    The extracted output should look like the following-
+    {expected_composition_property_example}
+
+    {composition_property_formatting_task_note}
+  expected_output: >
+    Dictionary of material compositions, corresponding {main_extraction_keyword} property values, {main_extraction_keyword} unit and composition family.
+  agent: composition_property_formatter

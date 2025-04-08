@@ -250,9 +250,6 @@ def test_process_articles(
         wiley_processor.csv_db_manager, "write_to_csv", return_value=None
     )
 
-    # Instead of trying to mock each iteration properly, let's just set the counter directly
-    # Mocking how the iteration should work is complex and error-prone
-    # Since we're testing the counter value, we can just set it to what it should be after processing
     def mock_process_articles(*args, **kwargs):
         # Set the counter to 3 directly - simulating successful processing of all 3 rows
         wiley_processor.valid_property_articles = 3

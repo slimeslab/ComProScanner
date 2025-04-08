@@ -1,0 +1,18 @@
+extract_synthesis_data:
+  description: >
+    **Task**: Extract Synthesis Data
+    **Description**: Extract the synthesis information including the synthesis processes and characterization techniques used to create the materials provided in the json list below from the given text to create a structured JSON output with the following keys-
+      "method", "precursors", "steps" and "characterization_techniques"
+
+    - DON'T consider computational or theoretical part. Only experimental synthesis data should be considered.
+    - If precursors are not mentioned properly return empty list.
+
+    **Parameters**:
+    - Formatted composition data containg materials for which synthesis data needs to be extracted: 
+    {composition_formatted_data}
+    - Text data containing compositions and property details: {synthesis_text_data}
+
+    {synthesis_extraction_task_note}
+  expected_output: >
+    Dictionary of synthesis data including method, list of precursors, list of steps, and list of characterization techniques.
+  agent: synthesis_extractor

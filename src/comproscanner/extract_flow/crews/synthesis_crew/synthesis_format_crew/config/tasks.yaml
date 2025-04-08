@@ -1,0 +1,14 @@
+format_synthesis_data:
+  description: >
+    **Task**: Format Synthesis Data
+    **Description**: Format the extracted synthesis data by matching the values to allowed entities if provided. Modify the 'methods' and 'characterization_techniques' if allowed entities are provided specifically, else keep the same. If any precursor has industry name or chemical name instead of chemical composition, change it to chemical composition. No need to change the 'steps'.
+
+    **Parameters**:
+    - Extracted synthesis data containing method, precursors, steps and characterization techniques: 
+    {extracted_synthesis_data}
+
+    {synthesis_formatting_task_note}
+
+  expected_output: >
+    Dictionary with formatted 'methods' and 'characterization_techniques' values matching only the allowed entities if provided, else keep the same. The 'precursors' values should be in a list of strings. The 'steps' values should remain unmodified.
+  agent: synthesis_formatter

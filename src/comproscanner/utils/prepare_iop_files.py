@@ -133,7 +133,7 @@ class PrepareIOPFiles:
                         if new_name not in parent_files:
                             xml_files.append((root, file))
                     else:
-                        # If we can't get DOI, check if filename exists in parent
+                        # If DOI can't be checked, check if filename exists in parent
                         if file not in parent_files:
                             xml_files.append((root, file))
 

@@ -1,0 +1,37 @@
+extract_composition_property:
+  description: |
+    **Task**: Extract Material Compositions and Properties
+    **Description**: Extract the material compositions and their corresponding {main_extraction_keyword} values, unit corresponding to {main_extraction_keyword} data and family of the materials from the given text to create a structured JSON output like the following-
+    {{
+      "compositions": {{
+        "full chemical formula with proper fractions mentioned": {main_extraction_keyword} value,
+        ...
+      }},
+      "property_unit": "unit of {main_extraction_keyword} measurement",
+      "family": "material family name"
+    }}
+    If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+    "abbreviations": {{
+      "g-CN": "g-C3N4",
+    }}
+    *Abbreviation Note*:
+    - DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+    - DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+    - FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+    *Other Points to Consider*
+    - If any composition has '-', replace it with ' - ' unless it's for variable, for e.g., (1-x).
+    - If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+    {expected_variable_composition_property_example}
+    Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+    - Only consider the article's own work data unless and until referenced paper's data has compositions to include. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+    **Parameters**:
+    - Property: {main_extraction_keyword}
+    - Text data containing compositions and property details: 
+    {composition_property_text_data}
+
+    {composition_property_extraction_task_note}
+  expected_output: >
+    Dictionary of material compositions, corresponding {main_extraction_keyword} property values, {main_extraction_keyword} unit and composition family.
+  agent: composition_property_extractor
