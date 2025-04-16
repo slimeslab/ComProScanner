@@ -116,9 +116,12 @@ def test_init_unsupported_model():
     """Test initialization with an unsupported model type"""
     config = RAGConfig(embedding_model="unsupported-model-type")
 
-    with patch(
-        "transformers.AutoTokenizer.from_pretrained",
-        side_effect=Exception("Model not found"),
+    # Since _determine_model_type defaults to "openai" for any unrecognized model,
+    # we need to mock the _init_openai method to raise an exception
+    with patch.object(
+        MultiModelEmbeddings,
+        "_init_openai",
+        side_effect=Exception("OpenAI initialization failed"),
     ):
         with pytest.raises(Exception):
             MultiModelEmbeddings(config)

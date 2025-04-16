@@ -134,6 +134,8 @@ def test_get_publisher_from_issn_rate_limit(filter_metadata, monkeypatch, mocker
 
 def test_update_from_existing_data(filter_metadata, sample_df):
     """Test updating from existing publisher data"""
+    # Create a DataFrame with some existing publisher information
+    sample_df.loc[1, "issn"] = "1234-5678"
     sample_df.loc[1, "metadata_publisher"] = "Publisher B"
     sample_df.loc[1, "general_publisher"] = "publisher_b"
 
@@ -141,11 +143,14 @@ def test_update_from_existing_data(filter_metadata, sample_df):
     updated_df, remaining_missing = filter_metadata._update_from_existing_data(
         sample_df, df_missing
     )
+
     assert len(remaining_missing) < len(df_missing)
+    # Additional assertions to verify the updates
     assert updated_df.loc[0, "metadata_publisher"] == "Publisher B"
     assert updated_df.loc[3, "metadata_publisher"] == "Publisher B"
     assert updated_df.loc[0, "general_publisher"] == "publisher_b"
     assert updated_df.loc[3, "general_publisher"] == "publisher_b"
+    # Verify that index 2 remains unchanged
     assert pd.isna(updated_df.loc[2, "metadata_publisher"])
 
 
