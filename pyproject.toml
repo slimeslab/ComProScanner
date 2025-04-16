@@ -18,14 +18,16 @@ dependencies = [
     "pandas>=2.2.3",
     "torch>=2.6.0",
     "langchain>=0.3.19",
-    "transformers>=4.49.0",
+    "transformers==4.46.3",                                        # chromadb 0.5.23 requires tokenizers<=0.20.3,>=0.13.2 which is incompatible with transformers>=4.46.3
+    "tokenizers==0.20.3",
     "mysql>=0.0.3",
     "mysql-connector>=2.2.9",
     "langchain_community>=0.3.18",
-    "chromadb>=0.6.3",
+    "chromadb==0.5.23",                                            # embedchain  0.1.128 (required by crewai-tools) requires chromadb<0.6.0,>=0.5.10
     "pdf2doi @ git+https://github.com/MicheleCotrufo/pdf2doi.git", # pdfminer.six>=20231228 is needed for CrewAI, it is updated in the repo but not released yet by pdf2doi as a package
     "docling>=2.28.0",
     "neo4j>=5.28.1",
+    "pymatgen>=2025.3.10",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -45,7 +47,7 @@ classifiers = [
 [project.optional-dependencies]
 dev = ["pytest>=8.3.4", "pytest-mock>=3.14.0", "pytest-cov>=6.0.0"]
 cuda = [
-    "torchaudio>=2.6.0+cu121; platform_system=='Linux' or platform_system=='Windows'",
+    "torchaudio>=2.6.0; platform_system=='Linux' or platform_system=='Windows'",
 ]
 [project.urls]
 "Homepage" = "https://github.com/aritraroy24/comproscanner"
