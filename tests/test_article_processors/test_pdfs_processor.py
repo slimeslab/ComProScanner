@@ -10,7 +10,7 @@ from comproscanner.utils.error_handler import (
     KeyboardInterruptHandler,
 )
 from comproscanner.utils.pdf_to_markdown_text import PDFToMarkdownText
-from comproscanner.article_processors.pdfs_processor import PDFsFolderProcessor
+from comproscanner.article_processors.pdfs_processor import PDFsProcessor
 
 
 @pytest.fixture
@@ -24,8 +24,8 @@ def sample_property_keywords():
 
 @pytest.fixture
 def pdfs_processor(sample_property_keywords):
-    """Fixture to create a PDFsFolderProcessor instance with test parameters"""
-    return PDFsFolderProcessor(
+    """Fixture to create a PDFsProcessor instance with test parameters"""
+    return PDFsProcessor(
         folder_path="/test/path",
         main_property_keyword="piezoelectric",
         property_keywords=sample_property_keywords,
@@ -36,7 +36,7 @@ def pdfs_processor(sample_property_keywords):
 
 def test_init_valid_parameters(sample_property_keywords):
     """Test initialization with valid parameters"""
-    processor = PDFsFolderProcessor(
+    processor = PDFsProcessor(
         folder_path="/test/path",
         main_property_keyword="piezoelectric",
         property_keywords=sample_property_keywords,
@@ -54,7 +54,7 @@ def test_init_valid_parameters(sample_property_keywords):
 def test_init_missing_folder_path(sample_property_keywords):
     """Test initialization with missing folder path"""
     with pytest.raises(ValueErrorHandler) as exc_info:
-        PDFsFolderProcessor(
+        PDFsProcessor(
             folder_path=None,
             main_property_keyword="piezoelectric",
             property_keywords=sample_property_keywords,
@@ -65,7 +65,7 @@ def test_init_missing_folder_path(sample_property_keywords):
 def test_init_missing_keyword(sample_property_keywords):
     """Test initialization with missing main property keyword"""
     with pytest.raises(ValueErrorHandler) as exc_info:
-        PDFsFolderProcessor(
+        PDFsProcessor(
             folder_path="/test/path",
             main_property_keyword=None,
             property_keywords=sample_property_keywords,
@@ -76,7 +76,7 @@ def test_init_missing_keyword(sample_property_keywords):
 def test_init_missing_property_keywords():
     """Test initialization with missing property keywords"""
     with pytest.raises(ValueErrorHandler) as exc_info:
-        PDFsFolderProcessor(
+        PDFsProcessor(
             folder_path="/test/path",
             main_property_keyword="piezoelectric",
             property_keywords=None,
@@ -137,7 +137,7 @@ def test_database_selection(is_sql_db):
         }
 
         # Create a simple test class for verification
-        class TestProcessor(PDFsFolderProcessor):
+        class TestProcessor(PDFsProcessor):
             def __init__(self, *args, **kwargs):
                 # Don't call parent constructor to avoid actual initialization
                 self.is_sql_db = kwargs.get("is_sql_db", False)
