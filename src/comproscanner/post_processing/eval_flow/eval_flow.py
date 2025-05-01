@@ -1,3 +1,12 @@
+"""
+eval_flow.py
+
+Author: Aritra Roy
+Email: contact@aritraroy.live
+Website: https://aritraroy.live
+Date: 20-04-2025
+"""
+
 # Standard library imports
 from typing import Dict, Optional, Any, List
 import json
