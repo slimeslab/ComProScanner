@@ -1,0 +1,83 @@
+evaluate_composition_data_task:
+  description: >
+    Compare composition data from the test dataset against the ground truth 
+    and make binary decisions (1 for match, 0 for no match) for each component. 
+    Your evaluation must focus on these specific criteria:
+
+    1. For 'property_unit': Decide if the units match exactly (1) or not (0)
+    2. For 'family': Decide if the material family descriptions match (1) or not (0) - can have some variation, but overall should be similar.
+    3. For 'compositions_property_values': For each entry, decide:
+       a. Keys: Determine if each ground truth key is matched in test data (1) or missing (0)
+          Note:
+          - The order of keys doesn't matter, only whether each ground truth key
+          has a match. Consider reasonable variations (e.g., spacing in chemical formulas, writing the way of environment or temperature/pressure etc.)
+          - However, BE STRICT about composition matching. Don't consider if the composition fraction position is different (for e.g., in ground truth data, fraction is written after the element, but in test data it is written before or the composition fraction values are not mathcing exactly). 
+          - The fraction balues MUST match. Sometimes the multiplications are already done, for e.g., ground truth data has 2(0.3) and test data has (0.6) - they are the same.
+          - Most of the time bracket and without brackets are the same, for e.g. - Ba(0.5)Ni(0.5)TiO3 and Ba0.5Ni0.5TiO3 are the same.
+          - Sometimes the extracted data will have already calculated compositions if there are any options to compute, they should be considered true, for e.g., Ba2(0.25)Ni0.5TiO3 and Ba0.5Ni0.5TiO3 are the same or Ba(1/3)Ni(2/3)TiO3 or Ba0.33Ni0.67TiO3 are the same.
+          **Important for composition with 'null' property values**
+          - Composition with 'null' property value in ground truth data should not be counted as missing if the test data doesn't have that composition.
+          - Composition with 'null' property value from ground truth data should not be counted for total_ground_truth_keys unless the same key is present in the test data set.
+          - If ground truth has composition chemical formula, but test data has chemical name or spelled formula it should consider as 'false'. However, if ground truth has some sort of abbreviation, test data can have either the short abbreviation or the chemical name or spelled formula. For e.g., if ground truth has Al2O3 and test data has aluminium oxide it should be 'false'. But if ground truth has 'PZT' and test data has 'Pb(Zr,Ti)O3' or 'Lead Zirconate Titanate' it should be counted as 'true'.
+          - Also, for chemical structures for which chemical formula is not possible (for e.g. graphene), the test data can have both short abbreviation or the chemical name. But, for chemical structures for which chemical formula is possible (for e.g. BN (boron nitride)) the chemical name (for this case, BN) should be there in the test data for 'true', otherwise 'false'.
+       b. Values: Do the property values match (1) or not (0) corresponding to the keys?
+          Note: The ground truth values can be given in a range (inside []) or as a single value.
+          - If the test value is inside the range, it is considered a match.
+          - Many times keys can't match exactly but the value will match - so while matching value be less strict about the finding the associated key.
+       
+    You must return your evaluation results in the following exact format:
+    {{
+      "composition_data": {{
+        "property_unit": {{
+          "match_value": 1 or 0,
+          "reference": "ground truth value",
+          "test": "test value"
+        }},
+        "family": {{
+          "match_value": 1 or 0,
+          "reference": "ground truth value",
+          "test": "test value"
+        }},
+        "compositions_property_values": {{
+          "reference": {{...}},
+          "test": {{...}},
+          "key_matches": [
+            {{
+              "reference_key": "key1",
+              "test_key": "key1",
+              "match_value": 1 or 0
+            }}
+          ],
+          "value_matches": [
+            {{
+              "key": "key1",
+              "reference_value": "value1",
+              "test_value": "value1",
+              "match_value": 1 or 0
+            }}
+          ],
+          "pair_matches": [
+            {{
+              "reference_pair": {{"key1": "value1"}},
+              "test_pair": {{"key1": "value1"}},
+              "match_value": 1 or 0
+            }}
+          ]
+          "total_ground_truth_keys": total number of composition keys in ground truth data,
+          "total_match": total number of matched composition keys,
+          "missing_keys": ["key2"],
+          "extra_keys": ["key3"]
+        }}
+      }}
+    }}
+
+    **Parameters:**
+    ground_truth_item
+    {ground_truth_item}
+
+    test_item
+    {test_item}
+  expected_output: >
+    A JSON object containing detailed binary evaluation results for composition data, 
+    with match decisions represented as 1 (match) or 0 (no match).
+  agent: composition_evaluator_agent

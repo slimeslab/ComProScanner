@@ -259,7 +259,7 @@ class PDFToMarkdownText:
                 if section_type:
                     current_section_type = section_type
 
-                # Add content to the current section if we have a valid section type
+                # Add content to the current section if a valid section type is there
                 if current_section_type:
                     other_content, comp_content = _get_diff_paragraphs(section_content)
 
