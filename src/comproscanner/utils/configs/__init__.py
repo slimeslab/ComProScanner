@@ -4,6 +4,7 @@ from .rag_config import RAGConfig
 from .database_config import DatabaseConfig
 from .article_keywords import ArticleRelatedKeywords
 from .llm_config import LLMConfig
+from .custom_dictionary import CustomDictionary
 
 __all__ = [
     "BaseUrls",
@@ -12,4 +13,5 @@ __all__ = [
     "DatabaseConfig",
     "ArticleRelatedKeywords",
     "LLMConfig",
+    "CustomDictionary",
 ]
