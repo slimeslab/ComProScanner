@@ -9,12 +9,14 @@ Date: 02-04-2025
 
 # Standard library imports
 import time
+import json
 import os
-from typing import Optional
-from tqdm import tqdm
+from typing import Optional, Tuple, List, Dict, Union
 
 # Third-party imports
+from tqdm import tqdm
 from crewai import LLM
+import numpy as np
 
 # Custom imports
 # metadata
@@ -24,10 +26,18 @@ from .metadata_extractor.filter_metadata import FilterMetadata
 # extract_compro_data
 from .utils.data_preparator import MatPropDataPreparator
 from .extract_flow.main_extraction_flow import DataExtractionFlow
-from .post_processing.get_paper_data import PaperMetadataExtractor
-from .post_processing.save_results import SaveResults
-from .post_processing.create_kg import CreateKG
+from .utils.get_paper_data import PaperMetadataExtractor
+from .utils.save_results import SaveResults
+from .post_processing.visualisation.create_kg import CreateKG
 from .post_processing.data_cleaner import calculate_resolved_compositions
+
+# evaluation
+from .post_processing.evaluation.semantic_evaluator import (
+    MaterialsDataSemanticEvaluator,
+)
+from .post_processing.evaluation.eval_flow.eval_flow import (
+    MaterialsDataAgenticEvaluatorFlow,
+)
 
 # utils
 from .utils.error_handler import ValueErrorHandler, KeyboardInterruptHandler
@@ -493,3 +503,102 @@ class ComProScanner:
             except Exception as e:
                 logger.error(f"Error processing DOI: {paper_data['doi']}. {e}")
                 continue
+
+    def evaluate_semantic(
+        self,
+        ground_truth_file: str = None,
+        test_data_file: str = None,
+        weights: dict[str, float] = None,
+        output_file: str = "semantic_evaluation_result.json",
+        agent_model_name: str = "gpt-4o-mini",
+        is_synthesis_evaluation: bool = True,
+        use_semantic_model=True,
+        primary_model_name="thellert/physbert_cased",
+        fallback_model_name="all-MiniLM-L6-v2",
+        similarity_thresholds=None,
+    ):
+        """Evaluate the extracted data using semantic evaluation.
+
+        Args:
+            ground_truth_file (str, optional): Path to the ground truth file. Defaults to None.
+            test_data_file (str, optional): Path to the test data file. Defaults to None.
+            weights (dict, optional): Weights for the evaluation metrics. Defaults to None.
+            output_file (str, optional): Path to the output file for saving the evaluation results. Defaults to "semantic_evaluation_result.json".
+            agent_model_name (str, optional): Name of the agent model used for extraction. Defaults to "gpt-4o-mini".
+            is_synthesis_evaluation (bool, optional): A flag to indicate if synthesis evaluation is required. Defaults to True.
+            use_semantic_model (bool, optional): A flag to indicate if semantic model should be used for evaluation. Defaults to True. If False, it will use the fallback SequenceMatcher class from difflib library.
+            primary_model_name (str, optional): Name of the primary model for semantic evaluation. Defaults to "thellert/physbert_cased".
+            fallback_model_name (str, optional): Name of the fallback model for semantic evaluation. Defaults to "all-MiniLM-L6-v2".
+            similarity_thresholds (dict, optional): Similarity thresholds for evaluation. Defaults to 0.8 for each metric.
+
+        Returns:
+            results (dict): Evaluation results containing various metrics.
+        """
+        if not ground_truth_file:
+            raise ValueErrorHandler(
+                message="Ground truth file path is required for semantic evaluation."
+            )
+        if not test_data_file:
+            raise ValueErrorHandler(
+                message="Test data file path is required for semantic evaluation."
+            )
+        evaluator = MaterialsDataSemanticEvaluator(
+            use_semantic_model=use_semantic_model,
+            primary_model_name=primary_model_name,
+            fallback_model_name=fallback_model_name,
+            similarity_thresholds=similarity_thresholds,
+        )
+        results = evaluator.evaluate(
+            ground_truth_file=ground_truth_file,
+            test_data_file=test_data_file,
+            weights=weights,
+            output_file=output_file,
+            agent_model_name=agent_model_name,
+            is_synthesis_evaluation=is_synthesis_evaluation,
+        )
+        return results
+
+    def evaluate_agentic(
+        self,
+        ground_truth_file: str = None,
+        test_data_file: str = None,
+        output_file: str = "detailed_evaluation.json",
+        agent_model_name: str = "o4-mini",
+        is_synthesis_evaluation: bool = True,
+        weights: dict[str, float] = None,
+        llm: Optional[LLM] = None,
+    ):
+        """Evaluate the extracted data using agentic evaluation.
+
+        Args:
+            ground_truth_file (str, optional): Path to the ground truth file. Defaults to None.
+            test_data_file (str, optional): Path to the test data file. Defaults to None.
+            output_file (str, optional): Path to the output file for saving the evaluation results. Defaults to "detailed_evaluation.json".
+            agent_model_name (str, optional): Name of the agent model for evaluation. Defaults to "o4-mini".
+            is_synthesis_evaluation (bool, optional): A flag to indicate if synthesis evaluation is required. Defaults to True.
+            weights (dict, optional): Weights for the evaluation metrics. Defaults to None.
+            llm (LLM, optional): An instance of the LLM class. Defaults to None.
+
+        Returns:
+            results (dict): Evaluation results containing various metrics.
+        """
+        if not ground_truth_file:
+            raise ValueErrorHandler(
+                message="Ground truth file path is required for agentic evaluation."
+            )
+        if not test_data_file:
+            raise ValueErrorHandler(
+                message="Test data file path is required for agentic evaluation."
+            )
+
+        evaluator = MaterialsDataAgenticEvaluatorFlow(
+            ground_truth_file=ground_truth_file,
+            test_data_file=test_data_file,
+            output_file=output_file,
+            agent_model_name=agent_model_name,
+            is_synthesis_evaluation=is_synthesis_evaluation,
+            weights=weights,
+            llm=llm,
+        )
+        results = evaluator.kickoff()
+        return results

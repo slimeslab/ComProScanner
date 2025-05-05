@@ -17,7 +17,7 @@ from crewai.project import CrewBase, agent, crew, task
 from crewai import LLM
 from pydantic import BaseModel, Field
 
-from .....utils.logger import setup_logger
+from comproscanner.utils.logger import setup_logger
 
 # Logger configuration
 logger = setup_logger("agent_composition_evaluation.log")

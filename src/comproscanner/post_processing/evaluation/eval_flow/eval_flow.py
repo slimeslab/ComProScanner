@@ -20,8 +20,8 @@ from pydantic import BaseModel, ConfigDict
 from crewai.flow.flow import Flow, listen, start, router, or_
 from crewai import LLM
 
-from ...utils.error_handler import ValueErrorHandler
-from ...utils.logger import setup_logger
+from comproscanner.utils.error_handler import ValueErrorHandler
+from comproscanner.utils.logger import setup_logger
 from .crews.composition_evaluation_crew.composition_evaluation_crew import (
     CompositionEvaluationCrew,
 )
@@ -79,7 +79,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
         ground_truth_file (str): Path to the ground truth JSON file
         test_data_file (str): Path to the test data JSON file
         output_file (str, optional): Path to save the evaluation results. Default: "agent_evaluation_results.json"
-        agent_model_name (str, optional): Name of the agent model used in evaluation. Default: "gpt-4o-mini"
+        agent_model_name (str, optional): Name of the agent model used in data extraction (default: "gpt-4o-mini")
         is_synthesis_evaluation (bool, optional): Whether to evaluate synthesis data. Default: True
         weights (Dict[str, float], optional): Custom weights for different components. Default: None
         llm (LLM, optional): LLM instance for the agents. Default: None

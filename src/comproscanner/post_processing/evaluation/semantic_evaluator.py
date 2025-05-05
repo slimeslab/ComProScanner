@@ -13,8 +13,8 @@ import string
 from difflib import SequenceMatcher
 
 # Custom imports
-from ..utils.configs import CustomDictionary
-from ..utils.error_handler import ValueErrorHandler
+from ...utils.configs import CustomDictionary
+from ...utils.error_handler import ValueErrorHandler
 
 
 class MaterialsDataSemanticEvaluator:
