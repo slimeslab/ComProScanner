@@ -1,5 +1,5 @@
 """
-create_kg.py
+create_knowledge_graph.py
 
 Author: Aritra Roy
 Email: contact@aritraroy.live

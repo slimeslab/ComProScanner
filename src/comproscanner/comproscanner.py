@@ -28,7 +28,7 @@ from .utils.data_preparator import MatPropDataPreparator
 from .extract_flow.main_extraction_flow import DataExtractionFlow
 from .utils.get_paper_data import PaperMetadataExtractor
 from .utils.save_results import SaveResults
-from .post_processing.visualisation.create_kg import CreateKG
+from .post_processing.visualisation.create_knowledge_graph import CreateKG
 from .post_processing.data_cleaner import calculate_resolved_compositions
 
 # evaluation
@@ -255,7 +255,7 @@ class ComProScanner:
         is_save_csv: bool = False,
         is_data_clean: bool = False,
         cleaning_strategy: str = "full",
-        is_create_kg: bool = False,
+        is_create_knowledge_graph: bool = False,
         is_only_relevant_kg: bool = True,
         materials_data_identifier_query: str = None,
         model: str = "gpt-4o-mini",
@@ -294,7 +294,7 @@ class ComProScanner:
             is_save_csv (bool, optional): A flag to indicate if the results should be saved in the CSV file. Defaults to False.
             is_data_clean (bool, optional): A flag to indicate if the data should be cleaned. Defaults to False.
             cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
-            is_create_kg (bool, optional): A flag to indicate if the knowledge graph should be created. Defaults to False.
+            is_create_knowledge_graph (bool, optional): A flag to indicate if the knowledge graph should be created. Defaults to False.
             is_only_relevant_kg (bool, optional): A flag to indicate if only relevant knowledge graph (containing composition-property and synthesis data) should be created. Defaults to True.
             llm (LLM, optional): An instance of the LLM class. Defaults to None.
             materials_data_identifier_query (str, optional): Query to identify the materials data. Must be an 'Yes/No' answer. Defaults to "Is there any material chemical composition and corresponding {main_property_keyword} value mentioned in the paper? GIVE ONE WORD ANSWER. Either YES or NO."
@@ -477,7 +477,7 @@ class ComProScanner:
                     continue
 
                 # Create knowledge graph if asked
-                if is_create_kg:
+                if is_create_knowledge_graph:
                     if (
                         is_only_relevant_kg
                         and not composition_data

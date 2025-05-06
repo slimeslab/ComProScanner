@@ -6,7 +6,7 @@ This module provides functions for creating various visualizations of evaluation
 
 from typing import Optional, List, Dict, Tuple, Union
 import numpy as np
-from .post_processing.visualisation.eval_visualisers import EvalVisualiser
+from .post_processing.visualisation.eval_plot_visualisers import EvalVisualiser
 
 # Import for type annotations, but use lazy loading for actual imports
 if False:
