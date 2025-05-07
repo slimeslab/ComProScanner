@@ -36,6 +36,7 @@ __all__ = [
     "RAGConfig",
     "LLMConfig",
     "eval_visualiser",
+    "data_visualiser",
 ]
 
 

@@ -11,10 +11,7 @@ import os
 import json
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from collections import Counter
-from typing import List, Dict, Union, Optional, Tuple
-import seaborn as sns
 
 
 class DataDistributionVisualiser:
@@ -229,7 +226,7 @@ class DataDistributionVisualiser:
         # Create pie chart
         wedges, texts, autotexts = ax.pie(
             values,
-            labels=None,  # We'll add labels in the legend
+            labels=None,
             autopct="%1.1f%%",
             startangle=90,
             colors=colors,
@@ -718,20 +715,3 @@ class DataDistributionVisualiser:
             y_label,
             rotation,
         )
-
-
-# Example usage of the library
-if __name__ == "__main__":
-    # Create visualiser instance
-    visualiser = DataDistributionVisualiser()
-
-    # Load data from a file or directory
-    # visualiser._load_data(data_sources="path/to/data.json")
-
-    # Create and save visualisations
-    # visualiser.plot_family_pie_chart(output_file="family_pie.png")
-    # visualiser.plot_family_histogram(output_file="family_histogram.png")
-    # visualiser.plot_precursors_pie_chart(output_file="precursors_pie.png")
-    # visualiser.plot_precursors_histogram(output_file="precursors_histogram.png")
-    # visualiser.plot_characterization_techniques_pie_chart(output_file="techniques_pie.png")
-    # visualiser.plot_characterization_techniques_histogram(output_file="techniques_histogram.png")
