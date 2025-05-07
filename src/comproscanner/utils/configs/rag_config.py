@@ -9,7 +9,7 @@ class RAGConfig:
         rag_db_path (str: optional): Path to the SQLite database (default: db).
         chunk_size (int: optional): Size of the chunks to split the input text into (default: 1000).
         chunk_overlap (int: optional): Overlap between the chunks (default: 25).
-        embedding_model (str: optional): Name of the embedding model (default: thellert/physbert_cased).
+        embedding_model (str: optional): Name of the embedding model (default: huggingface:thellert/physbert_cased).
         rag_chat_model (str: optional): Name of the chat model (default: gemini-2.0-flash-thinking-exp).
         rag_max_tokens (int: optional): Maximum length of the input text (default: 512).
         rag_top_k (int: optional): Top k value for sampling (default: 3).
