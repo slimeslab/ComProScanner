@@ -970,7 +970,7 @@ from comproscanner.utils.configs.rag_config import RAGConfig
 
 gemini_config = RAGConfig(
     rag_db_path="./vector_db",
-    rag_chat_model="gemini-pro",  # 'gemini' prefix indicates Google provided model
+    rag_chat_model="gemini-2.0-flash-thinking-exp",  # 'gemini' prefix indicates Google provided model
     temperature=0.2,
     streaming=True,
     rag_max_tokens=1024,
@@ -985,7 +985,7 @@ from comproscanner.utils.configs.rag_config import RAGConfig
 
 claude_config = RAGConfig(
     rag_db_path="./vector_db",
-    rag_chat_model="claude-3-opus-20240229",  # 'claude' prefix indicates Anthropic provided model
+    rag_chat_model="claude-3-5-haiku-20241022",  # 'claude' prefix indicates Anthropic provided model
     temperature=0.0,
     streaming=False,
     rag_max_tokens=2048,

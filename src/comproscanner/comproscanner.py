@@ -313,7 +313,7 @@ class ComProScanner:
             max_tokens (int, optional): Maximum tokens for completion
             rag_db_path (str, optional): Path to the vector database. Defaults to 'db'.
             embedding_model (str, optional): Name of the embedding model for RAG. Defaults to 'thellert/physbert_cased'.
-            rag_chat_model (str, optional): Name of the chat model for RAG. Defaults to 'gemini-2.0-flash-thinking-exp'.
+            rag_chat_model (str, optional): Name of the chat model for RAG. Defaults to 'gpt-4o-mini'.
             rag_max_tokens (int, optional): Maximum tokens for completion for RAG. Defaults to 512.
             rag_top_k (int, optional): Top k value for sampling for RAG. Defaults to 3.
             rag_base_url (str, optional): Base URL for the RAG model service.

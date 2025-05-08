@@ -10,7 +10,7 @@ class RAGConfig:
         chunk_size (int: optional): Size of the chunks to split the input text into (default: 1000).
         chunk_overlap (int: optional): Overlap between the chunks (default: 25).
         embedding_model (str: optional): Name of the embedding model (default: huggingface:thellert/physbert_cased).
-        rag_chat_model (str: optional): Name of the chat model (default: gemini-2.0-flash-thinking-exp).
+        rag_chat_model (str: optional): Name of the chat model (default: gpt-4o-mini).
         rag_max_tokens (int: optional): Maximum length of the input text (default: 512).
         rag_top_k (int: optional): Top k value for sampling (default: 3).
     """
@@ -19,7 +19,7 @@ class RAGConfig:
     DEFAULT_CHUNK_SIZE = 1000
     DEFAULT_CHUNK_OVERLAP = 25
     DEFAULT_EMBEDDING_MODEL = "huggingface:thellert/physbert_cased"
-    DEFAULT_CHAT_MODEL = "gemini-2.0-flash-thinking-exp"
+    DEFAULT_CHAT_MODEL = "gpt-4o-mini"
     DEFAULT_MAX_TOKENS = 512
     DEFAULT_TOP_K = 3
 
