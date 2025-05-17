@@ -11,7 +11,23 @@ import os
 import json
 import matplotlib.pyplot as plt
 import numpy as np
+import difflib
 from collections import Counter
+
+try:
+    from transformers import AutoTokenizer, AutoModel
+    import torch
+
+    TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    TRANSFORMERS_AVAILABLE = False
+
+try:
+    from sentence_transformers import SentenceTransformer
+
+    SENTENCE_TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    SENTENCE_TRANSFORMERS_AVAILABLE = False
 
 
 class DataDistributionVisualiser:
@@ -25,6 +41,256 @@ class DataDistributionVisualiser:
             "precursors": "plasma",
             "characterization_techniques": "mako",
         }
+
+    def _load_semantic_model(self, model_name="thellert/physbert_cased"):
+        """
+        Load the specified semantic model for similarity calculations.
+
+        Args:
+            model_name (str): Name of the model to load
+
+        Returns:
+            dict: Dictionary with model type and model/tokenizer objects
+        """
+        # Check if we already have a model loaded
+        if hasattr(self, "semantic_model") and self.semantic_model is not None:
+            return self.semantic_model
+
+        # Try loading the transformer model first
+        if TRANSFORMERS_AVAILABLE:
+            try:
+                print(f"Attempting to load {model_name} transformer model...")
+                tokenizer = AutoTokenizer.from_pretrained(model_name)
+                model = AutoModel.from_pretrained(model_name)
+                self.semantic_model = {
+                    "type": "transformers",
+                    "tokenizer": tokenizer,
+                    "model": model,
+                }
+                print(f"Successfully loaded {model_name} transformer model")
+                return self.semantic_model
+            except Exception as e:
+                print(f"Could not load {model_name}: {e}")
+
+        # Try sentence-transformers as fallback
+        if SENTENCE_TRANSFORMERS_AVAILABLE:
+            try:
+                print("Falling back to sentence-transformers model...")
+                st_model = SentenceTransformer("all-MiniLM-L6-v2")
+                self.semantic_model = {
+                    "type": "sentence_transformer",
+                    "model": st_model,
+                }
+                print("Successfully loaded sentence-transformers model")
+                return self.semantic_model
+            except Exception as e:
+                print(f"Could not load sentence-transformers: {e}")
+
+        # Final fallback to difflib
+        print("Falling back to difflib.SequenceMatcher for similarity calculations")
+        self.semantic_model = {"type": "difflib"}
+        return self.semantic_model
+
+    def calculate_similarity(self, text1, text2):
+        """
+        Calculate semantic similarity between two texts using the best available method.
+
+        Args:
+            text1 (str): First text
+            text2 (str): Second text
+
+        Returns:
+            float: Similarity score between 0 and 1
+        """
+        # Make sure we have a model loaded
+        if not hasattr(self, "semantic_model") or self.semantic_model is None:
+            self._load_semantic_model()
+
+        # Handle empty or None inputs
+        if not text1 or not text2:
+            return 0.0
+
+        # Convert to strings if needed
+        text1 = str(text1)
+        text2 = str(text2)
+
+        # Use the appropriate similarity calculation method
+        if self.semantic_model["type"] == "transformers":
+            return self._calculate_similarity_transformers(text1, text2)
+        elif self.semantic_model["type"] == "sentence_transformer":
+            return self._calculate_similarity_sentence_transformer(text1, text2)
+        else:
+            # Fallback to difflib
+            return self._calculate_similarity_difflib(text1, text2)
+
+    def _calculate_similarity_transformers(self, text1, text2):
+        """
+        Calculate similarity between two texts using transformers model.
+
+        Args:
+            text1 (str): First text
+            text2 (str): Second text
+
+        Returns:
+            float: Similarity score between 0 and 1
+        """
+        tokenizer = self.semantic_model["tokenizer"]
+        model = self.semantic_model["model"]
+
+        # Tokenize and get embeddings
+        inputs1 = tokenizer(text1, return_tensors="pt", padding=True, truncation=True)
+        inputs2 = tokenizer(text2, return_tensors="pt", padding=True, truncation=True)
+
+        # Get embeddings
+        with torch.no_grad():
+            outputs1 = model(**inputs1)
+            outputs2 = model(**inputs2)
+
+        # Use CLS token embedding (first token) as sentence representation
+        emb1 = outputs1.last_hidden_state[:, 0, :]
+        emb2 = outputs2.last_hidden_state[:, 0, :]
+
+        # Normalize the embeddings
+        emb1 = torch.nn.functional.normalize(emb1, p=2, dim=1)
+        emb2 = torch.nn.functional.normalize(emb2, p=2, dim=1)
+
+        # Calculate cosine similarity
+        similarity = torch.mm(emb1, emb2.transpose(0, 1)).item()
+
+        return similarity
+
+    def _calculate_similarity_sentence_transformer(self, text1, text2):
+        """
+        Calculate similarity between two texts using sentence-transformers.
+
+        Args:
+            text1 (str): First text
+            text2 (str): Second text
+
+        Returns:
+            float: Similarity score between 0 and 1
+        """
+        model = self.semantic_model["model"]
+
+        # Get embeddings
+        embedding1 = model.encode([text1])[0]
+        embedding2 = model.encode([text2])[0]
+
+        # Calculate cosine similarity
+        import numpy as np
+
+        norm1 = np.linalg.norm(embedding1)
+        norm2 = np.linalg.norm(embedding2)
+
+        if norm1 == 0 or norm2 == 0:
+            return 0.0
+
+        similarity = np.dot(embedding1, embedding2) / (norm1 * norm2)
+
+        # Ensure result is in range [0, 1]
+        return max(0.0, min(1.0, similarity))
+
+    def _calculate_similarity_difflib(self, text1, text2):
+        """
+        Calculate similarity between two texts using difflib.SequenceMatcher.
+
+        Args:
+            text1 (str): First text
+            text2 (str): Second text
+
+        Returns:
+            float: Similarity score between 0 and 1
+        """
+        return difflib.SequenceMatcher(None, text1.lower(), text2.lower()).ratio()
+
+    def _cluster_characterization_techniques(
+        self, techniques, similarity_threshold=0.8
+    ):
+        """
+        Cluster similar characterization techniques using semantic similarity.
+
+        Args:
+            techniques (list): List of all characterization techniques
+            similarity_threshold (float): Minimum similarity to consider two techniques as same
+
+        Returns:
+            dict: Dictionary mapping canonical names to lists of similar techniques
+        """
+        techniques_counter = Counter(techniques)
+        sorted_techniques = sorted(
+            techniques_counter.items(), key=lambda x: x[1], reverse=True
+        )
+
+        # Initialize clusters with the most frequent technique as first canonical form
+        clusters = {}
+        processed = set()
+
+        # Process techniques from most to least frequent
+        for technique, count in sorted_techniques:
+            if technique in processed:
+                continue
+
+            # Create a new cluster with this technique as canonical form
+            canonical = technique
+            clusters[canonical] = [technique]
+            processed.add(technique)
+
+            # Compare to all remaining techniques
+            for other_technique, other_count in sorted_techniques:
+                if other_technique in processed:
+                    continue
+
+                # Calculate similarity
+                similarity = self.calculate_similarity(canonical, other_technique)
+
+                if similarity >= similarity_threshold:
+                    clusters[canonical].append(other_technique)
+                    processed.add(other_technique)
+
+        return clusters
+
+    def _extract_characterization_techniques_with_clustering(
+        self, similarity_threshold=0.8
+    ):
+        """
+        Extract characterization techniques with semantic clustering to merge similar techniques.
+
+        Args:
+            similarity_threshold (float): Threshold for similarity-based clustering
+
+        Returns:
+            Counter: Counter with canonicalized characterization techniques
+        """
+        all_techniques = []
+
+        # Extract all raw techniques from the data
+        for doi, item_data in self.data.items():
+            if (
+                "synthesis_data" in item_data
+                and "characterization_techniques" in item_data["synthesis_data"]
+            ):
+                techniques = item_data["synthesis_data"]["characterization_techniques"]
+                if techniques:  # Only add if list is not empty
+                    all_techniques.extend(techniques)
+
+        if not all_techniques:
+            return Counter()
+
+        # Cluster similar techniques
+        clusters = self._cluster_characterization_techniques(
+            all_techniques, similarity_threshold
+        )
+
+        # Count canonical techniques
+        canonicalized_counts = Counter()
+        raw_counts = Counter(all_techniques)
+
+        for canonical, similar_techniques in clusters.items():
+            canonicalized_counts[canonical] = sum(
+                raw_counts[t] for t in similar_techniques
+            )
+
+        return canonicalized_counts
 
     def _load_data(self, data_sources=None, folder_path=None):
         """
@@ -178,15 +444,15 @@ class DataDistributionVisualiser:
         colour_palette=None,
     ):
         """
-        Create a pie chart visualisation of data distribution.
+        Create a pie chart visualisation of data distribution with percentage labels outside the chart.
 
         Args:
             data_counter (Counter): Counter object with data labels and frequencies
             title (str): Title for the plot
             figsize (tuple, optional): Figure size as (width, height) in inches
-            dpi (int, optional): DPI for output image
-            output_file (str, optional): Path to save the output plot image
-            min_percentage (float, optional): Minimum percentage for a category to be shown separately
+            dpi (int, optional): DPI for output image (Default: 300)
+            output_file (str, optional): Path to save the output plot image. If None, the plot is not saved
+            min_percentage (float, optional): Minimum percentage for a category to be shown separately (Default: 1.0)
             colour_palette (str, optional): Matplotlib colormap name for the pie sections
 
         Returns:
@@ -214,6 +480,9 @@ class DataDistributionVisualiser:
 
         labels = [f"{k} ({v:.1f}%)" for k, v in plot_items]
         values = [v for _, v in plot_items]
+        percentage_labels = [
+            f"{v:.1f}%" for v in values
+        ]  # Just the percentage for outside labels
 
         # Generate colors using specified palette
         if colour_palette is None:
@@ -223,37 +492,60 @@ class DataDistributionVisualiser:
 
         colors = cmap(np.linspace(0, 0.9, len(plot_items)))
 
-        # Create pie chart
-        wedges, texts, autotexts = ax.pie(
+        # Create pie chart with percentage labels outside
+        wedges, texts = ax.pie(
             values,
-            labels=None,
-            autopct="%1.1f%%",
-            startangle=90,
+            labels=percentage_labels,  # Use the percentage labels
             colors=colors,
+            startangle=90,
             wedgeprops={"edgecolor": "w", "linewidth": 1},
+            autopct=None,  # No internal percentage labels
+            labeldistance=1.05,  # Position labels outside the pie
         )
 
-        # Adjust text properties
-        for autotext in autotexts:
-            autotext.set_fontsize(10)
-            autotext.set_fontweight("bold")
+        # Improve label positioning and styling
+        for text in texts:
+            text.set_fontweight("bold")  # Make labels bold
+
+            # Adjust alignment based on position
+            # Get the position of the text
+            pos = text.get_position()
+            x, y = pos
+
+            # Calculate angle to determine which quadrant the text is in
+            angle = np.arctan2(y, x)
+
+            # Adjust alignment based on angle
+            if -np.pi / 2 < angle < np.pi / 2:  # Right half
+                text.set_horizontalalignment("left")
+            else:  # Left half
+                text.set_horizontalalignment("right")
+
+            # Handle top and bottom special cases
+            if angle > 3 * np.pi / 4 or angle < -3 * np.pi / 4:  # Bottom
+                text.set_verticalalignment("top")
+            elif -np.pi / 4 < angle < np.pi / 4:  # Right
+                text.set_verticalalignment("center")
+            elif np.pi / 4 < angle < 3 * np.pi / 4:  # Top
+                text.set_verticalalignment("bottom")
+            else:  # Left
+                text.set_verticalalignment("center")
 
         # Add legend
         ax.legend(
             wedges,
             labels,
-            title="Categories",
             loc="center left",
             bbox_to_anchor=(1, 0, 0.5, 1),
         )
 
-        # Set title
+        # Set title directly on the axes, centered
         ax.set_title(title, fontsize=14, fontweight="bold", pad=20)
 
         # Equal aspect ratio ensures that pie is drawn as a circle
         ax.set_aspect("equal")
 
-        # Adjust layout
+        # Adjust layout with title positioning
         plt.tight_layout()
 
         # Save figure if output_file is provided
@@ -607,6 +899,8 @@ class DataDistributionVisualiser:
         min_percentage=1.0,
         title="Distribution of Characterization Techniques",
         colour_palette=None,
+        use_semantic_clustering=True,
+        similarity_threshold=0.8,
     ):
         """
         Create a pie chart visualisation of characterization techniques distribution.
@@ -621,6 +915,8 @@ class DataDistributionVisualiser:
             min_percentage (float, optional): Minimum percentage for a category to be shown separately
             title (str, optional): Title for the plot
             colour_palette (str, optional): Matplotlib colormap name for the pie sections
+            use_semantic_clustering (bool): Whether to use semantic similarity for clustering similar techniques
+            similarity_threshold (float): Threshold for similarity-based clustering when use_semantic_clustering is True
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -630,7 +926,16 @@ class DataDistributionVisualiser:
             self._load_data(data_sources, folder_path)
 
         # Extract characterization techniques
-        techniques_counter = self._extract_characterization_techniques()
+        if use_semantic_clustering:
+            techniques_counter = (
+                self._extract_characterization_techniques_with_clustering(
+                    similarity_threshold
+                )
+            )
+            # Add clustering info to title if semantic clustering is used
+            title = f"{title} (Semantically Clustered)"
+        else:
+            techniques_counter = self._extract_characterization_techniques()
 
         if not techniques_counter:
             raise ValueError(
@@ -665,6 +970,8 @@ class DataDistributionVisualiser:
         x_label="Characterization Technique",
         y_label="Frequency",
         rotation=45,
+        use_semantic_clustering=True,
+        similarity_threshold=0.8,
     ):
         """
         Create a histogram visualisation of characterization techniques distribution.
@@ -682,6 +989,8 @@ class DataDistributionVisualiser:
             x_label (str, optional): Label for the x-axis
             y_label (str, optional): Label for the y-axis
             rotation (int, optional): Rotation angle for x-axis labels
+            use_semantic_clustering (bool): Whether to use semantic similarity for clustering similar techniques
+            similarity_threshold (float): Threshold for similarity-based clustering when use_semantic_clustering is True
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -691,7 +1000,16 @@ class DataDistributionVisualiser:
             self._load_data(data_sources, folder_path)
 
         # Extract characterization techniques
-        techniques_counter = self._extract_characterization_techniques()
+        if use_semantic_clustering:
+            techniques_counter = (
+                self._extract_characterization_techniques_with_clustering(
+                    similarity_threshold
+                )
+            )
+            # Add clustering info to title if semantic clustering is used
+            title = f"{title} (Semantically Clustered)"
+        else:
+            techniques_counter = self._extract_characterization_techniques()
 
         if not techniques_counter:
             raise ValueError(
@@ -714,4 +1032,44 @@ class DataDistributionVisualiser:
             x_label,
             y_label,
             rotation,
+        )
+
+    def get_technique_clusters(
+        self, data_sources=None, folder_path=None, similarity_threshold=0.8
+    ):
+        """
+        Get clusters of similar characterization techniques based on semantic similarity.
+
+        This is a utility method to inspect how techniques are being clustered.
+
+        Args:
+            data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
+                or dictionaries containing materials data
+            folder_path (str, optional): Path to folder containing JSON data files
+            similarity_threshold (float): Threshold for similarity-based clustering
+
+        Returns:
+            Dict[str, List[str]]: Dictionary mapping canonical names to lists of similar techniques
+        """
+        # Load data if not already loaded
+        if self.data is None or data_sources is not None or folder_path is not None:
+            self._load_data(data_sources, folder_path)
+
+        # Get all techniques
+        all_techniques = []
+        for doi, item_data in self.data.items():
+            if (
+                "synthesis_data" in item_data
+                and "characterization_techniques" in item_data["synthesis_data"]
+            ):
+                techniques = item_data["synthesis_data"]["characterization_techniques"]
+                if techniques:  # Only add if list is not empty
+                    all_techniques.extend(techniques)
+
+        if not all_techniques:
+            return {}
+
+        # Return clusters of similar techniques
+        return self._cluster_characterization_techniques(
+            all_techniques, similarity_threshold
         )
