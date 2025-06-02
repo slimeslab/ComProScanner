@@ -72,7 +72,7 @@ class SaveResults:
         self.results = {}
         if os.path.exists(self.json_results_file):
             try:
-                with open(self.json_results_file, "r") as f:
+                with open(self.json_results_file, "r", encoding="utf-8") as f:
                     self.results = json.load(f)
             except (json.JSONDecodeError, FileNotFoundError):
                 # Handle case where JSON file exists but is empty or corrupted
@@ -94,13 +94,13 @@ class SaveResults:
             os.makedirs(json_dir, exist_ok=True)
 
         try:
-            with open(self.json_results_file, "w") as f:
+            with open(self.json_results_file, "w", encoding="utf-8") as f:
                 json.dump(self.results, f, indent=2, ensure_ascii=False, default=str)
         except (TypeError, ValueError) as e:
             print(f"Error serializing data to JSON: {e}")
             # Try to save with string conversion for problematic objects
             try:
-                with open(self.json_results_file, "w") as f:
+                with open(self.json_results_file, "w", encoding="utf-8") as f:
                     json.dump(
                         self.results,
                         f,
