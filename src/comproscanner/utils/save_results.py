@@ -53,10 +53,14 @@ class SaveResults:
         # Convert the row to a pandas DataFrame
         df_new = pd.DataFrame([row_data])
 
-        # If file exists, append to it
+        # If file exists, read and append to it; otherwise create new file
         if os.path.exists(self.csv_results_file):
-            df_existing = pd.read_csv(self.csv_results_file)
-            df_updated = pd.concat([df_existing, df_new], ignore_index=True)
+            try:
+                df_existing = pd.read_csv(self.csv_results_file)
+                df_updated = pd.concat([df_existing, df_new], ignore_index=True)
+            except (pd.errors.EmptyDataError, pd.errors.ParserError):
+                # Handle case where CSV exists but is empty or corrupted
+                df_updated = df_new
         else:
             df_updated = df_new
 
@@ -67,8 +71,12 @@ class SaveResults:
         """Load existing results from JSON file."""
         self.results = {}
         if os.path.exists(self.json_results_file):
-            with open(self.json_results_file, "r") as f:
-                self.results = json.load(f)
+            try:
+                with open(self.json_results_file, "r") as f:
+                    self.results = json.load(f)
+            except (json.JSONDecodeError, FileNotFoundError):
+                # Handle case where JSON file exists but is empty or corrupted
+                self.results = {}
 
     def update_in_json(self, doi: str, result: Dict) -> None:
         """
@@ -79,5 +87,27 @@ class SaveResults:
             result: The result data to save
         """
         self.results[doi] = result
-        with open(self.json_results_file, "w") as f:
-            json.dump(self.results, f, indent=2)
+
+        # Create directory if it doesn't exist
+        json_dir = os.path.dirname(self.json_results_file)
+        if json_dir:
+            os.makedirs(json_dir, exist_ok=True)
+
+        try:
+            with open(self.json_results_file, "w") as f:
+                json.dump(self.results, f, indent=2, ensure_ascii=False, default=str)
+        except (TypeError, ValueError) as e:
+            print(f"Error serializing data to JSON: {e}")
+            # Try to save with string conversion for problematic objects
+            try:
+                with open(self.json_results_file, "w") as f:
+                    json.dump(
+                        self.results,
+                        f,
+                        indent=2,
+                        ensure_ascii=False,
+                        default=lambda x: str(x),
+                    )
+            except Exception as fallback_error:
+                print(f"Failed to save JSON file: {fallback_error}")
+                raise
