@@ -42,6 +42,16 @@ class SectionProcessor:
             "conclusion": "CONCLUSION",
         }
 
+        # Map CSV column names to section keys
+        self.column_to_section_map = {
+            "article_title": "article_title",
+            "abstract": "abstract",
+            "introduction": "introduction",
+            "conclusion": "conclusion",
+            "exp_methods": "exp_methods",
+            "results_discussion": "results_discussion",
+        }
+
     def _separate_tables_and_text(self, text: str) -> tuple:
         """
         Separate tables from main text and return both parts.
@@ -161,17 +171,26 @@ class SectionProcessor:
             tables_text = tables_part if tables_part else ""
             composition_property_text = results_text if results_text else ""
 
-        for section in ["title", "abstract", "introduction", "conclusion"]:
-            if section in row and not pd.isna(row[section]):
-                _, section_text = self._process_section(row[section], section)
+        csv_columns_to_process = [
+            "article_title",
+            "abstract",
+            "introduction",
+            "conclusion",
+        ]
+        for csv_column in csv_columns_to_process:
+            if csv_column in row and not pd.isna(row[csv_column]):
+                section_key = self.column_to_section_map[csv_column]
+                _, section_text = self._process_section(row[csv_column], section_key)
                 composition_property_text += section_text
 
         final_composition_property_text = "\n" + tables_text + composition_property_text
 
         synthesis_text = ""
-        for section in ["exp_methods", "results_discussion"]:
-            if section in row and not pd.isna(row[section]):
-                _, section_text = self._process_section(row[section], section)
+        synthesis_columns = ["exp_methods", "results_discussion"]
+        for csv_column in synthesis_columns:
+            if csv_column in row and not pd.isna(row[csv_column]):
+                section_key = self.column_to_section_map[csv_column]
+                _, section_text = self._process_section(row[csv_column], section_key)
                 synthesis_text += section_text
 
         return final_composition_property_text.strip(), synthesis_text.strip()
