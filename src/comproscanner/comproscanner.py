@@ -62,8 +62,8 @@ class ComProScanner:
 
     def collect_metadata(
         self,
-        base_queries: list = None,
-        extra_queries: list = None,
+        base_queries: Optional[list] = None,
+        extra_queries: Optional[list] = None,
         start_year: int = int(time.strftime("%Y")),
         end_year: int = int(time.strftime("%Y")) - 2,
     ):
@@ -116,10 +116,10 @@ class ComProScanner:
         is_sql_db: bool = False,
         is_save_xml: bool = False,
         is_save_pdf: bool = False,
-        rag_db_path: Optional[str] = None,
-        chunk_size: Optional[int] = None,
-        chunk_overlap: Optional[int] = None,
-        embedding_model: Optional[str] = None,
+        rag_db_path: str = "db",
+        chunk_size: int = 1000,
+        chunk_overlap: int = 25,
+        embedding_model: str = "thellert/physbert_cased",
     ):
         """Process articles for the main property keyword.
 
@@ -260,25 +260,25 @@ class ComProScanner:
         is_save_csv: bool = False,
         is_data_clean: bool = False,
         cleaning_strategy: str = "full",
-        materials_data_identifier_query: str = None,
+        materials_data_identifier_query: str = None,  # Will be set based on the main_property_keyword if not provided
         model: str = "gpt-4o-mini",
         api_base: Optional[str] = None,
         base_url: Optional[str] = None,
         api_key: Optional[str] = None,
         output_log_folder: Optional[str] = None,
-        is_log_json: Optional[bool] = False,
+        is_log_json: bool = False,
         task_output_folder: Optional[str] = None,
-        verbose: Optional[bool] = True,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        timeout: Optional[int] = None,
+        verbose: bool = True,
+        temperature: float = 0.1,
+        top_p: float = 0.9,
+        timeout: int = 60,
         frequency_penalty: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        rag_db_path: Optional[str] = None,
-        embedding_model: Optional[str] = None,
-        rag_chat_model: Optional[str] = None,
-        rag_max_tokens: Optional[int] = None,
-        rag_top_k: Optional[int] = None,
+        rag_db_path: str = "db",
+        embedding_model: str = "thellert/physbert_cased",
+        rag_chat_model: str = "gpt-4o-mini",
+        rag_max_tokens: int = 512,
+        rag_top_k: int = 3,
         rag_base_url: Optional[str] = None,
         **flow_optional_args,
     ):
@@ -305,8 +305,8 @@ class ComProScanner:
             api_base (str, optional): Base URL for standard API endpoints
             base_url (str, optional): Base URL for the model service
             api_key (str, optional): API key for the model service
-            output_log_folder (str, optional): Set to True to save logs inside {provided folder}/{doi} folder as .txt files. Logs will be in JSON format if the is_log_json is True, otherwise .txt. Defaults to None.
-            task_output_folder (str, optional): Folder path for storing the task outputs as .txt files inside {provided foler}/{doi} folder. Defaults to None.
+            output_log_folder (str, optional): Base folder path to save logs. Logs will be saved in {output_log_folder}/{doi}/ subdirectory. Logs will be in JSON format if is_log_json is True, otherwise plain text. Defaults to None.
+            task_output_folder (str, optional): Base folder path to save task outputs. Task outputs will be saved as .txt files in {task_output_folder}/{doi}/ subdirectory. Defaults to None.
             is_log_json (bool, optional): Flag to save logs in JSON format. Defaults to False.
             verbose (bool, optional): Flag to enable verbose output inside the terminal (defaults to True)
             temperature (float, optional): Temperature for text generation - controls randomness (defaults to 0.1)

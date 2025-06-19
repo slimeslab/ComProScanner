@@ -88,8 +88,8 @@ class DataExtractionFlow(Flow[MaterialsState]):
         materials_data_identifier_query (str: optional): Query to identify if materials data is present in the text. Must be an 'Yes/No' answer. Default: "Is there any material chemical composition (not abbreviations) and corresponding {main_extraction_keyword} value mentioned in the paper? GIVE ONE WORD ANSWER. Either YES or NO."
         extract_synthesis_data (bool: optional): Flag to extract synthesis data. Default: False
         rag_config (RAGConfig: optional): RAG configuration. Default: None
-        output_log_folder (str, optional): Set to True to save logs inside {provided folder}/{doi} folder as .txt files. Logs will be in JSON format if the is_log_json is True, otherwise .txt. Defaults to None.
-        task_output_folder (str, optional): Folder path for storing the task outputs as .txt files inside {provided foler}/{doi} folder. Defaults to None.
+        output_log_folder (str, optional): Base folder path to save logs. Logs will be saved in {output_log_folder}/{doi}/ subdirectory. Logs will be in JSON format if is_log_json is True, otherwise plain text. Defaults to None (no logging).
+        task_output_folder (str, optional): Base folder path to save task outputs. Task outputs will be saved as .txt files in {task_output_folder}/{doi}/ subdirectory. Defaults to None (no task output saving).
         is_log_json (bool, optional): Flag to save logs in JSON format. Defaults to False.
         verbose (bool: optional): Flag to enable verbose logging. Default: True
         expected_composition_property_example (str: optional): Expected example of composition and property data.
