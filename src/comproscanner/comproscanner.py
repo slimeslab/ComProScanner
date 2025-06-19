@@ -253,10 +253,10 @@ class ComProScanner:
         test_doi_list_file=None,
         total_test_data: int = 50,
         test_random_seed: int = 42,
-        checked_doi_list: Optional[str] = "checked_dois.txt",
+        checked_doi_list: str = "checked_dois.txt",
         json_results_file: str = "results.json",
         csv_results_file: str = "results.csv",
-        extract_synthesis_data: bool = False,
+        extract_synthesis_data: bool = True,
         is_save_csv: bool = False,
         is_data_clean: bool = False,
         cleaning_strategy: str = "full",
@@ -295,7 +295,7 @@ class ComProScanner:
             checked_doi_list (list, optional): List of DOIs which have been checked already. Defaults to "checked_dois.txt".
             json_results_file (str, optional): Path to the JSON results file. Defaults to "results.json".
             csv_results_file (str, optional): Path to the CSV results file. Defaults to "results.csv".
-            extract_synthesis_data (bool, optional): A flag to indicate if the synthesis data should be extracted. Defaults to False.
+            extract_synthesis_data (bool, optional): A flag to indicate if the synthesis data should be extracted. Defaults to True.
             is_save_csv (bool, optional): A flag to indicate if the results should be saved in the CSV file. Defaults to False.
             is_data_clean (bool, optional): A flag to indicate if the data should be cleaned. Defaults to False.
             cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
