@@ -10,6 +10,7 @@ Main functions:
 - extract_composition_property_data: Extract composition-property relationships from articles
 - evaluate_semantic: Evaluate extraction quality using semantic similarity
 - evaluate_agentic: Evaluate extraction quality using agent-based methods
+- create_knowledge_graph: Create knowledge graph from extracted data
 """
 
 # Import the main class
@@ -21,6 +22,7 @@ from .utils.configs.llm_config import LLMConfig
 
 # Import visualisation module
 from . import eval_visualiser
+from . import data_visualiser
 
 # Package version
 __version__ = "0.1.0"
@@ -33,6 +35,7 @@ __all__ = [
     "extract_composition_property_data",
     "evaluate_semantic",
     "evaluate_agentic",
+    "create_knowledge_graph",
     "RAGConfig",
     "LLMConfig",
     "eval_visualiser",

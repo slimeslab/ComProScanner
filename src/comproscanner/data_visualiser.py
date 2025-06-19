@@ -12,6 +12,8 @@ import numpy as np
 from comproscanner.post_processing.visualisation.data_distribution_visualisers import (
     DataDistributionVisualiser,
 )
+from .post_processing.visualisation.create_knowledge_graph import CreateKG
+from .utils.logger import setup_logger
 
 # Import for type annotations, but use lazy loading for actual imports
 if False:
@@ -19,6 +21,10 @@ if False:
     from matplotlib import pyplot as plt
     import pandas as pd
     import seaborn as sns
+
+
+######## logger Configuration ########
+logger = setup_logger("visualiser_logs.log")
 
 
 def plot_family_pie_chart(
@@ -304,3 +310,37 @@ def plot_characterization_techniques_histogram(
         rotation=rotation,
     )
     return fig
+
+
+def create_knowledge_graph(
+    self,
+    result_file: str = None,
+):
+    """
+    Create a knowledge graph from extracted composition-property data directly in Neo4j database.
+
+    Args:
+        result_file (str, required): Path to the JSON file containing extracted results.
+
+    Returns:
+        None (knowledge graph is created directly in Neo4j database).
+
+    Raises:
+        ValueErrorHandler: If result_file is not provided.
+    """
+    if result_file is None:
+        logger.error(
+            "result_file cannot be None. Please provide a valid file path. Exiting..."
+        )
+        raise ValueErrorHandler(
+            message="Please provide result_file path to proceed for creating knowledge graph."
+        )
+
+    try:
+        with CreateKG() as create_kg:
+            return create_kg.create_knowledge_graph(
+                result_file=result_file,
+            )
+    except Exception as e:
+        logger.error(f"Error creating knowledge graph: {e}")
+        raise
