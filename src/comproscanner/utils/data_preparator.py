@@ -12,7 +12,7 @@ import regex as re
 import json
 import os
 import glob
-import random
+from typing import Optional
 
 # Third party imports
 import pandas as pd
@@ -208,6 +208,8 @@ class MatPropDataPreparator:
         is_test_data_preparation: bool = False,
         test_doi_list_file=None,
         total_test_data: int = None,
+        test_random_seed: Optional[int] = 42,
+        checked_doi_list_file: Optional[str] = "checked_dois.txt",
     ):
         """
         Initialize the MatPropDataPreparator class.
@@ -221,6 +223,8 @@ class MatPropDataPreparator:
             is_test_data_preparation (bool: optional): Flag to indicate if the data preparation process is a test data preparation step (default: False)
             test_doi_list_file (str: optional): Test data file name (default: None)
             total_test_data (int: optional): Total number of test data to prepare (default: 50)
+            test_random_seed (int: optional): Random seed for test data preparation (default: 42)
+            checked_doi_list_file (str: optional): File to store checked DOIs (default: "checked_dois.txt")
 
         Returns:
             None
@@ -305,61 +309,50 @@ class MatPropDataPreparator:
                         test_dois = [
                             line.strip() for line in f.readlines() if line.strip()
                         ]
+                        if test_dois and test_dois[-1] == "":
+                            test_dois.pop()
                 except Exception as e:
                     logger.warning(
                         f"Error reading test DOI file {self.test_doi_list_file}: {str(e)}"
                     )
                     test_dois = []
 
-            processed_test_dois = list(set(test_dois).intersection(set(processed_dois)))
             unprocessed_test_dois = list(
                 set(test_dois).intersection(set(final_unprocessed_dois["doi"]))
             )
-            total_test_dois_available = len(processed_test_dois) + len(
-                unprocessed_test_dois
+            unprocessed_test_dois = list(
+                set(unprocessed_test_dois).difference(self.checked_dois)
             )
-            additional_needed = self.total_test_data - total_test_dois_available
-
-            if additional_needed > 0:
+            if len(test_dois) == self.total_test_data:
+                final_unprocessed_dois = final_unprocessed_dois[
+                    final_unprocessed_dois["doi"].isin(test_dois)
+                ]
+                logger.info(
+                    f"Total unprocessed DOIs: {len(final_unprocessed_dois)}. Test DOIs are already selected."
+                )
+            else:
                 remaining_dois_df = final_unprocessed_dois[
                     ~final_unprocessed_dois["doi"].isin(test_dois)
                 ]
+                shuffled_remaining_dois = remaining_dois_df.sample(
+                    n=len(remaining_dois_df), random_state=self.test_random_seed
+                )["doi"].tolist()
+                final_selection = unprocessed_test_dois + shuffled_remaining_dois
 
-                if len(remaining_dois_df) >= additional_needed:
-                    additional_dois = remaining_dois_df.sample(n=additional_needed)[
-                        "doi"
-                    ].tolist()
-                else:
-                    additional_dois = remaining_dois_df["doi"].tolist()
-                    logger.warning(
-                        f"Only found {len(additional_dois)} additional DOIs, which is less than the needed {additional_needed} - taking all available."
-                    )
-                final_selection = unprocessed_test_dois + additional_dois
-
-            else:
-                needed_from_unprocessed = self.total_test_data - len(
-                    processed_test_dois
+                # Filter final_unprocessed_dois to include only the selected DOIs
+                final_unprocessed_dois = final_unprocessed_dois[
+                    final_unprocessed_dois["doi"].isin(final_selection)
+                ]
+                logger.info(
+                    f"Total unprocessed DOIs: {len(final_unprocessed_dois)}. Test DOIs will be chosen based on the availability of composition data in the paper."
                 )
-
-                if (
-                    len(unprocessed_test_dois) > needed_from_unprocessed
-                    and needed_from_unprocessed > 0
-                ):
-                    final_selection = random.sample(
-                        unprocessed_test_dois, needed_from_unprocessed
-                    )
-                else:
-                    final_selection = unprocessed_test_dois
-                    if needed_from_unprocessed < len(unprocessed_test_dois):
-                        logger.warning(
-                            f"Using all {len(final_selection)} unprocessed test DOIs, which is less than the needed {needed_from_unprocessed} - taking all available."
-                        )
-
-            # Filter final_unprocessed_dois to include only the selected DOIs
-            final_unprocessed_dois = final_unprocessed_dois[
-                final_unprocessed_dois["doi"].isin(final_selection)
-            ]
+        else:
             logger.info(f"Total DOIs to process: {len(final_unprocessed_dois)}")
+
+            final_unprocessed_dois = final_unprocessed_dois[
+                ~final_unprocessed_dois["doi"].isin(self.checked_dois)
+            ]
+            print(f"Total DOIs to process: {len(final_unprocessed_dois)}")
 
         # Continue with the regular processing for all selected DOIs
         prepared_data = []

@@ -28,8 +28,11 @@ from .utils.data_preparator import MatPropDataPreparator
 from .extract_flow.main_extraction_flow import DataExtractionFlow
 from .utils.get_paper_data import PaperMetadataExtractor
 from .utils.save_results import SaveResults
-from .post_processing.visualisation.create_knowledge_graph import CreateKG
-from .post_processing.data_cleaner import calculate_resolved_compositions
+from .post_processing.data_cleaner import (
+    calculate_resolved_compositions,
+    CleaningStrategy,
+    DataCleaner,
+)
 
 # evaluation
 from .post_processing.evaluation.semantic_evaluator import (
@@ -248,15 +251,15 @@ class ComProScanner:
         num_rows: int = None,
         is_test_data_preparation=False,
         test_doi_list_file=None,
-        total_test_data=None,
+        total_test_data: int = 50,
+        test_random_seed: int = 42,
+        checked_doi_list: Optional[str] = "checked_dois.txt",
         json_results_file: str = "results.json",
         csv_results_file: str = "results.csv",
         extract_synthesis_data: bool = False,
         is_save_csv: bool = False,
         is_data_clean: bool = False,
         cleaning_strategy: str = "full",
-        is_create_knowledge_graph: bool = False,
-        is_only_relevant_kg: bool = True,
         materials_data_identifier_query: str = None,
         model: str = "gpt-4o-mini",
         api_base: Optional[str] = None,
@@ -288,14 +291,14 @@ class ComProScanner:
             is_test_data_preparation (bool, optional): A flag to indicate if the test data preparation is required. Defaults to False.
             test_doi_list_file (str, optional): Path to the file containing the test DOIs. Defaults to None.
             total_test_data (int, optional): Total number of test data. Defaults to 50 if not provided and is_test_data_preparation is True.
+            test_random_seed (int, optional): Random seed for test data preparation. Defaults to 42.
+            checked_doi_list (list, optional): List of DOIs which have been checked already. Defaults to "checked_dois.txt".
             json_results_file (str, optional): Path to the JSON results file. Defaults to "results.json".
             csv_results_file (str, optional): Path to the CSV results file. Defaults to "results.csv".
             extract_synthesis_data (bool, optional): A flag to indicate if the synthesis data should be extracted. Defaults to False.
             is_save_csv (bool, optional): A flag to indicate if the results should be saved in the CSV file. Defaults to False.
             is_data_clean (bool, optional): A flag to indicate if the data should be cleaned. Defaults to False.
             cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
-            is_create_knowledge_graph (bool, optional): A flag to indicate if the knowledge graph should be created. Defaults to False.
-            is_only_relevant_kg (bool, optional): A flag to indicate if only relevant knowledge graph (containing composition-property and synthesis data) should be created. Defaults to True.
             llm (LLM, optional): An instance of the LLM class. Defaults to None.
             materials_data_identifier_query (str, optional): Query to identify the materials data. Must be an 'Yes/No' answer. Defaults to "Is there any material chemical composition and corresponding {main_property_keyword} value mentioned in the paper? GIVE ONE WORD ANSWER. Either YES or NO."
             model (str: optional): The model to use (defaults to "gpt-4o-mini")
@@ -372,6 +375,8 @@ class ComProScanner:
             is_test_data_preparation=is_test_data_preparation,
             test_doi_list_file=test_doi_list_file,
             total_test_data=total_test_data,
+            test_random_seed=test_random_seed,
+            checked_doi_list=checked_doi_list,
         )
         paper_data_list = preparator.get_unprocessed_data()
 
@@ -476,22 +481,6 @@ class ComProScanner:
                     )
                     continue
 
-                # Create knowledge graph if asked
-                if is_create_knowledge_graph:
-                    if (
-                        is_only_relevant_kg
-                        and not composition_data
-                        and not synthesis_data
-                    ):
-                        continue
-                    try:
-                        with CreateKG() as kg_creator:
-                            kg_creator.process_paper_data(
-                                synthesis_data, composition_data, paper_metadata
-                            )
-                    except Exception as e:
-                        logger.error(f"Error creating knowledge graph: {e}")
-
                 # Delay before next paper
                 time.sleep(5)  # 5-second delay
 
@@ -503,6 +492,14 @@ class ComProScanner:
             except Exception as e:
                 logger.error(f"Error processing DOI: {paper_data['doi']}. {e}")
                 continue
+
+        if is_data_clean:
+            strategy_map = {
+                "basic": CleaningStrategy.BASIC,
+                "full": CleaningStrategy.FULL,
+            }
+            data_cleaner = DataCleaner(results_file=json_results_file)
+            data_cleaner.clean_data(strategy=strategy_map[cleaning_strategy])
 
     def evaluate_semantic(
         self,

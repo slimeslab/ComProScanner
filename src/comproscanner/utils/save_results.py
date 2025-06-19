@@ -74,7 +74,7 @@ class SaveResults:
             try:
                 with open(self.json_results_file, "r", encoding="utf-8") as f:
                     self.results = json.load(f)
-            except (json.JSONDecodeError, FileNotFoundError):
+            except (json.JSONDecodeError, FileNotFoundError, UnicodeDecodeError):
                 # Handle case where JSON file exists but is empty or corrupted
                 self.results = {}
 
@@ -95,7 +95,7 @@ class SaveResults:
 
         try:
             with open(self.json_results_file, "w", encoding="utf-8") as f:
-                json.dump(self.results, f, indent=2, ensure_ascii=False, default=str)
+                json.dump(self.results, f, indent=2, default=str)
         except (TypeError, ValueError) as e:
             print(f"Error serializing data to JSON: {e}")
             # Try to save with string conversion for problematic objects
@@ -105,7 +105,6 @@ class SaveResults:
                         self.results,
                         f,
                         indent=2,
-                        ensure_ascii=False,
                         default=lambda x: str(x),
                     )
             except Exception as fallback_error:
