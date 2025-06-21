@@ -424,3 +424,49 @@ class FilterMetadata:
 
         except Exception as e:
             logger.error(f"Error in filter_metadata: {str(e)}")
+
+    def update_publisher_information(self):
+        """Main function to update missing publisher information in the DataFrame"""
+        try:
+            # Read the existing CSV
+            df = pd.read_csv(self.filepath, low_memory=False)
+
+            # Remove invalid rows and duplicates
+            df = self._remove_invalid_rows(df)
+            df = self._remove_duplicate_doi_rows(df)
+
+            # Save the cleaned DataFrame back to CSV
+            df.to_csv(self.filepath, index=False)
+            logger.info(f"Saved cleaned DataFrame with {len(df)} rows.")
+
+            # Ensure required columns exist
+            if "metadata_publisher" not in df.columns:
+                df["metadata_publisher"] = None
+            if "general_publisher" not in df.columns:
+                df["general_publisher"] = None
+
+            # Get entries with missing publisher information
+            df_missing = self._get_missing_publisher_entries(df)
+
+            if len(df_missing) > 0:
+                # Get unique identifiers for missing entries
+                issn_list, scopus_id_list, publication_names = (
+                    self._get_unique_identifiers_for_missing(df_missing)
+                )
+
+                # Process only the missing entries
+                for issn, scopus_id, publication_name in tqdm(
+                    zip(issn_list, scopus_id_list, publication_names),
+                    total=len(issn_list),
+                    colour="#d6adff",
+                ):
+                    self._process_journal(issn, scopus_id, df, publication_name)
+            else:
+                logger.warning(f"No missing publisher information found.")
+
+        except FileNotFoundError as e:
+            logger.error(f"File not found. {e}")
+            raise FileNotFoundErrorHandler(f"File not found. {e}")
+        except Exception as e:
+            logger.error(f"An error occurred. {e}")
+            sys.exit(1)
