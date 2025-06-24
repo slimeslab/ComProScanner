@@ -84,8 +84,7 @@ scanner.process_articles(
 
 # Extract composition-property relationships
 scanner.extract_composition_property_data(
-    main_extraction_keyword="d33",
-    extract_synthesis_data=True
+    main_extraction_keyword="d33"
 )
 ```
 
@@ -176,7 +175,6 @@ from comproscanner import extract_composition_property_data
 extract_composition_property_data(
     main_property_keyword="piezoelectric",
     main_extraction_keyword="d33",
-    extract_synthesis_data=True,
     is_data_clean=True,
     model="gpt-4o-mini"
 )
@@ -193,7 +191,7 @@ extract_composition_property_data(
 - `total_test_data` (int, optional): Target number of test data points
 - `json_results_file` (str, optional): Path to store JSON results (default: "results.json")
 - `csv_results_file` (str, optional): Path to store CSV results (default: "results.csv")
-- `extract_synthesis_data` (bool, optional): Whether to extract synthesis data (default: False)
+- `is_extract_synthesis_data` (bool, optional): Whether to extract synthesis data (default: True)
 - `is_save_csv` (bool, optional): Whether to save results as CSV (default: False)
 - `is_data_clean` (bool, optional): Whether to clean the data (default: False)
 - `cleaning_strategy` (str, optional): Data cleaning strategy (default: "full")
