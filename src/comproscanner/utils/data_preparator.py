@@ -251,9 +251,10 @@ class MatPropDataPreparator:
             raise ValueErrorHandler(
                 message="Test data file name is required for test data preparation."
             )
+        self.is_test_data_preparation = is_test_data_preparation
         if is_test_data_preparation:
-            self.is_test_data_preparation = is_test_data_preparation
             self.test_doi_list_file = test_doi_list_file
+            self.test_random_seed = test_random_seed
             if total_test_data is None:
                 self.total_test_data = 50
             else:
@@ -263,9 +264,13 @@ class MatPropDataPreparator:
         self.extracted_folderpath = self.db_configs.EXTRACTED_CSV_FOLDERPATH
         self.start_row = start_row
         self.num_rows = num_rows
+        self.checked_doi_list_file = checked_doi_list_file
 
         # Initialize results storage
         self._load_existing_results()
+
+        # Load checked DOIs from the specified file
+        self.checked_dois = self._load_checked_dois()
 
     def _load_existing_results(self) -> None:
         """Load existing results from JSON file."""
@@ -273,6 +278,14 @@ class MatPropDataPreparator:
         if os.path.exists(self.json_results_file):
             with open(self.json_results_file, "r") as f:
                 self.results = json.load(f)
+
+    def _load_checked_dois(self) -> set:
+        """Load checked DOIs from the specified file."""
+        checked_dois = set()
+        if os.path.exists(self.checked_doi_list_file):
+            with open(self.checked_doi_list_file, "r") as f:
+                checked_dois = {line.strip() for line in f if line.strip()}
+        return checked_dois
 
     def get_unprocessed_data(self) -> list[Dict]:
         """
@@ -349,6 +362,7 @@ class MatPropDataPreparator:
         else:
             logger.info(f"Total DOIs to process: {len(final_unprocessed_dois)}")
 
+            # Remove checked DOIs from the final unprocessed DOIs
             final_unprocessed_dois = final_unprocessed_dois[
                 ~final_unprocessed_dois["doi"].isin(self.checked_dois)
             ]

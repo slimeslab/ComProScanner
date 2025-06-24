@@ -55,7 +55,7 @@ class MaterialsState(BaseModel):
     main_extraction_keyword: str = ""
     composition_property_text_data: str = ""
     synthesis_text_data: str = ""
-    extract_synthesis_data: bool = False
+    is_extract_synthesis_data: bool = True
     llm: Optional[LLM] = None
     rag_config: Optional[RAGConfig] = None
     output_log_folder: Optional[str] = None
@@ -86,7 +86,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
         synthesis_text_data (str: required): Text data to extract synthesis data
         llm (LLM: optional): LLM instance for the agents. Default: None
         materials_data_identifier_query (str: optional): Query to identify if materials data is present in the text. Must be an 'Yes/No' answer. Default: "Is there any material chemical composition (not abbreviations) and corresponding {main_extraction_keyword} value mentioned in the paper? GIVE ONE WORD ANSWER. Either YES or NO."
-        extract_synthesis_data (bool: optional): Flag to extract synthesis data. Default: False
+        is_extract_synthesis_data (bool: optional): Flag to extract synthesis data. Default: True
         rag_config (RAGConfig: optional): RAG configuration. Default: None
         output_log_folder (str, optional): Base folder path to save logs. Logs will be saved in {output_log_folder}/{doi}/ subdirectory. Logs will be in JSON format if is_log_json is True, otherwise plain text. Defaults to None (no logging).
         task_output_folder (str, optional): Base folder path to save task outputs. Task outputs will be saved as .txt files in {task_output_folder}/{doi}/ subdirectory. Defaults to None (no task output saving).
@@ -118,7 +118,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
         synthesis_text_data: str = None,
         llm: Optional[LLM] = None,
         materials_data_identifier_query: str = None,
-        extract_synthesis_data: bool = False,
+        is_extract_synthesis_data: bool = True,
         rag_config: Optional[RAGConfig] = None,
         output_log_folder: Optional[str] = None,
         task_output_folder: Optional[str] = None,
@@ -147,7 +147,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
 
         self.state.doi = doi
         self.state.llm = llm
-        self.state.extract_synthesis_data = extract_synthesis_data
+        self.state.is_extract_synthesis_data = is_extract_synthesis_data
         self.state.rag_config = rag_config
         self.state.output_log_folder = output_log_folder
         self.state.task_output_folder = task_output_folder
@@ -473,7 +473,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
         if (
             not self.state.synthesis_text_data
             or self.state.synthesis_text_data.strip() == ""
-            or self.state.extract_synthesis_data == False
+            or self.state.is_extract_synthesis_data == False
         ):
             logger.warning(
                 "Synthesis text data is empty or extraction skipped, not performing synthesis extraction"

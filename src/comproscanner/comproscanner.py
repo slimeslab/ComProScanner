@@ -253,11 +253,12 @@ class ComProScanner:
         test_doi_list_file=None,
         total_test_data: int = 50,
         test_random_seed: int = 42,
-        checked_doi_list: str = "checked_dois.txt",
+        checked_doi_list_file: str = "checked_dois.txt",
         json_results_file: str = "results.json",
         csv_results_file: str = "results.csv",
-        extract_synthesis_data: bool = True,
+        is_extract_synthesis_data: bool = True,
         is_save_csv: bool = False,
+        is_save_relevant: bool = True,
         is_data_clean: bool = False,
         cleaning_strategy: str = "full",
         materials_data_identifier_query: str = None,  # Will be set based on the main_property_keyword if not provided
@@ -292,11 +293,12 @@ class ComProScanner:
             test_doi_list_file (str, optional): Path to the file containing the test DOIs. Defaults to None.
             total_test_data (int, optional): Total number of test data. Defaults to 50 if not provided and is_test_data_preparation is True.
             test_random_seed (int, optional): Random seed for test data preparation. Defaults to 42.
-            checked_doi_list (list, optional): List of DOIs which have been checked already. Defaults to "checked_dois.txt".
+            checked_doi_list_file (list, optional): List of DOIs which have been checked already. Defaults to "checked_dois.txt".
             json_results_file (str, optional): Path to the JSON results file. Defaults to "results.json".
             csv_results_file (str, optional): Path to the CSV results file. Defaults to "results.csv".
-            extract_synthesis_data (bool, optional): A flag to indicate if the synthesis data should be extracted. Defaults to True.
+            is_extract_synthesis_data (bool, optional): A flag to indicate if the synthesis data should be extracted. Defaults to True.
             is_save_csv (bool, optional): A flag to indicate if the results should be saved in the CSV file. Defaults to False.
+            is_save_relevant (bool, optional): A flag to indicate if only papers with composition-property data should be saved. If True, only saves papers with composition data. If False, saves all processed papers. Defaults to True.
             is_data_clean (bool, optional): A flag to indicate if the data should be cleaned. Defaults to False.
             cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
             llm (LLM, optional): An instance of the LLM class. Defaults to None.
@@ -337,8 +339,8 @@ class ComProScanner:
             raise ValueErrorHandler(
                 message="Test data file name is required for test data preparation."
             )
+        self.is_test_data_preparation = is_test_data_preparation
         if is_test_data_preparation:
-            self.is_test_data_preparation = is_test_data_preparation
             self.test_doi_list_file = test_doi_list_file
             if total_test_data is None:
                 self.total_test_data = 50
@@ -365,7 +367,7 @@ class ComProScanner:
             rag_base_url=rag_base_url,
         )
         if materials_data_identifier_query is None:
-            materials_data_identifier_query = f"Is there any material chemical composition and corresponding {self.main_property_keyword} value mentioned in the paper? GIVE ONE WORD ANSWER. Either YES or NO."
+            materials_data_identifier_query = f"Is there any material chemical composition and corresponding {self.main_property_keyword} value mentioned in the paper? Give one word answer. Either Yes or No."
         preparator = MatPropDataPreparator(
             main_property_keyword=self.main_property_keyword,
             main_extraction_keyword=main_extraction_keyword,
@@ -376,7 +378,7 @@ class ComProScanner:
             test_doi_list_file=test_doi_list_file,
             total_test_data=total_test_data,
             test_random_seed=test_random_seed,
-            checked_doi_list=checked_doi_list,
+            checked_doi_list_file=checked_doi_list_file,
         )
         paper_data_list = preparator.get_unprocessed_data()
 
@@ -390,6 +392,8 @@ class ComProScanner:
                         test_dois_with_data = [
                             line.strip() for line in f.readlines() if line.strip()
                         ]
+                        if test_dois_with_data[-1] == "":
+                            test_dois_with_data.pop()
                 except Exception as e:
                     logger.warning(
                         f"Error reading test DOI file {test_doi_list_file}: {str(e)}"
@@ -414,7 +418,7 @@ class ComProScanner:
                         synthesis_text_data=paper_data["synthesis_text"],
                         llm=llm,
                         materials_data_identifier_query=materials_data_identifier_query,
-                        extract_synthesis_data=extract_synthesis_data,
+                        is_extract_synthesis_data=is_extract_synthesis_data,
                         rag_config=rag_config,
                         output_log_folder=output_log_folder,
                         task_output_folder=task_output_folder,
@@ -449,6 +453,33 @@ class ComProScanner:
                 composition_data = calculate_resolved_compositions(composition_data)
                 result_dict["composition_data"] = composition_data
 
+                # Determine if the paper should be saved or not
+                should_save = True
+                if composition_data == {}:
+                    if is_test_data_preparation:
+                        should_save = False
+                        logger.debug(
+                            f"Skipping save for DOI {current_doi} - no composition data (test data preparation mode)"
+                        )
+                    elif is_save_relevant:
+                        should_save = False
+                        logger.debug(
+                            f"Skipping save for DOI {current_doi} - no composition data (is_save_relevant is True)"
+                        )
+
+                # If the paper is relevant or is_save_relevant is False, save the results
+                if should_save:
+                    try:
+                        result_saver = SaveResults(json_results_file, csv_results_file)
+                        result_saver.update_in_json(paper_data["doi"], result_dict)
+                        if is_save_csv:
+                            result_saver.update_in_csv(result_dict)
+                    except Exception as e:
+                        logger.error(
+                            f"Error saving results for DOI: {paper_data['doi']}. {e}"
+                        )
+                        continue
+
                 # For test data preparation, track DOIs with non-empty composition data
                 if is_test_data_preparation and composition_data != {}:
                     if current_doi not in test_dois_with_data:
@@ -465,21 +496,18 @@ class ComProScanner:
                             )
                             break
 
-                # Try to save results
+                # log the processed DOI in the checked DOIs file
                 try:
-                    result_saver = SaveResults(json_results_file, csv_results_file)
-                    result_saver.update_in_json(
-                        paper_data["doi"], result_dict
-                    )  # JSON storage is required
-                    if is_save_csv:
-                        result_saver.update_in_csv(
-                            result_dict
-                        )  # CSV storage is optional
+                    dir_path = os.path.dirname(checked_doi_list_file)
+                    if dir_path:
+                        os.makedirs(dir_path, exist_ok=True)
+                    with open(checked_doi_list_file, "a") as f:
+                        logger.info(f"Adding DOI to checked list: {paper_data['doi']}")
+                        f.write(f"{paper_data['doi']}\n")
                 except Exception as e:
                     logger.error(
-                        f"Error saving results for DOI: {paper_data['doi']}. {e}"
+                        f"Error writing to checked DOIs file {checked_doi_list_file}: {str(e)}"
                     )
-                    continue
 
                 # Delay before next paper
                 time.sleep(5)  # 5-second delay
