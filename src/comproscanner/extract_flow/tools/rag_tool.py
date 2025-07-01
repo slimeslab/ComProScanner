@@ -197,11 +197,11 @@ class RAGTool(BaseTool):
             logger.info("Step 2: Generating response...")
             response = self._generate_response(query, relevant_docs)
 
-            logger.info("✅ RAG tool execution completed successfully")
+            logger.info("RAG tool execution completed successfully")
             return response
 
         except Exception as e:
-            error_msg = f"❌ Error in RAG tool for DOI {doi}: {str(e)}"
+            error_msg = f"Error in RAG tool for DOI {doi}: {str(e)}"
             logger.error(error_msg)
             logger.error(f"Error type: {type(e).__name__}")
 
