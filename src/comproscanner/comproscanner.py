@@ -276,7 +276,7 @@ class ComProScanner:
         frequency_penalty: Optional[float] = None,
         max_tokens: Optional[int] = None,
         rag_db_path: str = "db",
-        embedding_model: str = "thellert/physbert_cased",
+        embedding_model: str = "huggingface:thellert/physbert_cased",
         rag_chat_model: str = "gpt-4o-mini",
         rag_max_tokens: int = 512,
         rag_top_k: int = 3,
@@ -302,7 +302,7 @@ class ComProScanner:
             is_data_clean (bool, optional): A flag to indicate if the data should be cleaned. Defaults to False.
             cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
             llm (LLM, optional): An instance of the LLM class. Defaults to None.
-            materials_data_identifier_query (str, optional): Query to identify the materials data. Must be an 'Yes/No' answer. Defaults to "Is there any material chemical composition and corresponding {main_property_keyword} value mentioned in the paper? GIVE ONE WORD ANSWER. Either YES or NO."
+            materials_data_identifier_query (str, optional): Query to identify the materials data. Must be an 'yes/no' answer. Defaults to "Is there any material chemical composition and corresponding {main_property_keyword} value mentioned in the paper? GIVE ONE WORD ANSWER. Either yes or no."
             model (str: optional): The model to use (defaults to "gpt-4o-mini")
             api_base (str, optional): Base URL for standard API endpoints
             base_url (str, optional): Base URL for the model service
@@ -317,7 +317,7 @@ class ComProScanner:
             frequency_penalty (float, optional): Frequency penalty for text generation
             max_tokens (int, optional): Maximum tokens for completion
             rag_db_path (str, optional): Path to the vector database. Defaults to 'db'.
-            embedding_model (str, optional): Name of the embedding model for RAG. Defaults to 'thellert/physbert_cased'.
+            embedding_model (str, optional): Name of the embedding model for RAG. Defaults to 'huggingface:thellert/physbert_cased'.
             rag_chat_model (str, optional): Name of the chat model for RAG. Defaults to 'gpt-4o-mini'.
             rag_max_tokens (int, optional): Maximum tokens for completion for RAG. Defaults to 512.
             rag_top_k (int, optional): Top k value for sampling for RAG. Defaults to 3.
@@ -367,7 +367,7 @@ class ComProScanner:
             rag_base_url=rag_base_url,
         )
         if materials_data_identifier_query is None:
-            materials_data_identifier_query = f"Is there any material chemical composition and corresponding {self.main_property_keyword} value mentioned in the paper? Give one word answer. Either Yes or No."
+            materials_data_identifier_query = f"Is there any material chemical composition and corresponding {self.main_property_keyword} value mentioned in the paper? Give one word answer. Either yes or no."
         preparator = MatPropDataPreparator(
             main_property_keyword=self.main_property_keyword,
             main_extraction_keyword=main_extraction_keyword,

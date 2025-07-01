@@ -313,6 +313,11 @@ class MatPropDataPreparator:
             ~property_mentioned_df["doi"].isin(processed_dois)
         ]
 
+        # Remove checked DOIs from the final unprocessed DOIs - applies to both test and regular processing
+        final_unprocessed_dois = final_unprocessed_dois[
+            ~final_unprocessed_dois["doi"].isin(self.checked_dois)
+        ]
+
         # prepare test data if is_test_data_preparation
         if self.is_test_data_preparation:
             test_dois = []
@@ -333,9 +338,7 @@ class MatPropDataPreparator:
             unprocessed_test_dois = list(
                 set(test_dois).intersection(set(final_unprocessed_dois["doi"]))
             )
-            unprocessed_test_dois = list(
-                set(unprocessed_test_dois).difference(self.checked_dois)
-            )
+
             if len(test_dois) == self.total_test_data:
                 final_unprocessed_dois = final_unprocessed_dois[
                     final_unprocessed_dois["doi"].isin(test_dois)
@@ -362,11 +365,7 @@ class MatPropDataPreparator:
         else:
             logger.info(f"Total DOIs to process: {len(final_unprocessed_dois)}")
 
-            # Remove checked DOIs from the final unprocessed DOIs
-            final_unprocessed_dois = final_unprocessed_dois[
-                ~final_unprocessed_dois["doi"].isin(self.checked_dois)
-            ]
-            print(f"Total DOIs to process: {len(final_unprocessed_dois)}")
+        print(f"Total DOIs to process: {len(final_unprocessed_dois)}")
 
         # Continue with the regular processing for all selected DOIs
         prepared_data = []

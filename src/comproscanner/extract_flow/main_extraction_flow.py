@@ -85,7 +85,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
         composition_property_text_data (str: required): Text data to extract composition and property data
         synthesis_text_data (str: required): Text data to extract synthesis data
         llm (LLM: optional): LLM instance for the agents. Default: None
-        materials_data_identifier_query (str: optional): Query to identify if materials data is present in the text. Must be an 'Yes/No' answer. Default: "Is there any material chemical composition (not abbreviations) and corresponding {main_extraction_keyword} value mentioned in the paper? GIVE ONE WORD ANSWER. Either YES or NO."
+        materials_data_identifier_query (str: optional): Query to identify if materials data is present in the text. Must be an 'yes/no' answer. Default: "Is there any material chemical composition (not abbreviations) and corresponding {main_extraction_keyword} value mentioned in the paper? GIVE ONE WORD ANSWER. Either yes or no."
         is_extract_synthesis_data (bool: optional): Flag to extract synthesis data. Default: True
         rag_config (RAGConfig: optional): RAG configuration. Default: None
         output_log_folder (str, optional): Base folder path to save logs. Logs will be saved in {output_log_folder}/{doi}/ subdirectory. Logs will be in JSON format if is_log_json is True, otherwise plain text. Defaults to None (no logging).
@@ -377,7 +377,18 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 "main_extraction_keyword": self.state.main_extraction_keyword,
             }
         )
-        self.state.is_materials_mentioned = result.raw
+        # Store the raw result and clean it
+        raw_result = result.raw if hasattr(result, "raw") else str(result)
+
+        # Clean the result by removing common formatting
+        cleaned_result = raw_result.strip()
+        if cleaned_result.startswith('"') and cleaned_result.endswith('"'):
+            cleaned_result = cleaned_result[1:-1]
+
+        self.state.is_materials_mentioned = cleaned_result
+        logger.debug(f"Raw materials identification result: '{raw_result}'")
+        logger.debug(f"Cleaned materials identification result: '{cleaned_result}'")
+
         return self.state.is_materials_mentioned
 
     @router(identify_materials_data_presence)

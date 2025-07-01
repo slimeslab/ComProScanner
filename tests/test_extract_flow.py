@@ -209,7 +209,7 @@ class TestSimpleExtractionFlow:
         )
 
         # Set the state directly
-        flow.state.is_materials_mentioned = "YES"
+        flow.state.is_materials_mentioned = "yes"
 
         # Test the routing
         result = flow.route_process()
@@ -229,7 +229,7 @@ class TestSimpleExtractionFlow:
         )
 
         # Set the state directly
-        flow.state.is_materials_mentioned = "NO"
+        flow.state.is_materials_mentioned = "no"
 
         # Test the routing
         result = flow.route_process()

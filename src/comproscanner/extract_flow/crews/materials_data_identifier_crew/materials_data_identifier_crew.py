@@ -25,7 +25,7 @@ class YesNoResponse(BaseModel):
     def validate_yes_no(cls, v: str) -> str:
         normalized = v.lower().strip()
         if normalized not in ("yes", "no"):
-            raise ValueError('Value must be either "Yes" or "No" (case insensitive)')
+            raise ValueError('Value must be either "yes" or "no" (case insensitive)')
         # Return the normalized version in title case
         return normalized.title()
 

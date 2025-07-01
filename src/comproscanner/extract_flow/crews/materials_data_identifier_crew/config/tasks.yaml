@@ -1,6 +1,6 @@
 identify_materials_data:
   description: >
-    Query the vector database with the query: '{materials_data_identifier_query}' for the materials science journal article with the doi {doi} using the RAG tool. Check whether any material chemical composition (not abbreviations) and corresponding {main_extraction_keyword} value is mentioned for the provided scientific journal article or not. If provided answer 'Yes' else 'No'.
+    Query the vector database with the query: '{materials_data_identifier_query}' for the materials science journal article with the doi {doi} using the RAG tool. Check whether any material chemical composition (not abbreviations) and corresponding {main_extraction_keyword} value is mentioned for the provided scientific journal article or not. If provided answer 'yes' else 'no'.
   expected_output: >
-    Depending on whether any material chemical composition and property is mentioned for the provided scientific journal article, output should be either 'Yes' or 'No'.
+    Depending on whether any material chemical composition and property is mentioned for the provided scientific journal article, output should be either 'yes' or 'no'.
   agent: materials_data_identifier
