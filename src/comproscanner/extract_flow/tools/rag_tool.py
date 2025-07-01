@@ -175,8 +175,7 @@ class RAGTool(BaseTool):
 
     def _run(self, doi: str, query: str) -> str:
         """Execute the RAG tool with detailed debugging"""
-        logger.info("=== RAG TOOL EXECUTION START ===")
-        logger.info(f"DOI: {doi}")
+        logger.info(f"\nDOI: {doi}")
         logger.info(f"Query: {query}")
 
         db_name = doi.replace("/", "_")
