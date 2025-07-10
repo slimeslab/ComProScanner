@@ -8,7 +8,7 @@ evaluate_synthesis_data_task:
     2. For 'precursors': For each precursor, decide if it's correctly identified (1) or not (0)
        Note: The order of precursors doesn't matter, only whether each ground truth precursor is correctly identified in the test data. Keys can be either in chemical formula or chemical name - you need to understand the meaning of the keys.
     3. For 'characterization_techniques': For each technique, decide if it's correctly identified (1) or not (0)
-       Note: The order of techniques doesn't matter, only whether each ground truth technique is correctly identified in the test data. Keys can be either in instrument name or short name or the characterization process - you need to understand the meaning of the keys.
+       Note: The order of techniques doesn't matter, only whether each ground truth technique is correctly identified in the test data. Keys can be either in instrument name or short name of the characterization process - you need to understand the meaning of the keys.
     4. For 'steps': Decide if the synthesis procedure steps match or not. The match value should be a float between 0.00 and 1.00 and it should be round up to two decimal points.
        Note: This is a holistic judgment about whether the test steps capture the same procedure as the ground truth steps.
 

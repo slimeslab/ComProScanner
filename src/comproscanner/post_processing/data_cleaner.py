@@ -185,7 +185,8 @@ class DataCleaner:
 def calculate_resolved_compositions(composition_data):
     """
     Process and normalize material composition data with complex chemical formulas.
-    Only handles subtraction calculations inside brackets (float-float) → calculated value with result in brackets.
+    Handles mathematical operations (+, -, *, /) inside parentheses.
+    Removes parentheses around pure numbers but preserves chemical formulas.
 
     Args:
         composition_data (dict): Dictionary containing composition data with 'compositions_property_values' key or the entire result dictionary with composition_data as a key
@@ -227,9 +228,8 @@ def calculate_resolved_compositions(composition_data):
 
     def _process_formula(formula):
         """
-        Process chemical formulas to handle any subtraction calculations within brackets:
-        (float-float) → calculated value with result in brackets
-        e.g., (0.7-0.2) → (0.5) or (1-0.2-0.1) → (0.7)
+        Process chemical formulas to handle any mathematical calculations within brackets.
+        Also removes parentheses around pure numbers like (0.75) but keeps (Na0.25)
 
         Args:
             formula (str): The chemical formula string
@@ -240,43 +240,72 @@ def calculate_resolved_compositions(composition_data):
         if not formula or not isinstance(formula, str):
             return str(formula) if formula is not None else ""
 
-        # Handle any subtraction inside parentheses: (0.7-0.2) → (0.5) or (1-0.2-0.1) → (0.7)
-        # Matches any expression with numbers and hyphens inside parentheses
-        normalized = re.sub(
-            r"\(([0-9.-]+)\)", lambda m: _format_subtraction(m), formula
-        )
+        def _evaluate_expression(expr):
+            """
+            Safely evaluate a mathematical expression if it contains operators.
+            If no operators, check if it's a pure number or contains chemical symbols.
+            """
+            # Check if there are mathematical operators
+            if not any(op in expr for op in ["+", "-", "*", "/"]):
+                # No operators - check if it's a pure number or contains chemical symbols
+                if re.match(r"^[0-9.\s]+$", expr.strip()):
+                    # Pure number - remove parentheses
+                    return expr.strip()
+                else:
+                    # Contains letters/symbols - keep with parentheses
+                    return f"({expr})"
 
-        return normalized
+            # Allow numbers, floating points, and basic math operators.
+            # This is a security measure to restrict what eval() can process.
+            allowed_chars = r"^[0-9\.\s\+\-\*\/\(\)]*$"
+            if not re.match(allowed_chars, expr.strip()):
+                # If invalid characters, return with parentheses to preserve structure
+                return f"({expr})"
 
-    def _format_subtraction(match):
-        """
-        Calculate the result of subtractions inside parentheses.
-        Keep the calculated value inside brackets.
+            try:
+                # Eval is used here after checking the expression contains only allowed characters.
+                result = eval(expr)
+                # Format the result - keep decimal places for non-integers
+                if isinstance(result, float):
+                    if result.is_integer():
+                        return str(int(result))
+                    else:
+                        # Keep up to 4 decimal places
+                        return str(round(result, 4))
+                else:
+                    return str(result)
+            except (SyntaxError, ZeroDivisionError, TypeError, NameError):
+                # If evaluation fails, return with parentheses to preserve structure
+                return f"({expr})"
 
-        Args:
-            match: Regex match object
+        # Process parentheses - both mathematical expressions and pure numbers
+        # Add a safety counter to prevent infinite loops
+        max_iterations = 100
+        iteration_count = 0
 
-        Returns:
-            str: Result of the subtraction in brackets
-        """
-        # Split the string by hyphens and convert each part to float
-        parts = match.group(1).split("-")
+        while iteration_count < max_iterations:
+            match = re.search(r"\(([^()]+)\)", formula)
+            if not match:
+                break
 
-        # If the first character is empty, it means the expression starts with a minus
-        if parts[0] == "":
-            parts[1] = "-" + parts[1]
-            parts.pop(0)
+            expression_inside_parentheses = match.group(1)
+            evaluated_value = _evaluate_expression(expression_inside_parentheses)
 
-        numbers = [float(num) for num in parts]
+            # For avoiding infinite loops
+            if evaluated_value == f"({expression_inside_parentheses})":
+                break
 
-        # Calculate the result by starting with the first number and subtracting all others
-        result = numbers[0]
-        for num in numbers[1:]:
-            result -= num
-        result = round(result, 3)  # Round to 3 decimal places
+            # Replace the matched part
+            formula = (
+                formula[: match.start()] + str(evaluated_value) + formula[match.end() :]
+            )
 
-        # Always keep the parentheses for the result
-        return f"({result})"
+            iteration_count += 1
+
+        if iteration_count >= max_iterations:
+            print(f"Warning: Maximum iterations reached for formula: {formula}")
+
+        return formula
 
     if not composition_data:
         return {}

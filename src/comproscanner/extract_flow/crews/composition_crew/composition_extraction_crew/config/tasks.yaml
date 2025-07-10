@@ -20,11 +20,10 @@ extract_composition_property:
     - FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
 
     *Other Points to Consider*
-    - If any composition has '-', replace it with ' - ' unless it's for variable, for e.g., (1-x).
     - If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
     {expected_variable_composition_property_example}
     Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
-    - Only consider the article's own work data unless and until referenced paper's data has compositions to include. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+    - Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
 
     **Parameters**:
     - Property: {main_extraction_keyword}

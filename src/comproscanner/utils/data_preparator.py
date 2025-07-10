@@ -208,6 +208,7 @@ class MatPropDataPreparator:
         is_test_data_preparation: bool = False,
         test_doi_list_file=None,
         total_test_data: int = None,
+        is_only_consider_test_doi_list: bool = False,
         test_random_seed: Optional[int] = 42,
         checked_doi_list_file: Optional[str] = "checked_dois.txt",
     ):
@@ -223,6 +224,7 @@ class MatPropDataPreparator:
             is_test_data_preparation (bool: optional): Flag to indicate if the data preparation process is a test data preparation step (default: False)
             test_doi_list_file (str: optional): Test data file name (default: None)
             total_test_data (int: optional): Total number of test data to prepare (default: 50)
+            is_only_consider_test_doi_list (bool: optional): Flag to indicate if only the test DOI list should be considered (default: False). Should be set to True if the test_doi_list_file has required number of test DOIs.
             test_random_seed (int: optional): Random seed for test data preparation (default: 42)
             checked_doi_list_file (str: optional): File to store checked DOIs (default: "checked_dois.txt")
 
@@ -254,6 +256,10 @@ class MatPropDataPreparator:
         self.is_test_data_preparation = is_test_data_preparation
         if is_test_data_preparation:
             self.test_doi_list_file = test_doi_list_file
+            if is_only_consider_test_doi_list:
+                self.is_only_consider_test_doi_list = True
+            else:
+                self.is_only_consider_test_doi_list = False
             self.test_random_seed = test_random_seed
             if total_test_data is None:
                 self.total_test_data = 50
@@ -305,7 +311,7 @@ class MatPropDataPreparator:
         ]
         if self.num_rows is not None:
             property_mentioned_df = property_mentioned_df.head(self.num_rows)
-        print(f"Length of property_mentioned_df: {len(property_mentioned_df)}")
+        logger.debug(f"Length of property_mentioned_df: {len(property_mentioned_df)}")
 
         # get the DOIs that have already been processed and remove them from the list
         processed_dois = list(self.results.keys())
@@ -313,13 +319,12 @@ class MatPropDataPreparator:
             ~property_mentioned_df["doi"].isin(processed_dois)
         ]
 
-        # Remove checked DOIs from the final unprocessed DOIs - applies to both test and regular processing
-        final_unprocessed_dois = final_unprocessed_dois[
-            ~final_unprocessed_dois["doi"].isin(self.checked_dois)
-        ]
+        # copy the unprocessed DOIs to a new DataFrame
+        final_unprocessed_dois_copy = final_unprocessed_dois.copy()
 
         # prepare test data if is_test_data_preparation
         if self.is_test_data_preparation:
+            # Load test DOIs from file
             test_dois = []
             if os.path.exists(self.test_doi_list_file):
                 try:
@@ -329,43 +334,64 @@ class MatPropDataPreparator:
                         ]
                         if test_dois and test_dois[-1] == "":
                             test_dois.pop()
+
                 except Exception as e:
                     logger.warning(
                         f"Error reading test DOI file {self.test_doi_list_file}: {str(e)}"
                     )
                     test_dois = []
 
-            unprocessed_test_dois = list(
-                set(test_dois).intersection(set(final_unprocessed_dois["doi"]))
-            )
-
-            if len(test_dois) == self.total_test_data:
-                final_unprocessed_dois = final_unprocessed_dois[
-                    final_unprocessed_dois["doi"].isin(test_dois)
+            if self.is_only_consider_test_doi_list:
+                # Only consider test DOIs from the file that haven't been processed yet
+                # Use final_unprocessed_dois_copy which has processed DOIs removed but not checked DOIs
+                # Don't apply checked DOIs filter for this mode
+                final_unprocessed_dois = final_unprocessed_dois_copy[
+                    final_unprocessed_dois_copy["doi"].isin(test_dois)
                 ]
-                logger.info(
-                    f"Total unprocessed DOIs: {len(final_unprocessed_dois)}. Test DOIs are already selected."
+
+                logger.debug(
+                    f"Total unprocessed test DOIs: {len(final_unprocessed_dois)}. Only considering DOIs from test list file (ignoring checked DOIs)."
                 )
             else:
-                remaining_dois_df = final_unprocessed_dois[
-                    ~final_unprocessed_dois["doi"].isin(test_dois)
+                # Remove checked DOIs from the final unprocessed DOIs for dynamic test data preparation
+                final_unprocessed_dois = final_unprocessed_dois_copy[
+                    ~final_unprocessed_dois_copy["doi"].isin(self.checked_dois)
                 ]
-                shuffled_remaining_dois = remaining_dois_df.sample(
-                    n=len(remaining_dois_df), random_state=self.test_random_seed
-                )["doi"].tolist()
-                final_selection = unprocessed_test_dois + shuffled_remaining_dois
 
-                # Filter final_unprocessed_dois to include only the selected DOIs
-                final_unprocessed_dois = final_unprocessed_dois[
-                    final_unprocessed_dois["doi"].isin(final_selection)
-                ]
-                logger.info(
-                    f"Total unprocessed DOIs: {len(final_unprocessed_dois)}. Test DOIs will be chosen based on the availability of composition data in the paper."
+                # Original logic for dynamic test data preparation
+                unprocessed_test_dois = list(
+                    set(test_dois).intersection(set(final_unprocessed_dois["doi"]))
                 )
-        else:
-            logger.info(f"Total DOIs to process: {len(final_unprocessed_dois)}")
 
-        print(f"Total DOIs to process: {len(final_unprocessed_dois)}")
+                if len(test_dois) == self.total_test_data:
+                    final_unprocessed_dois = final_unprocessed_dois[
+                        final_unprocessed_dois["doi"].isin(test_dois)
+                    ]
+                    logger.debug(
+                        f"Total unprocessed DOIs: {len(final_unprocessed_dois)}. Test DOIs are already selected."
+                    )
+                else:
+                    remaining_dois_df = final_unprocessed_dois[
+                        ~final_unprocessed_dois["doi"].isin(test_dois)
+                    ]
+                    shuffled_remaining_dois = remaining_dois_df.sample(
+                        n=len(remaining_dois_df), random_state=self.test_random_seed
+                    )["doi"].tolist()
+                    final_selection = unprocessed_test_dois + shuffled_remaining_dois
+
+                    # Filter final_unprocessed_dois to include only the selected DOIs
+                    final_unprocessed_dois = final_unprocessed_dois[
+                        final_unprocessed_dois["doi"].isin(final_selection)
+                    ]
+                    logger.debug(
+                        f"Total unprocessed DOIs: {len(final_unprocessed_dois)}. Test DOIs will be chosen based on the availability of composition data in the paper."
+                    )
+        else:
+            # Remove checked DOIs from the final unprocessed DOIs - applies to regular processing only
+            final_unprocessed_dois = final_unprocessed_dois[
+                ~final_unprocessed_dois["doi"].isin(self.checked_dois)
+            ]
+        logger.info(f"Total DOIs to process: {len(final_unprocessed_dois)}")
 
         # Continue with the regular processing for all selected DOIs
         prepared_data = []

@@ -178,3 +178,4 @@ cython_debug/
 
 # Remove example directory primarily
 examples/
+tests example/

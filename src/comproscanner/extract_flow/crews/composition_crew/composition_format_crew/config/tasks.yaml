@@ -1,8 +1,9 @@
 format_composition_property:
   description: |
     **Task**: Format Material Compositions and Properties
-    **Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {extracted_composition_data}. You MUST use the final output from the tool as the final answer for such cases - don't calculate the composition percentage by yourself.
+    **Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {extracted_composition_data}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
     - If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+    - If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
 
     **Parameters**:
     - Extracted composition-property dictionary-

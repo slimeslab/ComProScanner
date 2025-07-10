@@ -252,6 +252,7 @@ class ComProScanner:
         is_test_data_preparation=False,
         test_doi_list_file=None,
         total_test_data: int = 50,
+        is_only_consider_test_doi_list: bool = False,
         test_random_seed: int = 42,
         checked_doi_list_file: str = "checked_dois.txt",
         json_results_file: str = "results.json",
@@ -292,6 +293,7 @@ class ComProScanner:
             is_test_data_preparation (bool, optional): A flag to indicate if the test data preparation is required. Defaults to False.
             test_doi_list_file (str, optional): Path to the file containing the test DOIs. Defaults to None.
             total_test_data (int, optional): Total number of test data. Defaults to 50 if not provided and is_test_data_preparation is True.
+            is_only_consider_test_doi_list (bool, optional): A flag to indicate if only the test DOI list should be considered. Defaults to False. Should be set to True if the test_doi_list_file has required number of test DOIs.
             test_random_seed (int, optional): Random seed for test data preparation. Defaults to 42.
             checked_doi_list_file (list, optional): List of DOIs which have been checked already. Defaults to "checked_dois.txt".
             json_results_file (str, optional): Path to the JSON results file. Defaults to "results.json".
@@ -376,6 +378,7 @@ class ComProScanner:
             num_rows=num_rows,
             is_test_data_preparation=is_test_data_preparation,
             test_doi_list_file=test_doi_list_file,
+            is_only_consider_test_doi_list=is_only_consider_test_doi_list,
             total_test_data=total_test_data,
             test_random_seed=test_random_seed,
             checked_doi_list_file=checked_doi_list_file,
