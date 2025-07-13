@@ -11,6 +11,7 @@ import requests
 from typing import Dict
 import os
 from dotenv import load_dotenv
+from typing import List
 
 from .logger import setup_logger
 
@@ -66,6 +67,48 @@ class PaperMetadataExtractor:
                 return "Sorry, I couldn't find anything about that, there could be an error with your scopus api key."
             except Exception as e:
                 return f"Sorry, something went wrong: {e}"
+
+        def _get_keywords_from_scopus_api(doi: str) -> List[str]:
+            """
+            Get the keywords from Scopus API using the provided DOI
+
+            Args:
+                doi (str: required): The DOI of the article to get keywords for
+
+            Returns:
+                keywords (list): List of keywords from Scopus API
+            """
+            try:
+                url = f"https://api.elsevier.com/content/abstract/doi/{doi}"
+                headers = {
+                    "X-ELS-APIKey": self.scopus_api_key,
+                    "Accept": "application/json",
+                }
+                response = requests.get(url, headers=headers)
+                response.raise_for_status()
+                response_json = response.json()
+
+                keywords = []
+                if response_json.get("abstracts-retrieval-response"):
+                    if response_json["abstracts-retrieval-response"].get(
+                        "authkeywords"
+                    ):
+                        author_keywords = response_json["abstracts-retrieval-response"][
+                            "authkeywords"
+                        ].get("author-keyword", [])
+
+                        if isinstance(author_keywords, dict):
+                            if author_keywords.get("$"):
+                                keywords.append(author_keywords.get("$"))
+                        elif isinstance(author_keywords, list):
+                            for keyword in author_keywords:
+                                if keyword.get("$"):
+                                    keywords.append(keyword.get("$"))
+
+                return keywords
+            except Exception as e:
+                logger.error(f"Error in getting keywords from Scopus API: {e}")
+                return []
 
         def _get_oaworks_data(doi: str):
             """
@@ -280,10 +323,31 @@ class PaperMetadataExtractor:
                         }
                     )
 
-        paper_data["authors"] = authors
+        # Get the keywords - combine from both sources
+        all_keywords = []
 
-        # Get the keywords
+        # Get keywords from Scopus API if available
+        if self.scopus_api_key:
+            scopus_keywords = _get_keywords_from_scopus_api(doi)
+            if scopus_keywords:
+                all_keywords.extend(scopus_keywords)
+
+        # Get keywords from OAWorks
         if isinstance(oaworks_data, dict) and "keyword" in oaworks_data:
-            paper_data["keywords"] = oaworks_data["keyword"]
+            oaworks_keywords = oaworks_data["keyword"]
+            if isinstance(oaworks_keywords, list):
+                all_keywords.extend(oaworks_keywords)
+            elif isinstance(oaworks_keywords, str):
+                all_keywords.append(oaworks_keywords)
+
+        # Remove duplicates while preserving order
+        unique_keywords = []
+        seen = set()
+        for keyword in all_keywords:
+            if keyword and keyword.lower() not in seen:
+                unique_keywords.append(keyword)
+                seen.add(keyword.lower())
+
+        paper_data["keywords"] = unique_keywords
 
         return paper_data
