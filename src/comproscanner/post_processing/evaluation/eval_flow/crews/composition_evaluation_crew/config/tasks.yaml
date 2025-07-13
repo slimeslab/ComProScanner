@@ -25,51 +25,51 @@ evaluate_composition_data_task:
           - If the test value is inside the range, it is considered a match.
           - Many times keys can't match exactly but the value will match - so while matching value be less strict about the finding the associated key.
        
-    You must return your evaluation results in the following exact format:
-    {{
-      "composition_data": {{
-        "property_unit": {{
+    You must return your evaluation results in the following exact format (Use only {} JSON data, don't use markdown ```json format):
+    {
+      "composition_data": {
+        "property_unit": {
           "match_value": 1 or 0,
           "reference": "ground truth value",
           "test": "test value"
-        }},
-        "family": {{
+        },
+        "family": {
           "match_value": 1 or 0,
           "reference": "ground truth value",
           "test": "test value"
-        }},
-        "compositions_property_values": {{
-          "reference": {{...}},
-          "test": {{...}},
+        },
+        "compositions_property_values": {
+          "reference": {...},
+          "test": {...},
           "key_matches": [
-            {{
+            {
               "reference_key": "key1",
               "test_key": "key1",
               "match_value": 1 or 0
-            }}
+            }
           ],
           "value_matches": [
-            {{
+            {
               "key": "key1",
               "reference_value": "value1",
               "test_value": "value1",
               "match_value": 1 or 0
-            }}
+            }
           ],
           "pair_matches": [
-            {{
-              "reference_pair": {{"key1": "value1"}},
-              "test_pair": {{"key1": "value1"}},
+            {
+              "reference_pair": {"key1": "value1"},
+              "test_pair": {"key1": "value1"},
               "match_value": 1 or 0
-            }}
+            }
           ]
           "total_ground_truth_keys": total number of composition keys in ground truth data,
           "total_match": total number of matched composition keys,
           "missing_keys": ["key2"],
           "extra_keys": ["key3"]
-        }}
-      }}
-    }}
+        }
+      }
+    }
 
     **Parameters:**
     ground_truth_item

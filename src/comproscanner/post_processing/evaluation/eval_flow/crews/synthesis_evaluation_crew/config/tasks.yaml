@@ -14,52 +14,51 @@ evaluate_synthesis_data_task:
 
     For each component, provide your binary decision (1 for match, 0 for no match).
 
-    OUTPUT FORMAT:
-    Return your evaluation as a JSON object with the following structure:
-    {{
-      "synthesis_data": {{
-        "method": {{
+    You must return your evaluation results in the following exact format (Use only {} JSON data, don't use markdown ```json format):
+    {
+      "synthesis_data": {
+        "method": {
           "match_value": 1 or 0,
           "reference": "ground truth method",
           "test": "test method"
-        }},
-        "precursors": {{
+        },
+        "precursors": {
           "reference": ["precursor1", "precursor2"],
           "test": ["precursor1", "precursor3"],
           "matches": [
-            {{
+            {
               "reference_item": "precursor1",
               "test_item": "precursor1",
               "match_value": 1 or 0
-            }}
+            }
           ],
           "total_ground_truth_items": total number of precursors in ground truth data,
           "total_match": total number of matched precursors,
           "missing_items": ["precursor2"],
           "extra_items": ["precursor3"]
-        }},
-        "characterization_techniques": {{
+        },
+        "characterization_techniques": {
           "reference": ["technique1", "technique2"],
           "test": ["technique1", "technique3"],
           "matches": [
-            {{
+            {
               "reference_item": "technique1",
               "test_item": "technique1",
               "match_value": 1 or 0
-            }}
+            }
           ],
           "total_ground_truth_items": total number of characterization techniques in ground truth data,
           "total_match": total number of matched characterization techniques,
           "missing_items": ["technique2"],
           "extra_items": ["technique3"]
-        }},
-        "steps": {{
+        },
+        "steps": {
           "match_value": value between 0 to 1 (float upto two decimal),
           "reference_steps": ["step1", "step2"],
           "test_steps": ["step1", "step3"]
-        }}
-      }}
-    }}
+        }
+      }
+    }
 
     **Parameters:**
     ground_truth_item

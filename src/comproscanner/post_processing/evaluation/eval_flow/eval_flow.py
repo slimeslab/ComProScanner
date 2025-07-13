@@ -122,13 +122,13 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
 
         # Set up weights with defaults if not provided
         default_weights = {
-            "property_unit": 0.75,
-            "family": 0.5,
-            "compositions_property_values": 0.75,
-            "method": 0.5,
-            "precursors": 0.5,
-            "characterization_techniques": 0.5,
-            "steps": 0.25,
+            "compositions_property_values": 0.3,
+            "property_unit": 0.1,
+            "family": 0.1,
+            "method": 0.1,
+            "precursors": 0.15,
+            "characterization_techniques": 0.15,
+            "steps": 0.1,
         }
         self.state.weights = default_weights.copy()
         if weights:
