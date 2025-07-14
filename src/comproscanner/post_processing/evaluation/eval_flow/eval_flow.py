@@ -889,6 +889,33 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
 
         return True
 
+    def _count_all_items(self, item):
+        """Count all individual items in a data entry"""
+        count = 0
+
+        # Count composition items
+        comp_data = item.get("composition_data", {})
+        if comp_data is not None:  # handles None values
+            if "property_unit" in comp_data:
+                count += 1
+            if "family" in comp_data:
+                count += 1
+            count += (
+                len(comp_data.get("compositions_property_values", {})) * 2
+            )  # Keys and values
+
+        # Count synthesis items
+        synth_data = item.get("synthesis_data", {})
+        if synth_data is not None:  # handles None values
+            if "method" in synth_data:
+                count += 1
+            count += len(synth_data.get("precursors", []))
+            count += len(synth_data.get("characterization_techniques", []))
+            if synth_data.get("steps"):
+                count += 2  # Count steps as 2 items (presence + content)
+
+        return count
+
     @start()
     def load_data(self):
         """Load ground truth and test data files, and check for existing results."""
@@ -960,8 +987,26 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
     @listen(load_data)
     def evaluate_items(self, data_info):
         """Evaluate remaining items in the dataset."""
-        remaining_count = len(data_info["remaining_dois"])
-        logger.info(f"Starting evaluation of {remaining_count} remaining items")
+        # Get all DOIs from the ground truth data
+        all_dois = set(self.state.ground_truth_data.keys())
+
+        # Filter to only process DOIs that aren't already in existing results
+        if (
+            self.state.existing_results
+            and "item_results" in self.state.existing_results
+        ):
+            already_processed_dois = set(
+                self.state.existing_results["item_results"].keys()
+            )
+        else:
+            already_processed_dois = set()
+
+        remaining_dois = [doi for doi in all_dois if doi not in already_processed_dois]
+
+        remaining_count = len(remaining_dois)
+        logger.info(
+            f"Starting evaluation of {remaining_count} remaining items (including missing DOIs)"
+        )
 
         if remaining_count == 0:
             logger.info("No remaining items to process, using existing results")
@@ -981,7 +1026,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
             "overall_accuracy": 0.0,
             "overall_composition_accuracy": 0.0,
             "overall_synthesis_accuracy": 0.0,
-            "total_items": self.state.total_count,
+            "total_items": len(all_dois),  # Use all DOIs count
             "absolute_classification_metrics": {
                 "true_positives": 0,
                 "false_positives": 0,
@@ -1006,7 +1051,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
 
         # Process each remaining DOI one at a time
         for doi_index, doi in enumerate(
-            tqdm(data_info["remaining_dois"], desc="Processing DOIs", unit="item")
+            tqdm(remaining_dois, desc="Processing DOIs", unit="item")
         ):
             logger.info(
                 f"Evaluating item {doi_index+1}/{remaining_count} with DOI: {doi}"
@@ -1016,114 +1061,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
             ground_truth_item = self.state.ground_truth_data.get(doi, {})
             test_item = self.state.test_data.get(doi, {})
 
-            # Skip if either is missing
-            if not ground_truth_item or not test_item:
-                logger.warning(f"Skipping DOI {doi}: Missing ground truth or test data")
-                continue
-
             # Initialize results for this DOI
-            doi_details = {}
-            has_valid_data = False
-
-            # Check if composition data exists in both ground truth and test items
-            has_composition_data = (
-                "composition_data" in ground_truth_item
-                and ground_truth_item["composition_data"]
-                and "composition_data" in test_item
-                and test_item["composition_data"]
-            )
-
-            # Evaluate composition data if it exists
-            if has_composition_data:
-                composition_result = composition_crew.kickoff(
-                    inputs={
-                        "ground_truth_item": json.dumps(
-                            ground_truth_item.get("composition_data", {})
-                        ),
-                        "test_item": json.dumps(test_item.get("composition_data", {})),
-                    }
-                )
-
-                # Store composition evaluation details
-                try:
-                    if isinstance(composition_result.raw, str):
-                        composition_details = json.loads(composition_result.raw)
-                    else:
-                        composition_details = composition_result.raw
-
-                    # Check if composition_data is in the result
-                    if "composition_data" in composition_details:
-                        doi_details["composition_data"] = composition_details[
-                            "composition_data"
-                        ]
-                        if not self._is_section_empty(doi_details["composition_data"]):
-                            has_valid_data = True
-                    else:
-                        doi_details["composition_data"] = composition_details
-                        if not self._is_section_empty(doi_details["composition_data"]):
-                            has_valid_data = True
-                except Exception as e:
-                    logger.error(
-                        f"Error processing composition results for DOI {doi}: {str(e)}"
-                    )
-                    doi_details["composition_data"] = {}
-
-            # Check if synthesis data exists in both ground truth and test items
-            has_synthesis_data = (
-                self.state.is_synthesis_evaluation
-                and "synthesis_data" in ground_truth_item
-                and ground_truth_item["synthesis_data"]
-                and "synthesis_data" in test_item
-                and test_item["synthesis_data"]
-            )
-
-            # Evaluate synthesis data if it exists
-            if has_synthesis_data:
-                synthesis_result = synthesis_crew.kickoff(
-                    inputs={
-                        "ground_truth_item": json.dumps(
-                            ground_truth_item.get("synthesis_data", {})
-                        ),
-                        "test_item": json.dumps(test_item.get("synthesis_data", {})),
-                    }
-                )
-
-                # Store synthesis evaluation details
-                try:
-                    if isinstance(synthesis_result.raw, str):
-                        synthesis_details = json.loads(synthesis_result.raw)
-                    else:
-                        synthesis_details = synthesis_result.raw
-
-                    # Check if synthesis_data is in the result
-                    if "synthesis_data" in synthesis_details:
-                        doi_details["synthesis_data"] = synthesis_details[
-                            "synthesis_data"
-                        ]
-                        if not self._is_section_empty(doi_details["synthesis_data"]):
-                            has_valid_data = True
-                    else:
-                        doi_details["synthesis_data"] = synthesis_details
-                        if not self._is_section_empty(doi_details["synthesis_data"]):
-                            has_valid_data = True
-                except Exception as e:
-                    logger.error(
-                        f"Error processing synthesis results for DOI {doi}: {str(e)}"
-                    )
-                    doi_details["synthesis_data"] = {}
-
-            # Skip if no valid data was found
-            if not has_valid_data:
-                logger.warning(f"Skipping DOI {doi}: No valid evaluation data found")
-                continue
-
-            # Store evaluation details for this DOI
-            self.state.evaluation_details[doi] = doi_details
-
-            # Enhance details with match ratios and similarity scores
-            enhanced_details = self._enhance_evaluation_details(doi_details)
-
-            # Calculate metrics for this DOI
             item_result = {
                 "overall_match": False,
                 "field_scores": {},
@@ -1144,85 +1082,253 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
                     "recall": 0.0,
                     "f1_score": 0.0,
                 },
-                "details": enhanced_details,
+                "details": {},
             }
 
-            # Calculate composition score
-            if "composition_data" in enhanced_details and not self._is_section_empty(
-                enhanced_details["composition_data"]
-            ):
-                composition_score = self._calculate_score(
-                    enhanced_details, "composition_data", self.state.weights
-                )
-                item_result["field_scores"]["composition_data"] = composition_score
+            # Case 1: DOI exists in both datasets
+            if ground_truth_item and test_item:
+                doi_details = {}
+                has_valid_data = False
 
-                # Calculate composition metrics
-                comp_metrics = self._calculate_tp_fp_fn(
-                    enhanced_details, "composition_data"
-                )
-                for metric in ["true_positives", "false_positives", "false_negatives"]:
-                    item_result["absolute_classification_metrics"][
-                        metric
-                    ] += comp_metrics[metric]
-
-                # Calculate normalized metrics for composition
-                comp_normalized_metrics = self._calculate_normalized_metrics(
-                    enhanced_details, "composition_data", normalized_weights
-                )
-                for metric in ["true_positives", "false_positives", "false_negatives"]:
-                    item_result["normalized_classification_metrics"][
-                        metric
-                    ] += comp_normalized_metrics[metric]
-
-            # Calculate synthesis score if applicable
-            if (
-                self.state.is_synthesis_evaluation
-                and "synthesis_data" in enhanced_details
-                and not self._is_section_empty(enhanced_details["synthesis_data"])
-            ):
-                synthesis_score = self._calculate_score(
-                    enhanced_details, "synthesis_data", self.state.weights
-                )
-                item_result["field_scores"]["synthesis_data"] = synthesis_score
-
-                # Calculate synthesis metrics
-                synth_metrics = self._calculate_tp_fp_fn(
-                    enhanced_details, "synthesis_data"
-                )
-                for metric in ["true_positives", "false_positives", "false_negatives"]:
-                    item_result["absolute_classification_metrics"][
-                        metric
-                    ] += synth_metrics[metric]
-
-                # Calculate normalized metrics for synthesis
-                synth_normalized_metrics = self._calculate_normalized_metrics(
-                    enhanced_details, "synthesis_data", normalized_weights
-                )
-                for metric in ["true_positives", "false_positives", "false_negatives"]:
-                    item_result["normalized_classification_metrics"][
-                        metric
-                    ] += synth_normalized_metrics[metric]
-
-            # Calculate overall score for the item
-            if (
-                self.state.is_synthesis_evaluation
-                and "composition_data" in item_result["field_scores"]
-                and "synthesis_data" in item_result["field_scores"]
-            ):
-                item_result["overall_score"] = 0.5 * item_result["field_scores"].get(
-                    "composition_data", 0.0
-                ) + 0.5 * item_result["field_scores"].get("synthesis_data", 0.0)
-            elif "composition_data" in item_result["field_scores"]:
-                item_result["overall_score"] = item_result["field_scores"].get(
-                    "composition_data", 0.0
-                )
-            elif "synthesis_data" in item_result["field_scores"]:
-                item_result["overall_score"] = item_result["field_scores"].get(
-                    "synthesis_data", 0.0
+                # Check if composition data exists in both ground truth and test items
+                has_composition_data = (
+                    "composition_data" in ground_truth_item
+                    and ground_truth_item["composition_data"]
+                    and "composition_data" in test_item
+                    and test_item["composition_data"]
                 )
 
-            # Determine if overall match (threshold: 0.8)
-            item_result["overall_match"] = item_result["overall_score"] > 0.8
+                # Evaluate composition data if it exists
+                if has_composition_data:
+                    composition_result = composition_crew.kickoff(
+                        inputs={
+                            "ground_truth_item": json.dumps(
+                                ground_truth_item.get("composition_data", {})
+                            ),
+                            "test_item": json.dumps(
+                                test_item.get("composition_data", {})
+                            ),
+                        }
+                    )
+
+                    # Store composition evaluation details
+                    try:
+                        if isinstance(composition_result.raw, str):
+                            composition_details = json.loads(composition_result.raw)
+                        else:
+                            composition_details = composition_result.raw
+
+                        # Check if composition_data is in the result
+                        if "composition_data" in composition_details:
+                            doi_details["composition_data"] = composition_details[
+                                "composition_data"
+                            ]
+                            if not self._is_section_empty(
+                                doi_details["composition_data"]
+                            ):
+                                has_valid_data = True
+                        else:
+                            doi_details["composition_data"] = composition_details
+                            if not self._is_section_empty(
+                                doi_details["composition_data"]
+                            ):
+                                has_valid_data = True
+                    except Exception as e:
+                        logger.error(
+                            f"Error processing composition results for DOI {doi}: {str(e)}"
+                        )
+                        doi_details["composition_data"] = {}
+
+                # Check if synthesis data exists in both ground truth and test items
+                has_synthesis_data = (
+                    self.state.is_synthesis_evaluation
+                    and "synthesis_data" in ground_truth_item
+                    and ground_truth_item["synthesis_data"]
+                    and "synthesis_data" in test_item
+                    and test_item["synthesis_data"]
+                )
+
+                # Evaluate synthesis data if it exists
+                if has_synthesis_data:
+                    synthesis_result = synthesis_crew.kickoff(
+                        inputs={
+                            "ground_truth_item": json.dumps(
+                                ground_truth_item.get("synthesis_data", {})
+                            ),
+                            "test_item": json.dumps(
+                                test_item.get("synthesis_data", {})
+                            ),
+                        }
+                    )
+
+                    # Store synthesis evaluation details
+                    try:
+                        if isinstance(synthesis_result.raw, str):
+                            synthesis_details = json.loads(synthesis_result.raw)
+                        else:
+                            synthesis_details = synthesis_result.raw
+
+                        # Check if synthesis_data is in the result
+                        if "synthesis_data" in synthesis_details:
+                            doi_details["synthesis_data"] = synthesis_details[
+                                "synthesis_data"
+                            ]
+                            if not self._is_section_empty(
+                                doi_details["synthesis_data"]
+                            ):
+                                has_valid_data = True
+                        else:
+                            doi_details["synthesis_data"] = synthesis_details
+                            if not self._is_section_empty(
+                                doi_details["synthesis_data"]
+                            ):
+                                has_valid_data = True
+                    except Exception as e:
+                        logger.error(
+                            f"Error processing synthesis results for DOI {doi}: {str(e)}"
+                        )
+                        doi_details["synthesis_data"] = {}
+
+                # Process valid data if found
+                if has_valid_data:
+                    # Store evaluation details for this DOI
+                    self.state.evaluation_details[doi] = doi_details
+
+                    # Enhance details with match ratios and similarity scores
+                    enhanced_details = self._enhance_evaluation_details(doi_details)
+                    item_result["details"] = enhanced_details
+
+                    # Calculate composition score
+                    if (
+                        "composition_data" in enhanced_details
+                        and not self._is_section_empty(
+                            enhanced_details["composition_data"]
+                        )
+                    ):
+                        composition_score = self._calculate_score(
+                            enhanced_details, "composition_data", self.state.weights
+                        )
+                        item_result["field_scores"][
+                            "composition_data"
+                        ] = composition_score
+
+                        # Calculate composition metrics
+                        comp_metrics = self._calculate_tp_fp_fn(
+                            enhanced_details, "composition_data"
+                        )
+                        for metric in [
+                            "true_positives",
+                            "false_positives",
+                            "false_negatives",
+                        ]:
+                            item_result["absolute_classification_metrics"][
+                                metric
+                            ] += comp_metrics[metric]
+
+                        # Calculate normalized metrics for composition
+                        comp_normalized_metrics = self._calculate_normalized_metrics(
+                            enhanced_details, "composition_data", normalized_weights
+                        )
+                        for metric in [
+                            "true_positives",
+                            "false_positives",
+                            "false_negatives",
+                        ]:
+                            item_result["normalized_classification_metrics"][
+                                metric
+                            ] += comp_normalized_metrics[metric]
+
+                    # Calculate synthesis score if applicable
+                    if (
+                        self.state.is_synthesis_evaluation
+                        and "synthesis_data" in enhanced_details
+                        and not self._is_section_empty(
+                            enhanced_details["synthesis_data"]
+                        )
+                    ):
+                        synthesis_score = self._calculate_score(
+                            enhanced_details, "synthesis_data", self.state.weights
+                        )
+                        item_result["field_scores"]["synthesis_data"] = synthesis_score
+
+                        # Calculate synthesis metrics
+                        synth_metrics = self._calculate_tp_fp_fn(
+                            enhanced_details, "synthesis_data"
+                        )
+                        for metric in [
+                            "true_positives",
+                            "false_positives",
+                            "false_negatives",
+                        ]:
+                            item_result["absolute_classification_metrics"][
+                                metric
+                            ] += synth_metrics[metric]
+
+                        # Calculate normalized metrics for synthesis
+                        synth_normalized_metrics = self._calculate_normalized_metrics(
+                            enhanced_details, "synthesis_data", normalized_weights
+                        )
+                        for metric in [
+                            "true_positives",
+                            "false_positives",
+                            "false_negatives",
+                        ]:
+                            item_result["normalized_classification_metrics"][
+                                metric
+                            ] += synth_normalized_metrics[metric]
+
+                    # Calculate overall score for the item
+                    if (
+                        self.state.is_synthesis_evaluation
+                        and "composition_data" in item_result["field_scores"]
+                        and "synthesis_data" in item_result["field_scores"]
+                    ):
+                        item_result["overall_score"] = 0.5 * item_result[
+                            "field_scores"
+                        ].get("composition_data", 0.0) + 0.5 * item_result[
+                            "field_scores"
+                        ].get(
+                            "synthesis_data", 0.0
+                        )
+                    elif "composition_data" in item_result["field_scores"]:
+                        item_result["overall_score"] = item_result["field_scores"].get(
+                            "composition_data", 0.0
+                        )
+                    elif "synthesis_data" in item_result["field_scores"]:
+                        item_result["overall_score"] = item_result["field_scores"].get(
+                            "synthesis_data", 0.0
+                        )
+
+                    # Determine if overall match (threshold: 0.8)
+                    item_result["overall_match"] = item_result["overall_score"] > 0.8
+                else:
+                    # No valid data found - treat as no match
+                    item_result["overall_score"] = 0.0
+                    item_result["overall_match"] = False
+                    logger.warning(f"DOI {doi}: No valid evaluation data found")
+
+            # Case 2: DOI exists in ground truth but not in test (missing)
+            elif ground_truth_item and not test_item:
+                item_count = self._count_all_items(ground_truth_item)
+
+                # All items are false negatives
+                item_result["absolute_classification_metrics"][
+                    "false_negatives"
+                ] = item_count
+                item_result["normalized_classification_metrics"][
+                    "false_negatives"
+                ] = 1.0  # Full DOI weight
+                item_result["overall_score"] = 0.0
+                item_result["overall_match"] = False
+
+                # Set field scores to zero
+                item_result["field_scores"]["composition_data"] = 0.0
+                if self.state.is_synthesis_evaluation:
+                    item_result["field_scores"]["synthesis_data"] = 0.0
+
+                logger.info(
+                    f"DOI {doi}: Missing from test data (false negatives: {item_count})"
+                )
 
             # Calculate precision, recall, F1 for absolute metrics
             self._calculate_classification_metrics(
