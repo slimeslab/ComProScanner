@@ -69,6 +69,10 @@ class CompositionFormatCrew:
         self.is_log_json = is_log_json
         self.verbose = verbose
 
+        # Initialize output file paths as None
+        self.output_log_file = None
+        self.task_output_file = None
+
         if self.output_log_folder:
             final_output_log_folder = (
                 f"{output_log_folder}/{self.doi.replace('/', '_')}"

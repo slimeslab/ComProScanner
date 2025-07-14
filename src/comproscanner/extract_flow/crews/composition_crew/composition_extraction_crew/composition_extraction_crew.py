@@ -69,6 +69,10 @@ class CompositionExtractionCrew:
         self.is_log_json = is_log_json
         self.verbose = verbose
 
+        # Initialize output file paths as None
+        self.output_log_file = None
+        self.task_output_file = None
+
         final_task_output_folder = f"{task_output_folder}/{self.doi.replace('/', '_')}"
         if self.output_log_folder:
             final_output_log_folder = (
