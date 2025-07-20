@@ -35,7 +35,7 @@ def plot_family_pie_chart(
     dpi: int = 300,
     min_percentage: float = 1.0,
     title: str = "Distribution of Material Families",
-    colour_palette: Optional[str] = None,
+    color_palette: Optional[str] = None,
 ):
     """
     Create a pie chart visualization of material families distribution.
@@ -48,7 +48,7 @@ def plot_family_pie_chart(
         dpi (int, optional): DPI for output image (default: 300)
         min_percentage (float, optional): Minimum percentage for a category to be shown separately (default: 1.0)
         title (str, optional): Title for the plot (default: "Distribution of Material Families")
-        colour_palette (str, optional): Matplotlib colormap name for the pie sections (default: None)
+        color_palette (str, optional): Matplotlib colormap name for the pie sections (default: None)
 
     Returns:
         matplotlib.figure.Figure: The generated figure object
@@ -65,7 +65,7 @@ def plot_family_pie_chart(
         dpi=dpi,
         min_percentage=min_percentage,
         title=title,
-        colour_palette=colour_palette,
+        color_palette=color_palette,
     )
     return fig
 
@@ -78,7 +78,7 @@ def plot_family_histogram(
     dpi: int = 300,
     max_items: int = 15,
     title: str = "Frequency Distribution of Material Families",
-    colour_palette: Optional[str] = None,
+    color_palette: Optional[str] = None,
     x_label: str = "Material Family",
     y_label: str = "Frequency",
     rotation: int = 45,
@@ -94,7 +94,7 @@ def plot_family_histogram(
         dpi (int, optional): DPI for output image (default: 300)
         max_items (int, optional): Maximum number of items to display (default: 15)
         title (str, optional): Title for the plot (default: "Frequency Distribution of Material Families")
-        colour_palette (str, optional): Matplotlib colormap name for the bars (default: None)
+        color_palette (str, optional): Matplotlib colormap name for the bars (default: None)
         x_label (str, optional): Label for the x-axis (default: "Material Family")
         y_label (str, optional): Label for the y-axis (default: "Frequency")
         rotation (int, optional): Rotation angle for x-axis labels (default: 45)
@@ -114,7 +114,7 @@ def plot_family_histogram(
         dpi=dpi,
         max_items=max_items,
         title=title,
-        colour_palette=colour_palette,
+        color_palette=color_palette,
         x_label=x_label,
         y_label=y_label,
         rotation=rotation,
@@ -130,7 +130,7 @@ def plot_precursors_pie_chart(
     dpi: int = 300,
     min_percentage: float = 1.0,
     title: str = "Distribution of Precursors in Materials Synthesis",
-    colour_palette: Optional[str] = None,
+    color_palette: Optional[str] = None,
 ):
     """
     Create a pie chart visualization of precursors distribution.
@@ -143,7 +143,7 @@ def plot_precursors_pie_chart(
         dpi (int, optional): DPI for output image (default: 300)
         min_percentage (float, optional): Minimum percentage for a category to be shown separately (default: 1.0)
         title (str, optional): Title for the plot (default: "Distribution of Precursors in Materials Synthesis")
-        colour_palette (str, optional): Matplotlib colormap name for the pie sections (default: None)
+        color_palette (str, optional): Matplotlib colormap name for the pie sections (default: None)
 
     Returns:
         matplotlib.figure.Figure: The generated figure object
@@ -160,7 +160,7 @@ def plot_precursors_pie_chart(
         dpi=dpi,
         min_percentage=min_percentage,
         title=title,
-        colour_palette=colour_palette,
+        color_palette=color_palette,
     )
     return fig
 
@@ -173,7 +173,7 @@ def plot_precursors_histogram(
     dpi: int = 300,
     max_items: int = 15,
     title: str = "Frequency Distribution of Precursors in Materials Synthesis",
-    colour_palette: Optional[str] = None,
+    color_palette: Optional[str] = None,
     x_label: str = "Precursor",
     y_label: str = "Frequency",
     rotation: int = 45,
@@ -189,7 +189,7 @@ def plot_precursors_histogram(
         dpi (int, optional): DPI for output image (default: 300)
         max_items (int, optional): Maximum number of items to display (default: 15)
         title (str, optional): Title for the plot (default: "Frequency Distribution of Precursors in Materials Synthesis")
-        colour_palette (str, optional): Matplotlib colormap name for the bars (default: None)
+        color_palette (str, optional): Matplotlib colormap name for the bars (default: None)
         x_label (str, optional): Label for the x-axis (default: "Precursor")
         y_label (str, optional): Label for the y-axis (default: "Frequency")
         rotation (int, optional): Rotation angle for x-axis labels (default: 45)
@@ -209,7 +209,7 @@ def plot_precursors_histogram(
         dpi=dpi,
         max_items=max_items,
         title=title,
-        colour_palette=colour_palette,
+        color_palette=color_palette,
         x_label=x_label,
         y_label=y_label,
         rotation=rotation,
@@ -225,7 +225,7 @@ def plot_characterization_techniques_pie_chart(
     dpi: int = 300,
     min_percentage: float = 1.0,
     title: str = "Distribution of Characterization Techniques",
-    colour_palette: Optional[str] = None,
+    color_palette: Optional[str] = None,
 ):
     """
     Create a pie chart visualization of characterization techniques distribution.
@@ -238,7 +238,7 @@ def plot_characterization_techniques_pie_chart(
         dpi (int, optional): DPI for output image (default: 300)
         min_percentage (float, optional): Minimum percentage for a category to be shown separately (default: 1.0)
         title (str, optional): Title for the plot (default: "Distribution of Characterization Techniques")
-        colour_palette (str, optional): Matplotlib colormap name for the pie sections (default: None)
+        color_palette (str, optional): Matplotlib colormap name for the pie sections (default: None)
 
     Returns:
         matplotlib.figure.Figure: The generated figure object
@@ -255,7 +255,7 @@ def plot_characterization_techniques_pie_chart(
         dpi=dpi,
         min_percentage=min_percentage,
         title=title,
-        colour_palette=colour_palette,
+        color_palette=color_palette,
     )
     return fig
 
@@ -268,7 +268,7 @@ def plot_characterization_techniques_histogram(
     dpi: int = 300,
     max_items: int = 15,
     title: str = "Frequency Distribution of Characterization Techniques",
-    colour_palette: Optional[str] = None,
+    color_palette: Optional[str] = None,
     x_label: str = "Characterization Technique",
     y_label: str = "Frequency",
     rotation: int = 45,
@@ -284,7 +284,7 @@ def plot_characterization_techniques_histogram(
         dpi (int, optional): DPI for output image (default: 300)
         max_items (int, optional): Maximum number of items to display (default: 15)
         title (str, optional): Title for the plot (default: "Frequency Distribution of Characterization Techniques")
-        colour_palette (str, optional): Matplotlib colormap name for the bars (default: None)
+        color_palette (str, optional): Matplotlib colormap name for the bars (default: None)
         x_label (str, optional): Label for the x-axis (default: "Characterization Technique")
         y_label (str, optional): Label for the y-axis (default: "Frequency")
         rotation (int, optional): Rotation angle for x-axis labels (default: 45)
@@ -304,7 +304,7 @@ def plot_characterization_techniques_histogram(
         dpi=dpi,
         max_items=max_items,
         title=title,
-        colour_palette=colour_palette,
+        color_palette=color_palette,
         x_label=x_label,
         y_label=y_label,
         rotation=rotation,

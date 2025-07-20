@@ -36,7 +36,7 @@ class DataDistributionVisualizer:
         Initialize the DataDistributionVisualizer class for visualizing material data distributions.
         """
         self.data = None
-        self.colour_palettes = {
+        self.color_palettes = {
             "family": "viridis",
             "precursors": "plasma",
             "characterization_techniques": "mako",
@@ -441,7 +441,7 @@ class DataDistributionVisualizer:
         dpi=300,
         output_file=None,
         min_percentage=1.0,
-        colour_palette=None,
+        color_palette=None,
     ):
         """
         Create a pie chart visualization of data distribution with percentage labels outside the chart.
@@ -453,7 +453,7 @@ class DataDistributionVisualizer:
             dpi (int, optional): DPI for output image (Default: 300)
             output_file (str, optional): Path to save the output plot image. If None, the plot is not saved
             min_percentage (float, optional): Minimum percentage for a category to be shown separately (Default: 1.0)
-            colour_palette (str, optional): Matplotlib colormap name for the pie sections
+            color_palette (str, optional): Matplotlib colormap name for the pie sections
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -485,10 +485,10 @@ class DataDistributionVisualizer:
         ]  # Just the percentage for outside labels
 
         # Generate colors using specified palette
-        if colour_palette is None:
+        if color_palette is None:
             cmap = plt.get_cmap("viridis")
         else:
-            cmap = plt.get_cmap(colour_palette)
+            cmap = plt.get_cmap(color_palette)
 
         colors = cmap(np.linspace(0, 0.9, len(plot_items)))
 
@@ -563,7 +563,7 @@ class DataDistributionVisualizer:
         dpi=300,
         output_file=None,
         max_items=15,
-        colour_palette=None,
+        color_palette=None,
         x_label=None,
         y_label="Frequency",
         rotation=45,
@@ -578,7 +578,7 @@ class DataDistributionVisualizer:
             dpi (int, optional): DPI for output image
             output_file (str, optional): Path to save the output plot image
             max_items (int, optional): Maximum number of items to display
-            colour_palette (str, optional): Matplotlib colormap name for the bars
+            color_palette (str, optional): Matplotlib colormap name for the bars
             x_label (str, optional): Label for the x-axis
             y_label (str, optional): Label for the y-axis
             rotation (int, optional): Rotation angle for x-axis labels
@@ -606,10 +606,10 @@ class DataDistributionVisualizer:
         values = [v for _, v in display_items]
 
         # Generate colors using specified palette
-        if colour_palette is None:
+        if color_palette is None:
             cmap = plt.get_cmap("viridis")
         else:
-            cmap = plt.get_cmap(colour_palette)
+            cmap = plt.get_cmap(color_palette)
 
         colors = cmap(np.linspace(0, 0.9, len(display_items)))
 
@@ -668,7 +668,7 @@ class DataDistributionVisualizer:
         dpi=300,
         min_percentage=1.0,
         title="Distribution of Material Families",
-        colour_palette=None,
+        color_palette=None,
     ):
         """
         Create a pie chart visualization of material families distribution.
@@ -682,7 +682,7 @@ class DataDistributionVisualizer:
             dpi (int, optional): DPI for output image
             min_percentage (float, optional): Minimum percentage for a category to be shown separately
             title (str, optional): Title for the plot
-            colour_palette (str, optional): Matplotlib colormap name for the pie sections
+            color_palette (str, optional): Matplotlib colormap name for the pie sections
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -698,8 +698,8 @@ class DataDistributionVisualizer:
             raise ValueError("No family data found in the provided data sources")
 
         # Use default colour palette if not specified
-        if colour_palette is None:
-            colour_palette = self.colour_palettes["family"]
+        if color_palette is None:
+            color_palette = self.color_palettes["family"]
 
         # Create pie chart
         return self._plot_pie_chart(
@@ -709,7 +709,7 @@ class DataDistributionVisualizer:
             dpi,
             output_file,
             min_percentage,
-            colour_palette,
+            color_palette,
         )
 
     def plot_family_histogram(
@@ -721,7 +721,7 @@ class DataDistributionVisualizer:
         dpi=300,
         max_items=15,
         title="Frequency Distribution of Material Families",
-        colour_palette=None,
+        color_palette=None,
         x_label="Material Family",
         y_label="Frequency",
         rotation=45,
@@ -738,7 +738,7 @@ class DataDistributionVisualizer:
             dpi (int, optional): DPI for output image
             max_items (int, optional): Maximum number of items to display
             title (str, optional): Title for the plot
-            colour_palette (str, optional): Matplotlib colormap name for the bars
+            color_palette (str, optional): Matplotlib colormap name for the bars
             x_label (str, optional): Label for the x-axis
             y_label (str, optional): Label for the y-axis
             rotation (int, optional): Rotation angle for x-axis labels
@@ -757,8 +757,8 @@ class DataDistributionVisualizer:
             raise ValueError("No family data found in the provided data sources")
 
         # Use default colour palette if not specified
-        if colour_palette is None:
-            colour_palette = self.colour_palettes["family"]
+        if color_palette is None:
+            color_palette = self.color_palettes["family"]
 
         # Create histogram
         return self._plot_histogram(
@@ -768,7 +768,7 @@ class DataDistributionVisualizer:
             dpi,
             output_file,
             max_items,
-            colour_palette,
+            color_palette,
             x_label,
             y_label,
             rotation,
@@ -783,7 +783,7 @@ class DataDistributionVisualizer:
         dpi=300,
         min_percentage=1.0,
         title="Distribution of Precursors in Materials Synthesis",
-        colour_palette=None,
+        color_palette=None,
     ):
         """
         Create a pie chart visualization of precursors distribution.
@@ -797,7 +797,7 @@ class DataDistributionVisualizer:
             dpi (int, optional): DPI for output image
             min_percentage (float, optional): Minimum percentage for a category to be shown separately
             title (str, optional): Title for the plot
-            colour_palette (str, optional): Matplotlib colormap name for the pie sections
+            color_palette (str, optional): Matplotlib colormap name for the pie sections
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -813,8 +813,8 @@ class DataDistributionVisualizer:
             raise ValueError("No precursors data found in the provided data sources")
 
         # Use default colour palette if not specified
-        if colour_palette is None:
-            colour_palette = self.colour_palettes["precursors"]
+        if color_palette is None:
+            color_palette = self.color_palettes["precursors"]
 
         # Create pie chart
         return self._plot_pie_chart(
@@ -824,7 +824,7 @@ class DataDistributionVisualizer:
             dpi,
             output_file,
             min_percentage,
-            colour_palette,
+            color_palette,
         )
 
     def plot_precursors_histogram(
@@ -836,7 +836,7 @@ class DataDistributionVisualizer:
         dpi=300,
         max_items=15,
         title="Frequency Distribution of Precursors in Materials Synthesis",
-        colour_palette=None,
+        color_palette=None,
         x_label="Precursor",
         y_label="Frequency",
         rotation=45,
@@ -853,7 +853,7 @@ class DataDistributionVisualizer:
             dpi (int, optional): DPI for output image
             max_items (int, optional): Maximum number of items to display
             title (str, optional): Title for the plot
-            colour_palette (str, optional): Matplotlib colormap name for the bars
+            color_palette (str, optional): Matplotlib colormap name for the bars
             x_label (str, optional): Label for the x-axis
             y_label (str, optional): Label for the y-axis
             rotation (int, optional): Rotation angle for x-axis labels
@@ -872,8 +872,8 @@ class DataDistributionVisualizer:
             raise ValueError("No precursors data found in the provided data sources")
 
         # Use default colour palette if not specified
-        if colour_palette is None:
-            colour_palette = self.colour_palettes["precursors"]
+        if color_palette is None:
+            color_palette = self.color_palettes["precursors"]
 
         # Create histogram
         return self._plot_histogram(
@@ -883,7 +883,7 @@ class DataDistributionVisualizer:
             dpi,
             output_file,
             max_items,
-            colour_palette,
+            color_palette,
             x_label,
             y_label,
             rotation,
@@ -898,7 +898,7 @@ class DataDistributionVisualizer:
         dpi=300,
         min_percentage=1.0,
         title="Distribution of Characterization Techniques",
-        colour_palette=None,
+        color_palette=None,
         use_semantic_clustering=True,
         similarity_threshold=0.8,
     ):
@@ -914,7 +914,7 @@ class DataDistributionVisualizer:
             dpi (int, optional): DPI for output image
             min_percentage (float, optional): Minimum percentage for a category to be shown separately
             title (str, optional): Title for the plot
-            colour_palette (str, optional): Matplotlib colormap name for the pie sections
+            color_palette (str, optional): Matplotlib colormap name for the pie sections
             use_semantic_clustering (bool): Whether to use semantic similarity for clustering similar techniques
             similarity_threshold (float): Threshold for similarity-based clustering when use_semantic_clustering is True
 
@@ -943,8 +943,8 @@ class DataDistributionVisualizer:
             )
 
         # Use default colour palette if not specified
-        if colour_palette is None:
-            colour_palette = self.colour_palettes["characterization_techniques"]
+        if color_palette is None:
+            color_palette = self.color_palettes["characterization_techniques"]
 
         # Create pie chart
         return self._plot_pie_chart(
@@ -954,7 +954,7 @@ class DataDistributionVisualizer:
             dpi,
             output_file,
             min_percentage,
-            colour_palette,
+            color_palette,
         )
 
     def plot_characterization_techniques_histogram(
@@ -966,7 +966,7 @@ class DataDistributionVisualizer:
         dpi=300,
         max_items=15,
         title="Frequency Distribution of Characterization Techniques",
-        colour_palette=None,
+        color_palette=None,
         x_label="Characterization Technique",
         y_label="Frequency",
         rotation=45,
@@ -985,7 +985,7 @@ class DataDistributionVisualizer:
             dpi (int, optional): DPI for output image
             max_items (int, optional): Maximum number of items to display
             title (str, optional): Title for the plot
-            colour_palette (str, optional): Matplotlib colormap name for the bars
+            color_palette (str, optional): Matplotlib colormap name for the bars
             x_label (str, optional): Label for the x-axis
             y_label (str, optional): Label for the y-axis
             rotation (int, optional): Rotation angle for x-axis labels
@@ -1017,8 +1017,8 @@ class DataDistributionVisualizer:
             )
 
         # Use default colour palette if not specified
-        if colour_palette is None:
-            colour_palette = self.colour_palettes["characterization_techniques"]
+        if color_palette is None:
+            color_palette = self.color_palettes["characterization_techniques"]
 
         # Create histogram
         return self._plot_histogram(
@@ -1028,7 +1028,7 @@ class DataDistributionVisualizer:
             dpi,
             output_file,
             max_items,
-            colour_palette,
+            color_palette,
             x_label,
             y_label,
             rotation,
