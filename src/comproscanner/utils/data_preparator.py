@@ -282,7 +282,7 @@ class MatPropDataPreparator:
         """Load existing results from JSON file."""
         self.results = {}
         if os.path.exists(self.json_results_file):
-            with open(self.json_results_file, "r") as f:
+            with open(self.json_results_file, "r", encoding="utf-8") as f:
                 self.results = json.load(f)
 
     def _load_checked_dois(self) -> set:

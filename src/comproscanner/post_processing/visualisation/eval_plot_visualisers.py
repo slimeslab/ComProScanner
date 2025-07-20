@@ -201,7 +201,7 @@ class EvalVisualiser:
             If index is None: list of colors
             If index is provided: single color
         """
-        cmap = cm.get_cmap(colormap)
+        cmap = plt.colormaps[colormap]
         if index is not None:
             position = index / max(1, num_items - 1) if num_items > 1 else 0.5
             return cmap(position)
@@ -1528,7 +1528,7 @@ class EvalVisualiser:
             bar_width = calc_bar_width
 
         # Create colormap
-        cmap = cm.get_cmap(colormap, num_models)
+        cmap = plt.colormaps[colormap].resampled(num_models)
 
         # Plot bars for each model
         all_bar_positions = []
@@ -2551,6 +2551,225 @@ class EvalVisualiser:
         if output_file:
             plt.savefig(output_file, dpi=dpi, bbox_inches="tight")
             print(f"Multiple models' distribution heatmap saved to {output_file}")
+
+        return fig
+
+    def plot_multiple_confusion_matrices_combined(
+        self,
+        result_sources: Union[List[str], List[Dict], str] = None,
+        folder_path: Optional[str] = None,
+        output_file: Optional[str] = None,
+        model_names: Optional[List[str]] = None,
+        figsize: Tuple[int, int] = (14, 10),
+        colormap: str = "YlOrRd",
+        show_annotations: bool = True,
+        annotation_format: Optional[str] = None,
+        annotation_fontsize: int = 10,  # NEW: Font size for values inside cells
+        title: Optional[str] = None,
+        title_fontsize: int = 14,
+        title_pad: Optional[float] = 20.0,
+        labels: List[str] = ["Models", "Metrics"],
+        label_fontsize: int = 12,
+        tick_label_fontsize: int = 10,  # NEW: Font size for x and y tick labels
+        dpi: int = 300,
+        include_metrics: Optional[List[str]] = [
+            "overall_accuracy",
+            "overall_composition_accuracy",
+            "overall_synthesis_accuracy",
+            "precision",
+            "recall",
+            "f1_score",
+            "normalized_precision",
+            "normalized_recall",
+            "normalized_f1_score",
+        ],
+        exclude_metrics: Optional[List[str]] = None,
+        sort_models_by: str = "average",  # CHANGED: Default to "average" instead of "overall_accuracy"
+        value_range: Tuple[float, float] = (0, 1),
+        show_colorbar: bool = True,
+        colorbar_label: str = "Score",
+        colorbar_fontsize: int = 10,
+        plot_padding: float = 0.1,
+    ):
+        """
+        Create a confusion matrix-style heatmap showing all models vs all performance metrics in a single visualization.
+
+        Args:
+            result_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing evaluation results
+            folder_path (Optional[str], optional): Path to folder containing JSON result files. Either result_sources or folder_path must be provided.
+            output_file (str, optional): Path to save the output visualisation
+            model_names (Optional[List[str]]): Names to display for models in the plot
+            figsize (Tuple[int, int]): Figure size as (width, height) in inches
+            colormap (str): Matplotlib colormap name for the heatmap
+            show_annotations (bool): Whether to show value annotations in cells
+            annotation_format (Optional[str]): Format string for annotations (e.g., '.2f' or '.1f')
+            annotation_fontsize (int): Font size for the annotation values inside cells
+            title (Optional[str]): Custom title for the plot
+            title_fontsize (int): Font size for the title
+            title_pad (Optional[float]): Padding for the title from the top of the plot
+            labels (List[str]): Labels for the x and y axes (default: ['Models', 'Metrics'])
+            label_fontsize (int): Font size for the axis labels
+            tick_label_fontsize (int): Font size for x and y tick labels
+            dpi (int): Resolution for saved image
+            include_metrics (Optional[List[str]]): Specific metrics to include (default: all 9 standard metrics)
+            exclude_metrics (Optional[List[str]]): Specific metrics to exclude from the heatmap
+            sort_models_by (str): Metric to sort models by, or "average" for average of all metrics (default: 'average')
+            value_range (Tuple[float, float]): Min and max values for color mapping (default: (0, 1))
+            show_colorbar (bool): Whether to show the colorbar legend
+            colorbar_label (str): Label for the colorbar
+            colorbar_fontsize (int): Font size for colorbar labels
+            plot_padding (float): Padding between heatmap and axes labels and title
+
+        Returns:
+            matplotlib.figure.Figure: The generated figure object
+        """
+        # Load results data
+        results_data, names = self._load_results_data(
+            result_sources, folder_path, model_names
+        )
+
+        # Get available metrics and filter based on include/exclude lists
+        available_metrics = self._get_available_metrics(results_data, include_metrics)
+
+        if exclude_metrics:
+            metrics_to_use = [m for m in available_metrics if m not in exclude_metrics]
+        else:
+            metrics_to_use = available_metrics
+
+        # Get human-readable metric names
+        metric_display_names = self._get_metric_display_names()
+
+        # Create the data matrix: models (rows) x metrics (columns)
+        data_matrix = np.zeros((len(results_data), len(metrics_to_use)))
+
+        for i, result in enumerate(results_data):
+            for j, metric in enumerate(metrics_to_use):
+                # Extract metric values using the same logic as other functions
+                values = self._extract_group_metrics(result, [metric])
+                data_matrix[i, j] = values[0] if values else 0
+
+        # Sort models if requested
+        if sort_models_by and len(results_data) > 1:
+            sort_values = []
+
+            for i, result in enumerate(results_data):
+                if sort_models_by == "average":
+                    # Calculate average of all metrics for this model
+                    model_average = np.mean(data_matrix[i, :])
+                    sort_values.append(model_average)
+                elif sort_models_by in result:
+                    sort_values.append(result[sort_models_by])
+                elif (
+                    "absolute_classification_metrics" in result
+                    and sort_models_by in result["absolute_classification_metrics"]
+                ):
+                    sort_values.append(
+                        result["absolute_classification_metrics"][sort_models_by]
+                    )
+                elif (
+                    "normalized_classification_metrics" in result
+                    and sort_models_by in result["normalized_classification_metrics"]
+                ):
+                    sort_values.append(
+                        result["normalized_classification_metrics"][sort_models_by]
+                    )
+                else:
+                    # Fallback: try to find the metric in the data matrix
+                    if sort_models_by in metrics_to_use:
+                        metric_index = metrics_to_use.index(sort_models_by)
+                        sort_values.append(data_matrix[i, metric_index])
+                    else:
+                        sort_values.append(0)  # Default
+
+            # Sort results_data, names, and data_matrix by sort_values (descending)
+            sorted_indices = np.argsort(sort_values)[::-1]
+            results_data = [results_data[i] for i in sorted_indices]
+            names = [names[i] for i in sorted_indices]
+            data_matrix = data_matrix[
+                sorted_indices, :
+            ]  # Sort the data matrix rows too
+
+        # Create DataFrame for plotting
+        metric_labels = [metric_display_names.get(m, m) for m in metrics_to_use]
+        df_heatmap = pd.DataFrame(
+            data_matrix,
+            index=names,  # Models as rows
+            columns=metric_labels,  # Metrics as columns
+        )
+
+        # Create figure
+        fig, ax = plt.subplots(figsize=figsize)
+
+        # Format for annotations
+        if annotation_format is None:
+            fmt = ".2f"
+        else:
+            fmt = annotation_format
+
+        # Create heatmap
+        sns.heatmap(
+            df_heatmap,
+            annot=show_annotations,
+            fmt=fmt,
+            cmap=colormap,
+            linewidths=0.5,
+            ax=ax,
+            vmin=value_range[0],
+            vmax=value_range[1],
+            cbar=show_colorbar,
+            cbar_kws={"label": colorbar_label} if show_colorbar else None,
+            annot_kws={
+                "fontsize": annotation_fontsize
+            },  # NEW: Set annotation font size
+        )
+
+        # Customize colorbar if shown
+        if show_colorbar:
+            cbar = ax.collections[0].colorbar
+            cbar.ax.tick_params(labelsize=colorbar_fontsize)
+            cbar.set_label(colorbar_label, fontsize=colorbar_fontsize)
+
+        # Set labels
+        ax.set_xlabel(labels[1], fontsize=label_fontsize)  # Metrics
+        ax.set_ylabel(labels[0], fontsize=label_fontsize)  # Models
+
+        # Rotate x-axis labels for better readability and set font sizes
+        ax.set_xticklabels(
+            ax.get_xticklabels(), rotation=45, ha="right", fontsize=tick_label_fontsize
+        )
+        ax.set_yticklabels(
+            ax.get_yticklabels(), rotation=0, fontsize=tick_label_fontsize
+        )
+
+        # Set title
+        title_kwargs = (
+            {"fontsize": title_fontsize, "pad": title_pad}
+            if title_pad
+            else {"fontsize": title_fontsize}
+        )
+
+        if title:
+            ax.set_title(title, fontweight="bold", **title_kwargs)
+        else:
+            if sort_models_by == "average":
+                sort_description = "average of all metrics"
+            else:
+                metric_name = metric_display_names.get(sort_models_by, sort_models_by)
+                sort_description = f"{metric_name}"
+
+            ax.set_title(
+                f"Performance Comparison: {len(results_data)} Models across {len(metrics_to_use)} Metrics\n(Sorted by {sort_description})",
+                fontweight="bold",
+                **title_kwargs,
+            )
+
+        # Adjust layout
+        plt.tight_layout(pad=plot_padding)
+
+        # Save figure
+        if output_file:
+            plt.savefig(output_file, dpi=dpi, bbox_inches="tight")
+            print(f"Performance comparison matrix saved to {output_file}")
 
         return fig
 

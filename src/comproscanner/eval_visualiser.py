@@ -647,6 +647,105 @@ def plot_multiple_performance_heatmaps(
     return fig
 
 
+def plot_multiple_confusion_matrices_combined(
+    self,
+    result_sources: Union[List[str], List[Dict], str] = None,
+    folder_path: Optional[str] = None,
+    output_file: Optional[str] = None,
+    model_names: Optional[List[str]] = None,
+    figsize: Tuple[int, int] = (14, 10),
+    colormap: str = "YlOrRd",
+    show_annotations: bool = True,
+    annotation_format: Optional[str] = None,
+    annotation_fontsize: int = 10,  # NEW: Font size for values inside cells
+    title: Optional[str] = None,
+    title_fontsize: int = 14,
+    title_pad: Optional[float] = 20.0,
+    labels: List[str] = ["Models", "Metrics"],
+    label_fontsize: int = 12,
+    tick_label_fontsize: int = 10,  # NEW: Font size for x and y tick labels
+    dpi: int = 300,
+    include_metrics: Optional[List[str]] = [
+        "overall_accuracy",
+        "overall_composition_accuracy",
+        "overall_synthesis_accuracy",
+        "precision",
+        "recall",
+        "f1_score",
+        "normalized_precision",
+        "normalized_recall",
+        "normalized_f1_score",
+    ],
+    exclude_metrics: Optional[List[str]] = None,
+    sort_models_by: str = "average",  # CHANGED: Default to "average" instead of "overall_accuracy"
+    value_range: Tuple[float, float] = (0, 1),
+    show_colorbar: bool = True,
+    colorbar_label: str = "Score",
+    colorbar_fontsize: int = 10,
+    plot_padding: float = 0.1,
+):
+    """
+    Create a confusion matrix-style heatmap showing all models vs all performance metrics in a single visualization.
+
+    Args:
+        result_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing evaluation results
+        folder_path (Optional[str], optional): Path to folder containing JSON result files. Either result_sources or folder_path must be provided.
+        output_file (str, optional): Path to save the output visualisation
+        model_names (Optional[List[str]]): Names to display for models in the plot
+        figsize (Tuple[int, int]): Figure size as (width, height) in inches
+        colormap (str): Matplotlib colormap name for the heatmap
+        show_annotations (bool): Whether to show value annotations in cells
+        annotation_format (Optional[str]): Format string for annotations (e.g., '.2f' or '.1f')
+        annotation_fontsize (int): Font size for the annotation values inside cells
+        title (Optional[str]): Custom title for the plot
+        title_fontsize (int): Font size for the title
+        title_pad (Optional[float]): Padding for the title from the top of the plot
+        labels (List[str]): Labels for the x and y axes (default: ['Models', 'Metrics'])
+        label_fontsize (int): Font size for the axis labels
+        tick_label_fontsize (int): Font size for x and y tick labels
+        dpi (int): Resolution for saved image
+        include_metrics (Optional[List[str]]): Specific metrics to include (default: all 9 standard metrics)
+        exclude_metrics (Optional[List[str]]): Specific metrics to exclude from the heatmap
+        sort_models_by (str): Metric to sort models by, or "average" for average of all metrics (default: 'average')
+        value_range (Tuple[float, float]): Min and max values for color mapping (default: (0, 1))
+        show_colorbar (bool): Whether to show the colorbar legend
+        colorbar_label (str): Label for the colorbar
+        colorbar_fontsize (int): Font size for colorbar labels
+        plot_padding (float): Padding between heatmap and axes labels and title
+
+    Returns:
+        matplotlib.figure.Figure: The generated figure object
+    """
+    visualiser = EvalVisualiser()
+    fig = visualiser.plot_multiple_confusion_matrices_combined(
+        result_sources=result_sources,
+        folder_path=folder_path,
+        output_file=output_file,
+        model_names=model_names,
+        figsize=figsize,
+        colormap=colormap,
+        show_annotations=show_annotations,
+        annotation_format=annotation_format,
+        annotation_fontsize=annotation_fontsize,
+        title=title,
+        title_fontsize=title_fontsize,
+        title_pad=title_pad,
+        labels=labels,
+        label_fontsize=label_fontsize,
+        tick_label_fontsize=tick_label_fontsize,
+        dpi=dpi,
+        include_metrics=include_metrics,
+        exclude_metrics=exclude_metrics,
+        sort_models_by=sort_models_by,
+        value_range=value_range,
+        show_colorbar=show_colorbar,
+        colorbar_label=colorbar_label,
+        colorbar_fontsize=colorbar_fontsize,
+        plot_padding=plot_padding,
+    )
+    return fig
+
+
 def plot_single_histogram_chart(
     result_file: Optional[str] = None,
     result_dict: Optional[dict] = None,
