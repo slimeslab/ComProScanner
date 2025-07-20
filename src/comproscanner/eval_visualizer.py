@@ -6,7 +6,7 @@ This module provides functions for creating various visualizations of evaluation
 
 from typing import Optional, List, Dict, Tuple, Union
 import numpy as np
-from .post_processing.visualisation.eval_plot_visualisers import EvalVisualiser
+from .post_processing.visualization.eval_plot_visualizers import EvalVisualizer
 
 # Import for type annotations, but use lazy loading for actual imports
 if False:
@@ -78,8 +78,8 @@ def plot_single_bar_chart(
         ValueError: If neither result_file nor result_dict is provided
     """
 
-    visualiser = EvalVisualiser()
-    fig = visualiser.plot_single_bar_chart(
+    visualizer = EvalVisualizer()
+    fig = visualizer.plot_single_bar_chart(
         result_file=result_file,
         result_dict=result_dict,
         output_file=output_file,
@@ -170,8 +170,8 @@ def plot_multiple_bar_charts(
     Raises:
         ValueErrorHandler: If neither result_sources nor folder_path is provided, or if the specified path does not exist
     """
-    visualiser = EvalVisualiser()
-    fig = visualiser.plot_multiple_bar_charts(
+    visualizer = EvalVisualizer()
+    fig = visualizer.plot_multiple_bar_charts(
         result_sources=result_sources,
         folder_path=folder_path,
         output_file=output_file,
@@ -277,8 +277,8 @@ def plot_single_radar_chart(
     Raises:
         ValueErrorHandler: If neither result_file nor result_dict is provided, or if the specified path does not exist
     """
-    visualiser = EvalVisualiser()
-    fig = visualiser.plot_single_radar_chart(
+    visualizer = EvalVisualizer()
+    fig = visualizer.plot_single_radar_chart(
         result_file=result_file,
         result_dict=result_dict,
         output_file=output_file,
@@ -405,8 +405,8 @@ def plot_multiple_radar_charts(
     Raises:
         ValueErrorHandler: If neither result_sources nor folder_path is provided, or if the specified path does not exist
     """
-    visualiser = EvalVisualiser()
-    fig = visualiser.plot_multiple_radar_charts(
+    visualizer = EvalVisualizer()
+    fig = visualizer.plot_multiple_radar_charts(
         result_sources=result_sources,
         folder_path=folder_path,
         output_file=output_file,
@@ -511,8 +511,8 @@ def plot_single_performance_heatmap(
     Raises:
         ValueErrorHandler: If neither result_file nor result_dict is provided, or if the specified path does not exist
     """
-    visualiser = EvalVisualiser()
-    fig = visualiser.plot_single_performance_heatmap(
+    visualizer = EvalVisualizer()
+    fig = visualizer.plot_single_performance_heatmap(
         result_file=result_file,
         result_dict=result_dict,
         output_file=output_file,
@@ -613,8 +613,8 @@ def plot_multiple_performance_heatmaps(
     Raises:
         ValueErrorHandler: If neither result_sources nor folder_path is provided, or if the specified path does not exist
     """
-    visualiser = EvalVisualiser()
-    fig = visualiser.plot_multiple_performance_heatmaps(
+    visualizer = EvalVisualizer()
+    fig = visualizer.plot_multiple_performance_heatmaps(
         result_sources=result_sources,
         folder_path=folder_path,
         output_file=output_file,
@@ -657,13 +657,13 @@ def plot_multiple_confusion_matrices_combined(
     colormap: str = "YlOrRd",
     show_annotations: bool = True,
     annotation_format: Optional[str] = None,
-    annotation_fontsize: int = 10,  # NEW: Font size for values inside cells
+    annotation_fontsize: int = 10,
     title: Optional[str] = None,
     title_fontsize: int = 14,
     title_pad: Optional[float] = 20.0,
     labels: List[str] = ["Models", "Metrics"],
     label_fontsize: int = 12,
-    tick_label_fontsize: int = 10,  # NEW: Font size for x and y tick labels
+    tick_label_fontsize: int = 10,
     dpi: int = 300,
     include_metrics: Optional[List[str]] = [
         "overall_accuracy",
@@ -690,7 +690,7 @@ def plot_multiple_confusion_matrices_combined(
     Args:
         result_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing evaluation results
         folder_path (Optional[str], optional): Path to folder containing JSON result files. Either result_sources or folder_path must be provided.
-        output_file (str, optional): Path to save the output visualisation
+        output_file (str, optional): Path to save the output visualization
         model_names (Optional[List[str]]): Names to display for models in the plot
         figsize (Tuple[int, int]): Figure size as (width, height) in inches
         colormap (str): Matplotlib colormap name for the heatmap
@@ -716,8 +716,8 @@ def plot_multiple_confusion_matrices_combined(
     Returns:
         matplotlib.figure.Figure: The generated figure object
     """
-    visualiser = EvalVisualiser()
-    fig = visualiser.plot_multiple_confusion_matrices_combined(
+    visualizer = EvalVisualizer()
+    fig = visualizer.plot_multiple_confusion_matrices_combined(
         result_sources=result_sources,
         folder_path=folder_path,
         output_file=output_file,
@@ -815,8 +815,8 @@ def plot_single_histogram_chart(
     Raises:
         ValueErrorHandler: If neither result_file nor result_dict is provided, or if the specified path does not exist
     """
-    visualiser = EvalVisualiser()
-    fig = visualiser.plot_single_histogram_chart(
+    visualizer = EvalVisualizer()
+    fig = visualizer.plot_single_histogram_chart(
         result_file=result_file,
         result_dict=result_dict,
         metric_name=metric_name,
@@ -930,8 +930,8 @@ def plot_multiple_histogram_charts(
     Raises:
         ValueErrorHandler: If neither result_sources nor folder_path is provided, or if the specified path does not exist
     """
-    visualiser = EvalVisualiser()
-    fig = visualiser.plot_multiple_histogram_charts(
+    visualizer = EvalVisualizer()
+    fig = visualizer.plot_multiple_histogram_charts(
         result_sources=result_sources,
         folder_path=folder_path,
         output_file=output_file,
@@ -1048,8 +1048,8 @@ def plot_single_violin_chart(
     Raises:
         ValueErrorHandler: If neither result_file nor result_dict is provided, or if the specified path does not exist
     """
-    visualiser = EvalVisualiser()
-    fig = visualiser.plot_single_violin_chart(
+    visualizer = EvalVisualizer()
+    fig = visualizer.plot_single_violin_chart(
         result_file=result_file,
         result_dict=result_dict,
         output_file=output_file,
@@ -1164,8 +1164,8 @@ def plot_multiple_violin_charts(
     Raises:
         ValueErrorHandler: If neither result_sources nor folder_path is provided, or if the specified path does not exist
     """
-    visualiser = EvalVisualiser()
-    fig = visualiser.plot_multiple_violin_charts(
+    visualizer = EvalVisualizer()
+    fig = visualizer.plot_multiple_violin_charts(
         result_sources=result_sources,
         folder_path=folder_path,
         output_file=output_file,

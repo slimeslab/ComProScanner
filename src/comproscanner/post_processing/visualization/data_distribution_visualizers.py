@@ -1,5 +1,5 @@
 """
-data_visualiser.py
+data_visualizer.py
 
 Author: Aritra Roy
 Email: contact@aritraroy.live
@@ -30,10 +30,10 @@ except ImportError:
     SENTENCE_TRANSFORMERS_AVAILABLE = False
 
 
-class DataDistributionVisualiser:
+class DataDistributionVisualizer:
     def __init__(self):
         """
-        Initialize the DataDistributionVisualiser class for visualising material data distributions.
+        Initialize the DataDistributionVisualizer class for visualizing material data distributions.
         """
         self.data = None
         self.colour_palettes = {
@@ -52,7 +52,7 @@ class DataDistributionVisualiser:
         Returns:
             dict: Dictionary with model type and model/tokenizer objects
         """
-        # Check if we already have a model loaded
+        # Check if the model is already loaded
         if hasattr(self, "semantic_model") and self.semantic_model is not None:
             return self.semantic_model
 
@@ -102,7 +102,7 @@ class DataDistributionVisualiser:
         Returns:
             float: Similarity score between 0 and 1
         """
-        # Make sure we have a model loaded
+        # Make sure a model is loaded
         if not hasattr(self, "semantic_model") or self.semantic_model is None:
             self._load_semantic_model()
 
@@ -294,7 +294,7 @@ class DataDistributionVisualiser:
 
     def _load_data(self, data_sources=None, folder_path=None):
         """
-        Load data from files or dictionaries for visualisation.
+        Load data from files or dictionaries for visualization.
 
         Args:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
@@ -444,7 +444,7 @@ class DataDistributionVisualiser:
         colour_palette=None,
     ):
         """
-        Create a pie chart visualisation of data distribution with percentage labels outside the chart.
+        Create a pie chart visualization of data distribution with percentage labels outside the chart.
 
         Args:
             data_counter (Counter): Counter object with data labels and frequencies
@@ -569,7 +569,7 @@ class DataDistributionVisualiser:
         rotation=45,
     ):
         """
-        Create a histogram visualisation of data distribution.
+        Create a histogram visualization of data distribution.
 
         Args:
             data_counter (Counter): Counter object with data labels and frequencies
@@ -671,7 +671,7 @@ class DataDistributionVisualiser:
         colour_palette=None,
     ):
         """
-        Create a pie chart visualisation of material families distribution.
+        Create a pie chart visualization of material families distribution.
 
         Args:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
@@ -727,7 +727,7 @@ class DataDistributionVisualiser:
         rotation=45,
     ):
         """
-        Create a histogram visualisation of material families distribution.
+        Create a histogram visualization of material families distribution.
 
         Args:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
@@ -786,7 +786,7 @@ class DataDistributionVisualiser:
         colour_palette=None,
     ):
         """
-        Create a pie chart visualisation of precursors distribution.
+        Create a pie chart visualization of precursors distribution.
 
         Args:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
@@ -842,7 +842,7 @@ class DataDistributionVisualiser:
         rotation=45,
     ):
         """
-        Create a histogram visualisation of precursors distribution.
+        Create a histogram visualization of precursors distribution.
 
         Args:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
@@ -903,7 +903,7 @@ class DataDistributionVisualiser:
         similarity_threshold=0.8,
     ):
         """
-        Create a pie chart visualisation of characterization techniques distribution.
+        Create a pie chart visualization of characterization techniques distribution.
 
         Args:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
@@ -974,7 +974,7 @@ class DataDistributionVisualiser:
         similarity_threshold=0.8,
     ):
         """
-        Create a histogram visualisation of characterization techniques distribution.
+        Create a histogram visualization of characterization techniques distribution.
 
         Args:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files

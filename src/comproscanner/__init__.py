@@ -20,9 +20,9 @@ from .comproscanner import ComProScanner
 from .utils.configs.rag_config import RAGConfig
 from .utils.configs.llm_config import LLMConfig
 
-# Import visualisation module
-from . import eval_visualiser
-from . import data_visualiser
+# Import visualization module
+from . import eval_visualizer
+from . import data_visualizer
 
 # Package version
 __version__ = "0.1.0"
@@ -38,8 +38,8 @@ __all__ = [
     "create_knowledge_graph",
     "RAGConfig",
     "LLMConfig",
-    "eval_visualiser",
-    "data_visualiser",
+    "eval_visualizer",
+    "data_visualizer",
 ]
 
 

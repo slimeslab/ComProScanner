@@ -287,7 +287,7 @@ class CreateKG:
         self.semantic_matcher = SemanticMatcher()
         self.method_clusters = {}
         self.technique_clusters = {}
-        self.keyword_clusters = {}  # New: Added for keyword clustering
+        self.keyword_clusters = {}
 
         try:
             uri = os.getenv("NEO4J_URI")
@@ -549,7 +549,7 @@ class CreateKG:
                     "property_unit": composition_data.get("property_unit"),
                     "precursors": synthesis_data.get("precursors", []),
                     "characterization_techniques": canonical_techniques,
-                    "keywords": canonical_keywords,  # New: keywords parameter
+                    "keywords": canonical_keywords,
                 }
 
                 # Add a transaction wrapper to ensure all-or-nothing operations
@@ -652,7 +652,7 @@ class CreateKG:
 
                         tx.run(techniques_query, **params)
 
-                    # Handle keywords separately - NEW
+                    # Handle keywords separately
                     if canonical_keywords:
                         keywords_query = """
                         MATCH (p:Paper {doi: $paper_metadata.doi})
@@ -758,9 +758,7 @@ class CreateKG:
             # Build semantic clusters for methods, techniques, and keywords first
             self.method_clusters = self.build_method_clusters(results)
             self.technique_clusters = self.build_technique_clusters(results)
-            self.keyword_clusters = self.build_keyword_clusters(
-                results
-            )  # New: cluster keywords
+            self.keyword_clusters = self.build_keyword_clusters(results)
 
             # Initialize the paper metadata extractor
             paper_metadata_extractor = PaperMetadataExtractor()
@@ -843,7 +841,7 @@ class CreateKG:
                     f"  Total unique characterization techniques in database: {technique_count}"
                 )
 
-                # Count unique keywords after semantic clustering - NEW
+                # Count unique keywords after semantic clustering
                 result = session.run(
                     "MATCH (k:Keyword) RETURN count(k) as keyword_count"
                 )

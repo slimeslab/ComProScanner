@@ -1,5 +1,5 @@
 """
-visualiser.py
+visualizer.py
 
 Author: Aritra Roy
 Email: contact@aritraroy.live
@@ -23,7 +23,7 @@ from typing import List, Dict, Union, Optional, Tuple
 from ...utils.error_handler import ValueErrorHandler
 
 
-class EvalVisualiser:
+class EvalVisualizer:
     def __init__(self):
         pass
 
@@ -31,7 +31,7 @@ class EvalVisualiser:
         self, result_sources=None, folder_path=None, model_names=None
     ):
         """
-        Load evaluation results data from files or dictionaries for visualisation.
+        Load evaluation results data from files or dictionaries for visualization.
 
         Args:
             result_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing evaluation results
@@ -1184,7 +1184,7 @@ class EvalVisualiser:
 
     def _get_default_metric_groups(self):
         """
-        Get default metric groups for heatmap visualisation.
+        Get default metric groups for heatmap visualization.
 
         Returns:
             list: List of default metric group definitions
@@ -2057,7 +2057,7 @@ class EvalVisualiser:
         Args:
             result_file (str, optional): Path to JSON file containing evaluation results for the model
             result_dict (dict, optional): Dictionary containing evaluation results for the model. Either result_file or result_dict must be provided.
-            output_file (str, optional): Path to save the output visualisation
+            output_file (str, optional): Path to save the output visualization
             model_name (str, optional): Name to display for the model in the plot
             figsize (tuple, optional): Figure size as (width, height) in inches (default: (12, 12))
             colormap (str, optional): Matplotlib colormap name for the heatmap (default: 'YlGnBu')
@@ -2254,7 +2254,7 @@ class EvalVisualiser:
         Args:
             result_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing evaluation results
             folder_path (Optional[str], optional): Path to folder containing JSON result files. Either result_sources or folder_path must be provided.
-            output_file (str, optional): Path to save the output visualisation
+            output_file (str, optional): Path to save the output visualization
             model_names (Optional[List[str]]): Names to display for models in the plots
             figsize (Tuple[int, int]): Figure size as (width, height) in inches
             colormap (str): Matplotlib colormap name for the heatmap
@@ -2349,9 +2349,9 @@ class EvalVisualiser:
             results_data = [results_data[i] for i in sorted_indices]
             names = [names[i] for i in sorted_indices]
 
-        # Start visualising data
+        # Start visualizing data
         if combine_models:
-            # Combined visualisation for all models
+            # Combined visualization for all models
             distribution, total_items = self._setup_combined_heatmap_data(
                 results_data,
                 metrics_to_use,
@@ -2428,7 +2428,7 @@ class EvalVisualiser:
                 ax.set_title(combined_title, fontsize=title_fontsize, fontweight="bold")
 
         else:
-            # Multiple visualisations for individual models
+            # Multiple visualizations for individual models
             num_models = len(results_data)
             ncols = min(2, num_models)
             nrows = (num_models + ncols - 1) // ncols  # Ceiling division
@@ -2564,13 +2564,13 @@ class EvalVisualiser:
         colormap: str = "YlOrRd",
         show_annotations: bool = True,
         annotation_format: Optional[str] = None,
-        annotation_fontsize: int = 10,  # NEW: Font size for values inside cells
+        annotation_fontsize: int = 10,
         title: Optional[str] = None,
         title_fontsize: int = 14,
         title_pad: Optional[float] = 20.0,
         labels: List[str] = ["Models", "Metrics"],
         label_fontsize: int = 12,
-        tick_label_fontsize: int = 10,  # NEW: Font size for x and y tick labels
+        tick_label_fontsize: int = 10,
         dpi: int = 300,
         include_metrics: Optional[List[str]] = [
             "overall_accuracy",
@@ -2584,7 +2584,7 @@ class EvalVisualiser:
             "normalized_f1_score",
         ],
         exclude_metrics: Optional[List[str]] = None,
-        sort_models_by: str = "average",  # CHANGED: Default to "average" instead of "overall_accuracy"
+        sort_models_by: str = "average",
         value_range: Tuple[float, float] = (0, 1),
         show_colorbar: bool = True,
         colorbar_label: str = "Score",
@@ -2597,7 +2597,7 @@ class EvalVisualiser:
         Args:
             result_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing evaluation results
             folder_path (Optional[str], optional): Path to folder containing JSON result files. Either result_sources or folder_path must be provided.
-            output_file (str, optional): Path to save the output visualisation
+            output_file (str, optional): Path to save the output visualization
             model_names (Optional[List[str]]): Names to display for models in the plot
             figsize (Tuple[int, int]): Figure size as (width, height) in inches
             colormap (str): Matplotlib colormap name for the heatmap
@@ -2718,9 +2718,7 @@ class EvalVisualiser:
             vmax=value_range[1],
             cbar=show_colorbar,
             cbar_kws={"label": colorbar_label} if show_colorbar else None,
-            annot_kws={
-                "fontsize": annotation_fontsize
-            },  # NEW: Set annotation font size
+            annot_kws={"fontsize": annotation_fontsize},
         )
 
         # Customize colorbar if shown
@@ -2933,7 +2931,7 @@ class EvalVisualiser:
             )
             lines.append((threshold_line, f"Threshold: {threshold_value:.2f}"))
 
-        # Add legend if we have any lines
+        # Add legend if any lines were added
         if lines:
             ax.legend(
                 [line for line, _ in lines],
@@ -3252,7 +3250,7 @@ class EvalVisualiser:
         Args:
             result_file (str, optional): Path to JSON file containing evaluation results
             result_dict (dict, optional): Dictionary containing evaluation results. Either result_file or result_dict must be provided.
-            output_file (str, optional): Path to save the output visualisation
+            output_file (str, optional): Path to save the output visualization
             model_name (str, optional): Name to display for the model in the plot
             figsize (tuple, optional): Figure size as (width, height) in inches (default: (14, 10))
             colormap (str, optional): Matplotlib colormap name for the violins (default: 'Blues')
@@ -3492,7 +3490,7 @@ class EvalVisualiser:
         Args:
             result_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing evaluation results
             folder_path (Optional[str], optional): Path to folder containing JSON result files. Either result_sources or folder_path must be provided.
-            output_file (str, optional): Path to save the output visualisation
+            output_file (str, optional): Path to save the output visualization
             model_names (Optional[List[str]]): Names to display for models in the plot
             metric_name (str, optional): Name of the metric to compare across models (default: "overall_accuracy")
             figsize (tuple, optional): Figure size as (width, height) in inches (default: (12, 8))

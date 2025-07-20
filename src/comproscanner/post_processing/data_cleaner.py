@@ -136,8 +136,7 @@ class DataCleaner:
             cleaned_data = self._clean_comp_prop_data(comp_prop_data)
             # Only include entries with valid compositions
             if cleaned_data:
-                result[key] = value.copy()  # Make a copy of the original data
-                # Update just the compositions_property_values with cleaned data
+                result[key] = value.copy()
                 result[key]["composition_data"]["compositions_property_values"] = (
                     self._return_in_dict(cleaned_data)
                 )
@@ -153,8 +152,7 @@ class DataCleaner:
             )
             # Include all entries that passed other cleaning steps
             if cleaned_data:
-                result[key] = value.copy()  # Make a copy of the original data
-                # Update just the compositions_property_values with cleaned data
+                result[key] = value.copy()
                 result[key]["composition_data"]["compositions_property_values"] = (
                     self._return_in_dict(cleaned_data)
                 )

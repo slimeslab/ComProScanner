@@ -1,5 +1,5 @@
 """
-data_visualiser.py
+data_visualizer.py
 
 Author: Aritra Roy
 Email: contact@aritraroy.live
@@ -9,10 +9,10 @@ Date: 07-05-2025
 
 from typing import Optional, List, Dict, Union, Tuple
 import numpy as np
-from comproscanner.post_processing.visualisation.data_distribution_visualisers import (
-    DataDistributionVisualiser,
+from comproscanner.post_processing.visualization.data_distribution_visualizers import (
+    DataDistributionVisualizer,
 )
-from .post_processing.visualisation.create_knowledge_graph import CreateKG
+from .post_processing.visualization.create_knowledge_graph import CreateKG
 from .utils.logger import setup_logger
 
 # Import for type annotations, but use lazy loading for actual imports
@@ -24,7 +24,7 @@ if False:
 
 
 ######## logger Configuration ########
-logger = setup_logger("visualiser_logs.log")
+logger = setup_logger("visualizer_logs.log")
 
 
 def plot_family_pie_chart(
@@ -56,8 +56,8 @@ def plot_family_pie_chart(
     Raises:
         ValueError: If neither data_sources nor folder_path is provided, or if no family data found
     """
-    visualiser = DataDistributionVisualiser()
-    fig = visualiser.plot_family_pie_chart(
+    visualizer = DataDistributionVisualizer()
+    fig = visualizer.plot_family_pie_chart(
         data_sources=data_sources,
         folder_path=folder_path,
         output_file=output_file,
@@ -105,8 +105,8 @@ def plot_family_histogram(
     Raises:
         ValueError: If neither data_sources nor folder_path is provided, or if no family data found
     """
-    visualiser = DataDistributionVisualiser()
-    fig = visualiser.plot_family_histogram(
+    visualizer = DataDistributionVisualizer()
+    fig = visualizer.plot_family_histogram(
         data_sources=data_sources,
         folder_path=folder_path,
         output_file=output_file,
@@ -151,8 +151,8 @@ def plot_precursors_pie_chart(
     Raises:
         ValueError: If neither data_sources nor folder_path is provided, or if no precursors data found
     """
-    visualiser = DataDistributionVisualiser()
-    fig = visualiser.plot_precursors_pie_chart(
+    visualizer = DataDistributionVisualizer()
+    fig = visualizer.plot_precursors_pie_chart(
         data_sources=data_sources,
         folder_path=folder_path,
         output_file=output_file,
@@ -200,8 +200,8 @@ def plot_precursors_histogram(
     Raises:
         ValueError: If neither data_sources nor folder_path is provided, or if no precursors data found
     """
-    visualiser = DataDistributionVisualiser()
-    fig = visualiser.plot_precursors_histogram(
+    visualizer = DataDistributionVisualizer()
+    fig = visualizer.plot_precursors_histogram(
         data_sources=data_sources,
         folder_path=folder_path,
         output_file=output_file,
@@ -246,8 +246,8 @@ def plot_characterization_techniques_pie_chart(
     Raises:
         ValueError: If neither data_sources nor folder_path is provided, or if no characterization techniques data found
     """
-    visualiser = DataDistributionVisualiser()
-    fig = visualiser.plot_characterization_techniques_pie_chart(
+    visualizer = DataDistributionVisualizer()
+    fig = visualizer.plot_characterization_techniques_pie_chart(
         data_sources=data_sources,
         folder_path=folder_path,
         output_file=output_file,
@@ -295,8 +295,8 @@ def plot_characterization_techniques_histogram(
     Raises:
         ValueError: If neither data_sources nor folder_path is provided, or if no characterization techniques data found
     """
-    visualiser = DataDistributionVisualiser()
-    fig = visualiser.plot_characterization_techniques_histogram(
+    visualizer = DataDistributionVisualizer()
+    fig = visualizer.plot_characterization_techniques_histogram(
         data_sources=data_sources,
         folder_path=folder_path,
         output_file=output_file,
