@@ -116,7 +116,7 @@ def evaluate_semantic(
     is_synthesis_evaluation=True,
     use_semantic_model=True,
     primary_model_name="thellert/physbert_cased",
-    fallback_model_name="all-MiniLM-L6-v2",
+    fallback_model_name="all-mpnet-base-v2",
     similarity_thresholds=None,
 ):
     """
@@ -131,7 +131,7 @@ def evaluate_semantic(
         is_synthesis_evaluation (bool, optional): A flag to indicate if synthesis evaluation is required. Defaults to True.
         use_semantic_model (bool, optional): A flag to indicate if semantic model should be used for evaluation. Defaults to True.
         primary_model_name (str, optional): Name of the primary model for semantic evaluation. Defaults to "thellert/physbert_cased".
-        fallback_model_name (str, optional): Name of the fallback model for semantic evaluation. Defaults to "all-MiniLM-L6-v2".
+        fallback_model_name (str, optional): Name of the fallback model for semantic evaluation. Defaults to "all-mpnet-base-v2".
         similarity_thresholds (dict, optional): Similarity thresholds for evaluation. Defaults to 0.8 for each metric.
     """
     scanner = ComProScanner(main_property_keyword="placeholder")

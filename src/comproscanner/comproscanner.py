@@ -536,27 +536,27 @@ class ComProScanner:
         self,
         ground_truth_file: str = None,
         test_data_file: str = None,
+        used_agent_model_name: str = None,
         weights: dict[str, float] = None,
         output_file: str = "semantic_evaluation_result.json",
-        agent_model_name: str = "gpt-4o-mini",
         is_synthesis_evaluation: bool = True,
         use_semantic_model=True,
         primary_model_name="thellert/physbert_cased",
-        fallback_model_name="all-MiniLM-L6-v2",
+        fallback_model_name="all-mpnet-base-v2",
         similarity_thresholds=None,
     ):
         """Evaluate the extracted data using semantic evaluation.
 
         Args:
-            ground_truth_file (str, optional): Path to the ground truth file. Defaults to None.
-            test_data_file (str, optional): Path to the test data file. Defaults to None.
-            weights (dict, optional): Weights for the evaluation metrics. Defaults to None.
+            ground_truth_file (str, required): Path to the ground truth file
+            test_data_file (str, required): Path to the test data file.
+            used_agent_model_name (str, required): Name of the agent model used for extraction.
+            weights (dict, optional): Weights for evaluation metrics. If not provided, uses default weights: {"compositions_property_values": 0.3, "property_unit": 0.1, "family": 0.1, "method": 0.1, "precursors": 0.15, "characterization_techniques": 0.15, "steps": 0.1}
             output_file (str, optional): Path to the output file for saving the evaluation results. Defaults to "semantic_evaluation_result.json".
-            agent_model_name (str, optional): Name of the agent model used for extraction. Defaults to "gpt-4o-mini".
             is_synthesis_evaluation (bool, optional): A flag to indicate if synthesis evaluation is required. Defaults to True.
             use_semantic_model (bool, optional): A flag to indicate if semantic model should be used for evaluation. Defaults to True. If False, it will use the fallback SequenceMatcher class from difflib library.
             primary_model_name (str, optional): Name of the primary model for semantic evaluation. Defaults to "thellert/physbert_cased".
-            fallback_model_name (str, optional): Name of the fallback model for semantic evaluation. Defaults to "all-MiniLM-L6-v2".
+            fallback_model_name (str, optional): Name of the fallback model for semantic evaluation. Defaults to "all-mpnet-base-v2".
             similarity_thresholds (dict, optional): Similarity thresholds for evaluation. Defaults to 0.8 for each metric.
 
         Returns:
@@ -581,7 +581,7 @@ class ComProScanner:
             test_data_file=test_data_file,
             weights=weights,
             output_file=output_file,
-            agent_model_name=agent_model_name,
+            used_agent_model_name=used_agent_model_name,
             is_synthesis_evaluation=is_synthesis_evaluation,
         )
         return results
@@ -590,22 +590,22 @@ class ComProScanner:
         self,
         ground_truth_file: str = None,
         test_data_file: str = None,
-        output_file: str = "detailed_evaluation.json",
-        agent_model_name: str = "o4-mini",
-        is_synthesis_evaluation: bool = True,
+        used_agent_model_name: str = None,
         weights: dict[str, float] = None,
+        output_file: str = "agentic_evaluation_result.json",
+        is_synthesis_evaluation: bool = True,
         llm: Optional[LLM] = None,
     ):
         """Evaluate the extracted data using agentic evaluation.
 
         Args:
-            ground_truth_file (str, optional): Path to the ground truth file. Defaults to None.
-            test_data_file (str, optional): Path to the test data file. Defaults to None.
-            output_file (str, optional): Path to the output file for saving the evaluation results. Defaults to "detailed_evaluation.json".
-            agent_model_name (str, optional): Name of the agent model for evaluation. Defaults to "o4-mini".
-            is_synthesis_evaluation (bool, optional): A flag to indicate if synthesis evaluation is required. Defaults to True.
+            ground_truth_file (str, required): Path to the ground truth file.
+            test_data_file (str, required): Path to the test data file.
+            used_agent_model_name (str, required): Name of the agent model for evaluation.
             weights (dict, optional): Weights for the evaluation metrics. Defaults to None.
-            llm (LLM, optional): An instance of the LLM class. Defaults to None.
+            output_file (str, optional): Path to the output file for saving the evaluation results. Defaults to "agentic_evaluation_result.json".
+            is_synthesis_evaluation (bool, optional): A flag to indicate if synthesis evaluation is required. Defaults to True.
+            llm (LLM, optional): An instance of the LLM class. Defaults to instance of LLM with model="o3-mini"
 
         Returns:
             results (dict): Evaluation results containing various metrics.
@@ -623,7 +623,7 @@ class ComProScanner:
             ground_truth_file=ground_truth_file,
             test_data_file=test_data_file,
             output_file=output_file,
-            agent_model_name=agent_model_name,
+            used_agent_model_name=used_agent_model_name,
             is_synthesis_evaluation=is_synthesis_evaluation,
             weights=weights,
             llm=llm,

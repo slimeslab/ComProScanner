@@ -24,7 +24,7 @@ class MaterialsDataSemanticEvaluator:
     Args:
         use_semantic_model (bool, optional): Whether to attempt to use semantic models for similarity (default: True)
         primary_model_name (str, optional): Name of the primary model to use (default: "thellert/physbert_cased")
-        fallback_model_name (str, optional): Name of the fallback sentence transformer model (default: "all-MiniLM-L6-v2")
+        fallback_model_name (str, optional): Name of the fallback sentence transformer model (default: "all-mpnet-base-v2")
         similarity_thresholds (dict, optional): Custom thresholds for similarity scoring
     """
 
@@ -32,7 +32,7 @@ class MaterialsDataSemanticEvaluator:
         self,
         use_semantic_model=True,
         primary_model_name="thellert/physbert_cased",
-        fallback_model_name="all-MiniLM-L6-v2",
+        fallback_model_name="all-mpnet-base-v2",
         similarity_thresholds=None,
     ):
         """
@@ -1168,9 +1168,9 @@ class MaterialsDataSemanticEvaluator:
         self,
         ground_truth_file=None,
         test_data_file=None,
+        used_used_agent_model_name=None,
         weights=None,
         output_file="detailed_evaluation.json",
-        agent_model_name="gpt-4o-mini",
         is_synthesis_evaluation=True,
     ):
         """
@@ -1180,9 +1180,9 @@ class MaterialsDataSemanticEvaluator:
         Args:
             ground_truth_file (str): Path to the ground truth JSON file
             test_data_file (str): Path to the test data JSON file
+            used_used_agent_model_name (str): Name of the agent model used in data extraction
             weights (dict, optional): Custom weights for different components
             output_file (str, optional): Path to save the detailed evaluation results
-            agent_model_name (str, optional): Name of the agent model used in data extraction (default: "gpt-4o-mini")
             is_synthesis_evaluation (bool, optional): Whether to evaluate synthesis data
 
         Returns:
@@ -1192,6 +1192,9 @@ class MaterialsDataSemanticEvaluator:
             raise ValueErrorHandler(
                 "Both ground truth and test data files are required"
             )
+
+        if not used_used_agent_model_name:
+            raise ValueErrorHandler("Used agent model name is required")
 
         if weights is None:
             weights = self.default_weights
@@ -1205,7 +1208,7 @@ class MaterialsDataSemanticEvaluator:
 
         # Initialize results
         accumulated_results = {
-            "agent_model_name": agent_model_name,
+            "used_used_agent_model_name": used_used_agent_model_name,
             "overall_accuracy": 0.0,
             "overall_composition_accuracy": 0.0,
             "overall_synthesis_accuracy": 0.0,

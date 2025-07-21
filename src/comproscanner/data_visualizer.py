@@ -313,7 +313,6 @@ def plot_characterization_techniques_histogram(
 
 
 def create_knowledge_graph(
-    self,
     result_file: str = None,
 ):
     """

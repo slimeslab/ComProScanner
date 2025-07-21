@@ -1,5 +1,5 @@
 """
-data_visualizer.py
+data_distribution_visualizer.py
 
 Author: Aritra Roy
 Email: contact@aritraroy.live
@@ -76,7 +76,7 @@ class DataDistributionVisualizer:
         if SENTENCE_TRANSFORMERS_AVAILABLE:
             try:
                 print("Falling back to sentence-transformers model...")
-                st_model = SentenceTransformer("all-MiniLM-L6-v2")
+                st_model = SentenceTransformer("all-mpnet-base-v2")
                 self.semantic_model = {
                     "type": "sentence_transformer",
                     "model": st_model,

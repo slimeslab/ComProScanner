@@ -89,7 +89,7 @@ def test_init_huggingface(mock_huggingface_model):
 
 def test_init_sentence_transformers(mock_sentence_transformers):
     """Test initialization with SentenceTransformers model"""
-    config = RAGConfig(embedding_model="sentence-transformers:all-MiniLM-L6-v2")
+    config = RAGConfig(embedding_model="sentence-transformers:all-mpnet-base-v2")
     embeddings = MultiModelEmbeddings(config)
 
     assert embeddings.model_type == "sentence_transformers"
@@ -157,7 +157,7 @@ def test_init_sentence_transformers_import_error(monkeypatch):
         "comproscanner.utils.embeddings.HAVE_SENTENCE_TRANSFORMERS", False
     )
 
-    config = RAGConfig(embedding_model="sentence-transformers:all-MiniLM-L6-v2")
+    config = RAGConfig(embedding_model="sentence-transformers:all-mpnet-base-v2")
 
     with pytest.raises(ImportErrorHandler) as excinfo:
         MultiModelEmbeddings(config)
@@ -179,7 +179,7 @@ def test_embed_documents_huggingface(mock_huggingface_model):
 
 def test_embed_documents_sentence_transformers(mock_sentence_transformers):
     """Test embedding documents with SentenceTransformers model"""
-    config = RAGConfig(embedding_model="sentence-transformers:all-MiniLM-L6-v2")
+    config = RAGConfig(embedding_model="sentence-transformers:all-mpnet-base-v2")
     embeddings = MultiModelEmbeddings(config)
 
     result = embeddings.embed_documents(["This is a test", "Another test"])
@@ -228,7 +228,7 @@ def test_embed_query_huggingface():
 
 def test_embed_query_sentence_transformers():
     """Test query embedding with SentenceTransformers model"""
-    config = RAGConfig(embedding_model="sentence-transformers:all-MiniLM-L6-v2")
+    config = RAGConfig(embedding_model="sentence-transformers:all-mpnet-base-v2")
     embeddings = MultiModelEmbeddings(config)
     with patch.object(
         embeddings, "_embed_document_sentence_transformers"
@@ -258,7 +258,7 @@ def test_embed_query_openai(mock_openai):
     "model_name,expected_type",
     [
         ("huggingface:bert-base-uncased", "huggingface"),
-        ("sentence-transformers:all-MiniLM-L6-v2", "sentence_transformers"),
+        ("sentence-transformers:all-mpnet-base-v2", "sentence_transformers"),
         ("text-embedding-ada-002", "openai"),
         ("some-other-model", "openai"),
     ],
@@ -288,7 +288,7 @@ def test_huggingface_actual_embedding():
     pytest.importorskip("transformers")
 
     try:
-        config = RAGConfig(embedding_model="sentence-transformers:all-MiniLM-L6-v2")
+        config = RAGConfig(embedding_model="sentence-transformers:all-mpnet-base-v2")
         embeddings = MultiModelEmbeddings(config)
         if hasattr(embeddings, "model"):
             result = embeddings.embed_query("This is an integration test")
@@ -304,7 +304,7 @@ def test_sentence_transformers_actual_embedding():
     pytest.importorskip("sentence_transformers")
 
     try:
-        config = RAGConfig(embedding_model="sentence-transformers:all-MiniLM-L6-v2")
+        config = RAGConfig(embedding_model="sentence-transformers:all-mpnet-base-v2")
         embeddings = MultiModelEmbeddings(config)
         if hasattr(embeddings, "model"):
             result = embeddings.embed_query("This is an integration test")

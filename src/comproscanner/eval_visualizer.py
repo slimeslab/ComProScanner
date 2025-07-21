@@ -231,7 +231,17 @@ def plot_single_radar_chart(
     start_angle: float = np.pi / 2,
     radar_range: Tuple[float, float] = (0, 1),
     dpi: int = 300,
-    metrics_to_include: Optional[List[str]] = None,
+    metrics_to_include: Optional[List[str]] = [
+        "overall_accuracy",
+        "overall_composition_accuracy",
+        "overall_synthesis_accuracy",
+        "precision",
+        "recall",
+        "f1_score",
+        "normalized_precision",
+        "normalized_recall",
+        "normalized_f1_score",
+    ],
 ):
     """
     Plot radar chart for a single evaluation result.
@@ -467,8 +477,17 @@ def plot_single_performance_heatmap(
     group_metrics: bool = False,
     metric_groups: Optional[List[Dict]] = None,
     group_colors: Optional[List[str]] = None,
-    include_metrics: Optional[List[str]] = None,
-    exclude_metrics: Optional[List[str]] = None,
+    metrics_to_include: Optional[List[str]] = [
+        "overall_accuracy",
+        "overall_composition_accuracy",
+        "overall_synthesis_accuracy",
+        "precision",
+        "recall",
+        "f1_score",
+        "normalized_precision",
+        "normalized_recall",
+        "normalized_f1_score",
+    ],
     group_label_right_margin: int = 1,
     average_value_left_margin: int = 1,
     plot_padding: float = 0.1,
@@ -499,8 +518,7 @@ def plot_single_performance_heatmap(
         group_metrics (bool, optional): Whether to visually group related metrics together (default: False)
         metric_groups (list, optional): Custom metric groups definition for grouping metrics
         group_colors (list, optional): Colors for metric groups (default: ['#f8f9fa', '#e9ecef', '#f8f9fa', '#e9ecef'])
-        include_metrics (list, optional): Specific metrics to include in the heatmap (default: all available)
-        exclude_metrics (list, optional): Specific metrics to exclude from the heatmap (default: none)
+        metrics_to_include (list, optional): Specific metrics to include in the heatmap (default: all available)
         group_label_right_margin (int, optional): Right margin for group labels (default: 1)
         average_value_left_margin (int, optional): Left margin for average values (default: 1)
         plot_padding (float, optional): Padding between heatmap and axes (default: 0.1)
@@ -535,8 +553,7 @@ def plot_single_performance_heatmap(
         group_metrics=group_metrics,
         metric_groups=metric_groups,
         group_colors=group_colors,
-        include_metrics=include_metrics,
-        exclude_metrics=exclude_metrics,
+        metrics_to_include=metrics_to_include,
         group_label_right_margin=group_label_right_margin,
         average_value_left_margin=average_value_left_margin,
         plot_padding=plot_padding,
@@ -566,8 +583,17 @@ def plot_multiple_performance_heatmaps(
     group_metrics: bool = True,
     metric_groups: Optional[List[Dict]] = None,
     group_colors: Optional[List[str]] = None,
-    include_metrics: Optional[List[str]] = None,
-    exclude_metrics: Optional[List[str]] = None,
+    metrics_to_include: Optional[List[str]] = [
+        "overall_accuracy",
+        "overall_composition_accuracy",
+        "overall_synthesis_accuracy",
+        "precision",
+        "recall",
+        "f1_score",
+        "normalized_precision",
+        "normalized_recall",
+        "normalized_f1_score",
+    ],
     sort_models_by: str = "overall_accuracy",
     combine_models: bool = False,
     group_label_right_margin: int = 1,
@@ -599,8 +625,7 @@ def plot_multiple_performance_heatmaps(
         group_metrics (bool): Whether to visually group related metrics
         metric_groups (Optional[List[Dict]]): Custom metric groups definition
         group_colors (Optional[List[str]]): Colors for metric groups
-        include_metrics (Optional[List[str]]): Specific metrics to include (if None, includes all available)
-        exclude_metrics (Optional[List[str]]): Specific metrics to exclude (if None, excludes none)
+        metrics_to_include (Optional[List[str]]): Specific metrics to include (if None, includes all available)
         sort_models_by (str): Metric to sort models by when displaying multiple models (default: 'overall_accuracy')
         combine_models (bool): Whether to combine all models into a single distribution plot (default: False)
         group_label_right_margin (int): Right margin for group labels
@@ -636,8 +661,7 @@ def plot_multiple_performance_heatmaps(
         group_metrics=group_metrics,
         metric_groups=metric_groups,
         group_colors=group_colors,
-        include_metrics=include_metrics,
-        exclude_metrics=exclude_metrics,
+        metrics_to_include=metrics_to_include,
         sort_models_by=sort_models_by,
         combine_models=combine_models,
         group_label_right_margin=group_label_right_margin,
@@ -665,7 +689,7 @@ def plot_multiple_confusion_matrices_combined(
     label_fontsize: int = 12,
     tick_label_fontsize: int = 10,
     dpi: int = 300,
-    include_metrics: Optional[List[str]] = [
+    metrics_to_include: Optional[List[str]] = [
         "overall_accuracy",
         "overall_composition_accuracy",
         "overall_synthesis_accuracy",
@@ -676,8 +700,7 @@ def plot_multiple_confusion_matrices_combined(
         "normalized_recall",
         "normalized_f1_score",
     ],
-    exclude_metrics: Optional[List[str]] = None,
-    sort_models_by: str = "average",  # CHANGED: Default to "average" instead of "overall_accuracy"
+    sort_models_by: str = "average",
     value_range: Tuple[float, float] = (0, 1),
     show_colorbar: bool = True,
     colorbar_label: str = "Score",
@@ -704,8 +727,7 @@ def plot_multiple_confusion_matrices_combined(
         label_fontsize (int): Font size for the axis labels
         tick_label_fontsize (int): Font size for x and y tick labels
         dpi (int): Resolution for saved image
-        include_metrics (Optional[List[str]]): Specific metrics to include (default: all 9 standard metrics)
-        exclude_metrics (Optional[List[str]]): Specific metrics to exclude from the heatmap
+        metrics_to_include (Optional[List[str]]): Specific metrics to include (default: all 9 standard metrics)
         sort_models_by (str): Metric to sort models by, or "average" for average of all metrics (default: 'average')
         value_range (Tuple[float, float]): Min and max values for color mapping (default: (0, 1))
         show_colorbar (bool): Whether to show the colorbar legend
@@ -734,8 +756,7 @@ def plot_multiple_confusion_matrices_combined(
         label_fontsize=label_fontsize,
         tick_label_fontsize=tick_label_fontsize,
         dpi=dpi,
-        include_metrics=include_metrics,
-        exclude_metrics=exclude_metrics,
+        metrics_to_include=metrics_to_include,
         sort_models_by=sort_models_by,
         value_range=value_range,
         show_colorbar=show_colorbar,
@@ -1001,8 +1022,17 @@ def plot_single_violin_chart(
     label_rotation: int = 45,
     inner: str = "box",
     dpi: int = 300,
-    include_metrics: Optional[List[str]] = None,
-    exclude_metrics: Optional[List[str]] = None,
+    metrics_to_include: Optional[List[str]] = [
+        "overall_accuracy",
+        "overall_composition_accuracy",
+        "overall_synthesis_accuracy",
+        "precision",
+        "recall",
+        "f1_score",
+        "normalized_precision",
+        "normalized_recall",
+        "normalized_f1_score",
+    ],
 ):
     """
     Create a violin plot for all metrics from a single model's evaluation results.
@@ -1039,8 +1069,7 @@ def plot_single_violin_chart(
         label_rotation (int, optional): Rotation angle for x-axis labels (default: 45)
         inner (str, optional): The representation of the data points inside the violin ('box', 'stick', 'point', or None) (default: 'box')
         dpi (int, optional): Resolution for saved image (default: 300)
-        include_metrics (list, optional): Specific metrics to include in the plot (default: None - all available)
-        exclude_metrics (list, optional): Specific metrics to exclude from the plot (default: None)
+        metrics_to_include (list, optional): Specific metrics to include in the plot (default: None - all available)
 
     Returns:
         matplotlib.figure.Figure: The generated figure object
@@ -1081,8 +1110,7 @@ def plot_single_violin_chart(
         label_rotation=label_rotation,
         inner=inner,
         dpi=dpi,
-        include_metrics=include_metrics,
-        exclude_metrics=exclude_metrics,
+        metrics_to_include=metrics_to_include,
     )
     return fig
 
