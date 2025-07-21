@@ -39,7 +39,7 @@ class DataCleaner:
 
     def _load_results(self) -> Dict[str, Any]:
         """Load results from JSON file."""
-        with open(self.results_file, "r") as f:
+        with open(self.results_file, "r", encoding="utf-8") as f:
             return json.load(f)
 
     def _get_comp_prop_data(self, extracted_data: Dict[str, Any]) -> Dict[str, Any]:

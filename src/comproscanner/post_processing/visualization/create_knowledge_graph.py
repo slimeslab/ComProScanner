@@ -744,7 +744,7 @@ class CreateKG:
                 Dict: Dictionary containing the extracted results
             """
             try:
-                with open(file_path, "r") as f:
+                with open(file_path, "r", encoding="utf-8") as f:
                     return json.load(f)
             except Exception as e:
                 logger.error(f"Error loading results file {file_path}: {e}")

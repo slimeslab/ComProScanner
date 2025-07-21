@@ -1535,7 +1535,7 @@ class MaterialsDataSemanticEvaluator:
                 )
 
         # Save results to file
-        with open(output_file, "w") as file:
+        with open(output_file, "w", encoding="utf-8") as file:
             json.dump(accumulated_results, file, indent=2)
 
         return accumulated_results

@@ -96,7 +96,7 @@ class EvalVisualizer:
                     names.append(f"Model {i+1}")
             elif isinstance(source, str):
                 try:
-                    with open(source, "r") as f:
+                    with open(source, "r", encoding="utf-8") as f:
                         result = json.load(f)
                         results_data.append(result)
 
@@ -1384,7 +1384,7 @@ class EvalVisualizer:
         if result_dict is not None:
             results = result_dict
         elif result_file is not None:
-            with open(result_file, "r") as f:
+            with open(result_file, "r", encoding="utf-8") as f:
                 results = json.load(f)
         else:
             raise ValueErrorHandler(
@@ -1701,7 +1701,7 @@ class EvalVisualizer:
         if result_dict is not None:
             results = result_dict
         elif result_file is not None:
-            with open(result_file, "r") as f:
+            with open(result_file, "r", encoding="utf-8") as f:
                 results = json.load(f)
         else:
             raise ValueErrorHandler(
@@ -2094,7 +2094,7 @@ class EvalVisualizer:
         if result_dict is not None:
             result = result_dict
         elif result_file is not None:
-            with open(result_file, "r") as f:
+            with open(result_file, "r", encoding="utf-8") as f:
                 result = json.load(f)
         else:
             raise ValueErrorHandler(
@@ -2845,7 +2845,7 @@ class EvalVisualizer:
         if result_dict is not None:
             results = result_dict
         elif result_file is not None:
-            with open(result_file, "r") as f:
+            with open(result_file, "r", encoding="utf-8") as f:
                 results = json.load(f)
         else:
             raise ValueErrorHandler(
@@ -3300,7 +3300,7 @@ class EvalVisualizer:
         if result_dict is not None:
             result = result_dict
         elif result_file is not None:
-            with open(result_file, "r") as f:
+            with open(result_file, "r", encoding="utf-8") as f:
                 result = json.load(f)
         else:
             raise ValueErrorHandler(

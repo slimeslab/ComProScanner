@@ -349,7 +349,7 @@ class DataDistributionVisualizer:
                 self._merge_data(all_data, source)
             elif isinstance(source, str):
                 try:
-                    with open(source, "r") as f:
+                    with open(source, "r", encoding="utf-8") as f:
                         data = json.load(f)
                         self._merge_data(all_data, data)
                 except Exception as e:
