@@ -88,8 +88,8 @@ scanner.extract_composition_property_data(
 )
 
 # Create knowledge graph from extracted data (optional)
-from comproscanner import create_knowledge_graph
-create_knowledge_graph(
+from comproscanner import data_visualizer
+data_visualizer.create_knowledge_graph(
     result_file="extracted_results.json"
 )
 
@@ -396,8 +396,8 @@ fig = data_visualizer.plot_family_pie_chart(
 )
 
 # Create knowledge graph from extracted data
-from comproscanner import create_knowledge_graph
-create_knowledge_graph(result_file="results.json")
+from comproscanner import data_visualizer
+data_visualizer.create_knowledge_graph(result_file="results.json")
 ```
 
 ##### Data Visualization Functions
