@@ -38,7 +38,7 @@ except ImportError:
 try:
     from ...utils.logger import setup_logger
     from ...utils.get_paper_data import PaperMetadataExtractor
-    from ...utils.error_handler import ValueErrorHandler, ImportErrorHandler
+    from ...utils.error_handler import ValueErrorHandler
 except ImportError:
     print("Error importing utility modules. Make sure they are in the correct path.")
     sys.exit(1)
@@ -76,7 +76,7 @@ class SemanticMatcher:
         # Try loading the transformer model first
         if TRANSFORMERS_AVAILABLE:
             try:
-                logger.info(f"Attempting to load {model_name} transformer model...")
+                logger.debug(f"Attempting to load {model_name} transformer model...")
                 tokenizer = AutoTokenizer.from_pretrained(model_name)
                 model = AutoModel.from_pretrained(model_name)
                 self.semantic_model = {
@@ -93,7 +93,7 @@ class SemanticMatcher:
         if SENTENCE_TRANSFORMERS_AVAILABLE:
             try:
                 logger.info("Falling back to sentence-transformers model...")
-                st_model = SentenceTransformer("all-mpnet-base-v2")
+                st_model = SentenceTransformer("all-MiniLM-L6-v2")
                 self.semantic_model = {
                     "type": "sentence_transformer",
                     "model": st_model,
@@ -239,28 +239,49 @@ class SemanticMatcher:
         clusters = {}
         processed = set()
 
+        logger.debug(
+            f"\nStarting clustering of {len(sorted_items)} unique items with similarity threshold {similarity_threshold}"
+        )
+
+        # Use a progress bar that tracks clusters created, not total items
+        pbar = tqdm(desc="Clustering progress", unit=" clusters")
+
         # Process items from most to least frequent
-        for item, count in sorted_items:
-            if item in processed:
-                continue
-
-            # Create a new cluster with this item as canonical form
-            canonical = item
-            clusters[canonical] = [item]
-            processed.add(item)
-
-            # Compare to all remaining items
-            for other_item, other_count in sorted_items:
-                if other_item in processed:
+        try:
+            for item, count in sorted_items:
+                if item in processed:
                     continue
 
-                # Calculate similarity
-                similarity = self.calculate_similarity(canonical, other_item)
+                # Create a new cluster with this item as canonical form
+                canonical = item
+                clusters[canonical] = [item]
+                processed.add(item)
 
-                if similarity >= similarity_threshold:
-                    clusters[canonical].append(other_item)
-                    processed.add(other_item)
+                # Compare to all remaining items
+                for other_item, other_count in sorted_items:
+                    if other_item in processed:
+                        continue
 
+                    # Calculate similarity
+                    similarity = self.calculate_similarity(canonical, other_item)
+
+                    if similarity >= similarity_threshold:
+                        clusters[canonical].append(other_item)
+                        processed.add(other_item)
+
+                # Update progress: increment by 1 for each cluster created
+                cluster_size = len(clusters[canonical])
+                pbar.set_postfix_str(
+                    f"Cluster size: {cluster_size} | Current: {canonical}"
+                )
+                pbar.update(1)
+
+        finally:
+            pbar.close()
+
+        logger.info(
+            f"Clustering completed: {len(clusters)} canonical clusters created from {len(sorted_items)} unique items"
+        )
         return clusters
 
     def get_canonical_name(self, item, clusters):
@@ -284,7 +305,7 @@ class CreateKG:
     def __init__(self):
         """Initialize Neo4j connection using environment variables"""
         self.driver = None
-        self.semantic_matcher = SemanticMatcher()
+        self.semantic_matcher = None
         self.method_clusters = {}
         self.technique_clusters = {}
         self.keyword_clusters = {}
@@ -313,6 +334,12 @@ class CreateKG:
             logger.error(str(e))
             raise
 
+    def _initialize_semantic_matcher(self, model_name="thellert/physbert_cased"):
+        """Initialize semantic matcher only when needed"""
+        if self.semantic_matcher is None:
+            logger.info("Initializing semantic matcher for clustering...")
+            self.semantic_matcher = SemanticMatcher(model_name)
+
     def close(self):
         """Close the driver connection"""
         if self.driver is not None:
@@ -324,7 +351,24 @@ class CreateKG:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
-    def build_method_clusters(self, results):
+    def get_canonical_name_safe(self, item, clusters):
+        """
+        Safely get the canonical name for an item from the clusters.
+        If clustering is disabled, return the item as-is.
+
+        Args:
+            item (str): The item to look up
+            clusters (dict): Dictionary mapping canonical names to lists of similar items
+
+        Returns:
+            str: The canonical name for the item, or the item itself if not found
+        """
+        if self.semantic_matcher is None or not clusters:
+            # If clustering is disabled, return the item as-is
+            return item
+        return self.semantic_matcher.get_canonical_name(item, clusters)
+
+    def build_method_clusters(self, results, similarity_threshold):
         """
         Build clusters of semantically similar synthesis methods
 
@@ -346,29 +390,19 @@ class CreateKG:
                     all_methods.append(method)
 
         # Cluster methods
-        logger.info(f"Clustering {len(all_methods)} synthesis methods...")
-        method_clusters = self.semantic_matcher.cluster_items(all_methods, 0.9)
-        num_canonical = len(method_clusters)
-        num_total = len(all_methods)
-        logger.info(
-            f"Clustered {num_total} synthesis methods into {num_canonical} canonical methods"
+        method_clusters = self.semantic_matcher.cluster_items(
+            all_methods, similarity_threshold
         )
-
-        # Log some clusters as examples
-        for i, (canonical, similar) in enumerate(method_clusters.items()):
-            if (
-                len(similar) > 1 and i < 5
-            ):  # Show first 5 non-trivial clusters as examples
-                logger.info(f"Method cluster example: '{canonical}' includes {similar}")
 
         return method_clusters
 
-    def build_technique_clusters(self, results):
+    def build_technique_clusters(self, results, similarity_threshold):
         """
         Build clusters of semantically similar characterization techniques
 
         Args:
             results (dict): Dictionary containing results data
+            similarity_threshold (float): Minimum similarity to consider two techniques as similar
 
         Returns:
             dict: Dictionary mapping canonical techniques to similar techniques
@@ -385,31 +419,19 @@ class CreateKG:
                     all_techniques.extend(techniques)
 
         # Cluster techniques
-        logger.info(f"Clustering {len(all_techniques)} characterization techniques...")
-        technique_clusters = self.semantic_matcher.cluster_items(all_techniques, 0.9)
-        num_canonical = len(technique_clusters)
-        num_total = len(all_techniques)
-        logger.info(
-            f"Clustered {num_total} characterization techniques into {num_canonical} canonical techniques"
+        technique_clusters = self.semantic_matcher.cluster_items(
+            all_techniques, similarity_threshold
         )
-
-        # Log some clusters as examples
-        for i, (canonical, similar) in enumerate(technique_clusters.items()):
-            if (
-                len(similar) > 1 and i < 5
-            ):  # Show first 5 non-trivial clusters as examples
-                logger.info(
-                    f"Technique cluster example: '{canonical}' includes {similar}"
-                )
 
         return technique_clusters
 
-    def build_keyword_clusters(self, results):
+    def build_keyword_clusters(self, results, similarity_threshold):
         """
         Build clusters of semantically similar keywords
 
         Args:
             results (dict): Dictionary containing results data
+            similarity_threshold (float): Minimum similarity to consider two keywords as similar
 
         Returns:
             dict: Dictionary mapping canonical keywords to similar keywords
@@ -426,24 +448,9 @@ class CreateKG:
                     all_keywords.extend(keywords)
 
         # Cluster keywords
-        logger.info(f"Clustering {len(all_keywords)} keywords...")
         keyword_clusters = self.semantic_matcher.cluster_items(
-            all_keywords, 0.85
-        )  # Higher threshold for keywords
-        num_canonical = len(keyword_clusters)
-        num_total = len(all_keywords)
-        logger.info(
-            f"Clustered {num_total} keywords into {num_canonical} canonical keywords"
+            all_keywords, similarity_threshold
         )
-
-        # Log some clusters as examples
-        for i, (canonical, similar) in enumerate(keyword_clusters.items()):
-            if (
-                len(similar) > 1 and i < 5
-            ):  # Show first 5 non-trivial clusters as examples
-                logger.info(
-                    f"Keyword cluster example: '{canonical}' includes {similar}"
-                )
 
         return keyword_clusters
 
@@ -471,7 +478,7 @@ class CreateKG:
 
                 # Get original method name and use semantic matcher to find canonical name
                 original_method_name = synthesis_data.get("method", "UNKNOWN_METHOD")
-                method_name = self.semantic_matcher.get_canonical_name(
+                method_name = self.get_canonical_name_safe(
                     original_method_name, self.method_clusters
                 )
 
@@ -503,7 +510,7 @@ class CreateKG:
                 canonical_techniques = []
 
                 for technique in original_techniques:
-                    canonical = self.semantic_matcher.get_canonical_name(
+                    canonical = self.get_canonical_name_safe(
                         technique, self.technique_clusters
                     )
                     canonical_techniques.append(canonical)
@@ -517,7 +524,7 @@ class CreateKG:
                 canonical_keywords = []
 
                 for keyword in original_keywords:
-                    canonical = self.semantic_matcher.get_canonical_name(
+                    canonical = self.get_canonical_name_safe(
                         keyword, self.keyword_clusters
                     )
                     canonical_keywords.append(canonical)
@@ -555,7 +562,7 @@ class CreateKG:
                 # Add a transaction wrapper to ensure all-or-nothing operations
                 tx = session.begin_transaction()
                 try:
-                    query = """
+                    main_query = """
                     // Create or find family node with unique name
                     MERGE (f:Family {name: $family_name})
                     
@@ -566,40 +573,21 @@ class CreateKG:
                         p.year = $paper_metadata.year,
                         p.isOpenAccess = $paper_metadata.isOpenAccess
                     
-                    // Create or find author nodes and their affiliations
-                    WITH p
-                    UNWIND $paper_metadata.authors as author
-                    MERGE (a:Author {name: author.name})
-                    SET a.affiliation_id = author.affiliation_id
-                    
-                    // Create affiliation node and set properties
-                    MERGE (aff:Affiliation {affiliation_id: author.affiliation_id})
-                    SET aff.name = author.affiliation_name,
-                        aff.country = author.affiliation_country
-                    
-                    // Create relationships
-                    MERGE (a)-[:AFFILIATED_WITH]->(aff)
-                    MERGE (a)-[:WROTE]->(p)
-                    
                     // Create or find method node based on unique name
-                    WITH p
                     MERGE (m:Method {name: $method_name})
                     MERGE (p)-[:USES_METHOD]->(m)
                     
                     // Create or find step node based on unique steps
-                    WITH p
                     MERGE (st:Step {steps: $synthesis_steps})
                     MERGE (p)-[:USED_SYNTHESIS_STEPS]->(st)
                     
                     // Create relationships between paper and family
-                    WITH p
-                    MATCH (f:Family {name: $family_name})
                     MERGE (p)-[:BELONGS_TO_FAMILY]->(f)
                     
                     RETURN p
                     """
 
-                    result = tx.run(query, **params)
+                    result = tx.run(main_query, **params)
                     paper_node = result.single()
 
                     if not paper_node:
@@ -608,6 +596,25 @@ class CreateKG:
                         )
                         tx.rollback()
                         return False
+
+                    if paper_metadata.get("authors"):
+                        authors_query = """
+                        MATCH (p:Paper {doi: $paper_metadata.doi})
+                        
+                        WITH p
+                        UNWIND $paper_metadata.authors as author
+                        MERGE (a:Author {name: author.name})
+                        SET a.affiliation_id = author.affiliation_id
+                        
+                        MERGE (aff:Affiliation {affiliation_id: author.affiliation_id})
+                        SET aff.name = author.affiliation_name,
+                            aff.country = author.affiliation_country
+                        
+                        MERGE (a)-[:AFFILIATED_WITH]->(aff)
+                        MERGE (a)-[:WROTE]->(p)
+                        """
+
+                        tx.run(authors_query, **params)
 
                     # Handle compositions separately
                     if composition_data.get("compositions_property_values"):
@@ -674,9 +681,6 @@ class CreateKG:
                     verified = result.single() is not None
 
                     if verified:
-                        logger.info(
-                            f"VERIFIED: Paper node for DOI: {paper_metadata.get('doi')} exists in database."
-                        )
                         return True
                     else:
                         logger.error(
@@ -711,9 +715,6 @@ class CreateKG:
                 synthesis_data, composition_data, paper_metadata
             )
             if success:
-                logger.info(
-                    f"Successfully created paper with authors and compositions for DOI: {paper_metadata.get('doi')}"
-                )
                 return success
             else:
                 logger.error(
@@ -724,13 +725,28 @@ class CreateKG:
             logger.error(f"An error occurred: {e}")
             return False
 
-    def create_knowledge_graph(self, result_file: str = "extracted_results.json"):
+    def create_knowledge_graph(
+        self,
+        result_file: str = None,
+        is_semantic_clustering_enabled: bool = True,
+        method_clustering_similarity_threshold: float = 0.8,
+        technique_clustering_similarity_threshold: float = 0.8,
+        keyword_clustering_similarity_threshold: float = 0.85,
+    ):
         """
         Create a knowledge graph from the extracted results file
 
         Args:
             result_file (str, required): Path to the JSON file containing extracted results.
+            is_semantic_clustering_enabled (bool, optional): Whether to enable clustering of similar compositions (Default: True)
+            method_clustering_similarity_threshold (float, optional): Similarity threshold for method clustering (Default: 0.8)
+            technique_clustering_similarity_threshold (float, optional): Similarity threshold for technique clustering (Default: 0.8)
+            keyword_clustering_similarity_threshold (float, optional): Similarity threshold for keyword clustering (Default: 0.85)
         """
+        if not result_file:
+            raise ValueErrorHandler(
+                "result_file is required to create the knowledge graph"
+            )
 
         # Define a local function to load results file
         def load_results_file(file_path: str) -> Dict:
@@ -752,13 +768,35 @@ class CreateKG:
 
         try:
             # Load the extracted results
-            logger.info(f"Loading results from {result_file}")
+            logger.debug(f"Loading results from {result_file}")
             results = load_results_file(result_file)
 
             # Build semantic clusters for methods, techniques, and keywords first
-            self.method_clusters = self.build_method_clusters(results)
-            self.technique_clusters = self.build_technique_clusters(results)
-            self.keyword_clusters = self.build_keyword_clusters(results)
+            if is_semantic_clustering_enabled:
+                logger.debug(f"Starting semantic clustering phase...")
+                # Initialize the semantic matcher
+                self._initialize_semantic_matcher()
+
+                self.method_clusters = self.build_method_clusters(
+                    results, similarity_threshold=method_clustering_similarity_threshold
+                )
+                self.technique_clusters = self.build_technique_clusters(
+                    results,
+                    similarity_threshold=technique_clustering_similarity_threshold,
+                )
+                self.keyword_clusters = self.build_keyword_clusters(
+                    results,
+                    similarity_threshold=keyword_clustering_similarity_threshold,
+                )
+                logger.debug("Semantic clustering completed.")
+            else:
+                logger.debug(
+                    "Skipping semantic clustering (is_semantic_clustering_enabled=False)"
+                )
+                # Initialize empty clusters - items will be used as-is
+                self.method_clusters = {}
+                self.technique_clusters = {}
+                self.keyword_clusters = {}
 
             # Initialize the paper metadata extractor
             paper_metadata_extractor = PaperMetadataExtractor()

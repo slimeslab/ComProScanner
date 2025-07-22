@@ -13,6 +13,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import difflib
 from collections import Counter
+from tqdm import tqdm
+from ...utils.logger import setup_logger
+
+logger = setup_logger("post-processing.log")
 
 try:
     from transformers import AutoTokenizer, AutoModel
@@ -36,11 +40,6 @@ class DataDistributionVisualizer:
         Initialize the DataDistributionVisualizer class for visualizing material data distributions.
         """
         self.data = None
-        self.color_palettes = {
-            "family": "viridis",
-            "precursors": "plasma",
-            "characterization_techniques": "mako",
-        }
 
     def _load_semantic_model(self, model_name="thellert/physbert_cased"):
         """
@@ -59,7 +58,9 @@ class DataDistributionVisualizer:
         # Try loading the transformer model first
         if TRANSFORMERS_AVAILABLE:
             try:
-                print(f"Attempting to load {model_name} transformer model...")
+                logger.debug(
+                    f"\n\nAttempting to load {model_name} transformer model..."
+                )
                 tokenizer = AutoTokenizer.from_pretrained(model_name)
                 model = AutoModel.from_pretrained(model_name)
                 self.semantic_model = {
@@ -67,27 +68,29 @@ class DataDistributionVisualizer:
                     "tokenizer": tokenizer,
                     "model": model,
                 }
-                print(f"Successfully loaded {model_name} transformer model")
+                logger.info(f"Successfully loaded {model_name} transformer model")
                 return self.semantic_model
             except Exception as e:
-                print(f"Could not load {model_name}: {e}")
+                logger.error(f"Could not load {model_name}: {e}")
 
         # Try sentence-transformers as fallback
         if SENTENCE_TRANSFORMERS_AVAILABLE:
             try:
-                print("Falling back to sentence-transformers model...")
+                logger.debug("Falling back to sentence-transformers model...")
                 st_model = SentenceTransformer("all-mpnet-base-v2")
                 self.semantic_model = {
                     "type": "sentence_transformer",
                     "model": st_model,
                 }
-                print("Successfully loaded sentence-transformers model")
+                logger.info("Successfully loaded sentence-transformers model")
                 return self.semantic_model
             except Exception as e:
-                print(f"Could not load sentence-transformers: {e}")
+                logger.error(f"Could not load sentence-transformers: {e}")
 
         # Final fallback to difflib
-        print("Falling back to difflib.SequenceMatcher for similarity calculations")
+        logger.debug(
+            "Falling back to difflib.SequenceMatcher for similarity calculations"
+        )
         self.semantic_model = {"type": "difflib"}
         return self.semantic_model
 
@@ -203,94 +206,206 @@ class DataDistributionVisualizer:
         """
         return difflib.SequenceMatcher(None, text1.lower(), text2.lower()).ratio()
 
-    def _cluster_characterization_techniques(
-        self, techniques, similarity_threshold=0.8
-    ):
+    def cluster_items(self, items, similarity_threshold=0.8):
         """
-        Cluster similar characterization techniques using semantic similarity.
+        Cluster similar items using semantic similarity.
 
         Args:
-            techniques (list): List of all characterization techniques
-            similarity_threshold (float): Minimum similarity to consider two techniques as same
+            items (list): List of items to cluster
+            similarity_threshold (float): Minimum similarity to consider two items as same
 
         Returns:
-            dict: Dictionary mapping canonical names to lists of similar techniques
+            dict: Dictionary mapping canonical names to lists of similar items
         """
-        techniques_counter = Counter(techniques)
-        sorted_techniques = sorted(
-            techniques_counter.items(), key=lambda x: x[1], reverse=True
-        )
+        if not items:
+            return {}
 
-        # Initialize clusters with the most frequent technique as first canonical form
+        items_counter = Counter(items)
+        sorted_items = sorted(items_counter.items(), key=lambda x: x[1], reverse=True)
+
+        # Initialize clusters with the most frequent item as first canonical form
         clusters = {}
         processed = set()
 
-        # Process techniques from most to least frequent
-        for technique, count in sorted_techniques:
-            if technique in processed:
-                continue
+        logger.debug(
+            f"\nStarting clustering of {len(sorted_items)} unique items with similarity threshold {similarity_threshold}"
+        )
 
-            # Create a new cluster with this technique as canonical form
-            canonical = technique
-            clusters[canonical] = [technique]
-            processed.add(technique)
+        # Use a progress bar that tracks clusters created, not total items
+        pbar = tqdm(desc="Clustering progress", unit=" clusters")
 
-            # Compare to all remaining techniques
-            for other_technique, other_count in sorted_techniques:
-                if other_technique in processed:
+        # Process items from most to least frequent
+        try:
+            for item, count in sorted_items:
+                if item in processed:
                     continue
 
-                # Calculate similarity
-                similarity = self.calculate_similarity(canonical, other_technique)
+                # Create a new cluster with this item as canonical form
+                canonical = item
+                clusters[canonical] = [item]
+                processed.add(item)
 
-                if similarity >= similarity_threshold:
-                    clusters[canonical].append(other_technique)
-                    processed.add(other_technique)
+                # Compare to all remaining items
+                for other_item, other_count in sorted_items:
+                    if other_item in processed:
+                        continue
 
+                    # Calculate similarity
+                    similarity = self.calculate_similarity(canonical, other_item)
+
+                    if similarity >= similarity_threshold:
+                        clusters[canonical].append(other_item)
+                        processed.add(other_item)
+
+                # Update progress: increment by 1 for each cluster created
+                cluster_size = len(clusters[canonical])
+                pbar.set_postfix_str(
+                    f"Cluster size: {cluster_size} | Current: {canonical}"
+                )
+                pbar.update(1)
+
+        finally:
+            pbar.close()
+
+        logger.info(
+            f"Clustering completed: {len(clusters)} canonical clusters created from {len(sorted_items)} unique items"
+        )
         return clusters
+
+    def _extract_with_clustering(self, data_key, sub_key, similarity_threshold=0.8):
+        """
+        Generic function to extract and cluster data from loaded data.
+
+        Args:
+            data_key (str): Key in item_data to look for (e.g., "composition_data", "synthesis_data")
+            sub_key (str): Sub-key within data_key (e.g., "family", "precursors", "characterization_techniques")
+            similarity_threshold (float): Threshold for similarity-based clustering
+
+        Returns:
+            Counter: Counter with canonicalized items
+        """
+        all_items = []
+
+        # Extract all raw items from the data
+        for doi, item_data in self.data.items():
+            if data_key in item_data and sub_key in item_data[data_key]:
+                items = item_data[data_key][sub_key]
+                if items:  # Only add if not empty
+                    if isinstance(items, list):
+                        all_items.extend(items)
+                    else:
+                        all_items.append(items)
+
+        if not all_items:
+            return Counter()
+
+        # Cluster similar items
+        clusters = self.cluster_items(all_items, similarity_threshold)
+
+        # Count canonical items
+        canonicalized_counts = Counter()
+        raw_counts = Counter(all_items)
+
+        for canonical, similar_items in clusters.items():
+            canonicalized_counts[canonical] = sum(
+                raw_counts[item] for item in similar_items
+            )
+
+        return canonicalized_counts
+
+    def _extract_families_with_clustering(self, similarity_threshold=0.8):
+        """Extract material families with semantic clustering."""
+        return self._extract_with_clustering(
+            "composition_data", "family", similarity_threshold
+        )
+
+    def _extract_precursors_with_clustering(self, similarity_threshold=0.8):
+        """Extract precursors with semantic clustering."""
+        return self._extract_with_clustering(
+            "synthesis_data", "precursors", similarity_threshold
+        )
 
     def _extract_characterization_techniques_with_clustering(
         self, similarity_threshold=0.8
     ):
+        """Extract characterization techniques with semantic clustering."""
+        return self._extract_with_clustering(
+            "synthesis_data", "characterization_techniques", similarity_threshold
+        )
+
+    def get_clusters(
+        self, data_type, data_sources=None, folder_path=None, similarity_threshold=0.8
+    ):
         """
-        Extract characterization techniques with semantic clustering to merge similar techniques.
+        Get clusters of similar items based on semantic similarity.
 
         Args:
+            data_type (str): Type of data to cluster ("families", "precursors", "characterization_techniques")
+            data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
+            folder_path (str, optional): Path to folder containing JSON data files
             similarity_threshold (float): Threshold for similarity-based clustering
 
         Returns:
-            Counter: Counter with canonicalized characterization techniques
+            Dict[str, List[str]]: Dictionary mapping canonical names to lists of similar items
         """
-        all_techniques = []
+        # Load data if not already loaded
+        if self.data is None or data_sources is not None or folder_path is not None:
+            self._load_data(data_sources, folder_path)
 
-        # Extract all raw techniques from the data
+        # Get all items based on data type
+        all_items = []
+
+        if data_type == "families":
+            data_key, sub_key = "composition_data", "family"
+        elif data_type == "precursors":
+            data_key, sub_key = "synthesis_data", "precursors"
+        elif data_type == "characterization_techniques":
+            data_key, sub_key = "synthesis_data", "characterization_techniques"
+        else:
+            raise ValueError(f"Unsupported data_type: {data_type}")
+
         for doi, item_data in self.data.items():
-            if (
-                "synthesis_data" in item_data
-                and "characterization_techniques" in item_data["synthesis_data"]
-            ):
-                techniques = item_data["synthesis_data"]["characterization_techniques"]
-                if techniques:  # Only add if list is not empty
-                    all_techniques.extend(techniques)
+            if data_key in item_data and sub_key in item_data[data_key]:
+                items = item_data[data_key][sub_key]
+                if items:  # Only add if not empty
+                    if isinstance(items, list):
+                        all_items.extend(items)
+                    else:
+                        all_items.append(items)
 
-        if not all_techniques:
-            return Counter()
+        if not all_items:
+            return {}
 
-        # Cluster similar techniques
-        clusters = self._cluster_characterization_techniques(
-            all_techniques, similarity_threshold
+        # Return clusters of similar items
+        return self.cluster_items(all_items, similarity_threshold)
+
+    # Keep existing methods for backward compatibility
+    def get_family_clusters(
+        self, data_sources=None, folder_path=None, similarity_threshold=0.8
+    ):
+        """Get clusters of similar material families."""
+        return self.get_clusters(
+            "families", data_sources, folder_path, similarity_threshold
         )
 
-        # Count canonical techniques
-        canonicalized_counts = Counter()
-        raw_counts = Counter(all_techniques)
+    def get_technique_clusters(
+        self, data_sources=None, folder_path=None, similarity_threshold=0.8
+    ):
+        """Get clusters of similar characterization techniques."""
+        return self.get_clusters(
+            "characterization_techniques",
+            data_sources,
+            folder_path,
+            similarity_threshold,
+        )
 
-        for canonical, similar_techniques in clusters.items():
-            canonicalized_counts[canonical] = sum(
-                raw_counts[t] for t in similar_techniques
-            )
-
-        return canonicalized_counts
+    def get_precursor_clusters(
+        self, data_sources=None, folder_path=None, similarity_threshold=0.8
+    ):
+        """Get clusters of similar precursors."""
+        return self.get_clusters(
+            "precursors", data_sources, folder_path, similarity_threshold
+        )
 
     def _load_data(self, data_sources=None, folder_path=None):
         """
@@ -353,7 +468,7 @@ class DataDistributionVisualizer:
                         data = json.load(f)
                         self._merge_data(all_data, data)
                 except Exception as e:
-                    print(f"Error loading {source}: {e}")
+                    logger.error(f"Error loading {source}: {e}")
                     continue
 
         if not all_data:
@@ -437,11 +552,14 @@ class DataDistributionVisualizer:
         self,
         data_counter,
         title,
-        figsize=(10, 8),
+        figsize=(12, 8),
         dpi=300,
         output_file=None,
         min_percentage=1.0,
-        color_palette=None,
+        color_palette="Blues",
+        title_fontsize=14,
+        label_fontsize=10,
+        legend_fontsize=10,
     ):
         """
         Create a pie chart visualization of data distribution with percentage labels outside the chart.
@@ -449,11 +567,14 @@ class DataDistributionVisualizer:
         Args:
             data_counter (Counter): Counter object with data labels and frequencies
             title (str): Title for the plot
-            figsize (tuple, optional): Figure size as (width, height) in inches
+            figsize (tuple, optional): Figure size as (width, height) in inches (Default: (12, 8))
             dpi (int, optional): DPI for output image (Default: 300)
             output_file (str, optional): Path to save the output plot image. If None, the plot is not saved
             min_percentage (float, optional): Minimum percentage for a category to be shown separately (Default: 1.0)
-            color_palette (str, optional): Matplotlib colormap name for the pie sections
+            color_palette (str, optional): Matplotlib colormap name for the pie sections (Default: "Blues")
+            title_fontsize (int, optional): Font size for the title (Default: 14)
+            label_fontsize (int, optional): Font size for the percentage labels (Default: 10)
+            legend_fontsize (int, optional): Font size for the legend (Default: 10)
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -485,11 +606,7 @@ class DataDistributionVisualizer:
         ]  # Just the percentage for outside labels
 
         # Generate colors using specified palette
-        if color_palette is None:
-            cmap = plt.get_cmap("viridis")
-        else:
-            cmap = plt.get_cmap(color_palette)
-
+        cmap = plt.get_cmap(color_palette)
         colors = cmap(np.linspace(0, 0.9, len(plot_items)))
 
         # Create pie chart with percentage labels outside
@@ -506,30 +623,53 @@ class DataDistributionVisualizer:
         # Improve label positioning and styling
         for text in texts:
             text.set_fontweight("bold")  # Make labels bold
+            text.set_fontsize(label_fontsize)
 
-            # Adjust alignment based on position
             # Get the position of the text
             pos = text.get_position()
             x, y = pos
 
-            # Calculate angle to determine which quadrant the text is in
+            # Calculate angle to determine positioning
             angle = np.arctan2(y, x)
+            # Convert to degrees for easier understanding
+            angle_deg = np.degrees(angle)
 
-            # Adjust alignment based on angle
-            if -np.pi / 2 < angle < np.pi / 2:  # Right half
-                text.set_horizontalalignment("left")
-            else:  # Left half
-                text.set_horizontalalignment("right")
+            # Normalize angle to 0-360 range
+            if angle_deg < 0:
+                angle_deg += 360
 
-            # Handle top and bottom special cases
-            if angle > 3 * np.pi / 4 or angle < -3 * np.pi / 4:  # Bottom
-                text.set_verticalalignment("top")
-            elif -np.pi / 4 < angle < np.pi / 4:  # Right
-                text.set_verticalalignment("center")
-            elif np.pi / 4 < angle < 3 * np.pi / 4:  # Top
+            # More precise alignment based on angle ranges
+            if 60 <= angle_deg <= 120:  # Top quadrant (60° to 120°)
+                text.set_horizontalalignment("center")
                 text.set_verticalalignment("bottom")
-            else:  # Left
+            elif 240 <= angle_deg <= 300:  # Bottom quadrant (240° to 300°)
+                text.set_horizontalalignment("center")
+                text.set_verticalalignment("top")
+            elif angle_deg <= 30 or angle_deg >= 330:  # Right side (330° to 30°)
+                text.set_horizontalalignment("left")
                 text.set_verticalalignment("center")
+            elif 150 <= angle_deg <= 210:  # Left side (150° to 210°)
+                text.set_horizontalalignment("right")
+                text.set_verticalalignment("center")
+            else:  # Diagonal positions - use adaptive alignment
+                if 30 < angle_deg < 60:  # Top-right
+                    text.set_horizontalalignment("left")
+                    text.set_verticalalignment("bottom")
+                elif 120 < angle_deg < 150:  # Top-left
+                    text.set_horizontalalignment("right")
+                    text.set_verticalalignment("bottom")
+                elif 210 < angle_deg < 240:  # Bottom-left
+                    text.set_horizontalalignment("right")
+                    text.set_verticalalignment("top")
+                elif 300 < angle_deg < 330:  # Bottom-right
+                    text.set_horizontalalignment("left")
+                    text.set_verticalalignment("top")
+                else:  # Fallback for any edge cases
+                    if x >= 0:
+                        text.set_horizontalalignment("left")
+                    else:
+                        text.set_horizontalalignment("right")
+                    text.set_verticalalignment("center")
 
         # Add legend
         ax.legend(
@@ -537,10 +677,11 @@ class DataDistributionVisualizer:
             labels,
             loc="center left",
             bbox_to_anchor=(1, 0, 0.5, 1),
+            fontsize=legend_fontsize,
         )
 
         # Set title directly on the axes, centered
-        ax.set_title(title, fontsize=14, fontweight="bold", pad=20)
+        ax.set_title(title, fontsize=title_fontsize, fontweight="bold", pad=20)
 
         # Equal aspect ratio ensures that pie is drawn as a circle
         ax.set_aspect("equal")
@@ -551,7 +692,7 @@ class DataDistributionVisualizer:
         # Save figure if output_file is provided
         if output_file:
             plt.savefig(output_file, dpi=dpi, bbox_inches="tight")
-            print(f"Pie chart saved to {output_file}")
+            logger.info(f"\nPie chart saved to {output_file}")
 
         return fig
 
@@ -563,10 +704,19 @@ class DataDistributionVisualizer:
         dpi=300,
         output_file=None,
         max_items=15,
-        color_palette=None,
+        color_palette="Blues",
         x_label=None,
         y_label="Frequency",
         rotation=45,
+        title_fontsize=14,
+        xlabel_fontsize=12,
+        ylabel_fontsize=12,
+        xtick_fontsize=10,
+        ytick_fontsize=10,
+        value_label_fontsize=9,
+        grid_axis="y",
+        grid_linestyle="--",
+        grid_alpha=0.3,
     ):
         """
         Create a histogram visualization of data distribution.
@@ -574,14 +724,23 @@ class DataDistributionVisualizer:
         Args:
             data_counter (Counter): Counter object with data labels and frequencies
             title (str): Title for the plot
-            figsize (tuple, optional): Figure size as (width, height) in inches
-            dpi (int, optional): DPI for output image
-            output_file (str, optional): Path to save the output plot image
-            max_items (int, optional): Maximum number of items to display
-            color_palette (str, optional): Matplotlib colormap name for the bars
-            x_label (str, optional): Label for the x-axis
-            y_label (str, optional): Label for the y-axis
-            rotation (int, optional): Rotation angle for x-axis labels
+            figsize (tuple, optional): Figure size as (width, height) in inches (Default: (12, 8))
+            dpi (int, optional): DPI for output image (Default: 300)
+            output_file (str, optional): Path to save the output plot image (Default: None)
+            max_items (int, optional): Maximum number of items to display (Default: 15)
+            color_palette (str, optional): Matplotlib colormap name for the bars (Default: "Blues")
+            x_label (str, optional): Label for the x-axis (Default: None)
+            y_label (str, optional): Label for the y-axis (Default: "Frequency")
+            rotation (int, optional): Rotation angle for x-axis labels (Default: 45)
+            title_fontsize (int, optional): Font size for the title (Default: 14)
+            xlabel_fontsize (int, optional): Font size for the x-axis label (Default: 12)
+            ylabel_fontsize (int, optional): Font size for the y-axis label (Default: 12)
+            xtick_fontsize (int, optional): Font size for the x-axis tick labels (Default: 10)
+            ytick_fontsize (int, optional): Font size for the y-axis tick labels (Default: 10)
+            value_label_fontsize (int, optional): Font size for the value labels on bars (Default: 9)
+            grid_axis (str, optional): Axis for grid lines ('x', 'y', 'both', or None for no grid) (Default: "y")
+            grid_linestyle (str, optional): Line style for grid lines (Default: "--")
+            grid_alpha (float, optional): Alpha (transparency) for grid lines (Default: 0.3)
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -606,11 +765,7 @@ class DataDistributionVisualizer:
         values = [v for _, v in display_items]
 
         # Generate colors using specified palette
-        if color_palette is None:
-            cmap = plt.get_cmap("viridis")
-        else:
-            cmap = plt.get_cmap(color_palette)
-
+        cmap = plt.get_cmap(color_palette)
         colors = cmap(np.linspace(0, 0.9, len(display_items)))
 
         # Create bars
@@ -632,22 +787,29 @@ class DataDistributionVisualizer:
                 ha="center",
                 va="bottom",
                 fontweight="bold",
+                fontsize=value_label_fontsize,
             )
 
         # Set x-axis labels
         ax.set_xticks(range(len(display_items)))
-        ax.set_xticklabels(labels, rotation=rotation, ha="right")
+        ax.set_xticklabels(
+            labels, rotation=rotation, ha="right", fontsize=xtick_fontsize
+        )
+
+        # Set y-axis tick label font size
+        ax.tick_params(axis="y", labelsize=ytick_fontsize)
 
         # Set axis labels
         if x_label:
-            ax.set_xlabel(x_label, fontsize=12)
-        ax.set_ylabel(y_label, fontsize=12)
+            ax.set_xlabel(x_label, fontsize=xlabel_fontsize)
+        ax.set_ylabel(y_label, fontsize=ylabel_fontsize)
 
         # Set title
-        ax.set_title(title, fontsize=14, fontweight="bold", pad=20)
+        ax.set_title(title, fontsize=title_fontsize, fontweight="bold", pad=20)
 
         # Add grid
-        ax.grid(axis="y", linestyle="--", alpha=0.3)
+        if grid_axis and grid_axis.lower() != "none":
+            ax.grid(axis=grid_axis, linestyle=grid_linestyle, alpha=grid_alpha)
 
         # Adjust layout
         plt.tight_layout()
@@ -655,7 +817,7 @@ class DataDistributionVisualizer:
         # Save figure if output_file is provided
         if output_file:
             plt.savefig(output_file, dpi=dpi, bbox_inches="tight")
-            print(f"Histogram saved to {output_file}")
+            logger.info(f"\nHistogram saved to {output_file}")
 
         return fig
 
@@ -664,11 +826,16 @@ class DataDistributionVisualizer:
         data_sources=None,
         folder_path=None,
         output_file=None,
-        figsize=(10, 8),
+        figsize=(12, 8),
         dpi=300,
         min_percentage=1.0,
         title="Distribution of Material Families",
-        color_palette=None,
+        color_palette="Blues",
+        title_fontsize=14,
+        label_fontsize=10,
+        legend_fontsize=10,
+        is_semantic_clustering_enabled=True,
+        similarity_threshold=0.8,
     ):
         """
         Create a pie chart visualization of material families distribution.
@@ -676,13 +843,19 @@ class DataDistributionVisualizer:
         Args:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
                 or dictionaries containing materials data
-            folder_path (str, optional): Path to folder containing JSON data files
-            output_file (str, optional): Path to save the output plot image
-            figsize (tuple, optional): Figure size as (width, height) in inches
-            dpi (int, optional): DPI for output image
+            folder_path (str, optional): Path to folder containing JSON data files. Either data_sources or folder_path must be provided.
+            output_file (str, optional): Path to save the output plot image. If None, the plot is not saved.
+            figsize (tuple, optional): Figure size as (width, height) in inches (Default: (12, 8))
+            dpi (int, optional): DPI for output image (Default: 300)
             min_percentage (float, optional): Minimum percentage for a category to be shown separately
             title (str, optional): Title for the plot
-            color_palette (str, optional): Matplotlib colormap name for the pie sections
+            color_palette (str, optional): Matplotlib colormap name for the pie sections (Default: "Blues")
+            title_fontsize (int, optional): Font size for the title (Default: 14)
+            label_fontsize (int, optional): Font size for the percentage labels (Default: 10)
+            legend_fontsize (int, optional): Font size for the legend (Default: 10)
+            is_semantic_clustering_enabled (bool, optional): Whether to enable semantic clustering of families (Default: True)
+            similarity_threshold (float, optional): Similarity threshold for clustering (Default: 0.8)
+
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -692,7 +865,13 @@ class DataDistributionVisualizer:
             self._load_data(data_sources, folder_path)
 
         # Extract families
-        family_counter = self._extract_families()
+        if is_semantic_clustering_enabled:
+            family_counter = self._extract_families_with_clustering(
+                similarity_threshold
+            )
+            title = f"{title} (Semantically Clustered)"
+        else:
+            family_counter = self._extract_families()
 
         if not family_counter:
             raise ValueError("No family data found in the provided data sources")
@@ -710,6 +889,9 @@ class DataDistributionVisualizer:
             output_file,
             min_percentage,
             color_palette,
+            title_fontsize,
+            label_fontsize,
+            legend_fontsize,
         )
 
     def plot_family_histogram(
@@ -721,10 +903,21 @@ class DataDistributionVisualizer:
         dpi=300,
         max_items=15,
         title="Frequency Distribution of Material Families",
-        color_palette=None,
+        color_palette="Blues",
         x_label="Material Family",
         y_label="Frequency",
         rotation=45,
+        title_fontsize=14,
+        xlabel_fontsize=12,
+        ylabel_fontsize=12,
+        xtick_fontsize=10,
+        ytick_fontsize=10,
+        value_label_fontsize=9,
+        grid_axis="y",
+        grid_linestyle="--",
+        grid_alpha=0.3,
+        is_semantic_clustering_enabled=True,
+        similarity_threshold=0.8,
     ):
         """
         Create a histogram visualization of material families distribution.
@@ -732,16 +925,27 @@ class DataDistributionVisualizer:
         Args:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
                 or dictionaries containing materials data
-            folder_path (str, optional): Path to folder containing JSON data files
-            output_file (str, optional): Path to save the output plot image
-            figsize (tuple, optional): Figure size as (width, height) in inches
-            dpi (int, optional): DPI for output image
-            max_items (int, optional): Maximum number of items to display
+            folder_path (str, optional): Path to folder containing JSON data files. Either data_sources or folder_path must be provided.
+            output_file (str, optional): Path to save the output plot image. If None, the plot is not saved
+            figsize (tuple, optional): Figure size as (width, height) in inches (Default: (12, 8))
+            dpi (int, optional): DPI for output image (Default: 300)
+            max_items (int, optional): Maximum number of items to display (Default: 15)
             title (str, optional): Title for the plot
-            color_palette (str, optional): Matplotlib colormap name for the bars
-            x_label (str, optional): Label for the x-axis
-            y_label (str, optional): Label for the y-axis
-            rotation (int, optional): Rotation angle for x-axis labels
+            color_palette (str, optional): Matplotlib colormap name for the bars (Default: "Blues")
+            x_label (str, optional): Label for the x-axis (Default: "Material Family")
+            y_label (str, optional): Label for the y-axis (Default: "Frequency")
+            rotation (int, optional): Rotation angle for x-axis labels (Default: 45)
+            title_fontsize (int, optional): Font size for the title (Default: 14)
+            xlabel_fontsize (int, optional): Font size for the x-axis label (Default: 12)
+            ylabel_fontsize (int, optional): Font size for the y-axis label (Default: 12)
+            xtick_fontsize (int, optional): Font size for the x-axis tick labels (Default: 10)
+            ytick_fontsize (int, optional): Font size for the y-axis tick labels (Default: 10)
+            value_label_fontsize (int, optional): Font size for the value labels on bars (Default: 9)
+            grid_axis (str, optional): Axis for grid lines ('x', 'y', 'both', or None for no grid) (Default: "y")
+            grid_linestyle (str, optional): Line style for grid lines (Default: "--")
+            grid_alpha (float, optional): Alpha (transparency) for grid lines (Default: 0.3)
+            is_semantic_clustering_enabled (bool, optional): Whether to enable semantic clustering of families (Default: True)
+            similarity_threshold (float, optional): Similarity threshold for clustering (Default: 0.8)
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -751,7 +955,13 @@ class DataDistributionVisualizer:
             self._load_data(data_sources, folder_path)
 
         # Extract families
-        family_counter = self._extract_families()
+        if is_semantic_clustering_enabled:
+            family_counter = self._extract_families_with_clustering(
+                similarity_threshold
+            )
+            title = f"{title} (Semantically Clustered)"
+        else:
+            family_counter = self._extract_families()
 
         if not family_counter:
             raise ValueError("No family data found in the provided data sources")
@@ -772,6 +982,15 @@ class DataDistributionVisualizer:
             x_label,
             y_label,
             rotation,
+            title_fontsize,
+            xlabel_fontsize,
+            ylabel_fontsize,
+            xtick_fontsize,
+            ytick_fontsize,
+            value_label_fontsize,
+            grid_axis,
+            grid_linestyle,
+            grid_alpha,
         )
 
     def plot_precursors_pie_chart(
@@ -779,11 +998,16 @@ class DataDistributionVisualizer:
         data_sources=None,
         folder_path=None,
         output_file=None,
-        figsize=(10, 8),
+        figsize=(12, 8),
         dpi=300,
         min_percentage=1.0,
         title="Distribution of Precursors in Materials Synthesis",
-        color_palette=None,
+        color_palette="Blues",
+        title_fontsize=14,
+        label_fontsize=10,
+        legend_fontsize=10,
+        is_semantic_clustering_enabled=True,
+        similarity_threshold=0.8,
     ):
         """
         Create a pie chart visualization of precursors distribution.
@@ -791,13 +1015,18 @@ class DataDistributionVisualizer:
         Args:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
                 or dictionaries containing materials data
-            folder_path (str, optional): Path to folder containing JSON data files
-            output_file (str, optional): Path to save the output plot image
-            figsize (tuple, optional): Figure size as (width, height) in inches
-            dpi (int, optional): DPI for output image
+            folder_path (str, optional): Path to folder containing JSON data files. Either data_sources or folder_path must be provided.
+            output_file (str, optional): Path to save the output plot image. If None, the plot is not saved.
+            figsize (tuple, optional): Figure size as (width, height) in inches (Default: (12, 8))
+            dpi (int, optional): DPI for output image (Default: 300)
             min_percentage (float, optional): Minimum percentage for a category to be shown separately
             title (str, optional): Title for the plot
-            color_palette (str, optional): Matplotlib colormap name for the pie sections
+            color_palette (str, optional): Matplotlib colormap name for the pie sections (Default: "Blues")
+            title_fontsize (int, optional): Font size for the title (Default: 14)
+            label_fontsize (int, optional): Font size for the percentage labels (Default: 10)
+            legend_fontsize (int, optional): Font size for the legend (Default: 10)
+            is_semantic_clustering_enabled (bool, optional): Whether to enable semantic clustering of precursors (Default: True)
+            similarity_threshold (float, optional): Similarity threshold for clustering (Default: 0.8)
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -807,7 +1036,13 @@ class DataDistributionVisualizer:
             self._load_data(data_sources, folder_path)
 
         # Extract precursors
-        precursors_counter = self._extract_precursors()
+        if is_semantic_clustering_enabled:
+            precursors_counter = self._extract_precursors_with_clustering(
+                similarity_threshold
+            )
+            title = f"{title} (Semantically Clustered)"
+        else:
+            precursors_counter = self._extract_precursors()
 
         if not precursors_counter:
             raise ValueError("No precursors data found in the provided data sources")
@@ -825,6 +1060,9 @@ class DataDistributionVisualizer:
             output_file,
             min_percentage,
             color_palette,
+            title_fontsize,
+            label_fontsize,
+            legend_fontsize,
         )
 
     def plot_precursors_histogram(
@@ -840,6 +1078,17 @@ class DataDistributionVisualizer:
         x_label="Precursor",
         y_label="Frequency",
         rotation=45,
+        title_fontsize=14,
+        xlabel_fontsize=12,
+        ylabel_fontsize=12,
+        xtick_fontsize=10,
+        ytick_fontsize=10,
+        value_label_fontsize=9,
+        grid_axis="y",
+        grid_linestyle="--",
+        grid_alpha=0.3,
+        is_semantic_clustering_enabled=True,
+        similarity_threshold=0.8,
     ):
         """
         Create a histogram visualization of precursors distribution.
@@ -847,16 +1096,27 @@ class DataDistributionVisualizer:
         Args:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
                 or dictionaries containing materials data
-            folder_path (str, optional): Path to folder containing JSON data files
-            output_file (str, optional): Path to save the output plot image
-            figsize (tuple, optional): Figure size as (width, height) in inches
-            dpi (int, optional): DPI for output image
-            max_items (int, optional): Maximum number of items to display
+            folder_path (str, optional): Path to folder containing JSON data files. Either data_sources or folder_path must be provided.
+            output_file (str, optional): Path to save the output plot image. If None, the plot is not saved
+            figsize (tuple, optional): Figure size as (width, height) in inches (Default: (12, 8))
+            dpi (int, optional): DPI for output image (Default: 300)
+            max_items (int, optional): Maximum number of items to display (Default: 15)
             title (str, optional): Title for the plot
-            color_palette (str, optional): Matplotlib colormap name for the bars
-            x_label (str, optional): Label for the x-axis
-            y_label (str, optional): Label for the y-axis
-            rotation (int, optional): Rotation angle for x-axis labels
+            color_palette (str, optional): Matplotlib colormap name for the bars (Default: "Blues")
+            x_label (str, optional): Label for the x-axis (Default: "Material Family")
+            y_label (str, optional): Label for the y-axis (Default: "Frequency")
+            rotation (int, optional): Rotation angle for x-axis labels (Default: 45)
+            title_fontsize (int, optional): Font size for the title (Default: 14)
+            xlabel_fontsize (int, optional): Font size for the x-axis label (Default: 12)
+            ylabel_fontsize (int, optional): Font size for the y-axis label (Default: 12)
+            xtick_fontsize (int, optional): Font size for the x-axis tick labels (Default: 10)
+            ytick_fontsize (int, optional): Font size for the y-axis tick labels (Default: 10)
+            value_label_fontsize (int, optional): Font size for the value labels on bars (Default: 9)
+            grid_axis (str, optional): Axis for grid lines ('x', 'y', 'both', or None for no grid) (Default: "y")
+            grid_linestyle (str, optional): Line style for grid lines (Default: "--")
+            grid_alpha (float, optional): Alpha (transparency) for grid lines (Default: 0.3)
+            is_semantic_clustering_enabled (bool, optional): Whether to enable semantic clustering of precursors (Default: True)
+            similarity_threshold (float, optional): Similarity threshold for clustering (Default: 0.8)
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -866,7 +1126,13 @@ class DataDistributionVisualizer:
             self._load_data(data_sources, folder_path)
 
         # Extract precursors
-        precursors_counter = self._extract_precursors()
+        if is_semantic_clustering_enabled:
+            precursors_counter = self._extract_precursors_with_clustering(
+                similarity_threshold
+            )
+            title = f"{title} (Semantically Clustered)"
+        else:
+            precursors_counter = self._extract_precursors()
 
         if not precursors_counter:
             raise ValueError("No precursors data found in the provided data sources")
@@ -887,6 +1153,15 @@ class DataDistributionVisualizer:
             x_label,
             y_label,
             rotation,
+            title_fontsize,
+            xlabel_fontsize,
+            ylabel_fontsize,
+            xtick_fontsize,
+            ytick_fontsize,
+            value_label_fontsize,
+            grid_axis,
+            grid_linestyle,
+            grid_alpha,
         )
 
     def plot_characterization_techniques_pie_chart(
@@ -894,13 +1169,16 @@ class DataDistributionVisualizer:
         data_sources=None,
         folder_path=None,
         output_file=None,
-        figsize=(10, 8),
+        figsize=(12, 8),
         dpi=300,
         min_percentage=1.0,
         title="Distribution of Characterization Techniques",
-        color_palette=None,
-        use_semantic_clustering=True,
+        color_palette="Blues",
+        is_semantic_clustering_enabled=True,
         similarity_threshold=0.8,
+        title_fontsize=14,
+        label_fontsize=10,
+        legend_fontsize=10,
     ):
         """
         Create a pie chart visualization of characterization techniques distribution.
@@ -908,15 +1186,18 @@ class DataDistributionVisualizer:
         Args:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
                 or dictionaries containing materials data
-            folder_path (str, optional): Path to folder containing JSON data files
-            output_file (str, optional): Path to save the output plot image
-            figsize (tuple, optional): Figure size as (width, height) in inches
-            dpi (int, optional): DPI for output image
+            folder_path (str, optional): Path to folder containing JSON data files. Either data_sources or folder_path must be provided.
+            output_file (str, optional): Path to save the output plot image. If None, the plot is not saved.
+            figsize (tuple, optional): Figure size as (width, height) in inches (Default: (12, 8))
+            dpi (int, optional): DPI for output image (Default: 300)
             min_percentage (float, optional): Minimum percentage for a category to be shown separately
             title (str, optional): Title for the plot
-            color_palette (str, optional): Matplotlib colormap name for the pie sections
-            use_semantic_clustering (bool): Whether to use semantic similarity for clustering similar techniques
-            similarity_threshold (float): Threshold for similarity-based clustering when use_semantic_clustering is True
+            color_palette (str, optional): Matplotlib colormap name for the pie sections (Default: "Blues")
+            is_semantic_clustering_enabled (bool): Whether to use semantic similarity for clustering similar techniques
+            similarity_threshold (float): Threshold for similarity-based clustering when is_semantic_clustering_enabled is True
+            title_fontsize (int, optional): Font size for the title (Default: 14)
+            label_fontsize (int, optional): Font size for the percentage labels (Default: 10)
+            legend_fontsize (int, optional): Font size for the legend labels (Default: 10)
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -926,7 +1207,7 @@ class DataDistributionVisualizer:
             self._load_data(data_sources, folder_path)
 
         # Extract characterization techniques
-        if use_semantic_clustering:
+        if is_semantic_clustering_enabled:
             techniques_counter = (
                 self._extract_characterization_techniques_with_clustering(
                     similarity_threshold
@@ -955,6 +1236,9 @@ class DataDistributionVisualizer:
             output_file,
             min_percentage,
             color_palette,
+            title_fontsize,
+            label_fontsize,
+            legend_fontsize,
         )
 
     def plot_characterization_techniques_histogram(
@@ -962,7 +1246,7 @@ class DataDistributionVisualizer:
         data_sources=None,
         folder_path=None,
         output_file=None,
-        figsize=(14, 8),
+        figsize=(12, 8),
         dpi=300,
         max_items=15,
         title="Frequency Distribution of Characterization Techniques",
@@ -970,8 +1254,17 @@ class DataDistributionVisualizer:
         x_label="Characterization Technique",
         y_label="Frequency",
         rotation=45,
-        use_semantic_clustering=True,
+        is_semantic_clustering_enabled=True,
         similarity_threshold=0.8,
+        title_fontsize=14,
+        xlabel_fontsize=12,
+        ylabel_fontsize=12,
+        xtick_fontsize=10,
+        ytick_fontsize=10,
+        value_label_fontsize=9,
+        grid_axis="y",
+        grid_linestyle="--",
+        grid_alpha=0.3,
     ):
         """
         Create a histogram visualization of characterization techniques distribution.
@@ -980,17 +1273,27 @@ class DataDistributionVisualizer:
             data_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files
                 or dictionaries containing materials data
             folder_path (str, optional): Path to folder containing JSON data files
-            output_file (str, optional): Path to save the output plot image
-            figsize (tuple, optional): Figure size as (width, height) in inches
-            dpi (int, optional): DPI for output image
-            max_items (int, optional): Maximum number of items to display
+            output_file (str, optional): Path to save the output plot image. If None, the plot is not saved.
+            figsize (tuple, optional): Figure size as (width, height) in inches (Default: (12, 8))
+            dpi (int, optional): DPI for output image (Default: 300)
+            max_items (int, optional): Maximum number of items to display (Default: 15)
             title (str, optional): Title for the plot
-            color_palette (str, optional): Matplotlib colormap name for the bars
-            x_label (str, optional): Label for the x-axis
-            y_label (str, optional): Label for the y-axis
-            rotation (int, optional): Rotation angle for x-axis labels
-            use_semantic_clustering (bool): Whether to use semantic similarity for clustering similar techniques
-            similarity_threshold (float): Threshold for similarity-based clustering when use_semantic_clustering is True
+            color_palette (str, optional): Matplotlib colormap name for the bars (Default: "Blues")
+            x_label (str, optional): Label for the x-axis (Default: "Characterization Technique")
+            y_label (str, optional): Label for the y-axis (Default: "Frequency")
+            rotation (int, optional): Rotation angle for x-axis labels (Default: 45)
+            is_semantic_clustering_enabled (bool): Whether to use semantic similarity for clustering similar techniques
+            similarity_threshold (float): Threshold for similarity-based clustering when is_semantic_clustering_enabled is True
+            title_fontsize (int, optional): Font size for the title (Default: 14)
+            xlabel_fontsize (int, optional): Font size for the x-axis label (Default: 12)
+            ylabel_fontsize (int, optional): Font size for the y-axis label (Default: 12)
+            xtick_fontsize (int, optional): Font size for the x-axis tick labels (Default: 10)
+            ytick_fontsize (int, optional): Font size for the y-axis tick labels (Default: 10)
+            value_label_fontsize (int, optional): Font size for the value labels on bars (Default: 9)
+            grid_axis (str, optional): Axis for grid lines ('x', 'y', 'both', or None for no grid) (Default: "y")
+            grid_linestyle (str, optional): Line style for grid lines (Default: "--")
+            grid_alpha (float, optional): Alpha (transparency) for grid lines (Default: 0.3)
+
 
         Returns:
             matplotlib.figure.Figure: The generated figure object
@@ -1000,7 +1303,7 @@ class DataDistributionVisualizer:
             self._load_data(data_sources, folder_path)
 
         # Extract characterization techniques
-        if use_semantic_clustering:
+        if is_semantic_clustering_enabled:
             techniques_counter = (
                 self._extract_characterization_techniques_with_clustering(
                     similarity_threshold
@@ -1032,6 +1335,15 @@ class DataDistributionVisualizer:
             x_label,
             y_label,
             rotation,
+            title_fontsize,
+            xlabel_fontsize,
+            ylabel_fontsize,
+            xtick_fontsize,
+            ytick_fontsize,
+            value_label_fontsize,
+            grid_axis,
+            grid_linestyle,
+            grid_alpha,
         )
 
     def get_technique_clusters(

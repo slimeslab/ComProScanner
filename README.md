@@ -410,12 +410,15 @@ data_visualizer.create_knowledge_graph(result_file="results.json")
 
    - `data_sources` (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing materials data
    - `folder_path` (str, optional): Path to folder containing JSON data files
-   - `output_file` (str, optional): Path to save the output plot image
-   - `figsize` (tuple, optional): Figure size as (width, height) in inches (default: (10, 8))
+   - `output_file` (str, optional): Path to save the output plot image. If None, the plot is not saved.
+   - `figsize` (tuple, optional): Figure size as (width, height) in inches (default: (12, 8))
    - `dpi` (int, optional): DPI for output image (default: 300)
    - `min_percentage` (float, optional): Minimum percentage for a category to be shown separately (default: 1.0)
    - `title` (str, optional): Title for the plot (default: "Distribution of Material Families")
-   - `color_palette` (str, optional): Matplotlib colormap name for the pie sections (default: None)
+   - `color_palette` (str, optional): Matplotlib colormap name for the pie sections (default: "Blues")
+   - `title_fontsize` (int, optional): Font size for the title (default: 14)
+   - `label_fontsize` (int, optional): Font size for the percentage labels (default: 10)
+   - `legend_fontsize` (int, optional): Font size for the legend (default: 10)
 
 2. ###### plot_family_histogram
 
@@ -425,15 +428,23 @@ data_visualizer.create_knowledge_graph(result_file="results.json")
 
    - `data_sources` (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing materials data
    - `folder_path` (str, optional): Path to folder containing JSON data files
-   - `output_file` (str, optional): Path to save the output plot image
+   - `output_file` (str, optional): Path to save the output plot image. If None, the plot is not saved.
    - `figsize` (tuple, optional): Figure size as (width, height) in inches (default: (12, 8))
    - `dpi` (int, optional): DPI for output image (default: 300)
    - `max_items` (int, optional): Maximum number of items to display (default: 15)
    - `title` (str, optional): Title for the plot (default: "Frequency Distribution of Material Families")
-   - `color_palette` (str, optional): Matplotlib colormap name for the bars (default: None)
+   - `color_palette` (str, optional): Matplotlib colormap name for the bars (default: "Blues")
    - `x_label` (str, optional): Label for the x-axis (default: "Material Family")
    - `y_label` (str, optional): Label for the y-axis (default: "Frequency")
    - `rotation` (int, optional): Rotation angle for x-axis labels (default: 45)
+   - `title_fontsize` (int, optional): Font size for the title (default: 14)
+   - `xlabel_fontsize` (int, optional): Font size for the x-axis label (default: 12)
+   - `ylabel_fontsize` (int, optional): Font size for the y-axis label (default: 12)
+   - `xtick_fontsize` (int, optional): Font size for the x-axis tick labels (default: 10)
+   - `value_label_fontsize` (int, optional): Font size for the value labels on bars (default: 9)
+   - `grid_axis` (str, optional): Axis for grid lines ('x', 'y', 'both', or None for no grid) (default: "y")
+   - `grid_linestyle` (str, optional): Line style for grid lines (default: "--")
+   - `grid_alpha` (float, optional): Alpha (transparency) for grid lines (default: 0.3)
 
 3. ###### plot_precursors_pie_chart
 
@@ -443,12 +454,15 @@ data_visualizer.create_knowledge_graph(result_file="results.json")
 
    - `data_sources` (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing materials data
    - `folder_path` (str, optional): Path to folder containing JSON data files
-   - `output_file` (str, optional): Path to save the output plot image
-   - `figsize` (tuple, optional): Figure size as (width, height) in inches (default: (10, 8))
+   - `output_file` (str, optional): Path to save the output plot image. If None, the plot is not saved.
+   - `figsize` (tuple, optional): Figure size as (width, height) in inches (default: (12, 8))
    - `dpi` (int, optional): DPI for output image (default: 300)
    - `min_percentage` (float, optional): Minimum percentage for a category to be shown separately (default: 1.0)
    - `title` (str, optional): Title for the plot (default: "Distribution of Precursors in Materials Synthesis")
-   - `color_palette` (str, optional): Matplotlib colormap name for the pie sections (default: None)
+   - `color_palette` (str, optional): Matplotlib colormap name for the pie sections (default: "Blues")
+   - `title_fontsize` (int, optional): Font size for the title (default: 14)
+   - `label_fontsize` (int, optional): Font size for the percentage labels (default: 10)
+   - `legend_fontsize` (int, optional): Font size for the legend (default: 10)
 
 4. ###### plot_precursors_histogram
 
@@ -458,15 +472,23 @@ data_visualizer.create_knowledge_graph(result_file="results.json")
 
    - `data_sources` (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing materials data
    - `folder_path` (str, optional): Path to folder containing JSON data files
-   - `output_file` (str, optional): Path to save the output plot image
+   - `output_file` (str, optional): Path to save the output plot image. If None, the plot is not saved.
    - `figsize` (tuple, optional): Figure size as (width, height) in inches (default: (12, 8))
    - `dpi` (int, optional): DPI for output image (default: 300)
    - `max_items` (int, optional): Maximum number of items to display (default: 15)
    - `title` (str, optional): Title for the plot (default: "Frequency Distribution of Precursors in Materials Synthesis")
-   - `color_palette` (str, optional): Matplotlib colormap name for the bars (default: None)
+   - `color_palette` (str, optional): Matplotlib colormap name for the bars (default: "Blues")
    - `x_label` (str, optional): Label for the x-axis (default: "Precursor")
    - `y_label` (str, optional): Label for the y-axis (default: "Frequency")
    - `rotation` (int, optional): Rotation angle for x-axis labels (default: 45)
+   - `title_fontsize` (int, optional): Font size for the title (default: 14)
+   - `xlabel_fontsize` (int, optional): Font size for the x-axis label (default: 12)
+   - `ylabel_fontsize` (int, optional): Font size for the y-axis label (default: 12)
+   - `xtick_fontsize` (int, optional): Font size for the x-axis tick labels (default: 10)
+   - `value_label_fontsize` (int, optional): Font size for the value labels on bars (default: 9)
+   - `grid_axis` (str, optional): Axis for grid lines ('x', 'y', 'both', or None for no grid) (default: "y")
+   - `grid_linestyle` (str, optional): Line style for grid lines (default: "--")
+   - `grid_alpha` (float, optional): Alpha (transparency) for grid lines (default: 0.3)
 
 5. ###### plot_characterization_techniques_pie_chart
 
@@ -476,12 +498,17 @@ data_visualizer.create_knowledge_graph(result_file="results.json")
 
    - `data_sources` (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing materials data
    - `folder_path` (str, optional): Path to folder containing JSON data files
-   - `output_file` (str, optional): Path to save the output plot image
+   - `output_file` (str, optional): Path to save the output plot image. If None, the plot is not saved.
    - `figsize` (tuple, optional): Figure size as (width, height) in inches (default: (10, 8))
    - `dpi` (int, optional): DPI for output image (default: 300)
    - `min_percentage` (float, optional): Minimum percentage for a category to be shown separately (default: 1.0)
    - `title` (str, optional): Title for the plot (default: "Distribution of Characterization Techniques")
-   - `color_palette` (str, optional): Matplotlib colormap name for the pie sections (default: None)
+   - `color_palette` (str, optional): Matplotlib colormap name for the pie sections (default: "Blues")
+   - `is_semantic_clustering_enabled` (bool, optional): Whether to use semantic similarity for clustering similar techniques (default: True)
+   - `similarity_threshold` (float, optional): Threshold for similarity-based clustering when is_semantic_clustering_enabled is True (default: 0.8)
+   - `title_fontsize` (int, optional): Font size for the title (default: 14)
+   - `label_fontsize` (int, optional): Font size for the percentage labels (default: 10)
+   - `legend_fontsize` (int, optional): Font size for the legend (default: 10)
 
 6. ###### plot_characterization_techniques_histogram
 
@@ -491,15 +518,25 @@ data_visualizer.create_knowledge_graph(result_file="results.json")
 
    - `data_sources` (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing materials data
    - `folder_path` (str, optional): Path to folder containing JSON data files
-   - `output_file` (str, optional): Path to save the output plot image
-   - `figsize` (tuple, optional): Figure size as (width, height) in inches (default: (14, 8))
+   - `output_file` (str, optional): Path to save the output plot image. If None, the plot is not saved.
+   - `figsize` (tuple, optional): Figure size as (width, height) in inches (default: (12, 8))
    - `dpi` (int, optional): DPI for output image (default: 300)
    - `max_items` (int, optional): Maximum number of items to display (default: 15)
    - `title` (str, optional): Title for the plot (default: "Frequency Distribution of Characterization Techniques")
-   - `color_palette` (str, optional): Matplotlib colormap name for the bars (default: None)
+   - `color_palette` (str, optional): Matplotlib colormap name for the bars (default: "Blues")
    - `x_label` (str, optional): Label for the x-axis (default: "Characterization Technique")
    - `y_label` (str, optional): Label for the y-axis (default: "Frequency")
    - `rotation` (int, optional): Rotation angle for x-axis labels (default: 45)
+   - `is_semantic_clustering_enabled` (bool, optional): Whether to use semantic similarity for clustering similar techniques (default: True)
+   - `similarity_threshold` (float, optional): Threshold for similarity-based clustering when is_semantic_clustering_enabled is True (default: 0.8)
+   - `title_fontsize` (int, optional): Font size for the title (default: 14)
+   - `xlabel_fontsize` (int, optional): Font size for the x-axis label (default: 12)
+   - `ylabel_fontsize` (int, optional): Font size for the y-axis label (default: 12)
+   - `xtick_fontsize` (int, optional): Font size for the x-axis tick labels (default: 10)
+   - `value_label_fontsize` (int, optional): Font size for the value labels on bars (default: 9)
+   - `grid_axis` (str, optional): Axis for grid lines ('x', 'y', 'both', or None for no grid) (default: "y")
+   - `grid_linestyle` (str, optional): Line style for grid lines (default: "--")
+   - `grid_alpha` (float, optional): Alpha (transparency) for grid lines (default: 0.3)
 
 7. ###### create_knowledge_graph
 
