@@ -48,8 +48,8 @@ from .utils.logger import setup_logger
 from .utils.configs.rag_config import RAGConfig
 from .utils.configs.llm_config import LLMConfig
 
-######## logger Configuration ########
-logger = setup_logger("all_logs.log")
+# configure logger
+logger = setup_logger("comproscanner.log")
 
 
 class ComProScanner:

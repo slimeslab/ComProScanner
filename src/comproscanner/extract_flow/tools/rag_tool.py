@@ -7,25 +7,26 @@ Website: https://aritraroy.live
 Date: 21-03-2025
 """
 
+# Standard library imports
 from typing import Type
 import importlib.util
 
+# Third-party imports
+from dotenv import load_dotenv
 from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
-from dotenv import load_dotenv
-
 from langchain_core.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage, SystemMessage
 
-
+# Local imports
 from ...utils.configs.rag_config import RAGConfig
 from ...utils.database_manager import VectorDatabaseManager
 from ...utils.logger import setup_logger
 from ...utils.error_handler import ImportErrorHandler, ValueErrorHandler
 
-######## logger Configuration ########
-logger = setup_logger("composition_property_extractor.log")
+# configure logger
+logger = setup_logger("comproscanner.log", module_name="rag_tool")
 
 
 class RAGToolInput(BaseModel):

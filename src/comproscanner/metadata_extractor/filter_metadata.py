@@ -33,8 +33,8 @@ from ..utils.logger import setup_logger
 
 load_dotenv()
 
-######## logger Configuration ########
-logger = setup_logger("metadata_collector.log")
+# configure logger
+logger = setup_logger("comproscanner.log", module_name="filter_metadata")
 
 
 ######## Class to filter metadata ########

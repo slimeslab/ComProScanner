@@ -37,8 +37,8 @@ from .error_handler import ValueErrorHandler
 from .logger import setup_logger
 from .embeddings import MultiModelEmbeddings
 
-######## logger Configuration ########
-logger = setup_logger("article_processor.log")
+# configure logger
+logger = setup_logger("comproscanner.log", module_name="database_manager")
 
 
 class MySQLDatabaseManager:

@@ -45,8 +45,8 @@ from ..utils.common_functions import write_timeout_file
 # Load environment variables from .env file
 load_dotenv()
 
-######## logger Configuration ########
-logger = setup_logger("article_processor.log")
+# configure logger
+logger = setup_logger("comproscanner.log", module_name="wiley_processor")
 
 
 ######## Class to process Wiley articles ########

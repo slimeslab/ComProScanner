@@ -38,8 +38,8 @@ from ..utils.common_functions import (
 )
 
 
-######## logger Configuration ########
-logger = setup_logger("article_processor.log")
+# configure logger
+logger = setup_logger("comproscanner.log", module_name="pdfs_processor")
 
 
 ######## Class to process PDFs in a folder ########

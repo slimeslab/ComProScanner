@@ -17,11 +17,6 @@ from crewai.project import CrewBase, agent, crew, task
 from crewai import LLM
 from pydantic import BaseModel, Field
 
-from comproscanner.utils.logger import setup_logger
-
-# Logger configuration
-logger = setup_logger("agent_synthesis_evaluation.log")
-
 
 class SynthesisMatch(BaseModel):
     """Basic match structure with reference and test values"""

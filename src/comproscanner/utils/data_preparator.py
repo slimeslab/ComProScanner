@@ -27,8 +27,8 @@ from .error_handler import (
 )
 from .logger import setup_logger
 
-######## logger Configuration ########
-logger = setup_logger("composition_property_extractor.log")
+# configure logger
+logger = setup_logger("comproscanner.log", module_name="data_preparator")
 
 
 class SectionProcessor:

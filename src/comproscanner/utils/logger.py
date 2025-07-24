@@ -28,8 +28,8 @@ class LoggerTextColours:
 
 
 class CustomFormatter(logging.Formatter):
-    DEBUG_INFO_FORMAT = "%(message)s"
-    DETAILED_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
+    DEBUG_INFO_FORMAT = "[%(name)s] %(message)s"
+    DETAILED_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     datefmt = "%d-%m-%Y %H:%M:%S"
 
     FORMATS = {
@@ -70,34 +70,48 @@ def verbose(self, message, *args, **kwargs):
 logging.Logger.verbose = verbose
 
 
-def setup_logger(log_filename, log_level=logging.DEBUG):
+def setup_logger(log_filename, module_name=None, log_level=logging.DEBUG):
     """
     Set up and return a logger with both file and console handlers.
 
     Args:
         log_filename (str): Name of the log file (e.g., 'article_processor.log')
+        module_name (str): Name of the module for which the logger is being set up (default: None)
         log_level (int): Logging level (default: logging.DEBUG [All logs are captured])
 
     Returns:
         logging.Logger: Configured logger instance
     """
-    log_dir = "logs"
-    os.makedirs(log_dir, exist_ok=True)
+    if module_name:
+        logger_name = f"comproscanner.{module_name}"
+    else:
+        logger_name = "comproscanner"
 
-    logger = logging.getLogger(log_filename)
+    logger = logging.getLogger(logger_name)
     logger.setLevel(log_level)
 
-    if not logger.handlers:
-        file_handler = logging.FileHandler(os.path.join(log_dir, log_filename))
-        console_handler = logging.StreamHandler(sys.stdout)
+    # Check if handlers are already configured for this logger
+    has_file_handler = any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+    has_console_handler = any(
+        isinstance(h, logging.StreamHandler) and h.stream == sys.stdout
+        for h in logger.handlers
+    )
 
+    if not has_file_handler:
+        file_handler = logging.FileHandler(log_filename)
         file_formatter = logging.Formatter(
-            "%(asctime)s - %(levelname)s - %(message)s", datefmt="%d-%m-%Y %H:%M:%S"
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            datefmt="%d-%m-%Y %H:%M:%S",
         )
         file_handler.setFormatter(file_formatter)
-        console_handler.setFormatter(CustomFormatter())
-
         logger.addHandler(file_handler)
+
+    if not has_console_handler:
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(CustomFormatter())
         logger.addHandler(console_handler)
+
+    # Prevent propagation to avoid duplicate messages from parent loggers
+    logger.propagate = False
 
     return logger

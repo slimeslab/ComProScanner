@@ -16,7 +16,7 @@ from collections import Counter
 from tqdm import tqdm
 from ...utils.logger import setup_logger
 
-logger = setup_logger("post-processing.log")
+logger = setup_logger("comproscanner.log", module_name="data_distribution_visualizers")
 
 try:
     from transformers import AutoTokenizer, AutoModel

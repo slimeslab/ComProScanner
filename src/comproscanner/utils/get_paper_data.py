@@ -17,8 +17,8 @@ from .logger import setup_logger
 
 load_dotenv()
 
-######## logger Configuration ########
-logger = setup_logger("post-processing.log")
+# configure logger
+logger = setup_logger("comproscanner.log", module_name="get_paper_data")
 
 
 class PaperMetadataExtractor:

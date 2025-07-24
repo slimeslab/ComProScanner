@@ -36,8 +36,8 @@ from ..utils.common_functions import return_error_message
 from ..utils.prepare_iop_files import PrepareIOPFiles
 
 
-######## logger Configuration ########
-logger = setup_logger("article_processor.log")
+# configure logger
+logger = setup_logger("comproscanner.log", module_name="iop_processor")
 
 
 ######## Class to process IOP articles ########

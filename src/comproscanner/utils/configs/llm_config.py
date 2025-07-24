@@ -14,12 +14,6 @@ import os
 # Third-party imports
 from crewai import LLM
 
-# Custom imports
-from ..logger import setup_logger
-
-######## logger Configuration ########
-logger = setup_logger("composition_property_extractor.log")
-
 
 class LLMConfig:
     # Default values

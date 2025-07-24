@@ -26,8 +26,8 @@ from .error_handler import ValueErrorHandler
 from .configs import ArticleRelatedKeywords
 from .logger import setup_logger
 
-######## logger Configuration ########
-logger = setup_logger("article_processor.log")
+# configure logger
+logger = setup_logger("comproscanner.log", module_name="pdf_to_markdown_text")
 
 
 class PDFToMarkdownText:

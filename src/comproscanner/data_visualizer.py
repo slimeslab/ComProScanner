@@ -23,8 +23,8 @@ if False:
     import seaborn as sns
 
 
-######## logger Configuration ########
-logger = setup_logger("visualizer_logs.log")
+# configure logger
+logger = setup_logger("comproscanner.log", module_name="data_visualizer")
 
 
 def plot_family_pie_chart(

@@ -20,8 +20,8 @@ from transformers import AutoTokenizer, AutoModel
 from comproscanner.utils.error_handler import ValueErrorHandler, ImportErrorHandler
 from comproscanner.utils.logger import setup_logger
 
-######## logger Configuration ########
-logger = setup_logger("all_logs.log")
+# configure logger
+logger = setup_logger("comproscanner.log", module_name="embeddings")
 
 # Import optional dependencies conditionally
 try:

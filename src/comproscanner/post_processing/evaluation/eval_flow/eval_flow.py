@@ -30,7 +30,7 @@ from .crews.synthesis_evaluation_crew.synthesis_evaluation_crew import (
 )
 
 # Logger Configuration
-logger = setup_logger("agent_evaluation.log")
+logger = setup_logger("comproscanner.log", module_name="eval_flow")
 
 
 class AgentEvaluationState(BaseModel):

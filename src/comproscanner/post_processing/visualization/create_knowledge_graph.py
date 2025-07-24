@@ -47,7 +47,7 @@ except ImportError:
 load_dotenv()
 
 # Setup logger
-logger = setup_logger("post-processing.log")
+logger = setup_logger("comproscanner.log", module_name="create_knowledge_graph")
 
 
 class SemanticMatcher:

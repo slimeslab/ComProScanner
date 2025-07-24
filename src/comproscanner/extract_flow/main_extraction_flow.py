@@ -39,8 +39,8 @@ from .crews.synthesis_crew.synthesis_format_crew.synthesis_format_crew import (
     SynthesisFormatCrew,
 )
 
-######## logger Configuration ########
-logger = setup_logger("composition_property_extractor.log")
+# configure logger
+logger = setup_logger("comproscanner.log", module_name="main_extraction_flow")
 
 
 class MaterialsState(BaseModel):
