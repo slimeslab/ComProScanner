@@ -506,7 +506,9 @@ class ComProScanner:
                         os.makedirs(dir_path, exist_ok=True)
                     with open(checked_doi_list_file, "a") as f:
                         logger.info(f"Adding DOI to checked list: {paper_data['doi']}")
-                        f.write(f"{paper_data['doi']}\n")
+                        if paper_data["doi"] not in f.read():
+                            # Write the DOI only if it is not already present
+                            f.write(f"{paper_data['doi']}\n")
                 except Exception as e:
                     logger.error(
                         f"Error writing to checked DOIs file {checked_doi_list_file}: {str(e)}"
