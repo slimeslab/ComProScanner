@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.74Pb(Mg1/3Nb2/3)O3-0.26PbTiO3":1780,"0.74Pb(Mg1/3Nb2/3)O3-0.26PbTiO3-DCP":1250,"0.23Pb(In1/2Nb1/2)O3-0.47Pb(Mg1/3Nb2/3)O3-0.30PbTiO3":1624},"property_unit":"pC/N","family":"PbTiO3"}}

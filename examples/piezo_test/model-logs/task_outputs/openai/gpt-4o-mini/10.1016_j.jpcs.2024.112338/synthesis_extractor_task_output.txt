@@ -1,0 +1,1 @@
+{"synthesis_extracted_data":{"method":"solid-state reaction","precursors":["Lead (II) oxide (PbO)","Zirconium dioxide (ZrO2)","Titanium dioxide (TiO2)","Molybdenum trioxide (MoO3)","Indium (III) oxide (In2O3)","Zinc oxide (ZnO)","Antimony trioxide (Sb2O3)","Samarium (III) oxide (Sm2O3)"],"steps":[],"characterization_techniques":["EDS","FTIR","LCR meter","ferroelectric tester"]}}

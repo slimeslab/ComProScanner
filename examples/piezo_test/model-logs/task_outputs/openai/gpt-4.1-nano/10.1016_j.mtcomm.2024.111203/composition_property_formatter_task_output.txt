@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Na0.25K0.25Bi2.5(0)Nb2O9+0":14,"Na0.25K0.25Bi2.5(−0.01)Nb2O9+3(−0.01)/2":20,"Na0.25K0.25Bi2.5(−0.03)Nb2O9+3(−0.03)/2":20,"Na0.25K0.25Bi2.5(−0.05)Nb2O9+3(−0.05)/2":20,"Na0.25K0.25Bi2.5(−0.07)Nb2O9+3(−0.07)/2":20,"Na0.25K0.25Bi2.5(−0.10)Nb2O9+3(−0.10)/2":20},"property_unit":"pC/N","family":"NaKBiNbO"}}

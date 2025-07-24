@@ -1,0 +1,251 @@
+2025-07-11 10:32:28: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Material properties of PZT-8 piezoceramics and PIMNT single crystal.
+|| d 33 (pC/N)| k t| Q m| T C (\xb0C)| \u03b5 E^{ } 33|
+|---|---|---|---|---|---|
+|[001]c PIMNT|2090|0.55|180|172|5127|
+|PZT\u22128|225|0.47|800|300|1180|
+
+Table 2. The simulated and measured impedance characteristic parameters of the PIMNT and PZT transducers.
+|| f r (kHz)| f a (kHz)| k eff| Q m|
+|---|---|---|---|---|
+|PIMNT transducer|
+|Measurement|55.35|55.94|0.145|918|
+|COMSOL FEA|55.10|55.96|0.175|1147|
+|PZT transducer|
+|Measurement|55.81|56.00|0.082|1730|
+|COMSOL FEA|55.44|55.66|0.089|2772|
+
+Table 3. Frequency response of the ultrasonic transducer operating in oil.
+|| f r (kHz)| f a (kHz)| k eff| Q m|
+|---|---|---|---|---|
+|PIMNT transducer|55.12|55.58|0.128|290|
+|PZT transducer|55.42|55.58|0.076|326|
+
+Table 4. The performance parameters of the PIMNT and PZT transducers in load test.
+||PIMNT transducer|PZT transducer|
+|---|---|---|
+|\u03b533T|3.77\xd710E^{\u22128}|1.05\xd710E^{\u22128}|
+|E 3 (V/m)|105,000|60,000|
+|P (W)|680|42.8|
+|W e (W/cmE^{3}\xb7kHz)|12.41|0.45|
+
+Table 5. The electro-acoustic efficiency parameters of the PIMNT and PZT transducers.
+||PIMNT transducer|PZT transducer|
+|---|---|---|
+|Q e|138.9|311.3|
+|N eff|670.7|589.7|
+|R L|9.95|191.92|
+|R 1|3.17|22.64|
+|P L|3.1|8.5|
+|\u03b7ea|0.75|0.88|
+|P opt|25.9|24.3|
+|\u03b7max|0.924|0.921|
+
+# RESULTS AND DISCUSSION
+According to the formula for power capacity (, it can be analyzed that the reason for higher power capacity of the PIMNT transducer lies in the fact that both the \u03b5 33 T and k eff of the PIMNT single crystals are higher than those of the PZT piezoceramics. There is a considerable difference in Q m between the PIMNT single crystal and PZT piezoceramic, resulting in a lower Q m for the PIMNT transducer and a higher Q m for the PZT transducer. The calculated power capacity of the PIMNT transducer was 15.9 times that of the PZT transducer, indicating that transducers made with PIMNT single crystals can be applied in higher power output applications. Additionally, the calculated power density of the PIMNT transducer is 27.6 times that of PZT transducer, which facilitates the miniaturization of ultrasonic scalpel transducers while maintaining the same output power. The electro-acoustic efficiency \u03b7 ea of the transducer is very important in power ultrasonic equipment. Under optimal load conditions, the maximum electro-acoustic efficiency \u03b7 max of the transducer is determined by its dynamic parameter N eff. The optimum load coefficient P opt and \u03b7 max are expressed as follows: where Q e= 1/tan\u03c3 e, The calculated parameters are listed in. Both transducers exhibited a maximum electro-acoustic efficiency exceeding 0.92; however, neither achieved the optimal load coefficient under actual load conditions, resulting in lower efficiency. The efficiency of the PIMNT transducer was only 0.75, which is lower than the 0.88 of the PZT transducers. The current structure of the PIMNT transducer is similar to that of the PZT transducer and has not been redesigned according to the special properties of the PIMNT single crystal. Consequently, the efficiency of the PIMNT transducer is relatively low. In the future, the PIMNT transducer can be redesigned to achieve a higher electro-acoustic efficiency.
+
+# TITLE
+PIMNT piezocrystal ultrasonic scalpel transducer with enhanced electromechanical performances
+
+# ABSTRACT
+To address these limitations, a novel high-performance ultrasonic transducer is proposed that offers superior power density and electromechanical coupling factor by utilizing the relaxor-based ferroelectric single crystal Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (PIMNT) as the piezoelectric ring. A stability test under a strong electric field of 1.5 kV/cm confirmed the feasibility of the PIMNT single crystal for ultrasonic scalpel application. Finite element analysis was employed to optimize the thickness of the PIMNT rings, leading to the resonance frequency of approximately 55.5 kHz, the universal working frequency for the ultrasonic scalpel transducer. The PIMNT transducer achieved an effective electromechanical coupling factor k
+                     eff of 14.5 % compared to the traditional PZT transducer of 8.2 %. The enhancement was attributed to the superior piezoelectric properties of the PIMNT single crystal. An acoustic load simulation system was established, and the power density of PIMNT transducer was measured to be 27.6 times that of the PZT transducer. This significantly improved property shows the higher power output capacity and highlights the potential of PIMNT transducer for high-power and miniaturized ultrasonic scalpel transducers.
+
+# INTRODUCTION
+Ultrasonic scalpels typically require an output mechanical power of 30\u2013100 W. Research has shown that the power density of conventional piezoelectric transducer is no more than 6 W/kHz\xb7cmE^{3} , thus the transducer is always being huge to output enough mechanical power. Lead zirconate titanate Pb(Zr1\u2212xTix)O3 (PZT) materials have been used for power ultrasonic applications. However, piezoelectric coefficients d 33 and longitudinal electromechanical coupling factor k 33 of PZT are approximately 200\u2013400 pC/N and 0.7, respectively, which still leave much room to enhance the displacement and overall electromechanical performance in ultrasound transducers. Among them, the ternary Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (PIN-PMN-PT) single crystals are notable for their high coercive field and Curie temperatures, with many researches focused on Mn-doped PIMNT. The Mn-PIMNT single crystal exhibits exceptional piezoelectric coefficients, electromechanical coupling factor, and coercive field. Previous studies reported that effective electromechanical coupling factor k eff of Mn-PIMNT transducer is approximately 2, 1.6, 1.75 times that of PZT transducer at the resonance frequency of 20.7 kHz, 45.6 kHz, 61.7 kHz, respectively, while displacement is similar to that of PZT transducer , which is attribute to low product of d 33 and Q m values. However, the doping of Mn ions is also relatively complex, while PIMNT is more readily available. In contrast, undoped PIMNT demonstrate similar k 33 and higher d 33 (\u223c 1500\u20132700 pC/N) , suggesting potential for enhanced displacement in transducers. In this article, we propose a high-performance ultrasonic transducer operating at 55.5 kHz, the universal working frequency for commercial ultrasonic scalpel transducer, utilizing PIMNT single crystal as the piezoelectric material. Three-dimensional models of both PIMNT and PZT ultrasonic scalpel transducers were constructed using finite element software. Furthermore, a comparative analysis of PIMNT and PZT transducers at around 55.5 kHz was performed through impedance and vibration tests.
+
+# CONCLUSION
+This work investigated a high-performance ultrasonic scalpel transducer utilizing PIMNT single crystal. The PIMNT single crystal exhibited comprehensively excellent properties, including high coercive field, electromechanical coupling factor, piezoelectric coefficient, the value of d 33 \xb7Q m and maintained performance stability under 1.5 kV/cm. The device model of the ultrasonic transducer based on PIMNT piezoelectric rings was developed using finite element simulation, achieving a resonance frequency of 55.5 kHz. Compared to conventional PZT rings, the thickness of the PIMNT rings was reduced by 57.6 %. The fabricated PIMNT transducer achieved an effective electromechanical coupling factor k eff 1.8 times that of the PZT transducer and comparable to that of the Mn-PIMNT transducer. Additionally, the displacement of the PIMNT transducer was found to be 1.6 times that of the PZT transducer, surpassing the performance of the Mn-PIMNT transducer. The results indicated that the power capacity increased by 15.9 times, highlighting the advantages of the PIMNT single crystal in high-power applications. Additionally, the significantly higher power density, which increased by 27.6 times, indicates that PIMNT single crystals hold promise for the miniaturization of ultrasonic scalpel transducers. In conclusion, this study highlights the promising avenues of PIMNT single crystals in developing high-performance and miniaturized power ultrasonic applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-11 10:32:34: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Material properties of PZT-8 piezoceramics and PIMNT single crystal.
+|| d 33 (pC/N)| k t| Q m| T C (\xb0C)| \u03b5 E^{ } 33|
+|---|---|---|---|---|---|
+|[001]c PIMNT|2090|0.55|180|172|5127|
+|PZT\u22128|225|0.47|800|300|1180|
+
+Table 2. The simulated and measured impedance characteristic parameters of the PIMNT and PZT transducers.
+|| f r (kHz)| f a (kHz)| k eff| Q m|
+|---|---|---|---|---|
+|PIMNT transducer|
+|Measurement|55.35|55.94|0.145|918|
+|COMSOL FEA|55.10|55.96|0.175|1147|
+|PZT transducer|
+|Measurement|55.81|56.00|0.082|1730|
+|COMSOL FEA|55.44|55.66|0.089|2772|
+
+Table 3. Frequency response of the ultrasonic transducer operating in oil.
+|| f r (kHz)| f a (kHz)| k eff| Q m|
+|---|---|---|---|---|
+|PIMNT transducer|55.12|55.58|0.128|290|
+|PZT transducer|55.42|55.58|0.076|326|
+
+Table 4. The performance parameters of the PIMNT and PZT transducers in load test.
+||PIMNT transducer|PZT transducer|
+|---|---|---|
+|\u03b533T|3.77\xd710E^{\u22128}|1.05\xd710E^{\u22128}|
+|E 3 (V/m)|105,000|60,000|
+|P (W)|680|42.8|
+|W e (W/cmE^{3}\xb7kHz)|12.41|0.45|
+
+Table 5. The electro-acoustic efficiency parameters of the PIMNT and PZT transducers.
+||PIMNT transducer|PZT transducer|
+|---|---|---|
+|Q e|138.9|311.3|
+|N eff|670.7|589.7|
+|R L|9.95|191.92|
+|R 1|3.17|22.64|
+|P L|3.1|8.5|
+|\u03b7ea|0.75|0.88|
+|P opt|25.9|24.3|
+|\u03b7max|0.924|0.921|
+
+# RESULTS AND DISCUSSION
+According to the formula for power capacity (, it can be analyzed that the reason for higher power capacity of the PIMNT transducer lies in the fact that both the \u03b5 33 T and k eff of the PIMNT single crystals are higher than those of the PZT piezoceramics. There is a considerable difference in Q m between the PIMNT single crystal and PZT piezoceramic, resulting in a lower Q m for the PIMNT transducer and a higher Q m for the PZT transducer. The calculated power capacity of the PIMNT transducer was 15.9 times that of the PZT transducer, indicating that transducers made with PIMNT single crystals can be applied in higher power output applications. Additionally, the calculated power density of the PIMNT transducer is 27.6 times that of PZT transducer, which facilitates the miniaturization of ultrasonic scalpel transducers while maintaining the same output power. The electro-acoustic efficiency \u03b7 ea of the transducer is very important in power ultrasonic equipment. Under optimal load conditions, the maximum electro-acoustic efficiency \u03b7 max of the transducer is determined by its dynamic parameter N eff. The optimum load coefficient P opt and \u03b7 max are expressed as follows: where Q e= 1/tan\u03c3 e, The calculated parameters are listed in. Both transducers exhibited a maximum electro-acoustic efficiency exceeding 0.92; however, neither achieved the optimal load coefficient under actual load conditions, resulting in lower efficiency. The efficiency of the PIMNT transducer was only 0.75, which is lower than the 0.88 of the PZT transducers. The current structure of the PIMNT transducer is similar to that of the PZT transducer and has not been redesigned according to the special properties of the PIMNT single crystal. Consequently, the efficiency of the PIMNT transducer is relatively low. In the future, the PIMNT transducer can be redesigned to achieve a higher electro-acoustic efficiency.
+
+# TITLE
+PIMNT piezocrystal ultrasonic scalpel transducer with enhanced electromechanical performances
+
+# ABSTRACT
+To address these limitations, a novel high-performance ultrasonic transducer is proposed that offers superior power density and electromechanical coupling factor by utilizing the relaxor-based ferroelectric single crystal Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (PIMNT) as the piezoelectric ring. A stability test under a strong electric field of 1.5 kV/cm confirmed the feasibility of the PIMNT single crystal for ultrasonic scalpel application. Finite element analysis was employed to optimize the thickness of the PIMNT rings, leading to the resonance frequency of approximately 55.5 kHz, the universal working frequency for the ultrasonic scalpel transducer. The PIMNT transducer achieved an effective electromechanical coupling factor k
+                     eff of 14.5 % compared to the traditional PZT transducer of 8.2 %. The enhancement was attributed to the superior piezoelectric properties of the PIMNT single crystal. An acoustic load simulation system was established, and the power density of PIMNT transducer was measured to be 27.6 times that of the PZT transducer. This significantly improved property shows the higher power output capacity and highlights the potential of PIMNT transducer for high-power and miniaturized ultrasonic scalpel transducers.
+
+# INTRODUCTION
+Ultrasonic scalpels typically require an output mechanical power of 30\u2013100 W. Research has shown that the power density of conventional piezoelectric transducer is no more than 6 W/kHz\xb7cmE^{3} , thus the transducer is always being huge to output enough mechanical power. Lead zirconate titanate Pb(Zr1\u2212xTix)O3 (PZT) materials have been used for power ultrasonic applications. However, piezoelectric coefficients d 33 and longitudinal electromechanical coupling factor k 33 of PZT are approximately 200\u2013400 pC/N and 0.7, respectively, which still leave much room to enhance the displacement and overall electromechanical performance in ultrasound transducers. Among them, the ternary Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (PIN-PMN-PT) single crystals are notable for their high coercive field and Curie temperatures, with many researches focused on Mn-doped PIMNT. The Mn-PIMNT single crystal exhibits exceptional piezoelectric coefficients, electromechanical coupling factor, and coercive field. Previous studies reported that effective electromechanical coupling factor k eff of Mn-PIMNT transducer is approximately 2, 1.6, 1.75 times that of PZT transducer at the resonance frequency of 20.7 kHz, 45.6 kHz, 61.7 kHz, respectively, while displacement is similar to that of PZT transducer , which is attribute to low product of d 33 and Q m values. However, the doping of Mn ions is also relatively complex, while PIMNT is more readily available. In contrast, undoped PIMNT demonstrate similar k 33 and higher d 33 (\u223c 1500\u20132700 pC/N) , suggesting potential for enhanced displacement in transducers. In this article, we propose a high-performance ultrasonic transducer operating at 55.5 kHz, the universal working frequency for commercial ultrasonic scalpel transducer, utilizing PIMNT single crystal as the piezoelectric material. Three-dimensional models of both PIMNT and PZT ultrasonic scalpel transducers were constructed using finite element software. Furthermore, a comparative analysis of PIMNT and PZT transducers at around 55.5 kHz was performed through impedance and vibration tests.
+
+# CONCLUSION
+This work investigated a high-performance ultrasonic scalpel transducer utilizing PIMNT single crystal. The PIMNT single crystal exhibited comprehensively excellent properties, including high coercive field, electromechanical coupling factor, piezoelectric coefficient, the value of d 33 \xb7Q m and maintained performance stability under 1.5 kV/cm. The device model of the ultrasonic transducer based on PIMNT piezoelectric rings was developed using finite element simulation, achieving a resonance frequency of 55.5 kHz. Compared to conventional PZT rings, the thickness of the PIMNT rings was reduced by 57.6 %. The fabricated PIMNT transducer achieved an effective electromechanical coupling factor k eff 1.8 times that of the PZT transducer and comparable to that of the Mn-PIMNT transducer. Additionally, the displacement of the PIMNT transducer was found to be 1.6 times that of the PZT transducer, surpassing the performance of the Mn-PIMNT transducer. The results indicated that the power capacity increased by 15.9 times, highlighting the advantages of the PIMNT single crystal in high-power applications. Additionally, the significantly higher power density, which increased by 27.6 times, indicates that PIMNT single crystals hold promise for the miniaturization of ultrasonic scalpel transducers. In conclusion, this study highlights the promising avenues of PIMNT single crystals in developing high-performance and miniaturized power ultrasonic applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3": 2090,
+      "Pb(Zr1-xTix)O3": 225
+    },
+    "abbreviations": {
+      "PIMNT": "Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3",
+      "PZT": "Pb(Zr1-xTix)O3"
+    },
+    "property_unit": "pC/N",
+    "family": "PZT"
+  }
+}"

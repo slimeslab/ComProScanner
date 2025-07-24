@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"α-TeO2":null,"β-TeO2":null},"abbreviations":{},"property_unit":"pm/V","family":"TeO2"}}

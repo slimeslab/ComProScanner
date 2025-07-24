@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"K0.5Na0.5NbO3":94,"(K,Na)0.5NbO3":94},"abbreviations":{"KNN":"(K,Na)0.5NbO3","MeHA":"methacrylated hyaluronic acid hydrogel"},"property_unit":"pC/N","family":"KNbO3"}}

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BaTiO3":97,"Ba0.97Ca0.03TiO3":105,"Ba0.95Ca0.05TiO3":88,"Ba0.92Ca0.08TiO3":110},"property_unit":"pC/N","family":"BaTiO3"}}

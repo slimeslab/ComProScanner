@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Ni@MoS2":3930,"3–73":6950,"2–72":1380,"Pd@MoS2":4050,"Pt@MoS2":3820,"Ir@MoS2":7590},"abbreviations":{"TM":"Transition Metal"},"property_unit":"pC/N","family":"MoS2"}}

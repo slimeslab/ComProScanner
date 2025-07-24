@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"AlN":5,"AlN-Air":4.5,"AlN-Vacuum":5},"property_unit":"pC/N","family":"AlN"}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PNT-0.41PZ-PT-Mn":310,"PNT-0.42PZ-PT-Mn":368,"PNT-0.43PZ-PT-Mn":400,"PNT-0.43PZ-PT-Mn-Traditional poling":205,"PNT-0.44PZ-PT-Mn":238},"abbreviations":{"PNT-xPZ-PT-Mn":"0.12Pb(Ni1/3Ta2/3)O3-xPbZrO3-(0.88-x)PbTiO3"},"property_unit":"pC/N","family":"PZT"}}

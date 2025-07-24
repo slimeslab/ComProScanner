@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Nd-PZT":550,"PBZTN":864,"PBZTNB":744,"Sm-PMN-PT":1500,"Sm-PBZT-PSN":610,"Textured PIN-PSN-PT":1100,"PNN-PZT":986,"BS-PT-BZH":461,"Textured PZT":760,"BS-PT-PMnN":280,"0.01Ta-Sm-PZT":530,"0.00Ta-Sm-PZT":513},"property_unit":"pC/N","family":"PZT"}}

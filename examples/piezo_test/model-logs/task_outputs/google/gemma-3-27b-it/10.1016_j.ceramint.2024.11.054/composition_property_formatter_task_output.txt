@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi0.997La0.003FeO3-0.3BaTiO3":179,"Bi0.997La0.003FeO3-0.295BaTiO3":179,"Bi0.997La0.003FeO3-0.30BaTiO3 (Quenched)":205,"Bi0.997La0.003FeO3-0.31BaTiO3 (Quenched)":205,"Bi0.997La0.003FeO3-0.32BaTiO3 (Quenched)":205},"property_unit":"pC/N","family":"BiFeO3-BaTiO3"}}

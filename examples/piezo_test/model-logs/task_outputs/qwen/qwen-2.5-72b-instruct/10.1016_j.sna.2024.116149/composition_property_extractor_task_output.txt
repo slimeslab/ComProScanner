@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3":2090,"Pb(Zr1-xTi)xO3":225},"abbreviations":{"PIMNT":"Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3","PZT":"Pb(Zr1-xTi)xO3"},"property_unit":"pC/N","family":"Pb-based perovskite"}}

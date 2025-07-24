@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BaTi(1.0)(Zr1/3Sn1/3Hf1/3)0.00O3":100,"BaTi(0.98)(Zr1/3Sn1/3Hf1/3)0.02O3":null,"BaTi(0.96)(Zr1/3Sn1/3Hf1/3)0.04O3":350,"BaTi(0.94)(Zr1/3Sn1/3Hf1/3)0.06O3":null,"BaTi(0.92)(Zr1/3Sn1/3Hf1/3)0.08O3":null},"property_unit":"pC/N","family":"BaTiO3"}}

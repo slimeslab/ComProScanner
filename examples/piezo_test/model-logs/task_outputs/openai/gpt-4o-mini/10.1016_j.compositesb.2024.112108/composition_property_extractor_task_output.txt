@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"CdS":2.24,"SnS2":3.11,"CS-2":3.11,"RCS":2.24},"abbreviations":{"CS":"CdS@SnS2","RCS":"Reference Composite Sample"},"property_unit":"pm/V","family":"CdS/SnS2 Heterojunction"}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BaTi0.89Hf0.11O3":337,"BaTi0.89Hf0.11O3 + 1%Fe":337},"abbreviations":{"IB":"invisible boundary","QP":"quadruple point"},"property_unit":"pC/N","family":"BaTiO3"}}

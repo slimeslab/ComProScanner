@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.01Ta-Sm-PZT where x=0.01":530,"0.00Ta-Sm-PZT where x=0.00":513},"abbreviations":{"PZT":"PbZrTiO3"},"property_unit":"pC/N","family":"PZT"}}

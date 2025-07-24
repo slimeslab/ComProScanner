@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PYN-PMN-PT (random)":306,"PYN-PMN-PT (textured)":607,"BaTiO3":null},"abbreviations":{"PYN":"Pb(Yn1/2Nb1/2)O3","PMN":"Pb(Mg1/3Nb2/3)O3","PT":"PbTiO3","BT":"BaTiO3","TGG":"Template Grain Growth"},"property_unit":"pC/N","family":"Perovskite"}}

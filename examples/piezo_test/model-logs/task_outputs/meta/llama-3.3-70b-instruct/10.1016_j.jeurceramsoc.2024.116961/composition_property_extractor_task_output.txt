@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Na0.25K0.25Bi2.5Nb2O9":24,"Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9":24.4},"abbreviations":{"NKBN":"Na0.25K0.25Bi2.5Nb2O9","NKBC x NW y":"Na0.25K0.25Bi2.5-xCe(x)Nb2-yW(y)O9"},"property_unit":"pC/N","family":"BLSFs"}}

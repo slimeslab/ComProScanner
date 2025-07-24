@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(Pb(0.94-((0.94*0.06))))Sr(0.06) (Mg(1/3))Nb(2/3) 0.2 (Zr(0.388)) (Ti(0.412)) O3":708},"property_unit":"pC/N","family":"Pb(Zr,Ti)O3"}}

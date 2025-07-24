@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(1-0.04)BaTiO3 + (0.04)Zr + (0.04)Sn + (0.04)Hf":350,"(1-0.02)BaTiO3 + (0.02)Zr + (0.02)Sn + (0.02)Hf":350,"(1-0.06)BaTiO3 + (0.06)Zr + (0.06)Sn + (0.06)Hf":350,"(1-0.08)BaTiO3 + (0.08)Zr + (0.08)Sn + (0.08)Hf":350},"property_unit":"pC/N","family":"BaTiO3"}}

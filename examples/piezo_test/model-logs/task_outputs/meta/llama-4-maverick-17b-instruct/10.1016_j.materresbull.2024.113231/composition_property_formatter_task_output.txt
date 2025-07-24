@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Na0.49Bi0.49Ba0.02TiO3":175,"Na0.47Bi0.47Ba0.06TiO3":201,"Na0.45Bi0.45Ba0.1TiO3":194,"Na0.425Bi0.425Ba0.15TiO3":150,"Na0.4Bi0.4Ba0.2TiO3":125,"Na0.375Bi0.375Ba0.25TiO3":100,"Na0.47Bi0.49Ba0.06TiO3 + Sr0.03":201,"Na0.47Bi0.49Ba0.06TiO3":207},"property_unit":"pC/N","family":"Na0.5Bi0.5TiO3"}}

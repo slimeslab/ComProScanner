@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Pb(Mg(1/3)Nb(2/3))O3-0.3PbTiO3":35083,"MA: Pb(Mg(1/3)Nb(2/3))O3-0.3PbTiO3":7058,"R: Pb(Mg(1/3)Nb(2/3))O3-0.3PbTiO3":35083,"RC: Pb(Mg(1/3)Nb(2/3))O3-0.3PbTiO3":2580,"M: Pb(Mg(1/3)Nb(2/3))O3-0.3PbTiO3":16271},"abbreviations":{},"property_unit":"pC/N","family":"Pb(Mg1/3Nb2/3)O3-PbTiO3"}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BaTi0.89Hf0.11O3":337,"BT-11Hf-1Fe":337,"BaTi1-x Hf x O3":null,"BT-xHf-yFe":null},"abbreviations":{"BT":"BaTiO3","QP":"quadruple point","MPB":"morphotropic phase boundary","PPB":"polymorphic phase boundary","IB":"invisible boundary"},"property_unit":"pC/N","family":"BaTiO3"}}

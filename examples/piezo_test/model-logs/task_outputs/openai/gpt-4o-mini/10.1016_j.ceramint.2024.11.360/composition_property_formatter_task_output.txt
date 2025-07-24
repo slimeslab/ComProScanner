@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi4Ti3O12":4.25,"Bi3La1Ti3O12":11.57,"Bi4-xLa(x)Ti3O12 where x=0":7.75,"Bi4-xLa(x)Ti3O12 where x=0.25":7.75,"Bi4-xLa(x)Ti3O12 where x=0.75":7.75,"Bi4-xLa(x)Ti3O12 where x=1":11.57},"property_unit":"pm/V","family":"Aurivillius"}}

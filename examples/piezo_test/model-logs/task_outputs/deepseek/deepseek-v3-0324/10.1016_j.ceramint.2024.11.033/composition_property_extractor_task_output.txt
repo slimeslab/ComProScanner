@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PEO":1.0,"PEO-BTO2":1.9,"PEO-BTO5":2.5},"abbreviations":{"PEO":"Plasma Electrolytic Oxidation","BTO":"BaTiO3"},"property_unit":"pC/N","family":"BaTiO3"}}

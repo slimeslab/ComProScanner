@@ -1,0 +1,622 @@
+2025-07-10 21:34:54: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Refined structural parameters by using the Rietveld method for PZT-PMS-PSN ceramic powders., S. G., F. R., A.P., L.P., and S.P. stand for the sample state, space group, phase fraction, atomic positions, lattice parameters, and statistical parameters, respectively.
+|x|S. G.|F. R.(%)|Atoms|A.P.|L.P.|S.P.|
+|---|---|---|---|---|---|---|
+|0.48|R3c|77.21|Pb|0|0|0.26760|['a\xa0=\xa05.764632', 'c\xa0=\xa014.12014', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0120', 'V\xa0=\xa0406.3619']|['r', '=\xa011.910 r', '=\xa05.595', 'r', '=\xa08.524', 'GOF\xa0=\xa02.129']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0|0|0.02|
+|O1|0.17200|0.34400|0.08330|
+|Cc|22.79|Pb|0|0.75|0|['a\xa0=\xa010.03996', 'b\xa0=\xa05.738719', 'c\xa0=\xa05.759603', 'V\xa0=\xa0271.9942', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.9518']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.21562|0.25|0.20681|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.50|P4mm|61.20|Pb|0|0|0|['a\xa0=\xa0b\xa0=\xa04.040773', 'c\xa0=\xa04.13156', 'V\xa0=\xa067.45946', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa010.750 r', '=\xa05.243', 'r', '=\xa07.543 GOF\xa0=\xa02.050']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|0.5|0.5543|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|38.80|Pb|0|0.75|0|['a\xa0=\xa010.00549', 'b\xa0=\xa05.71811', 'c\xa0=\xa05.731405', 'V\xa0=\xa0269.5649', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.707']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.2558228|0.25|0.26072|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.52|P4mm|52.48|Pb|0|['0', '0.5']|['0', '0.5543']|['a\xa0=\xa0b\xa0=\xa04.029017', 'c\xa0=\xa04.135008', 'V\xa0=\xa067.12348', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa011.751', 'r', '=\xa05.320', 'r', '=\xa08.317 GOF\xa0=\xa02.209']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|47.52|Pb|0|0.75|0|['a\xa0=\xa010.02496', 'b\xa0=\xa05.69872', 'c\xa0=\xa05.702712', 'V\xa0=\xa0268.2873', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.5643']||
+|Ti/Zr/Mn/Sb/Sc/Nb|0.26359|0.25|0.262347|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.54|P4mm|65.30|Pb|0|0|0|['a\xa0=\xa0b\xa0=\xa04.034943', 'c\xa0=\xa04.133492', 'V\xa0=\xa067.29642', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa010.342 r', '=\xa05.220', 'r', '=\xa07.416 GOF\xa0=\xa01.981']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|0.5|0.5543|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|34.70|Pb|0|0.75|0|['a\xa0=\xa010.02317', 'b\xa0=\xa05.704986', 'c\xa0=\xa05.717385', 'V\xa0=\xa0268.7379', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.7145']||
+|Ti/Zr/Mn/Sb/Sc/Nb|0.2569638|0.25|0.272173|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.56|P4mm|60.08|Pb|0|0|0|['a\xa0=\xa0b\xa0=\xa04.024276', 'c\xa0=\xa04.132124', 'V\xa0=\xa066.91892', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa011.751', 'r', '=\xa05.320', 'r', '=\xa08.317 GOF\xa0=\xa02.209']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|0.5|0.5543|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|39.92|Pb|0|0.75|0|['a\xa0=\xa010.01773', 'b\xa0=\xa05.675097', 'c\xa0=\xa05.685408', 'V\xa0=\xa0265.8697', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.6587']||
+|Ti/Zr/Mn/Sb/Sc/Nb|0.2654322|0.25|0.2644618|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+
+Table 2. Comparison of the dielectric and piezoelectric properties of PZT-PMS-PSN ceramic with similar materials.
+| x|d33 (pC NE^{\u22121})|Tc (\xb0C)|Qm|tan\u03b4 (%) @1\xa0kHz|kp (%)|\u03b5r|Qm\u2217d33 (10 E^{\u22129}\xa0C\xa0NE^{\u22121})|Refs|
+|---|---|---|---|---|---|---|---|---|
+|x\xa0=\xa00.48|214|309|1887|0.22|49|611|404|This work|
+|x\xa0=\xa00.50|265|315|1663|0.28|54|966|441|This work|
+|x\xa0=\xa00.52|315|328|1578|0.29|51|1160|497|This work|
+|x\xa0=\xa00.54|225|333|1022|0.39|54|926|230|This work|
+|x\xa0=\xa00.56|156|335|1021|0.28|56|798|160|This work|
+|Fe-PMS-PZT|360|\u2013|1500|0.295|61|1055|540|[3]|
+|Yb-Nb-PMS-PZT|390|\u2013|800|0.41|61|1380|312|[4]|
+|Ce-PMS-PZT|388|\u2013|1450|0.59|60|2140|563|[7]|
+|PZT-PMS-PZN|369|275|1381|0.44|64|1200|510|[9]|
+|PNW-PMS-PZN|380|205|1275|0.58|61.3|2138|485|[10]|
+|PMS-PZT-PMT|430|250|1740|0.16|57|1740|748|[12]|
+|commercial hard PZT C-213|310|315|2500|0.30|58|1470|775|\u2013|
+|EuE^{3+}-modified-0.42PMN-0.26PIN-0.32\xa0PT|462|172|\u2013|\u2013|\u2013|\u2013|\u2013|[25]|
+|Sm-doped 24PIN-42PMN-34PT|420|250|\u2013|\u2013|\u2013|\u2013|\u2013|[26]|
+|0.39-BNT-0.20PZ-0.41\xa0PT|500|307|\u2013|0.14|\u2013|2985||[27]|
+|0.74PT-0.26BZN|410|467|\u2013|\u2013|\u2013|\u2013|\u2013|[28]|
+
+# RESULTS AND DISCUSSION
+(a\u2013e) illustrates the microstructural morphology of the sintered PZT-PMS-PSN ceramics, with the average grain size (AGS) indicated in the inserted figures. As depicted in (f), the mean grain size of PZT-PMS-PSN ceramics is 6.53, 6.46, 6.78, 7.1, and 6.75 respectively. It is noteworthy that for PZT-PMS-PSN ceramics with x = 0.52 and x = 0.54, the original morphology exhibits uniform characteristics and a more balanced distribution in both size and shape. Overall, these findings highlight the consistent microstructural features present within this range of compositions for PZT-PMS-PSN ceramics. The XRD patterns of PZT-PMS-PSN ceramics with different compositions (x = 0.48, 0.50, 0.52, 0.54, 0.56) at room temperature are depicted in. In the case of x = 0.48, the (111) peak displays a doublet while the (200) peak appears as a singlet, however, for x > 0.48, the (111) peak gracefully transforms into a singlet and the (200) peak elegantly splits into a doublet pattern. This indicates that there is a phase transition from rhombohedral (R) phase with space group R3m PDF#70\u20134072 to tetragonal (T) phase with space group P4mm PDF#89\u20136690. The (111) and (200) singlets of the x > 0.48 samples exhibit asymmetry due to the splitting of the 1/2{311} superlattice reflection, as observed in previous studies. Notably, this effect is more pronounced in the x = 0.48 sample, indicated by the black arrow. The splitting of superlattice peaks 1/2{311} comes from antiferrodistortive aE^{-}aE^{-}cE^{-} octahedra tilt along the [111]c axis in the Cc phase. The Rietveld refinement was conducted to accurately depict the evolution of phase structure in PZT-PMS-PSN ceramics, as illustrated in. summarizes the corresponding refined structural parameters. Throughout the refinement process, there is a remarkable agreement between the observed and calculated profiles for PZT-PMS-PSN ceramics based on a single two-phase model: R3c + Cc and P4 mm + Cc. As depicted in (f), the calculated volume fraction of the Cc phase gradually increases from x = 0.48 (22.79 %) to approximately x = 0.52 (47.52 %), but eventually stabilizes at x = 0 0.56 (39 0.92 %). The presence of smooth polarization rotation within this Cc phase significantly contributes to its piezoelectric properties, indicating a transition from an R3c phase to a P4mm phase in the structure of PZT-PMS-PSN ceramics. The refined profiles are consistent with XRD patterns for PZT-PMS-PSN ceramics. The P4mm and R3c phase structures can be obtained from 5-atom unit cells (Z = 1) of the ideal cubic perovskite (Pm3m) by introducing different modes of structural distortion. Therefore, (a) shows the Raman spectra of the PZT-PMS-PSN ceramics to illustrate the R3c-P4mm transition. The frequency of some modes decreased, such as 210.15 cmE^{\u22121} and 549.39 cmE^{\u22121}. However, some modes disappear, such as 241.56 cmE^{\u22121} and 579.51 cmE^{\u22121}. When x increases to 0.56, these modes clearly split neatly, becoming 564.92 cmE^{\u22121} and 592.64 cmE^{\u22121}. The dominant modes in the vicinity of A1(TO1) \u2212130 cmE^{\u22121} primarily correspond to antiferrodistorsive (AFD) modes. It can be found that as x increases, the strength of A1(TO1) increases. It indicates that the AFD distortion is becoming stronger, which is caused by the increase of the Cc phase. The mode around E(TO2)-R- 241.562 cmE^{\u22121} is related to the O-Zr-O bending. The mode near E(TO2)-R - 241.562 cmE^{\u22121} is related to the O-Zr-O bending, which is the characteristic mode of R3c and disappears with the increase of x. Secondly, the peak near E(TO3) + A1(3TO)-R - 579.51 cmE^{\u22121} is also the characteristic peak of the R3c phase. With the increase of x, the peak width gradually disappears and split into A1(3TO) and E(TO3). All these indicate that the structure of PZT-PMS-PSN ceramics changes from R3c to P4mm phase. The PFM measurements were conducted within an 8 \u03bcm \u2217 8 \u03bcm rectangular region to illustrate the alterations in domain structure of PZT-PMS-PSN ceramics, as depicted in (a\u2013i). The polarization axis of the rhombohedral phase aligns parallel to [111], resulting in eight potential domain orientations and the formation of 71\xb0, 180\xb0, and 109\xb0 domain structures. The 71\xb0 and 109\xb0 domain are characterized by the wedge-shaped domain which is shown in the blue oval and arrow in (b) in rhombohedral PZT-PMS-PSN ceramic. The 180\xb0 domain is characterized by the lamellar domain that is marked as the pink oval and arrow in (b). Different from rhombohedral phase, the polarization axis of the tetragonal phase is aligned parallel to [001], resulting in six potential domain orientations, which give rise to 90\xb0 and 180\xb0 domain structures. The 90\xb0 domain are characterized by the herringbone-like domain which is shown in the green oval and arrow in (e) in tetragonal PZT-PMS-PSN ceramic. The variation trend of the dielectric constant (\u03b5r) and dielectric loss of PZT-PMS-PSN ceramics at different temperatures is illustrated in (a\u2013e), with x content ranging from 0.48 to 0.56 and a frequency range of 0.1\u2013100 kHz. It can be seen from (f) that with the increase of x, the Curie temperature increases, and the temperature is 309, 315, 328.1, 333.1 and 335.1 respectively, which is conducive to the improvement of the stability of temperature. In order to find out the effect of x addition on the ferroelectric performance of PZT-PMS-PSN ceramics, the polarization-electric field (P-E) hysteresis loops of unpoled PZT-PMS-PSN ceramics at room temperature and 10 Hz are shown in (a\u2013b). The saturated polarization (P max), remnant polarization (P r ) and coercive field (E c\u2212, E c+) associated with the composition are illustrated in (c\u2013d). The E c+ first increases and then slightly decreases with the increase of x addition, which means enhancing the \u201csoft\u201d effect and stabilizing the \u201chard\u201d effect for piezoelectric materials. And the Ei decreases with the increase of x addition, which demonstrates that \u201chard\u201d effect is stable. generated the defect dipole (PD) and form an internal field (Ei) that provides a restoring force for the spontaneously polarized Ps. The hysteresis loop of the polarization-electric field (P-E) for poled PZT-PMS-PSN ceramics at room temperature and 10 Hz is depicted in (e), while the corresponding internal bias field Ei is illustrated in (f). It can be observed that the internal bias field of PZT-PMS-PSN ceramics increases as the phase structure transitions from R3c to P4mm, which is caused that the alignment of the defect oxygen vacancy symmetry with the tetragonal phase is facilitated. (a) displays the frequency dependence of impedance |Z| for PZT-PMS-PSN ceramics of x = 0.48, 0.52, and 0.56 in 33 mode. It can be observed that the maximum phase angle a close approximation to 90\xb0, manifesting that the polarization reversal is fully saturated and the electrical properties are hardly related to the polarization conditions. The d33 and Qm values of PZT-PMS-PSN ceramics exhibit variations with the x content, as illustrated in (b). The d33 of PZT-PMS-PSN ceramics is 214, 265, 315, 225, and 156 respectively. The d33 of PZT-PMS-PSN ceramics exhibits an initial increase followed by a decrease as x increases, reaching its maximum value of 315 at x = 0.52. This behavior can be attributed to the increased presence of the C1c2 phase, which leads to a reduction in Gibbs free energy difference and enhances polarization rotation diversity. Simultaneously, the easier movement of domain walls results in a decreased mechanical quality factor for the material. (c) shows the \u03b5r and tan\u03b4 of PZT-PMS-PSN ceramics. The loss values are 0.224, 0.279, 0.290, 0.391, and 0.281, respectively. And the \u03b5r are 611, 966, 1126, 926 and 796, respectively. It can be observed that the tan\u03b4 and \u03b5r increases with the increase of x, and then decreases, which is mainly related to C1c2 structure that allows the polar axis to lie anywhere between the [001] and the [111] axes. The kp and g33 of PZT-PMS-PSN ceramics are displayed in (d), The value of g33 decreases as x increases, while kp remains relatively stable for values of x below 0.54. (a) shows the bipolar strain versus electric field S-E loops of PZT-PMS-PSN ceramics at room temperature and 10 Hz. Furthermore, the corresponding composition-dependent negative, positive, and total strain for PZT-PMS-PSN ceramics are shown in (b). Specifically, The positive strain of PZT-PMS-PSN ceramics is 0.14 %, 0.19 %, 0.16 %, 0.12 %, and 0.13 %, respectively. Consequently, an enhanced strain was observed in the PZT-PMS-PSN ceramic of x = 0.50 and 0.52 near the MPB. And the PZT-PMS-PSN ceramic of x = 0.52 demonstrates exceptional piezoelectric properties and a low dielectric loss coefficient, with high d33 = 315 pC NE^{\u22121} and Qm = 1578, as well as low \u03b5r = 1160, tan\u03b4 = 0.288 %. summarizes some important properties for PZT-PMS-PSN ceramic of x = 0.52 and other hard piezoelectric materials for high-power applications. It can be found that the PZT-PMS-PSN ceramic of x = 0.52 has high Tc and low tan\u03b4. The subsequent analysis delves into the fundamental physical mechanism of piezoelectricity for PZT-PMS-PSN ceramic of x = 0.52. Rayleigh analysis enables a quantitative assessment of these intrinsic and extrinsic contributions, as demonstrated in the subsequent equation :  The polarizability P(E) is determined by the amplitude (E0) of the applied electric field. To prevent the nucleation of new domains, E0 was maintained below half of the coercive field EC. \u03b5init represents the reversible permittivity coefficient. The Rayleigh coefficient \u03b1 represents the piezoelectric external response, which can be interpreted as an irreversible displacement of the domain wall, calculated from the slope of \u03b5\u2217 with respect to E0. (a) displays a typical hysteresis loop for PZT-PMS-PSN ceramic of x = 0.52. The reverse permittivity coefficient \u03b5\u2217 is obtained by measuring the peak-to-peak polarization (Pp-p) at each electric field (E0) using the Rayleigh method, following these steps:  The field correlation values of \u03b5\u2217 obtained from are subjected to linear fitting, and the corresponding results are presented in (b). The values of \u03b5init and \u03b1 are illustrated in (c). It is noteworthy that at x = 0.52, both the \u03b5init and \u03b1 values exhibit a consistent trend and reach their maximum, indicating an amplification of intrinsic and external contributions, thereby resulting in an enhanced piezoelectric effect. The extrinsic contribution to the total dielectric response (\u03b1E0/(\u03b1E0 + \u03b5init)) is 9.3 % at x = 0.48, and decreases to 6.6 % at x = 0.52, indicating that the influence of inelastic domain wall motion on d33 is minimal.
+
+# TITLE
+Enhancing the piezoelectric performance of novel PZT-PMS-PSN piezoelectric ceramics by fine-tuning the monoclinic phase
+
+# ABSTRACT
+The enhanced high-power performance of 0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 (x = 0.48, 0.50, 0.52, 0.54, 0.56) piezoelectric ceramics (PZT-PMS-PSN) has been achieved with notable improvement in the piezoelectric coefficient (d33). The presence of the monoclinic phase (Cc) has led to an increase in d33 from 214 pC N−1 to 315 pC N−1. Therefore, the composition 0.93 Pb(Zr0.48Ti0.52)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 exhibits excellent mechanical and electrical parameters: a d33 value of 315 pC N−1, a high mechanical quality factor of 1578, an electromechanical coupling factor kp of 52 %, and a low dielectric loss tanδ of only 0.288 %. Additionally, this ceramic exhibits a significantly high Curie temperature (Tc), reaching up to 328 °C which stabilizes its ferroelectric phase. Moreover, the phase transition of PZT-PMS-PSN ceramics from rhombohedral to tetragonal phase was investigated by X-ray diffraction, Raman scattering, Piezo-response force microscopy.
+
+# INTRODUCTION
+The utilization of high-power piezoelectric ceramics is crucial in diverse range of high-power applications, including actuators, transformers, ultrasonic motors, and underwater sonar  These high-power piezoceramics typically operate within the vicinity of their resonant or anti-resonant frequencies, which ranges from a few kilohertz to several megahertz  This necessitates a relatively high vibration velocity (v0). Therefore, in order to achieve an increased v0 (v0\u221dd33\u2022Qm), it is essential for the piezoceramics to possess an elevated piezoelectric coefficient (d33) and electromechanical quality factor (Qm). Furthermore, efficient conversion of electrical energy into mechanical energy requires an enhanced electromechanical coupling coefficient (kp), and minimizing heating effects necessitates low dielectric loss (tan\u03b4). Additionally, it is imperative for the piezoceramics to have a superior Curie temperature (>300 \xb0C). Previous researches indicate that piezoelectric ceramics based on Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 (PMS-PZT) demonstrate a \u201chard\u201d behavior with notable features such as elevated Qm values, diminished d33 values, and reduced kp values. During the past years, the piezoelectric response of PMS-PZT piezoelectric materials can be enhanced through the incorporation of various functional additives, such as Fe2O3 , Yb2O3 , MnO2 , ZnO , CeO2 , and Sr2O3. In addition, the incorporation of relaxation ferroelectrics into PMS-PZT series ceramics, thereby endowing it with exceptional \u201chard\u201d and \u201csoft\u201d performance characteristics, represents the most widely employed and efficacious approach, such as Pb(Zn1/3Nb2/3)O3 , Pb(Ni1/2W1/2)O3 , Pb(Mn1/3Nb2/3)O3  and Pb(Mg1/3Ta2/3)O3. However, the Curie temperature (Tc) of the aforementioned modified PMS-PZT material exhibits a significantly lower range (<300 \xb0C), thereby imposing limitations on its extensive application in certain fields. The Pb(Sc1/2Nb1/2)O3 (PSN) is a classical relaxor with the rich fluctuations of local order and special piezoelectric responses. Moreover, it has already been verified that the introdution of Pb(Sc1/2Nb1/2)O3 in Pb(Zr,Ti)O3 can form competiton between long-rang order and short-rang order, which makes it so easy to create the instability of free energy and structure, and retain a high Curie temperature (\uff1e300\xb0). For instance, Cheng et al. reported d33 enhances from 150 pC NE^{\u22121} to 325 pC NE^{\u22121} and the Tc increases from 280 \xb0C to 302 \xb0C because of increasement of tetragonal phase. Du et al. discovered the d33 increases from 240 pC NE^{\u22121} to 380 pC NE^{\u22121}. The smooth rotation of polarization in the monoclinic phase, resulting from the displacement of off-center A-site atoms from [111]p-axis positions to [001]p-axis positions, serves as a pivotal connection between the rhombohedral and tetragonal phases, facilitating domain reorientation during polarization. This phenomenon significantly contributes to enhancing the piezoelectric performance and elevating Tc in high-power Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 ceramics by optimizing the Zr/Ti ratio. In the present study, we have developed and synthesized a novel series of 0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 (PZT-PMS-PSN ceramics with x = 0.48, 0.50, 0.52, 0.54, 0.56). The modification of the monoclinic phase has been strategically employed to significantly enhance both strain and piezoelectric coefficient (d33), while simultaneously maintaining a high Curie temperature (TC). A comprehensive investigation into the effects of Zr/Ti modification on the crystal structure, microstructure, and dielectric, ferroelectric and piezoelectric properties of PZT-PMS-PSN has been conducted. Ultimately, our efforts have led to the successful achievement of a relatively high strain value of 0.19 %, an impressive piezoelectric coefficient (d33 = 315 pC NE^{\u22121}), and an electromechanical quality factor Qm (Qm = 1578). Furthermore, we have also achieved a relatively low dielectric loss (tan\u03b4 = 0.288 %) and a high Curie temperature (TC \u223c 328 \xb0C).
+
+# CONCLUSION
+A series of novel 0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 ceramics were designed by manipulating the monoclinic phase, leading to the fabrication of high-performance piezoelectric ceramics through a solid-state method. The spontaneous polarization direction undergoes a transition from the [111]p-axis to the [001]p-axis, indicating a shift from the R3m phase to the P4mm phase. More importantly, the electromechanical characteristic in PZT-PMS-PSN ceramic of x = 0.52 ceramic are excellent: d33 = 315 pC NE^{\u22121}, kp = 0.52, Qm = 1578, tan\u03b4 = 0.288 %, and Tc = 328 \xb0C. The aforementioned improvements indicate the extensive potential application of PZT-PMS-PSN ceramics in high temperature and high-power devices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 21:34:57: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Refined structural parameters by using the Rietveld method for PZT-PMS-PSN ceramic powders., S. G., F. R., A.P., L.P., and S.P. stand for the sample state, space group, phase fraction, atomic positions, lattice parameters, and statistical parameters, respectively.
+|x|S. G.|F. R.(%)|Atoms|A.P.|L.P.|S.P.|
+|---|---|---|---|---|---|---|
+|0.48|R3c|77.21|Pb|0|0|0.26760|['a\xa0=\xa05.764632', 'c\xa0=\xa014.12014', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0120', 'V\xa0=\xa0406.3619']|['r', '=\xa011.910 r', '=\xa05.595', 'r', '=\xa08.524', 'GOF\xa0=\xa02.129']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0|0|0.02|
+|O1|0.17200|0.34400|0.08330|
+|Cc|22.79|Pb|0|0.75|0|['a\xa0=\xa010.03996', 'b\xa0=\xa05.738719', 'c\xa0=\xa05.759603', 'V\xa0=\xa0271.9942', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.9518']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.21562|0.25|0.20681|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.50|P4mm|61.20|Pb|0|0|0|['a\xa0=\xa0b\xa0=\xa04.040773', 'c\xa0=\xa04.13156', 'V\xa0=\xa067.45946', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa010.750 r', '=\xa05.243', 'r', '=\xa07.543 GOF\xa0=\xa02.050']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|0.5|0.5543|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|38.80|Pb|0|0.75|0|['a\xa0=\xa010.00549', 'b\xa0=\xa05.71811', 'c\xa0=\xa05.731405', 'V\xa0=\xa0269.5649', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.707']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.2558228|0.25|0.26072|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.52|P4mm|52.48|Pb|0|['0', '0.5']|['0', '0.5543']|['a\xa0=\xa0b\xa0=\xa04.029017', 'c\xa0=\xa04.135008', 'V\xa0=\xa067.12348', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa011.751', 'r', '=\xa05.320', 'r', '=\xa08.317 GOF\xa0=\xa02.209']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|47.52|Pb|0|0.75|0|['a\xa0=\xa010.02496', 'b\xa0=\xa05.69872', 'c\xa0=\xa05.702712', 'V\xa0=\xa0268.2873', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.5643']||
+|Ti/Zr/Mn/Sb/Sc/Nb|0.26359|0.25|0.262347|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.54|P4mm|65.30|Pb|0|0|0|['a\xa0=\xa0b\xa0=\xa04.034943', 'c\xa0=\xa04.133492', 'V\xa0=\xa067.29642', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa010.342 r', '=\xa05.220', 'r', '=\xa07.416 GOF\xa0=\xa01.981']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|0.5|0.5543|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|34.70|Pb|0|0.75|0|['a\xa0=\xa010.02317', 'b\xa0=\xa05.704986', 'c\xa0=\xa05.717385', 'V\xa0=\xa0268.7379', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.7145']||
+|Ti/Zr/Mn/Sb/Sc/Nb|0.2569638|0.25|0.272173|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.56|P4mm|60.08|Pb|0|0|0|['a\xa0=\xa0b\xa0=\xa04.024276', 'c\xa0=\xa04.132124', 'V\xa0=\xa066.91892', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa011.751', 'r', '=\xa05.320', 'r', '=\xa08.317 GOF\xa0=\xa02.209']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|0.5|0.5543|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|39.92|Pb|0|0.75|0|['a\xa0=\xa010.01773', 'b\xa0=\xa05.675097', 'c\xa0=\xa05.685408', 'V\xa0=\xa0265.8697', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.6587']||
+|Ti/Zr/Mn/Sb/Sc/Nb|0.2654322|0.25|0.2644618|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+
+Table 2. Comparison of the dielectric and piezoelectric properties of PZT-PMS-PSN ceramic with similar materials.
+| x|d33 (pC NE^{\u22121})|Tc (\xb0C)|Qm|tan\u03b4 (%) @1\xa0kHz|kp (%)|\u03b5r|Qm\u2217d33 (10 E^{\u22129}\xa0C\xa0NE^{\u22121})|Refs|
+|---|---|---|---|---|---|---|---|---|
+|x\xa0=\xa00.48|214|309|1887|0.22|49|611|404|This work|
+|x\xa0=\xa00.50|265|315|1663|0.28|54|966|441|This work|
+|x\xa0=\xa00.52|315|328|1578|0.29|51|1160|497|This work|
+|x\xa0=\xa00.54|225|333|1022|0.39|54|926|230|This work|
+|x\xa0=\xa00.56|156|335|1021|0.28|56|798|160|This work|
+|Fe-PMS-PZT|360|\u2013|1500|0.295|61|1055|540|[3]|
+|Yb-Nb-PMS-PZT|390|\u2013|800|0.41|61|1380|312|[4]|
+|Ce-PMS-PZT|388|\u2013|1450|0.59|60|2140|563|[7]|
+|PZT-PMS-PZN|369|275|1381|0.44|64|1200|510|[9]|
+|PNW-PMS-PZN|380|205|1275|0.58|61.3|2138|485|[10]|
+|PMS-PZT-PMT|430|250|1740|0.16|57|1740|748|[12]|
+|commercial hard PZT C-213|310|315|2500|0.30|58|1470|775|\u2013|
+|EuE^{3+}-modified-0.42PMN-0.26PIN-0.32\xa0PT|462|172|\u2013|\u2013|\u2013|\u2013|\u2013|[25]|
+|Sm-doped 24PIN-42PMN-34PT|420|250|\u2013|\u2013|\u2013|\u2013|\u2013|[26]|
+|0.39-BNT-0.20PZ-0.41\xa0PT|500|307|\u2013|0.14|\u2013|2985||[27]|
+|0.74PT-0.26BZN|410|467|\u2013|\u2013|\u2013|\u2013|\u2013|[28]|
+
+# RESULTS AND DISCUSSION
+(a\u2013e) illustrates the microstructural morphology of the sintered PZT-PMS-PSN ceramics, with the average grain size (AGS) indicated in the inserted figures. As depicted in (f), the mean grain size of PZT-PMS-PSN ceramics is 6.53, 6.46, 6.78, 7.1, and 6.75 respectively. It is noteworthy that for PZT-PMS-PSN ceramics with x = 0.52 and x = 0.54, the original morphology exhibits uniform characteristics and a more balanced distribution in both size and shape. Overall, these findings highlight the consistent microstructural features present within this range of compositions for PZT-PMS-PSN ceramics. The XRD patterns of PZT-PMS-PSN ceramics with different compositions (x = 0.48, 0.50, 0.52, 0.54, 0.56) at room temperature are depicted in. In the case of x = 0.48, the (111) peak displays a doublet while the (200) peak appears as a singlet, however, for x > 0.48, the (111) peak gracefully transforms into a singlet and the (200) peak elegantly splits into a doublet pattern. This indicates that there is a phase transition from rhombohedral (R) phase with space group R3m PDF#70\u20134072 to tetragonal (T) phase with space group P4mm PDF#89\u20136690. The (111) and (200) singlets of the x > 0.48 samples exhibit asymmetry due to the splitting of the 1/2{311} superlattice reflection, as observed in previous studies. Notably, this effect is more pronounced in the x = 0.48 sample, indicated by the black arrow. The splitting of superlattice peaks 1/2{311} comes from antiferrodistortive aE^{-}aE^{-}cE^{-} octahedra tilt along the [111]c axis in the Cc phase. The Rietveld refinement was conducted to accurately depict the evolution of phase structure in PZT-PMS-PSN ceramics, as illustrated in. summarizes the corresponding refined structural parameters. Throughout the refinement process, there is a remarkable agreement between the observed and calculated profiles for PZT-PMS-PSN ceramics based on a single two-phase model: R3c + Cc and P4 mm + Cc. As depicted in (f), the calculated volume fraction of the Cc phase gradually increases from x = 0.48 (22.79 %) to approximately x = 0.52 (47.52 %), but eventually stabilizes at x = 0 0.56 (39 0.92 %). The presence of smooth polarization rotation within this Cc phase significantly contributes to its piezoelectric properties, indicating a transition from an R3c phase to a P4mm phase in the structure of PZT-PMS-PSN ceramics. The refined profiles are consistent with XRD patterns for PZT-PMS-PSN ceramics. The P4mm and R3c phase structures can be obtained from 5-atom unit cells (Z = 1) of the ideal cubic perovskite (Pm3m) by introducing different modes of structural distortion. Therefore, (a) shows the Raman spectra of the PZT-PMS-PSN ceramics to illustrate the R3c-P4mm transition. The frequency of some modes decreased, such as 210.15 cmE^{\u22121} and 549.39 cmE^{\u22121}. However, some modes disappear, such as 241.56 cmE^{\u22121} and 579.51 cmE^{\u22121}. When x increases to 0.56, these modes clearly split neatly, becoming 564.92 cmE^{\u22121} and 592.64 cmE^{\u22121}. The dominant modes in the vicinity of A1(TO1) \u2212130 cmE^{\u22121} primarily correspond to antiferrodistorsive (AFD) modes. It can be found that as x increases, the strength of A1(TO1) increases. It indicates that the AFD distortion is becoming stronger, which is caused by the increase of the Cc phase. The mode around E(TO2)-R- 241.562 cmE^{\u22121} is related to the O-Zr-O bending. The mode near E(TO2)-R - 241.562 cmE^{\u22121} is related to the O-Zr-O bending, which is the characteristic mode of R3c and disappears with the increase of x. Secondly, the peak near E(TO3) + A1(3TO)-R - 579.51 cmE^{\u22121} is also the characteristic peak of the R3c phase. With the increase of x, the peak width gradually disappears and split into A1(3TO) and E(TO3). All these indicate that the structure of PZT-PMS-PSN ceramics changes from R3c to P4mm phase. The PFM measurements were conducted within an 8 \u03bcm \u2217 8 \u03bcm rectangular region to illustrate the alterations in domain structure of PZT-PMS-PSN ceramics, as depicted in (a\u2013i). The polarization axis of the rhombohedral phase aligns parallel to [111], resulting in eight potential domain orientations and the formation of 71\xb0, 180\xb0, and 109\xb0 domain structures. The 71\xb0 and 109\xb0 domain are characterized by the wedge-shaped domain which is shown in the blue oval and arrow in (b) in rhombohedral PZT-PMS-PSN ceramic. The 180\xb0 domain is characterized by the lamellar domain that is marked as the pink oval and arrow in (b). Different from rhombohedral phase, the polarization axis of the tetragonal phase is aligned parallel to [001], resulting in six potential domain orientations, which give rise to 90\xb0 and 180\xb0 domain structures. The 90\xb0 domain are characterized by the herringbone-like domain which is shown in the green oval and arrow in (e) in tetragonal PZT-PMS-PSN ceramic. The variation trend of the dielectric constant (\u03b5r) and dielectric loss of PZT-PMS-PSN ceramics at different temperatures is illustrated in (a\u2013e), with x content ranging from 0.48 to 0.56 and a frequency range of 0.1\u2013100 kHz. It can be seen from (f) that with the increase of x, the Curie temperature increases, and the temperature is 309, 315, 328.1, 333.1 and 335.1 respectively, which is conducive to the improvement of the stability of temperature. In order to find out the effect of x addition on the ferroelectric performance of PZT-PMS-PSN ceramics, the polarization-electric field (P-E) hysteresis loops of unpoled PZT-PMS-PSN ceramics at room temperature and 10 Hz are shown in (a\u2013b). The saturated polarization (P max), remnant polarization (P r ) and coercive field (E c\u2212, E c+) associated with the composition are illustrated in (c\u2013d). The E c+ first increases and then slightly decreases with the increase of x addition, which means enhancing the \u201csoft\u201d effect and stabilizing the \u201chard\u201d effect for piezoelectric materials. And the Ei decreases with the increase of x addition, which demonstrates that \u201chard\u201d effect is stable. generated the defect dipole (PD) and form an internal field (Ei) that provides a restoring force for the spontaneously polarized Ps. The hysteresis loop of the polarization-electric field (P-E) for poled PZT-PMS-PSN ceramics at room temperature and 10 Hz is depicted in (e), while the corresponding internal bias field Ei is illustrated in (f). It can be observed that the internal bias field of PZT-PMS-PSN ceramics increases as the phase structure transitions from R3c to P4mm, which is caused that the alignment of the defect oxygen vacancy symmetry with the tetragonal phase is facilitated. (a) displays the frequency dependence of impedance |Z| for PZT-PMS-PSN ceramics of x = 0.48, 0.52, and 0.56 in 33 mode. It can be observed that the maximum phase angle a close approximation to 90\xb0, manifesting that the polarization reversal is fully saturated and the electrical properties are hardly related to the polarization conditions. The d33 and Qm values of PZT-PMS-PSN ceramics exhibit variations with the x content, as illustrated in (b). The d33 of PZT-PMS-PSN ceramics is 214, 265, 315, 225, and 156 respectively. The d33 of PZT-PMS-PSN ceramics exhibits an initial increase followed by a decrease as x increases, reaching its maximum value of 315 at x = 0.52. This behavior can be attributed to the increased presence of the C1c2 phase, which leads to a reduction in Gibbs free energy difference and enhances polarization rotation diversity. Simultaneously, the easier movement of domain walls results in a decreased mechanical quality factor for the material. (c) shows the \u03b5r and tan\u03b4 of PZT-PMS-PSN ceramics. The loss values are 0.224, 0.279, 0.290, 0.391, and 0.281, respectively. And the \u03b5r are 611, 966, 1126, 926 and 796, respectively. It can be observed that the tan\u03b4 and \u03b5r increases with the increase of x, and then decreases, which is mainly related to C1c2 structure that allows the polar axis to lie anywhere between the [001] and the [111] axes. The kp and g33 of PZT-PMS-PSN ceramics are displayed in (d), The value of g33 decreases as x increases, while kp remains relatively stable for values of x below 0.54. (a) shows the bipolar strain versus electric field S-E loops of PZT-PMS-PSN ceramics at room temperature and 10 Hz. Furthermore, the corresponding composition-dependent negative, positive, and total strain for PZT-PMS-PSN ceramics are shown in (b). Specifically, The positive strain of PZT-PMS-PSN ceramics is 0.14 %, 0.19 %, 0.16 %, 0.12 %, and 0.13 %, respectively. Consequently, an enhanced strain was observed in the PZT-PMS-PSN ceramic of x = 0.50 and 0.52 near the MPB. And the PZT-PMS-PSN ceramic of x = 0.52 demonstrates exceptional piezoelectric properties and a low dielectric loss coefficient, with high d33 = 315 pC NE^{\u22121} and Qm = 1578, as well as low \u03b5r = 1160, tan\u03b4 = 0.288 %. summarizes some important properties for PZT-PMS-PSN ceramic of x = 0.52 and other hard piezoelectric materials for high-power applications. It can be found that the PZT-PMS-PSN ceramic of x = 0.52 has high Tc and low tan\u03b4. The subsequent analysis delves into the fundamental physical mechanism of piezoelectricity for PZT-PMS-PSN ceramic of x = 0.52. Rayleigh analysis enables a quantitative assessment of these intrinsic and extrinsic contributions, as demonstrated in the subsequent equation :  The polarizability P(E) is determined by the amplitude (E0) of the applied electric field. To prevent the nucleation of new domains, E0 was maintained below half of the coercive field EC. \u03b5init represents the reversible permittivity coefficient. The Rayleigh coefficient \u03b1 represents the piezoelectric external response, which can be interpreted as an irreversible displacement of the domain wall, calculated from the slope of \u03b5\u2217 with respect to E0. (a) displays a typical hysteresis loop for PZT-PMS-PSN ceramic of x = 0.52. The reverse permittivity coefficient \u03b5\u2217 is obtained by measuring the peak-to-peak polarization (Pp-p) at each electric field (E0) using the Rayleigh method, following these steps:  The field correlation values of \u03b5\u2217 obtained from are subjected to linear fitting, and the corresponding results are presented in (b). The values of \u03b5init and \u03b1 are illustrated in (c). It is noteworthy that at x = 0.52, both the \u03b5init and \u03b1 values exhibit a consistent trend and reach their maximum, indicating an amplification of intrinsic and external contributions, thereby resulting in an enhanced piezoelectric effect. The extrinsic contribution to the total dielectric response (\u03b1E0/(\u03b1E0 + \u03b5init)) is 9.3 % at x = 0.48, and decreases to 6.6 % at x = 0.52, indicating that the influence of inelastic domain wall motion on d33 is minimal.
+
+# TITLE
+Enhancing the piezoelectric performance of novel PZT-PMS-PSN piezoelectric ceramics by fine-tuning the monoclinic phase
+
+# ABSTRACT
+The enhanced high-power performance of 0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 (x = 0.48, 0.50, 0.52, 0.54, 0.56) piezoelectric ceramics (PZT-PMS-PSN) has been achieved with notable improvement in the piezoelectric coefficient (d33). The presence of the monoclinic phase (Cc) has led to an increase in d33 from 214 pC N−1 to 315 pC N−1. Therefore, the composition 0.93 Pb(Zr0.48Ti0.52)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 exhibits excellent mechanical and electrical parameters: a d33 value of 315 pC N−1, a high mechanical quality factor of 1578, an electromechanical coupling factor kp of 52 %, and a low dielectric loss tanδ of only 0.288 %. Additionally, this ceramic exhibits a significantly high Curie temperature (Tc), reaching up to 328 °C which stabilizes its ferroelectric phase. Moreover, the phase transition of PZT-PMS-PSN ceramics from rhombohedral to tetragonal phase was investigated by X-ray diffraction, Raman scattering, Piezo-response force microscopy.
+
+# INTRODUCTION
+The utilization of high-power piezoelectric ceramics is crucial in diverse range of high-power applications, including actuators, transformers, ultrasonic motors, and underwater sonar  These high-power piezoceramics typically operate within the vicinity of their resonant or anti-resonant frequencies, which ranges from a few kilohertz to several megahertz  This necessitates a relatively high vibration velocity (v0). Therefore, in order to achieve an increased v0 (v0\u221dd33\u2022Qm), it is essential for the piezoceramics to possess an elevated piezoelectric coefficient (d33) and electromechanical quality factor (Qm). Furthermore, efficient conversion of electrical energy into mechanical energy requires an enhanced electromechanical coupling coefficient (kp), and minimizing heating effects necessitates low dielectric loss (tan\u03b4). Additionally, it is imperative for the piezoceramics to have a superior Curie temperature (>300 \xb0C). Previous researches indicate that piezoelectric ceramics based on Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 (PMS-PZT) demonstrate a \u201chard\u201d behavior with notable features such as elevated Qm values, diminished d33 values, and reduced kp values. During the past years, the piezoelectric response of PMS-PZT piezoelectric materials can be enhanced through the incorporation of various functional additives, such as Fe2O3 , Yb2O3 , MnO2 , ZnO , CeO2 , and Sr2O3. In addition, the incorporation of relaxation ferroelectrics into PMS-PZT series ceramics, thereby endowing it with exceptional \u201chard\u201d and \u201csoft\u201d performance characteristics, represents the most widely employed and efficacious approach, such as Pb(Zn1/3Nb2/3)O3 , Pb(Ni1/2W1/2)O3 , Pb(Mn1/3Nb2/3)O3  and Pb(Mg1/3Ta2/3)O3. However, the Curie temperature (Tc) of the aforementioned modified PMS-PZT material exhibits a significantly lower range (<300 \xb0C), thereby imposing limitations on its extensive application in certain fields. The Pb(Sc1/2Nb1/2)O3 (PSN) is a classical relaxor with the rich fluctuations of local order and special piezoelectric responses. Moreover, it has already been verified that the introdution of Pb(Sc1/2Nb1/2)O3 in Pb(Zr,Ti)O3 can form competiton between long-rang order and short-rang order, which makes it so easy to create the instability of free energy and structure, and retain a high Curie temperature (\uff1e300\xb0). For instance, Cheng et al. reported d33 enhances from 150 pC NE^{\u22121} to 325 pC NE^{\u22121} and the Tc increases from 280 \xb0C to 302 \xb0C because of increasement of tetragonal phase. Du et al. discovered the d33 increases from 240 pC NE^{\u22121} to 380 pC NE^{\u22121}. The smooth rotation of polarization in the monoclinic phase, resulting from the displacement of off-center A-site atoms from [111]p-axis positions to [001]p-axis positions, serves as a pivotal connection between the rhombohedral and tetragonal phases, facilitating domain reorientation during polarization. This phenomenon significantly contributes to enhancing the piezoelectric performance and elevating Tc in high-power Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 ceramics by optimizing the Zr/Ti ratio. In the present study, we have developed and synthesized a novel series of 0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 (PZT-PMS-PSN ceramics with x = 0.48, 0.50, 0.52, 0.54, 0.56). The modification of the monoclinic phase has been strategically employed to significantly enhance both strain and piezoelectric coefficient (d33), while simultaneously maintaining a high Curie temperature (TC). A comprehensive investigation into the effects of Zr/Ti modification on the crystal structure, microstructure, and dielectric, ferroelectric and piezoelectric properties of PZT-PMS-PSN has been conducted. Ultimately, our efforts have led to the successful achievement of a relatively high strain value of 0.19 %, an impressive piezoelectric coefficient (d33 = 315 pC NE^{\u22121}), and an electromechanical quality factor Qm (Qm = 1578). Furthermore, we have also achieved a relatively low dielectric loss (tan\u03b4 = 0.288 %) and a high Curie temperature (TC \u223c 328 \xb0C).
+
+# CONCLUSION
+A series of novel 0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 ceramics were designed by manipulating the monoclinic phase, leading to the fabrication of high-performance piezoelectric ceramics through a solid-state method. The spontaneous polarization direction undergoes a transition from the [111]p-axis to the [001]p-axis, indicating a shift from the R3m phase to the P4mm phase. More importantly, the electromechanical characteristic in PZT-PMS-PSN ceramic of x = 0.52 ceramic are excellent: d33 = 315 pC NE^{\u22121}, kp = 0.52, Qm = 1578, tan\u03b4 = 0.288 %, and Tc = 328 \xb0C. The aforementioned improvements indicate the extensive potential application of PZT-PMS-PSN ceramics in high temperature and high-power devices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="```json
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "0.93 Pb(Zr0.52Ti0.48)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 where x = 0.48": 214,
+      "0.93 Pb(Zr0.50Ti0.50)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 where x = 0.50": 265,
+      "0.93 Pb(Zr0.48Ti0.52)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 where x = 0.52": 315,
+      "0.93 Pb(Zr0.46Ti0.54)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 where x = 0.54": 225,
+      "0.93 Pb(Zr0.44Ti0.56)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 where x = 0.56": 156
+    },
+    "abbreviations": {
+      "PZT-PMS-PSN": "0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3"
+    },
+    "property_unit": "pC/N",
+    "family": "Pb(Zr,Ti)O3"
+  }
+}
+```"
+2025-07-17 14:23:43: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Refined structural parameters by using the Rietveld method for PZT-PMS-PSN ceramic powders., S. G., F. R., A.P., L.P., and S.P. stand for the sample state, space group, phase fraction, atomic positions, lattice parameters, and statistical parameters, respectively.
+|x|S. G.|F. R.(%)|Atoms|A.P.|L.P.|S.P.|
+|---|---|---|---|---|---|---|
+|0.48|R3c|77.21|Pb|0|0|0.26760|['a\xa0=\xa05.764632', 'c\xa0=\xa014.12014', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0120', 'V\xa0=\xa0406.3619']|['r', '=\xa011.910 r', '=\xa05.595', 'r', '=\xa08.524', 'GOF\xa0=\xa02.129']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0|0|0.02|
+|O1|0.17200|0.34400|0.08330|
+|Cc|22.79|Pb|0|0.75|0|['a\xa0=\xa010.03996', 'b\xa0=\xa05.738719', 'c\xa0=\xa05.759603', 'V\xa0=\xa0271.9942', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.9518']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.21562|0.25|0.20681|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.50|P4mm|61.20|Pb|0|0|0|['a\xa0=\xa0b\xa0=\xa04.040773', 'c\xa0=\xa04.13156', 'V\xa0=\xa067.45946', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa010.750 r', '=\xa05.243', 'r', '=\xa07.543 GOF\xa0=\xa02.050']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|0.5|0.5543|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|38.80|Pb|0|0.75|0|['a\xa0=\xa010.00549', 'b\xa0=\xa05.71811', 'c\xa0=\xa05.731405', 'V\xa0=\xa0269.5649', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.707']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.2558228|0.25|0.26072|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.52|P4mm|52.48|Pb|0|['0', '0.5']|['0', '0.5543']|['a\xa0=\xa0b\xa0=\xa04.029017', 'c\xa0=\xa04.135008', 'V\xa0=\xa067.12348', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa011.751', 'r', '=\xa05.320', 'r', '=\xa08.317 GOF\xa0=\xa02.209']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|47.52|Pb|0|0.75|0|['a\xa0=\xa010.02496', 'b\xa0=\xa05.69872', 'c\xa0=\xa05.702712', 'V\xa0=\xa0268.2873', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.5643']||
+|Ti/Zr/Mn/Sb/Sc/Nb|0.26359|0.25|0.262347|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.54|P4mm|65.30|Pb|0|0|0|['a\xa0=\xa0b\xa0=\xa04.034943', 'c\xa0=\xa04.133492', 'V\xa0=\xa067.29642', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa010.342 r', '=\xa05.220', 'r', '=\xa07.416 GOF\xa0=\xa01.981']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|0.5|0.5543|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|34.70|Pb|0|0.75|0|['a\xa0=\xa010.02317', 'b\xa0=\xa05.704986', 'c\xa0=\xa05.717385', 'V\xa0=\xa0268.7379', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.7145']||
+|Ti/Zr/Mn/Sb/Sc/Nb|0.2569638|0.25|0.272173|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.56|P4mm|60.08|Pb|0|0|0|['a\xa0=\xa0b\xa0=\xa04.024276', 'c\xa0=\xa04.132124', 'V\xa0=\xa066.91892', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa011.751', 'r', '=\xa05.320', 'r', '=\xa08.317 GOF\xa0=\xa02.209']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|0.5|0.5543|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|39.92|Pb|0|0.75|0|['a\xa0=\xa010.01773', 'b\xa0=\xa05.675097', 'c\xa0=\xa05.685408', 'V\xa0=\xa0265.8697', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.6587']||
+|Ti/Zr/Mn/Sb/Sc/Nb|0.2654322|0.25|0.2644618|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+
+Table 2. Comparison of the dielectric and piezoelectric properties of PZT-PMS-PSN ceramic with similar materials.
+| x|d33 (pC NE^{\u22121})|Tc (\xb0C)|Qm|tan\u03b4 (%) @1\xa0kHz|kp (%)|\u03b5r|Qm\u2217d33 (10 E^{\u22129}\xa0C\xa0NE^{\u22121})|Refs|
+|---|---|---|---|---|---|---|---|---|
+|x\xa0=\xa00.48|214|309|1887|0.22|49|611|404|This work|
+|x\xa0=\xa00.50|265|315|1663|0.28|54|966|441|This work|
+|x\xa0=\xa00.52|315|328|1578|0.29|51|1160|497|This work|
+|x\xa0=\xa00.54|225|333|1022|0.39|54|926|230|This work|
+|x\xa0=\xa00.56|156|335|1021|0.28|56|798|160|This work|
+|Fe-PMS-PZT|360|\u2013|1500|0.295|61|1055|540|[3]|
+|Yb-Nb-PMS-PZT|390|\u2013|800|0.41|61|1380|312|[4]|
+|Ce-PMS-PZT|388|\u2013|1450|0.59|60|2140|563|[7]|
+|PZT-PMS-PZN|369|275|1381|0.44|64|1200|510|[9]|
+|PNW-PMS-PZN|380|205|1275|0.58|61.3|2138|485|[10]|
+|PMS-PZT-PMT|430|250|1740|0.16|57|1740|748|[12]|
+|commercial hard PZT C-213|310|315|2500|0.30|58|1470|775|\u2013|
+|EuE^{3+}-modified-0.42PMN-0.26PIN-0.32\xa0PT|462|172|\u2013|\u2013|\u2013|\u2013|\u2013|[25]|
+|Sm-doped 24PIN-42PMN-34PT|420|250|\u2013|\u2013|\u2013|\u2013|\u2013|[26]|
+|0.39-BNT-0.20PZ-0.41\xa0PT|500|307|\u2013|0.14|\u2013|2985||[27]|
+|0.74PT-0.26BZN|410|467|\u2013|\u2013|\u2013|\u2013|\u2013|[28]|
+
+# RESULTS AND DISCUSSION
+(a\u2013e) illustrates the microstructural morphology of the sintered PZT-PMS-PSN ceramics, with the average grain size (AGS) indicated in the inserted figures. As depicted in (f), the mean grain size of PZT-PMS-PSN ceramics is 6.53, 6.46, 6.78, 7.1, and 6.75 respectively. It is noteworthy that for PZT-PMS-PSN ceramics with x = 0.52 and x = 0.54, the original morphology exhibits uniform characteristics and a more balanced distribution in both size and shape. Overall, these findings highlight the consistent microstructural features present within this range of compositions for PZT-PMS-PSN ceramics. The XRD patterns of PZT-PMS-PSN ceramics with different compositions (x = 0.48, 0.50, 0.52, 0.54, 0.56) at room temperature are depicted in. In the case of x = 0.48, the (111) peak displays a doublet while the (200) peak appears as a singlet, however, for x > 0.48, the (111) peak gracefully transforms into a singlet and the (200) peak elegantly splits into a doublet pattern. This indicates that there is a phase transition from rhombohedral (R) phase with space group R3m PDF#70\u20134072 to tetragonal (T) phase with space group P4mm PDF#89\u20136690. The (111) and (200) singlets of the x > 0.48 samples exhibit asymmetry due to the splitting of the 1/2{311} superlattice reflection, as observed in previous studies. Notably, this effect is more pronounced in the x = 0.48 sample, indicated by the black arrow. The splitting of superlattice peaks 1/2{311} comes from antiferrodistortive aE^{-}aE^{-}cE^{-} octahedra tilt along the [111]c axis in the Cc phase. The Rietveld refinement was conducted to accurately depict the evolution of phase structure in PZT-PMS-PSN ceramics, as illustrated in. summarizes the corresponding refined structural parameters. Throughout the refinement process, there is a remarkable agreement between the observed and calculated profiles for PZT-PMS-PSN ceramics based on a single two-phase model: R3c + Cc and P4 mm + Cc. As depicted in (f), the calculated volume fraction of the Cc phase gradually increases from x = 0.48 (22.79 %) to approximately x = 0.52 (47.52 %), but eventually stabilizes at x = 0 0.56 (39 0.92 %). The presence of smooth polarization rotation within this Cc phase significantly contributes to its piezoelectric properties, indicating a transition from an R3c phase to a P4mm phase in the structure of PZT-PMS-PSN ceramics. The refined profiles are consistent with XRD patterns for PZT-PMS-PSN ceramics. The P4mm and R3c phase structures can be obtained from 5-atom unit cells (Z = 1) of the ideal cubic perovskite (Pm3m) by introducing different modes of structural distortion. Therefore, (a) shows the Raman spectra of the PZT-PMS-PSN ceramics to illustrate the R3c-P4mm transition. The frequency of some modes decreased, such as 210.15 cmE^{\u22121} and 549.39 cmE^{\u22121}. However, some modes disappear, such as 241.56 cmE^{\u22121} and 579.51 cmE^{\u22121}. When x increases to 0.56, these modes clearly split neatly, becoming 564.92 cmE^{\u22121} and 592.64 cmE^{\u22121}. The dominant modes in the vicinity of A1(TO1) \u2212130 cmE^{\u22121} primarily correspond to antiferrodistorsive (AFD) modes. It can be found that as x increases, the strength of A1(TO1) increases. It indicates that the AFD distortion is becoming stronger, which is caused by the increase of the Cc phase. The mode around E(TO2)-R- 241.562 cmE^{\u22121} is related to the O-Zr-O bending. The mode near E(TO2)-R - 241.562 cmE^{\u22121} is related to the O-Zr-O bending, which is the characteristic mode of R3c and disappears with the increase of x. Secondly, the peak near E(TO3) + A1(3TO)-R - 579.51 cmE^{\u22121} is also the characteristic peak of the R3c phase. With the increase of x, the peak width gradually disappears and split into A1(3TO) and E(TO3). All these indicate that the structure of PZT-PMS-PSN ceramics changes from R3c to P4mm phase. The PFM measurements were conducted within an 8 \u03bcm \u2217 8 \u03bcm rectangular region to illustrate the alterations in domain structure of PZT-PMS-PSN ceramics, as depicted in (a\u2013i). The polarization axis of the rhombohedral phase aligns parallel to [111], resulting in eight potential domain orientations and the formation of 71\xb0, 180\xb0, and 109\xb0 domain structures. The 71\xb0 and 109\xb0 domain are characterized by the wedge-shaped domain which is shown in the blue oval and arrow in (b) in rhombohedral PZT-PMS-PSN ceramic. The 180\xb0 domain is characterized by the lamellar domain that is marked as the pink oval and arrow in (b). Different from rhombohedral phase, the polarization axis of the tetragonal phase is aligned parallel to [001], resulting in six potential domain orientations, which give rise to 90\xb0 and 180\xb0 domain structures. The 90\xb0 domain are characterized by the herringbone-like domain which is shown in the green oval and arrow in (e) in tetragonal PZT-PMS-PSN ceramic. The variation trend of the dielectric constant (\u03b5r) and dielectric loss of PZT-PMS-PSN ceramics at different temperatures is illustrated in (a\u2013e), with x content ranging from 0.48 to 0.56 and a frequency range of 0.1\u2013100 kHz. It can be seen from (f) that with the increase of x, the Curie temperature increases, and the temperature is 309, 315, 328.1, 333.1 and 335.1 respectively, which is conducive to the improvement of the stability of temperature. In order to find out the effect of x addition on the ferroelectric performance of PZT-PMS-PSN ceramics, the polarization-electric field (P-E) hysteresis loops of unpoled PZT-PMS-PSN ceramics at room temperature and 10 Hz are shown in (a\u2013b). The saturated polarization (P max), remnant polarization (P r ) and coercive field (E c\u2212, E c+) associated with the composition are illustrated in (c\u2013d). The E c+ first increases and then slightly decreases with the increase of x addition, which means enhancing the \u201csoft\u201d effect and stabilizing the \u201chard\u201d effect for piezoelectric materials. And the Ei decreases with the increase of x addition, which demonstrates that \u201chard\u201d effect is stable. generated the defect dipole (PD) and form an internal field (Ei) that provides a restoring force for the spontaneously polarized Ps. The hysteresis loop of the polarization-electric field (P-E) for poled PZT-PMS-PSN ceramics at room temperature and 10 Hz is depicted in (e), while the corresponding internal bias field Ei is illustrated in (f). It can be observed that the internal bias field of PZT-PMS-PSN ceramics increases as the phase structure transitions from R3c to P4mm, which is caused that the alignment of the defect oxygen vacancy symmetry with the tetragonal phase is facilitated. (a) displays the frequency dependence of impedance |Z| for PZT-PMS-PSN ceramics of x = 0.48, 0.52, and 0.56 in 33 mode. It can be observed that the maximum phase angle a close approximation to 90\xb0, manifesting that the polarization reversal is fully saturated and the electrical properties are hardly related to the polarization conditions. The d33 and Qm values of PZT-PMS-PSN ceramics exhibit variations with the x content, as illustrated in (b). The d33 of PZT-PMS-PSN ceramics is 214, 265, 315, 225, and 156 respectively. The d33 of PZT-PMS-PSN ceramics exhibits an initial increase followed by a decrease as x increases, reaching its maximum value of 315 at x = 0.52. This behavior can be attributed to the increased presence of the C1c2 phase, which leads to a reduction in Gibbs free energy difference and enhances polarization rotation diversity. Simultaneously, the easier movement of domain walls results in a decreased mechanical quality factor for the material. (c) shows the \u03b5r and tan\u03b4 of PZT-PMS-PSN ceramics. The loss values are 0.224, 0.279, 0.290, 0.391, and 0.281, respectively. And the \u03b5r are 611, 966, 1126, 926 and 796, respectively. It can be observed that the tan\u03b4 and \u03b5r increases with the increase of x, and then decreases, which is mainly related to C1c2 structure that allows the polar axis to lie anywhere between the [001] and the [111] axes. The kp and g33 of PZT-PMS-PSN ceramics are displayed in (d), The value of g33 decreases as x increases, while kp remains relatively stable for values of x below 0.54. (a) shows the bipolar strain versus electric field S-E loops of PZT-PMS-PSN ceramics at room temperature and 10 Hz. Furthermore, the corresponding composition-dependent negative, positive, and total strain for PZT-PMS-PSN ceramics are shown in (b). Specifically, The positive strain of PZT-PMS-PSN ceramics is 0.14 %, 0.19 %, 0.16 %, 0.12 %, and 0.13 %, respectively. Consequently, an enhanced strain was observed in the PZT-PMS-PSN ceramic of x = 0.50 and 0.52 near the MPB. And the PZT-PMS-PSN ceramic of x = 0.52 demonstrates exceptional piezoelectric properties and a low dielectric loss coefficient, with high d33 = 315 pC NE^{\u22121} and Qm = 1578, as well as low \u03b5r = 1160, tan\u03b4 = 0.288 %. summarizes some important properties for PZT-PMS-PSN ceramic of x = 0.52 and other hard piezoelectric materials for high-power applications. It can be found that the PZT-PMS-PSN ceramic of x = 0.52 has high Tc and low tan\u03b4. The subsequent analysis delves into the fundamental physical mechanism of piezoelectricity for PZT-PMS-PSN ceramic of x = 0.52. Rayleigh analysis enables a quantitative assessment of these intrinsic and extrinsic contributions, as demonstrated in the subsequent equation :  The polarizability P(E) is determined by the amplitude (E0) of the applied electric field. To prevent the nucleation of new domains, E0 was maintained below half of the coercive field EC. \u03b5init represents the reversible permittivity coefficient. The Rayleigh coefficient \u03b1 represents the piezoelectric external response, which can be interpreted as an irreversible displacement of the domain wall, calculated from the slope of \u03b5\u2217 with respect to E0. (a) displays a typical hysteresis loop for PZT-PMS-PSN ceramic of x = 0.52. The reverse permittivity coefficient \u03b5\u2217 is obtained by measuring the peak-to-peak polarization (Pp-p) at each electric field (E0) using the Rayleigh method, following these steps:  The field correlation values of \u03b5\u2217 obtained from are subjected to linear fitting, and the corresponding results are presented in (b). The values of \u03b5init and \u03b1 are illustrated in (c). It is noteworthy that at x = 0.52, both the \u03b5init and \u03b1 values exhibit a consistent trend and reach their maximum, indicating an amplification of intrinsic and external contributions, thereby resulting in an enhanced piezoelectric effect. The extrinsic contribution to the total dielectric response (\u03b1E0/(\u03b1E0 + \u03b5init)) is 9.3 % at x = 0.48, and decreases to 6.6 % at x = 0.52, indicating that the influence of inelastic domain wall motion on d33 is minimal.
+
+# TITLE
+Enhancing the piezoelectric performance of novel PZT-PMS-PSN piezoelectric ceramics by fine-tuning the monoclinic phase
+
+# ABSTRACT
+The enhanced high-power performance of 0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 (x = 0.48, 0.50, 0.52, 0.54, 0.56) piezoelectric ceramics (PZT-PMS-PSN) has been achieved with notable improvement in the piezoelectric coefficient (d33). The presence of the monoclinic phase (Cc) has led to an increase in d33 from 214 pC N−1 to 315 pC N−1. Therefore, the composition 0.93 Pb(Zr0.48Ti0.52)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 exhibits excellent mechanical and electrical parameters: a d33 value of 315 pC N−1, a high mechanical quality factor of 1578, an electromechanical coupling factor kp of 52 %, and a low dielectric loss tanδ of only 0.288 %. Additionally, this ceramic exhibits a significantly high Curie temperature (Tc), reaching up to 328 °C which stabilizes its ferroelectric phase. Moreover, the phase transition of PZT-PMS-PSN ceramics from rhombohedral to tetragonal phase was investigated by X-ray diffraction, Raman scattering, Piezo-response force microscopy.
+
+# INTRODUCTION
+The utilization of high-power piezoelectric ceramics is crucial in diverse range of high-power applications, including actuators, transformers, ultrasonic motors, and underwater sonar  These high-power piezoceramics typically operate within the vicinity of their resonant or anti-resonant frequencies, which ranges from a few kilohertz to several megahertz  This necessitates a relatively high vibration velocity (v0). Therefore, in order to achieve an increased v0 (v0\u221dd33\u2022Qm), it is essential for the piezoceramics to possess an elevated piezoelectric coefficient (d33) and electromechanical quality factor (Qm). Furthermore, efficient conversion of electrical energy into mechanical energy requires an enhanced electromechanical coupling coefficient (kp), and minimizing heating effects necessitates low dielectric loss (tan\u03b4). Additionally, it is imperative for the piezoceramics to have a superior Curie temperature (>300 \xb0C). Previous researches indicate that piezoelectric ceramics based on Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 (PMS-PZT) demonstrate a \u201chard\u201d behavior with notable features such as elevated Qm values, diminished d33 values, and reduced kp values. During the past years, the piezoelectric response of PMS-PZT piezoelectric materials can be enhanced through the incorporation of various functional additives, such as Fe2O3 , Yb2O3 , MnO2 , ZnO , CeO2 , and Sr2O3. In addition, the incorporation of relaxation ferroelectrics into PMS-PZT series ceramics, thereby endowing it with exceptional \u201chard\u201d and \u201csoft\u201d performance characteristics, represents the most widely employed and efficacious approach, such as Pb(Zn1/3Nb2/3)O3 , Pb(Ni1/2W1/2)O3 , Pb(Mn1/3Nb2/3)O3  and Pb(Mg1/3Ta2/3)O3. However, the Curie temperature (Tc) of the aforementioned modified PMS-PZT material exhibits a significantly lower range (<300 \xb0C), thereby imposing limitations on its extensive application in certain fields. The Pb(Sc1/2Nb1/2)O3 (PSN) is a classical relaxor with the rich fluctuations of local order and special piezoelectric responses. Moreover, it has already been verified that the introdution of Pb(Sc1/2Nb1/2)O3 in Pb(Zr,Ti)O3 can form competiton between long-rang order and short-rang order, which makes it so easy to create the instability of free energy and structure, and retain a high Curie temperature (\uff1e300\xb0). For instance, Cheng et al. reported d33 enhances from 150 pC NE^{\u22121} to 325 pC NE^{\u22121} and the Tc increases from 280 \xb0C to 302 \xb0C because of increasement of tetragonal phase. Du et al. discovered the d33 increases from 240 pC NE^{\u22121} to 380 pC NE^{\u22121}. The smooth rotation of polarization in the monoclinic phase, resulting from the displacement of off-center A-site atoms from [111]p-axis positions to [001]p-axis positions, serves as a pivotal connection between the rhombohedral and tetragonal phases, facilitating domain reorientation during polarization. This phenomenon significantly contributes to enhancing the piezoelectric performance and elevating Tc in high-power Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 ceramics by optimizing the Zr/Ti ratio. In the present study, we have developed and synthesized a novel series of 0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 (PZT-PMS-PSN ceramics with x = 0.48, 0.50, 0.52, 0.54, 0.56). The modification of the monoclinic phase has been strategically employed to significantly enhance both strain and piezoelectric coefficient (d33), while simultaneously maintaining a high Curie temperature (TC). A comprehensive investigation into the effects of Zr/Ti modification on the crystal structure, microstructure, and dielectric, ferroelectric and piezoelectric properties of PZT-PMS-PSN has been conducted. Ultimately, our efforts have led to the successful achievement of a relatively high strain value of 0.19 %, an impressive piezoelectric coefficient (d33 = 315 pC NE^{\u22121}), and an electromechanical quality factor Qm (Qm = 1578). Furthermore, we have also achieved a relatively low dielectric loss (tan\u03b4 = 0.288 %) and a high Curie temperature (TC \u223c 328 \xb0C).
+
+# CONCLUSION
+A series of novel 0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 ceramics were designed by manipulating the monoclinic phase, leading to the fabrication of high-performance piezoelectric ceramics through a solid-state method. The spontaneous polarization direction undergoes a transition from the [111]p-axis to the [001]p-axis, indicating a shift from the R3m phase to the P4mm phase. More importantly, the electromechanical characteristic in PZT-PMS-PSN ceramic of x = 0.52 ceramic are excellent: d33 = 315 pC NE^{\u22121}, kp = 0.52, Qm = 1578, tan\u03b4 = 0.288 %, and Tc = 328 \xb0C. The aforementioned improvements indicate the extensive potential application of PZT-PMS-PSN ceramics in high temperature and high-power devices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-17 14:23:50: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Refined structural parameters by using the Rietveld method for PZT-PMS-PSN ceramic powders., S. G., F. R., A.P., L.P., and S.P. stand for the sample state, space group, phase fraction, atomic positions, lattice parameters, and statistical parameters, respectively.
+|x|S. G.|F. R.(%)|Atoms|A.P.|L.P.|S.P.|
+|---|---|---|---|---|---|---|
+|0.48|R3c|77.21|Pb|0|0|0.26760|['a\xa0=\xa05.764632', 'c\xa0=\xa014.12014', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0120', 'V\xa0=\xa0406.3619']|['r', '=\xa011.910 r', '=\xa05.595', 'r', '=\xa08.524', 'GOF\xa0=\xa02.129']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0|0|0.02|
+|O1|0.17200|0.34400|0.08330|
+|Cc|22.79|Pb|0|0.75|0|['a\xa0=\xa010.03996', 'b\xa0=\xa05.738719', 'c\xa0=\xa05.759603', 'V\xa0=\xa0271.9942', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.9518']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.21562|0.25|0.20681|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.50|P4mm|61.20|Pb|0|0|0|['a\xa0=\xa0b\xa0=\xa04.040773', 'c\xa0=\xa04.13156', 'V\xa0=\xa067.45946', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa010.750 r', '=\xa05.243', 'r', '=\xa07.543 GOF\xa0=\xa02.050']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|0.5|0.5543|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|38.80|Pb|0|0.75|0|['a\xa0=\xa010.00549', 'b\xa0=\xa05.71811', 'c\xa0=\xa05.731405', 'V\xa0=\xa0269.5649', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.707']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.2558228|0.25|0.26072|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.52|P4mm|52.48|Pb|0|['0', '0.5']|['0', '0.5543']|['a\xa0=\xa0b\xa0=\xa04.029017', 'c\xa0=\xa04.135008', 'V\xa0=\xa067.12348', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa011.751', 'r', '=\xa05.320', 'r', '=\xa08.317 GOF\xa0=\xa02.209']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|47.52|Pb|0|0.75|0|['a\xa0=\xa010.02496', 'b\xa0=\xa05.69872', 'c\xa0=\xa05.702712', 'V\xa0=\xa0268.2873', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.5643']||
+|Ti/Zr/Mn/Sb/Sc/Nb|0.26359|0.25|0.262347|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.54|P4mm|65.30|Pb|0|0|0|['a\xa0=\xa0b\xa0=\xa04.034943', 'c\xa0=\xa04.133492', 'V\xa0=\xa067.29642', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa010.342 r', '=\xa05.220', 'r', '=\xa07.416 GOF\xa0=\xa01.981']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|0.5|0.5543|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|34.70|Pb|0|0.75|0|['a\xa0=\xa010.02317', 'b\xa0=\xa05.704986', 'c\xa0=\xa05.717385', 'V\xa0=\xa0268.7379', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.7145']||
+|Ti/Zr/Mn/Sb/Sc/Nb|0.2569638|0.25|0.272173|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+|0.56|P4mm|60.08|Pb|0|0|0|['a\xa0=\xa0b\xa0=\xa04.024276', 'c\xa0=\xa04.132124', 'V\xa0=\xa066.91892', 'α\xa0=\xa0β\xa0=\xa0γ\xa0=\xa090']|['r', '=\xa011.751', 'r', '=\xa05.320', 'r', '=\xa08.317 GOF\xa0=\xa02.209']|
+|Ti/Zr/Mn/Sb/Sc/Nb|0.5|0.5|0.5543|
+|O1|0.5|0.5|0.079276|
+|O2|0.5|0|0.59755|
+|Cc|39.92|Pb|0|0.75|0|['a\xa0=\xa010.01773', 'b\xa0=\xa05.675097', 'c\xa0=\xa05.685408', 'V\xa0=\xa0265.8697', 'α\xa0=\xa0γ\xa0=\xa090', 'β\xa0=\xa0124.6587']||
+|Ti/Zr/Mn/Sb/Sc/Nb|0.2654322|0.25|0.2644618|
+|O1|0.98475|0.25|0.92087|
+|O2|0.22541|0.483|\u22120.093|
+|O3|0.22541|0.017|0.407|
+
+Table 2. Comparison of the dielectric and piezoelectric properties of PZT-PMS-PSN ceramic with similar materials.
+| x|d33 (pC NE^{\u22121})|Tc (\xb0C)|Qm|tan\u03b4 (%) @1\xa0kHz|kp (%)|\u03b5r|Qm\u2217d33 (10 E^{\u22129}\xa0C\xa0NE^{\u22121})|Refs|
+|---|---|---|---|---|---|---|---|---|
+|x\xa0=\xa00.48|214|309|1887|0.22|49|611|404|This work|
+|x\xa0=\xa00.50|265|315|1663|0.28|54|966|441|This work|
+|x\xa0=\xa00.52|315|328|1578|0.29|51|1160|497|This work|
+|x\xa0=\xa00.54|225|333|1022|0.39|54|926|230|This work|
+|x\xa0=\xa00.56|156|335|1021|0.28|56|798|160|This work|
+|Fe-PMS-PZT|360|\u2013|1500|0.295|61|1055|540|[3]|
+|Yb-Nb-PMS-PZT|390|\u2013|800|0.41|61|1380|312|[4]|
+|Ce-PMS-PZT|388|\u2013|1450|0.59|60|2140|563|[7]|
+|PZT-PMS-PZN|369|275|1381|0.44|64|1200|510|[9]|
+|PNW-PMS-PZN|380|205|1275|0.58|61.3|2138|485|[10]|
+|PMS-PZT-PMT|430|250|1740|0.16|57|1740|748|[12]|
+|commercial hard PZT C-213|310|315|2500|0.30|58|1470|775|\u2013|
+|EuE^{3+}-modified-0.42PMN-0.26PIN-0.32\xa0PT|462|172|\u2013|\u2013|\u2013|\u2013|\u2013|[25]|
+|Sm-doped 24PIN-42PMN-34PT|420|250|\u2013|\u2013|\u2013|\u2013|\u2013|[26]|
+|0.39-BNT-0.20PZ-0.41\xa0PT|500|307|\u2013|0.14|\u2013|2985||[27]|
+|0.74PT-0.26BZN|410|467|\u2013|\u2013|\u2013|\u2013|\u2013|[28]|
+
+# RESULTS AND DISCUSSION
+(a\u2013e) illustrates the microstructural morphology of the sintered PZT-PMS-PSN ceramics, with the average grain size (AGS) indicated in the inserted figures. As depicted in (f), the mean grain size of PZT-PMS-PSN ceramics is 6.53, 6.46, 6.78, 7.1, and 6.75 respectively. It is noteworthy that for PZT-PMS-PSN ceramics with x = 0.52 and x = 0.54, the original morphology exhibits uniform characteristics and a more balanced distribution in both size and shape. Overall, these findings highlight the consistent microstructural features present within this range of compositions for PZT-PMS-PSN ceramics. The XRD patterns of PZT-PMS-PSN ceramics with different compositions (x = 0.48, 0.50, 0.52, 0.54, 0.56) at room temperature are depicted in. In the case of x = 0.48, the (111) peak displays a doublet while the (200) peak appears as a singlet, however, for x > 0.48, the (111) peak gracefully transforms into a singlet and the (200) peak elegantly splits into a doublet pattern. This indicates that there is a phase transition from rhombohedral (R) phase with space group R3m PDF#70\u20134072 to tetragonal (T) phase with space group P4mm PDF#89\u20136690. The (111) and (200) singlets of the x > 0.48 samples exhibit asymmetry due to the splitting of the 1/2{311} superlattice reflection, as observed in previous studies. Notably, this effect is more pronounced in the x = 0.48 sample, indicated by the black arrow. The splitting of superlattice peaks 1/2{311} comes from antiferrodistortive aE^{-}aE^{-}cE^{-} octahedra tilt along the [111]c axis in the Cc phase. The Rietveld refinement was conducted to accurately depict the evolution of phase structure in PZT-PMS-PSN ceramics, as illustrated in. summarizes the corresponding refined structural parameters. Throughout the refinement process, there is a remarkable agreement between the observed and calculated profiles for PZT-PMS-PSN ceramics based on a single two-phase model: R3c + Cc and P4 mm + Cc. As depicted in (f), the calculated volume fraction of the Cc phase gradually increases from x = 0.48 (22.79 %) to approximately x = 0.52 (47.52 %), but eventually stabilizes at x = 0 0.56 (39 0.92 %). The presence of smooth polarization rotation within this Cc phase significantly contributes to its piezoelectric properties, indicating a transition from an R3c phase to a P4mm phase in the structure of PZT-PMS-PSN ceramics. The refined profiles are consistent with XRD patterns for PZT-PMS-PSN ceramics. The P4mm and R3c phase structures can be obtained from 5-atom unit cells (Z = 1) of the ideal cubic perovskite (Pm3m) by introducing different modes of structural distortion. Therefore, (a) shows the Raman spectra of the PZT-PMS-PSN ceramics to illustrate the R3c-P4mm transition. The frequency of some modes decreased, such as 210.15 cmE^{\u22121} and 549.39 cmE^{\u22121}. However, some modes disappear, such as 241.56 cmE^{\u22121} and 579.51 cmE^{\u22121}. When x increases to 0.56, these modes clearly split neatly, becoming 564.92 cmE^{\u22121} and 592.64 cmE^{\u22121}. The dominant modes in the vicinity of A1(TO1) \u2212130 cmE^{\u22121} primarily correspond to antiferrodistorsive (AFD) modes. It can be found that as x increases, the strength of A1(TO1) increases. It indicates that the AFD distortion is becoming stronger, which is caused by the increase of the Cc phase. The mode around E(TO2)-R- 241.562 cmE^{\u22121} is related to the O-Zr-O bending. The mode near E(TO2)-R - 241.562 cmE^{\u22121} is related to the O-Zr-O bending, which is the characteristic mode of R3c and disappears with the increase of x. Secondly, the peak near E(TO3) + A1(3TO)-R - 579.51 cmE^{\u22121} is also the characteristic peak of the R3c phase. With the increase of x, the peak width gradually disappears and split into A1(3TO) and E(TO3). All these indicate that the structure of PZT-PMS-PSN ceramics changes from R3c to P4mm phase. The PFM measurements were conducted within an 8 \u03bcm \u2217 8 \u03bcm rectangular region to illustrate the alterations in domain structure of PZT-PMS-PSN ceramics, as depicted in (a\u2013i). The polarization axis of the rhombohedral phase aligns parallel to [111], resulting in eight potential domain orientations and the formation of 71\xb0, 180\xb0, and 109\xb0 domain structures. The 71\xb0 and 109\xb0 domain are characterized by the wedge-shaped domain which is shown in the blue oval and arrow in (b) in rhombohedral PZT-PMS-PSN ceramic. The 180\xb0 domain is characterized by the lamellar domain that is marked as the pink oval and arrow in (b). Different from rhombohedral phase, the polarization axis of the tetragonal phase is aligned parallel to [001], resulting in six potential domain orientations, which give rise to 90\xb0 and 180\xb0 domain structures. The 90\xb0 domain are characterized by the herringbone-like domain which is shown in the green oval and arrow in (e) in tetragonal PZT-PMS-PSN ceramic. The variation trend of the dielectric constant (\u03b5r) and dielectric loss of PZT-PMS-PSN ceramics at different temperatures is illustrated in (a\u2013e), with x content ranging from 0.48 to 0.56 and a frequency range of 0.1\u2013100 kHz. It can be seen from (f) that with the increase of x, the Curie temperature increases, and the temperature is 309, 315, 328.1, 333.1 and 335.1 respectively, which is conducive to the improvement of the stability of temperature. In order to find out the effect of x addition on the ferroelectric performance of PZT-PMS-PSN ceramics, the polarization-electric field (P-E) hysteresis loops of unpoled PZT-PMS-PSN ceramics at room temperature and 10 Hz are shown in (a\u2013b). The saturated polarization (P max), remnant polarization (P r ) and coercive field (E c\u2212, E c+) associated with the composition are illustrated in (c\u2013d). The E c+ first increases and then slightly decreases with the increase of x addition, which means enhancing the \u201csoft\u201d effect and stabilizing the \u201chard\u201d effect for piezoelectric materials. And the Ei decreases with the increase of x addition, which demonstrates that \u201chard\u201d effect is stable. generated the defect dipole (PD) and form an internal field (Ei) that provides a restoring force for the spontaneously polarized Ps. The hysteresis loop of the polarization-electric field (P-E) for poled PZT-PMS-PSN ceramics at room temperature and 10 Hz is depicted in (e), while the corresponding internal bias field Ei is illustrated in (f). It can be observed that the internal bias field of PZT-PMS-PSN ceramics increases as the phase structure transitions from R3c to P4mm, which is caused that the alignment of the defect oxygen vacancy symmetry with the tetragonal phase is facilitated. (a) displays the frequency dependence of impedance |Z| for PZT-PMS-PSN ceramics of x = 0.48, 0.52, and 0.56 in 33 mode. It can be observed that the maximum phase angle a close approximation to 90\xb0, manifesting that the polarization reversal is fully saturated and the electrical properties are hardly related to the polarization conditions. The d33 and Qm values of PZT-PMS-PSN ceramics exhibit variations with the x content, as illustrated in (b). The d33 of PZT-PMS-PSN ceramics is 214, 265, 315, 225, and 156 respectively. The d33 of PZT-PMS-PSN ceramics exhibits an initial increase followed by a decrease as x increases, reaching its maximum value of 315 at x = 0.52. This behavior can be attributed to the increased presence of the C1c2 phase, which leads to a reduction in Gibbs free energy difference and enhances polarization rotation diversity. Simultaneously, the easier movement of domain walls results in a decreased mechanical quality factor for the material. (c) shows the \u03b5r and tan\u03b4 of PZT-PMS-PSN ceramics. The loss values are 0.224, 0.279, 0.290, 0.391, and 0.281, respectively. And the \u03b5r are 611, 966, 1126, 926 and 796, respectively. It can be observed that the tan\u03b4 and \u03b5r increases with the increase of x, and then decreases, which is mainly related to C1c2 structure that allows the polar axis to lie anywhere between the [001] and the [111] axes. The kp and g33 of PZT-PMS-PSN ceramics are displayed in (d), The value of g33 decreases as x increases, while kp remains relatively stable for values of x below 0.54. (a) shows the bipolar strain versus electric field S-E loops of PZT-PMS-PSN ceramics at room temperature and 10 Hz. Furthermore, the corresponding composition-dependent negative, positive, and total strain for PZT-PMS-PSN ceramics are shown in (b). Specifically, The positive strain of PZT-PMS-PSN ceramics is 0.14 %, 0.19 %, 0.16 %, 0.12 %, and 0.13 %, respectively. Consequently, an enhanced strain was observed in the PZT-PMS-PSN ceramic of x = 0.50 and 0.52 near the MPB. And the PZT-PMS-PSN ceramic of x = 0.52 demonstrates exceptional piezoelectric properties and a low dielectric loss coefficient, with high d33 = 315 pC NE^{\u22121} and Qm = 1578, as well as low \u03b5r = 1160, tan\u03b4 = 0.288 %. summarizes some important properties for PZT-PMS-PSN ceramic of x = 0.52 and other hard piezoelectric materials for high-power applications. It can be found that the PZT-PMS-PSN ceramic of x = 0.52 has high Tc and low tan\u03b4. The subsequent analysis delves into the fundamental physical mechanism of piezoelectricity for PZT-PMS-PSN ceramic of x = 0.52. Rayleigh analysis enables a quantitative assessment of these intrinsic and extrinsic contributions, as demonstrated in the subsequent equation :  The polarizability P(E) is determined by the amplitude (E0) of the applied electric field. To prevent the nucleation of new domains, E0 was maintained below half of the coercive field EC. \u03b5init represents the reversible permittivity coefficient. The Rayleigh coefficient \u03b1 represents the piezoelectric external response, which can be interpreted as an irreversible displacement of the domain wall, calculated from the slope of \u03b5\u2217 with respect to E0. (a) displays a typical hysteresis loop for PZT-PMS-PSN ceramic of x = 0.52. The reverse permittivity coefficient \u03b5\u2217 is obtained by measuring the peak-to-peak polarization (Pp-p) at each electric field (E0) using the Rayleigh method, following these steps:  The field correlation values of \u03b5\u2217 obtained from are subjected to linear fitting, and the corresponding results are presented in (b). The values of \u03b5init and \u03b1 are illustrated in (c). It is noteworthy that at x = 0.52, both the \u03b5init and \u03b1 values exhibit a consistent trend and reach their maximum, indicating an amplification of intrinsic and external contributions, thereby resulting in an enhanced piezoelectric effect. The extrinsic contribution to the total dielectric response (\u03b1E0/(\u03b1E0 + \u03b5init)) is 9.3 % at x = 0.48, and decreases to 6.6 % at x = 0.52, indicating that the influence of inelastic domain wall motion on d33 is minimal.
+
+# TITLE
+Enhancing the piezoelectric performance of novel PZT-PMS-PSN piezoelectric ceramics by fine-tuning the monoclinic phase
+
+# ABSTRACT
+The enhanced high-power performance of 0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 (x = 0.48, 0.50, 0.52, 0.54, 0.56) piezoelectric ceramics (PZT-PMS-PSN) has been achieved with notable improvement in the piezoelectric coefficient (d33). The presence of the monoclinic phase (Cc) has led to an increase in d33 from 214 pC N−1 to 315 pC N−1. Therefore, the composition 0.93 Pb(Zr0.48Ti0.52)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 exhibits excellent mechanical and electrical parameters: a d33 value of 315 pC N−1, a high mechanical quality factor of 1578, an electromechanical coupling factor kp of 52 %, and a low dielectric loss tanδ of only 0.288 %. Additionally, this ceramic exhibits a significantly high Curie temperature (Tc), reaching up to 328 °C which stabilizes its ferroelectric phase. Moreover, the phase transition of PZT-PMS-PSN ceramics from rhombohedral to tetragonal phase was investigated by X-ray diffraction, Raman scattering, Piezo-response force microscopy.
+
+# INTRODUCTION
+The utilization of high-power piezoelectric ceramics is crucial in diverse range of high-power applications, including actuators, transformers, ultrasonic motors, and underwater sonar  These high-power piezoceramics typically operate within the vicinity of their resonant or anti-resonant frequencies, which ranges from a few kilohertz to several megahertz  This necessitates a relatively high vibration velocity (v0). Therefore, in order to achieve an increased v0 (v0\u221dd33\u2022Qm), it is essential for the piezoceramics to possess an elevated piezoelectric coefficient (d33) and electromechanical quality factor (Qm). Furthermore, efficient conversion of electrical energy into mechanical energy requires an enhanced electromechanical coupling coefficient (kp), and minimizing heating effects necessitates low dielectric loss (tan\u03b4). Additionally, it is imperative for the piezoceramics to have a superior Curie temperature (>300 \xb0C). Previous researches indicate that piezoelectric ceramics based on Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 (PMS-PZT) demonstrate a \u201chard\u201d behavior with notable features such as elevated Qm values, diminished d33 values, and reduced kp values. During the past years, the piezoelectric response of PMS-PZT piezoelectric materials can be enhanced through the incorporation of various functional additives, such as Fe2O3 , Yb2O3 , MnO2 , ZnO , CeO2 , and Sr2O3. In addition, the incorporation of relaxation ferroelectrics into PMS-PZT series ceramics, thereby endowing it with exceptional \u201chard\u201d and \u201csoft\u201d performance characteristics, represents the most widely employed and efficacious approach, such as Pb(Zn1/3Nb2/3)O3 , Pb(Ni1/2W1/2)O3 , Pb(Mn1/3Nb2/3)O3  and Pb(Mg1/3Ta2/3)O3. However, the Curie temperature (Tc) of the aforementioned modified PMS-PZT material exhibits a significantly lower range (<300 \xb0C), thereby imposing limitations on its extensive application in certain fields. The Pb(Sc1/2Nb1/2)O3 (PSN) is a classical relaxor with the rich fluctuations of local order and special piezoelectric responses. Moreover, it has already been verified that the introdution of Pb(Sc1/2Nb1/2)O3 in Pb(Zr,Ti)O3 can form competiton between long-rang order and short-rang order, which makes it so easy to create the instability of free energy and structure, and retain a high Curie temperature (\uff1e300\xb0). For instance, Cheng et al. reported d33 enhances from 150 pC NE^{\u22121} to 325 pC NE^{\u22121} and the Tc increases from 280 \xb0C to 302 \xb0C because of increasement of tetragonal phase. Du et al. discovered the d33 increases from 240 pC NE^{\u22121} to 380 pC NE^{\u22121}. The smooth rotation of polarization in the monoclinic phase, resulting from the displacement of off-center A-site atoms from [111]p-axis positions to [001]p-axis positions, serves as a pivotal connection between the rhombohedral and tetragonal phases, facilitating domain reorientation during polarization. This phenomenon significantly contributes to enhancing the piezoelectric performance and elevating Tc in high-power Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 ceramics by optimizing the Zr/Ti ratio. In the present study, we have developed and synthesized a novel series of 0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 (PZT-PMS-PSN ceramics with x = 0.48, 0.50, 0.52, 0.54, 0.56). The modification of the monoclinic phase has been strategically employed to significantly enhance both strain and piezoelectric coefficient (d33), while simultaneously maintaining a high Curie temperature (TC). A comprehensive investigation into the effects of Zr/Ti modification on the crystal structure, microstructure, and dielectric, ferroelectric and piezoelectric properties of PZT-PMS-PSN has been conducted. Ultimately, our efforts have led to the successful achievement of a relatively high strain value of 0.19 %, an impressive piezoelectric coefficient (d33 = 315 pC NE^{\u22121}), and an electromechanical quality factor Qm (Qm = 1578). Furthermore, we have also achieved a relatively low dielectric loss (tan\u03b4 = 0.288 %) and a high Curie temperature (TC \u223c 328 \xb0C).
+
+# CONCLUSION
+A series of novel 0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3 ceramics were designed by manipulating the monoclinic phase, leading to the fabrication of high-performance piezoelectric ceramics through a solid-state method. The spontaneous polarization direction undergoes a transition from the [111]p-axis to the [001]p-axis, indicating a shift from the R3m phase to the P4mm phase. More importantly, the electromechanical characteristic in PZT-PMS-PSN ceramic of x = 0.52 ceramic are excellent: d33 = 315 pC NE^{\u22121}, kp = 0.52, Qm = 1578, tan\u03b4 = 0.288 %, and Tc = 328 \xb0C. The aforementioned improvements indicate the extensive potential application of PZT-PMS-PSN ceramics in high temperature and high-power devices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="```json
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "0.93Pb(Zr0.52Ti0.48)O3-0.05Pb(Mn1/3Sb2/3)O3-0.02Pb(Sc1/2Nb1/2)O3": 214,
+      "0.93Pb(Zr0.50Ti0.50)O3-0.05Pb(Mn1/3Sb2/3)O3-0.02Pb(Sc1/2Nb1/2)O3": 265,
+      "0.93Pb(Zr0.48Ti0.52)O3-0.05Pb(Mn1/3Sb2/3)O3-0.02Pb(Sc1/2Nb1/2)O3": 315,
+      "0.93Pb(Zr0.46Ti0.54)O3-0.05Pb(Mn1/3Sb2/3)O3-0.02Pb(Sc1/2Nb1/2)O3": 225,
+      "0.93Pb(Zr0.44Ti0.56)O3-0.05Pb(Mn1/3Sb2/3)O3-0.02Pb(Sc1/2Nb1/2)O3": 156,
+      "Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 where x = 0.48": 214,
+      "Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 where x = 0.50": 265,
+      "Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 where x = 0.52": 315,
+      "Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 where x = 0.54": 225,
+      "Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3 where x = 0.56": 156,
+      "0.93Pb(Zr(1-x)Tix)O3-0.05Pb(Mn1/3Sb2/3)O3-0.02Pb(Sc1/2Nb1/2)O3 where x = 0.48": 214,
+      "0.93Pb(Zr(1-x)Tix)O3-0.05Pb(Mn1/3Sb2/3)O3-0.02Pb(Sc1/2Nb1/2)O3 where x = 0.50": 265,
+      "0.93Pb(Zr(1-x)Tix)O3-0.05Pb(Mn1/3Sb2/3)O3-0.02Pb(Sc1/2Nb1/2)O3 where x = 0.52": 315,
+      "0.93Pb(Zr(1-x)Tix)O3-0.05Pb(Mn1/3Sb2/3)O3-0.02Pb(Sc1/2Nb1/2)O3 where x = 0.54": 225,
+      "0.93Pb(Zr(1-x)Tix)O3-0.05Pb(Mn1/3Sb2/3)O3-0.02Pb(Sc1/2Nb1/2)O3 where x = 0.56": 156
+    },
+    "abbreviations": {
+      "PZT-PMS-PSN": "0.93 Pb(Zr1-xTix)O3-0.05 Pb(Mn1/3Sb2/3)O3-0.02 Pb(Sc1/2Nb1/2)O3",
+      "PMS-PZT": "Pb(Mn1/3Sb2/3)O3-Pb(Zr,Ti)O3",
+      "PSN": "Pb(Sc1/2Nb1/2)O3"
+    },
+    "property_unit": "pC/N",
+    "family": "Pb(Zr,Ti)O3"
+  }
+}
+```"

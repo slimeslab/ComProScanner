@@ -1,0 +1,1 @@
+{"synthesis_formatted_data":{"method":"solid-state reaction","precursors":["BiFeO3","BaTiO3","Bi0.5Na0.5TiO3","Bi2O3"],"steps":["mixing","solid-state reaction"],"characterization_techniques":["XRD","Raman Spectroscopy","SEM","XPS"]}}

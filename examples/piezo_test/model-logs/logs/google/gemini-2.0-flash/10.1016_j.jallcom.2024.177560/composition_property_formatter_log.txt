@@ -1,0 +1,68 @@
+2025-07-10 15:45:01: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'0.3PbTiO3–0.65PbZrO3–0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3–5 wt% (La2O3+Nb2O5)': 585, 'PNN–PZT–Sn': 1123, 'PNN–PZT–Ta': 1090, 'BZT–PZ–PT': 341, 'PHT–PIN–Li/W': 655, 'BS–PT-PMN–Fe': 160, 'PT–PZ–BNT': 200}, 'abbreviations': {'BLZT': '(Bi0.3La0.7)(Zn0.5Ti0.5)O3', 'PT': 'PbTiO3', 'PZ': 'PbZrO3', 'PNN': 'Pb(Ni1/3Nb2/3)O3', 'PZT': 'Pb(Zr,Ti)O3', 'BZT': 'Bi(Zn0.5Ti0.5)O3', 'PHT': 'Pb(Hf,Ti)O3', 'PIN': 'PbIn1/2Nb1/2O3', 'BS': 'BiScO3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'BMT': 'Bi(Mg2/3Ta1/3)O3', 'BNT': 'Bi0.5Na0.5TiO3'}, 'property_unit': 'pC/N', 'family': 'Pb(Zr, Ti)O3'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'0.3PbTiO3–0.65PbZrO3–0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3–5 wt% (La2O3+Nb2O5)': 585, 'PNN–PZT–Sn': 1123, 'PNN–PZT–Ta': 1090, 'BZT–PZ–PT': 341, 'PHT–PIN–Li/W': 655, 'BS–PT-PMN–Fe': 160, 'PT–PZ–BNT': 200}, 'abbreviations': {'BLZT': '(Bi0.3La0.7)(Zn0.5Ti0.5)O3', 'PT': 'PbTiO3', 'PZ': 'PbZrO3', 'PNN': 'Pb(Ni1/3Nb2/3)O3', 'PZT': 'Pb(Zr,Ti)O3', 'BZT': 'Bi(Zn0.5Ti0.5)O3', 'PHT': 'Pb(Hf,Ti)O3', 'PIN': 'PbIn1/2Nb1/2O3', 'BS': 'BiScO3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'BMT': 'Bi(Mg2/3Ta1/3)O3', 'BNT': 'Bi0.5Na0.5TiO3'}, 'property_unit': 'pC/N', 'family': 'Pb(Zr, Ti)O3'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-10 15:45:11: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'0.3PbTiO3–0.65PbZrO3–0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3–5 wt% (La2O3+Nb2O5)': 585, 'PNN–PZT–Sn': 1123, 'PNN–PZT–Ta': 1090, 'BZT–PZ–PT': 341, 'PHT–PIN–Li/W': 655, 'BS–PT-PMN–Fe': 160, 'PT–PZ–BNT': 200}, 'abbreviations': {'BLZT': '(Bi0.3La0.7)(Zn0.5Ti0.5)O3', 'PT': 'PbTiO3', 'PZ': 'PbZrO3', 'PNN': 'Pb(Ni1/3Nb2/3)O3', 'PZT': 'Pb(Zr,Ti)O3', 'BZT': 'Bi(Zn0.5Ti0.5)O3', 'PHT': 'Pb(Hf,Ti)O3', 'PIN': 'PbIn1/2Nb1/2O3', 'BS': 'BiScO3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'BMT': 'Bi(Mg2/3Ta1/3)O3', 'BNT': 'Bi0.5Na0.5TiO3'}, 'property_unit': 'pC/N', 'family': 'Pb(Zr, Ti)O3'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'0.3PbTiO3–0.65PbZrO3–0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3–5 wt% (La2O3+Nb2O5)': 585, 'PNN–PZT–Sn': 1123, 'PNN–PZT–Ta': 1090, 'BZT–PZ–PT': 341, 'PHT–PIN–Li/W': 655, 'BS–PT-PMN–Fe': 160, 'PT–PZ–BNT': 200}, 'abbreviations': {'BLZT': '(Bi0.3La0.7)(Zn0.5Ti0.5)O3', 'PT': 'PbTiO3', 'PZ': 'PbZrO3', 'PNN': 'Pb(Ni1/3Nb2/3)O3', 'PZT': 'Pb(Zr,Ti)O3', 'BZT': 'Bi(Zn0.5Ti0.5)O3', 'PHT': 'Pb(Hf,Ti)O3', 'PIN': 'PbIn1/2Nb1/2O3', 'BS': 'BiScO3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'BMT': 'Bi(Mg2/3Ta1/3)O3', 'BNT': 'Bi0.5Na0.5TiO3'}, 'property_unit': 'pC/N', 'family': 'Pb(Zr, Ti)O3'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="```json
+{
+  "composition_formatted_data": {
+    "compositions_property_values": {
+      "0.3PbTiO3–0.65PbZrO3–0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3–5 wt% (La2O3+Nb2O5)": 585,
+      "Pb(Ni1/3Nb2/3)O3–Pb(Zr,Ti)O3–Sn": 1123,
+      "Pb(Ni1/3Nb2/3)O3–Pb(Zr,Ti)O3–Ta": 1090,
+      "Bi(Zn0.5Ti0.5)O3–PbZrO3–PbTiO3": 341,
+      "Pb(Hf,Ti)O3–PbIn1/2Nb1/2O3–Li/W": 655,
+      "BiScO3–PbTiO3-Pb(Mg1/3Nb2/3)O3–Fe": 160,
+      "PbTiO3–PbZrO3–Bi0.5Na0.5TiO3": 200
+    },
+    "property_unit": "pC/N",
+    "family": "Pb(Zr, Ti)O3"
+  }
+}
+```"

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BaZr0.60Ti0.40O3":76.2,"BaZr0.60Ti0.40O3 - 7% Epoxy Resin":93,"BaZr0.50Ti0.50O3":79,"BaZr0.50Ti0.50O3 - 7% Epoxy Resin":83},"property_unit":"pC/N","family":"BZT"}}

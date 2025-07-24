@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"CdS":null,"SnS2":null,"RCS":null,"CS-1":null,"CS-2":3.11,"CS-3":null,"CS-4":null},"abbreviations":{},"property_unit":"p.m./V","family":"CdS/SnS2"}}

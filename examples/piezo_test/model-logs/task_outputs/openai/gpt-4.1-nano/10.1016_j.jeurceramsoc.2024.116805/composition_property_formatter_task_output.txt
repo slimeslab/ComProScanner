@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(1-0.01)Bi0.5Na0.5TiO3 - (0.01)SbE^{5+}":404,"(1-0.01)Bi0.5Na0.5TiO3 - (0.01)TaE^{5+}":612,"(1-0.03)Bi0.5Na0.5TiO3 - (0.03)ZrE^{4+}":448,"(1-0.03)Bi0.5Na0.5TiO3 - (0.03)HfE^{4+}":377},"property_unit":"pC/N","family":"BiNaTiO3"}}

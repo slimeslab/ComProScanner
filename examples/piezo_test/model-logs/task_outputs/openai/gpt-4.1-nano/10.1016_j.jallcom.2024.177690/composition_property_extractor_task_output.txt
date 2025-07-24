@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"(K0.5Na0.5)xEu0.01NbO3 where x=0.99":135,"(K0.5Na0.5)xEu0.01NbO3 where x=1.00":135,"(K0.5Na0.5)xEu0.01NbO3 where x=1.01":135},"abbreviations":{"KNEN":"(K0.5Na0.5)1-x Eu x NbO3"},"property_unit":"pC/N","family":"KNEN"}}

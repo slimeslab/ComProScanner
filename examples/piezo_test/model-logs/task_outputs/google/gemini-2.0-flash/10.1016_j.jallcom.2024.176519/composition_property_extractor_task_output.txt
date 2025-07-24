@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Ba0.95Ca0.05Sn0.09Ti0.91O3":720},"abbreviations":{"BCST":"Ba0.95Ca0.05Sn0.09Ti0.91O3","ECE":"electrocaloric effect","MPB":"morphotropic phase boundary","LTCC":"Ultra-low temperature co-fired ceramics"},"property_unit":"pC/N","family":"BaTiO3"}}

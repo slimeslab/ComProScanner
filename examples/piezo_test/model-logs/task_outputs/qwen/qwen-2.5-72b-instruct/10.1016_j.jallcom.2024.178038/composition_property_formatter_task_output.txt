@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"PbZr0.52Ti0.48O3 - Pt":80,"PbZr0.52Ti0.48O3":260},"property_unit":"pm/V","family":"PZT"}}

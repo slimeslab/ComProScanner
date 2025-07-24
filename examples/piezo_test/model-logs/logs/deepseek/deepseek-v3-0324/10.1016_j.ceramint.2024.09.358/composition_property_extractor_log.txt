@@ -1,0 +1,423 @@
+2025-07-13 22:35:19: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Lattice attributes for BCZT and BCST ceramics derived from the Rietveld refinement of XRD data.
+|Composition|BCZT|BCST|Phase| T| O| T| O|
+|---|---|---|---|---|---|---|---|
+|a  (\xc5)|4.0080(2)|4.0019(4)|3.9993(2)|3.9976(2)|
+|b  (\xc5)|4.0080(2)|5.6893(6)|3.9993(2)|5.6628(8)|
+|c  (\xc5)|4.0287(4)|5.6765(7)|4.0132(2)|5.6665(6)|
+|V  (\xc5 E^{ } )|64.74(8)|129.24(2)|64.18(2)|126.27(5)|
+|c/a|1.0051|\u2013|1.0034|\u2013|
+|\u03c7 E^{ }|1.49|1.49|1.13|1.13|
+|Phase (  wt.  %)|55.18|44.82|48.10|51.90|
+
+Table 2. The Wyckoff positions of atoms in BCZT and BCST ceramics.
+|Ceramics|Phases|Atoms|Coordinates|x|y|Z|
+|---|---|---|---|---|---|---|
+|BCZT|T|Ba/Ca|0|0|0|
+|Ti/Zr|0.5|0.5|0.4541(5)|
+|O1|0.5|0.5|\u22120.0263(3)|
+|O2|0.5|0|0.5381(3)|
+|O|Ba/Ca|0|0|0|
+|Ti/Zr|0.5|0|0.4881(4)|
+|O1|0|0|0.4952(9)|
+|O2|0.5|0.2493(2)|0.2928(3)|
+|BCST|T|Ba/Ca|0|0|0|
+|Ti/Sn|0.5|0.5|0.5166(5)|
+|O1|0.5|0.5|\u22120.0416(8)|
+|O2|0.5|0|0.5100(2)|
+|O|Ba/Ca|0|0|0|
+|Ti/Sn|0.5|0|0.4903(5)|
+|O1|0|0|0.5371(6)|
+|O2|0.5|0.2346(3)|0.2757(2)|
+
+Table 3. Comparison of energy storage density parameters of the present with other BT-based compositions.
+|Ceramic| T (\xb0C)| E (kVcmE^{\u22121})| W tot (mJcmE^{\u22123})| W  rec. (mJcmE^{\u22123})| \u03b7 (%)|Ref.|
+|---|---|---|---|---|---|---|
+|Ba  0.92  Ca  0.08  Ti  0.91  Zr  0.09  O  3|35|20.0|201|127.0|63.18|This work|
+|Ba  0.92  Ca  0.08  Ti  0.91  Sn  0.09  O  3|35|20.0|261|191.8|73.26|This work|
+|Ba  0.90  Ca  0.10  Zr  0.15  Ti  0.85  O  3|27|29.8|257.4|92.8|36.1|[50]|
+|Ba  0.85  Ca  0.15  Zr  0.10  Ti  0.90  O  3|30|25.0|202|75|37|[44]|
+|Ba  0.85  Ca  0.15  Zr  0.90  Ti  0.10  O  3|27|20.0|136.7|97.4|71.3|[43]|
+|Ba  0.85  Ca  0.15  Zr  0.90  Ti  0.10  O  3|25|20.0|113.8|38.6|33.9|[51]|
+|BaTi  0.89  Sn  0.11  O  3|30|25.0|85.1|72.4|85.07|[52]|
+|Ba  0.9  Sr  0.1  Ti  0.9  Sn  0.1  O  3|45|20.0|68.8|58.08|84.36|[53]|
+|Ba  0.85  Ca  0.15  Zr  0.08  Sn  0.02  Ti  0.9  O  3|140|12.0|23.2|19|81.65|[54]|
+|Ba  0.85  Ca  0.15  Zr  0.10  Ti  0.90  O  3|129|6.5|16.5|14|80|[55]|
+
+Table 4. Comparison between electrocaloric parameters of this work with other BT-based compositions.
+|Ceramic| \u0394T (K)| E (kV mmE^{\u22121})| \u03be max (K mm kVE^{\u22121})|Ref.|
+|---|---|---|---|---|
+|Ba  0.92  Ca  0.08  Ti  0.91  Zr  0.09  O  3|0.720|2.0|0.360|This Work|
+|Ba  0.92  Ca  0.08  Ti  0.91  Sn  0.09  O  3|0.770|2.0|0.490|This Work|
+|Ba  0.85  Ca  0.15  Ti  0.90  Zr  0.10  O  3|0.414|1.6|0.250|[61]|
+|BaSn  0.08  Ti  0.92  O  3|0.460|1.6|0.280|[62]|
+|Ba  0.90  Sr  0.10  Ti  0.90  Hf  0.10  O  3|1.200|5.0|0.240|[63]|
+|BaTi  0.91  Sn  0.09  O  3|0.770|3.0|0.250|[64]|
+|Ba  1-1.5x  Sm  x  TiO  3  (x=0.02)|1.110|3.0|0.370|[65]|
+|0.4(Ba  0.7  Sr  0.3  TiO  3  -0.6Ba (Zr  0.2  Ti  0.8  ) O  3|0.530|3.0|0.176|[66]|
+|Ba  0.85  Sr  0.15  Hf  0.06  Ti  0.94  O  3|0.910|4.0|0.227|[67]|
+
+# RESULTS AND DISCUSSION
+(a) shows the room temperature X-ray diffraction (XRD) patterns of BCZT and BCST ceramics. These patterns reveal distinctive peaks that indicate a perovskite structure, devoid of any impurities, confirming the successful incorporation of CaE^{2+}, ZrE^{4+}, and SnE^{4+} ions into the BaTiO3 lattice. The characteristic peaks correspond to the established BaTiO3 diffraction patterns outlined in the Joint Committee on Powder Diffraction Standards (JCPDS) files #79\u20132264 and #81\u20132200, representing the tetragonal (T) and orthorhombic (O) phases of the BaTiO3 ceramic, respectively, The Gaussian fitting of the peaks at 2\u03b8 \u2248 45\xb0, as illustrated in (b), also corroborate the coexistence of tetragonal (T) and orthorhombic (O) phases in the studied ceramics. The result of Rietveld refinement performed against the X-ray diffraction (XRD) patterns of BCZT and BCST ceramics is depicted in (c\u2013d), respectively. From the refinement, it can be deduced that there exists a coexistence of tetragonal (T, P4mm) and orthorhombic (O, Amm2) phases. The BCZT ceramic comprises 55.18 wt% tetragonal phase and 44.82 wt% orthorhombic phase, while the BCST ceramic contains 48.10 wt% tetragonal phase and 51.90 wt% orthorhombic phase. The discrepancy in the phase distribution between BCZT and BCST may likely be attributed to the difference in ionic radii between ZrE^{4+} (0.72 \xc5) and SnE^{4+} (0.69 \xc5) ions. ZrE^{4+}, having a larger ionic radius in comparison to that of TiE^{4+} (0.605 \xc5), causes a greater elongation along the c-axis, leading to an enhanced lattice distortion. This increased distortion stabilizes the tetragonal symmetry, which is further supported by a higher c/a ratio observed in BCZT compound. Consequently, BCZT exhibits a higher proportion of the tetragonal phase. In contrast, SnE^{4+} ion, though slightly larger than TiE^{4+} ion, is smaller than ZrE^{4+} ion, results in lesser lattice distortion. This distortion favors the stabilization of the orthorhombic phase, explaining the higher orthorhombic phase percentage in BCST compound. The lattice parameters (a, b, c) obtained from the XRD refinement are presented in , which also encompasses the lattice volume (V) and goodness of fit (\u03c7 E^{2}) values for both compounds. The changes in unit cell volume from the parent lattice confirm the successful incorporation of CaE^{2+}, ZrE^{4+}, SnE^{4+} into BaTiO3 lattice. The increase in the unit cell volume of BCZT (64.74 \xc5\xb3 in tetragonal phase and 129.24 \xc5\xb3 in orthorhombic phase) compared to that of the parent BaTiO3 lattice (64.28 \xc5\xb3 in tetragonal phase and 128.76 \xc5\xb3 in orthorhombic phase) can be attributed to a larger ionic radius of ZrE^{4+} (0.72 \xc5) ion compared to that of TiE^{4+}(0.605 \xc5) ion. Conversely, in case of BCST, the unit cell volume (64.18 \xc5\xb3 in the tetragonal phase and 126.27 \xc5\xb3 in the orthorhombic phase) decreases in comparison to that of BaTiO3 despite the doping of SnE^{4+} (0.69 \xc5), which has a larger radius than TiE^{4+} ion. This discrepancy may be attributed to a significantly higher effective electron affinity of Sn (107.3 kJ/mol) when compared with that of Ti (7.6 kJ/mol). Further, it is also clear from that the BCZT ceramic exhibits a higher tetragonality ratio (c/a) in comparison to that of BCST ceramic. The bulk density of the ceramics was determined using the Archimedes' principle, providing values of 5.91 g cmE^{\u22123} and 5.80 g cmE^{\u22123} for BCZT and BCST ceramics, respectively. In terms of relative density, the BCZT ceramic has a density of 98.17 %, and the BCST ceramic has a density of 96.34 %. A higher density of BCZT indicates better dielectric and piezoelectric properties. presents the atomic coordinates for both BCZT and BCST ceramics. From there, it can be inferred that CaE^{2+} ions are substituted at BaE^{2+} site, while ZrE^{4+} and SnE^{4+} ions occupy the TiE^{4+} site in BCZT and BCST ceramics as confirmed from the similar Wyckoff positions. The VESTA software generated crystal structures of the BCZT and BCST compounds, as shown in the insets of (c\u2013d), using the parameters from and 2 The Fourier subprogram in FULLPROF was used to calculate the scattering density inside the unit cell of the ceramics. The application of Fast Fourier Transform (FFT) as a subroutine was used to speed up the calculation of the given expression. where, V represents the volume of the unit cell, H is the reciprocal lattice vector, r denotes the vector position within the unit cell, and F(H) corresponds to the complex Fourier coefficients employed for various Fourier transform operations. The unit of \u03c1(r) is determined by dividing the unit of F(H) by the unit of V. The electron density within the unit cell was determined and the same is illustrated in (a\u2013b) which suggests that the BCZT ceramic exhibits a higher electron density compared to that of BCST ceramic. ZrE^{4+} has a different electron distribution compared to SnE^{4+}. ZrE^{4+}, with its [Kr] 4 dE^{2} electronic configuration, tends to contribute more to the electron density in the crystal structure. On the other hand, SnE^{4+} ion, with a [Kr] 5sE^{2} 4 dE^{1}\u2070 configuration, does not influence the electron density as strongly. The higher electron density in BCZT can thus be attributed to the nature of the ZrE^{4+} ion's electron cloud and its interaction with surrounding atoms. At room temperature, both BCZT and BCST compounds exhibit dual-phase crystal structures. The FESEM images of sintered BCZT and BCST ceramics are shown in (a\u2013b). The BCZT ceramic shows the existence of more number of larger grains than those in the BCST compound. The disparity in grain size between the two compounds is also corroborated by the histograms shown in (c\u2013d) for the BCZT and BCST compounds, respectively. The histograms show a grain size distribution curve, indicating that a greater number of grains fall within the range of 3\u20134 \u03bcm for BCZT ceramic and 1\u20132 \u03bcm for BCST ceramic. (e\u2013f) displays the elemental composition of the ceramics as determined from the EDX analysis. The theoretical and experimental atomic percentages (at. %) of the constituent elements in the ceramics are presented in the insets of (e\u2013f). In BCZT ceramics, the experimental atomic ratios of Ba/Ca and Ti/Zr are found to be 11.66 and 10.98, respectively. For comparison, the Ba/Ca and Ti/Sn ratios in BCST ceramics are 11.94 and 9.54, respectively. Theoretical atomic ratios Ba/Ca and Ti/Zr or Ti/Sn are 11.5 and 10.11, respectively, revealing a fair match. Additional peaks appear in both EDX spectra at about 2.1 and 9.1 keV, indicating the presence of gold used to coat the samples for measurement. (a\u2013d) illustrates the temperature dependent dielectric constant (\u025b) and loss tangent (tan\u03b4) of BCZT and BCST compounds at different frequencies (0.1, 1, 5, and 10 KHz). (a) demonstrates that the BCZT compound undergoes two distinct phase transitions; the first from orthorhombic to tetragonal at temperature (T O-T) \u223c 52 \xb0C, and the second from tetragonal to cubic at the Curie temperature (T C) \u223c 105 \xb0C. In contrast, in (b), the BCST compound exhibits a single-phase transition from tetragonal to cubic phase at T C \u223c 70 \xb0C, a significantly lower temperature compared to that of BCZT ceramic. It is a well-established fact that substitution of SnE^{4+} ion at TiE^{4+} site in BT-based ceramics reduces the T C at much faster rate when compared to the substitution of ZrE^{4+} ion at TiE^{4+} site. Literature also confirms that substituting SnE^{4+} ion at TiE^{4+} site in BT-based ceramics reduces the phase transition temperatures. This can be understood as SnE^{4+} has a more isotropic electron cloud due to its electronic configuration ([Kr] 5sE^{2} 4 dE^{1}), which reduces the overall polarization of the material. Since T C is linked to the strength of the dipole-dipole interactions within the material, lower polarization caused by SnE^{4}\u207asubstitution weakens these interactions and decreases T C more significantly. Since the Rietveld refinement indicates presence of two phases in BCST ceramic, we confirmed this by taking the derivative of the dielectric constant at 0.1 kHz. The inset of depicts the derivate of the dielectric constant-versus temperature graph of BCST compound from where a noticeable hump near room temperature can be noticed. This attests a phase transition from tetragonal to orthorhombic phase in BCST compound near room temperature. Dielectric loss tangent (tan\u03b4) refers to the dissipation of energy that occurs when the polarization lags behind the applied electric field. The variation of tan\u03b4 with temperature at different frequencies is shown in (c\u2013d) for the studied compounds. The tan\u03b4 values for the compounds are maximum near the high-temperature dielectric peaks. The peak dielectric maximum (\u03b5m) and tan\u03b4 near the Curie temperature are \u223c13304 and \u223c0.06 for BCZT, and \u223c12112 and \u223c0.15 for BCST compound at 1 KHz applied frequency. Above 125 \xb0C, the dispersion in tan\u03b4 may be attributed to the predominance of the grain boundaries' influence in comparison to the grains. The formation of polar nano-regions (PNRs) may be responsible for the transition of the material from a normal ferroelectric to a relaxor ferroelectric. For this, Uchino and Nomura proposed a modified version of the Curie-Weiss law. where, T represents the temperature, C denotes the Curie\u2013Weiss constant, and the relaxation degree represented by \u03b3 (1 < \u03b3 < 2) characterizes the ferroelectric nature. The value of \u03b3 is 1 for regular ferroelectrics and 2 for optimal relaxor ferroelectrics. (a\u2013b) displays the relationship between the log ( 1\u025b\u2212 1 \u025bm) against log ( T\u2212 Tm) at a frequency of 1 kHz. The \u03b3 values observed for BCZT and BCST ceramics are 1.59 and 1.62, respectively. Although these values indicate that neither BCZT nor BCST ceramic exhibit strong relaxor behavior, their \u03b3 values being above 1 suggest the presence of slight relaxor characteristics. The hysteresis loops measurements depicting the percentage strain versus electric field and conducted up to a maximum field intensity of 20 kV cmE^{\u22121} and applied frequency of 10 Hz for the BCZT and BCST compounds are shown in (a\u2013b). The determined d33\u2217 values are \u223c609 p.m. VE^{\u22121} for BCZT and \u223c358 p.m. VE^{\u22121} for BCST ceramic. Despite exhibiting greater relaxor behavior, the BCST compound possesses a lower d33\u2217 value when compared with that of BCZT ceramic. This difference is due to a lower tetragonality ratio (1.0034) and bulk density (5.80 g cmE^{\u2212}\xb3) for the former than the tetragonality ratio (1.0051) and bulk density (5.91 g cmE^{\u2212}\xb3) for the latter compound. The superior d33\u2217 value of BCZT ceramic may also be attributed to its higher percentage of the tetragonal phase. Among the various phases present in BT-based ceramics, the tetragonal phase provides the highest piezoelectricity due to its highly asymmetric nature. Furthermore, the smaller grain size in BCST ceramic could lead to domain wall pinning by grain boundaries, resulting in reduced piezoelectricity in this compound. The pyroelectric coefficient (p= \u0394 Ps \u0394T) for the studied compounds was determined from the slope of a graph between the spontaneous polarization (Ps) and temperature (T). The graphs are shown in (a\u2013b). The pyroelectric coefficient exhibits its peak values at specific temperature intervals: 342\u2013368 K for BCZT compound, reaching \u22121861.9 \u03bcCmE^{-2} KE^{\u22121}, and 322\u2013343 K for BCST ceramic with a value of \u22122482.2 \u03bcCmE^{-2} KE^{\u22121}. Further, at lower temperatures (312\u2013337 K for BCZT and 347\u2013368 K for BCST), the pyroelectric coefficient remains substantial (\u22121396.9 \u03bcCmE^{-2} KE^{\u22121} for BCZT and \u22121794.0 \u03bcCmE^{-2} KE^{\u22121} for BCST), indicating the persistence of the ferroelectric behaviour. However, at higher temperatures (372\u2013393 K for BCZT and 347\u2013368 K for BCST), the pyroelectric coefficient sharply falls (\u221265.6 \u03bcCmE^{-2} KE^{\u22121} for BCZT and \u221267.8 \u03bcCmE^{-2} KE^{\u22121} for BCST). Furthermore, the comparison between BCZT and BCST reveals that BCZT exhibits a lower pyroelectric coefficient. This is because BCZT contains more acceptor ion dopants, particularly ZrE^{4+}. The enhanced pyroelectric coefficient observed in BCST suggests its potential for a higher electrocaloric effect, indicating its suitability for applications requiring efficient temperature-induced polarization changes. The enhanced pyroelectric coefficient observed in BCST suggests a higher electrocaloric effect in this compound. Each ferroelectric material possesses a distinct hysteresis loop (P-E loop) between electric polarization and applied electric field from which one can determine key parameters such as spontaneous polarization (Ps), remnant polarization (Pr), and coercive field (Ec). compares the room-temperature hysteresis loops of the BCZT and BCST compounds. From there, one may observe that the P-E loop for BCST is narrower than that of BCZT due to the presence of polar nanoregions and the ensuing relaxor behaviour in the former compound. The values of Pr (11.92 \u03bcC cmE^{\u22122}) and Ec (1.11 kV cmE^{\u22121}) in the BCST sample are lower than that of the BCZT compound (15.76 \u03bcC cmE^{\u22122} & 1.45 kV cmE^{\u22121}). However, the Pmax value (46.85 \u03bcC cmE^{\u22122}) in the BCST is larger than the Pmax value of BCZT (37.06 \u03bcC cmE^{\u22122}). Further, (b\u2013c) illustrates P-E loops at different temperatures for both BCZT and BCST ceramics. It can be noticed that as the temperature rises, the P\u2013E loops become narrower, and there is a gradual decrease in Pr, Ec, and Pmax values for both materials, which is a well-known fact. At temperatures above Tc (\u223c105 \xb0C for BCZT and \u223c70 \xb0C for BCST), the P-E loops exhibit a behaviour reminiscent of a paraelectric phase. The total energy density (W tot) and recoverable energy density (W rec), as well as the efficiency (\u03b7), of the studied compounds were determined by analyzing the P-E hysteresis loops using the following equations : It is important to remember that achieving high energy storage densities and efficiency in relaxor ferroelectric based-ceramics relies on optimizing the electrical breakdown strength, polarization, dielectric constant, and dielectric loss. (e\u2013f) illustrates the changes in the energy storage capacity of BCZT and BCST ceramics when subjected to thermal variation at an electric field strength of 20 kV cmE^{\u22121}. At 35 \xb0C, the values of W tot, W rec, and \u03b7 are 201, 127 mJcmE^{\u22123}, and 63.18 % for BCZT; and 261, 191.8 mJcmE^{\u22123}, and 73.26 % for BCST. The increased energy storage capability of the BCST compound can be attributed to a higher charge storage density (Q c = Pmax - P r ) owing to its smaller grain size and an enhanced relaxor behaviour. Near Tc, the values of W tot, W rec, and \u03b7 are 164.4 mJ cmE^{\u22123}, 152.0 mJ cmE^{\u22123}, and 92.41 % for BCZT; and 189.68 mJ cmE^{\u22123}, 164.27 mJ cmE^{\u22123}, and 88.68 % for BCST compound. The breakdown electric field (E b ) for BCZT and BCST ceramics can be estimated with the following Weibull distribution function. where, i, n, and Ei represent the serial number of each ceramic, the total number of compounds, and the breakdown electric field of the ceramic in ascending order, respectively. As shown in (a), the linear relationship between xi and yi for all samples demonstrates m value greater than 10, confirming the reliability of the breakdown electric field (Eb) for both ceramics. The P d is calculated using the equation  where f represents the frequency of the AC signal. The calculated Pd values for BCZT and BCST ceramics near room temperature (35 \xb0C) and at their respective Curie temperatures (T C ) are shown in (b). The electrocaloric effect (ECE) articulates the change in isothermal entropy or adiabatic temperature of a dielectric substance when an electric field is applied or removed. depicts a schematic representation of the ECE cooling cycle, which consists of four distinct phases (A-D). During the first stage of the cooling cycle, the polar material is at a temperature T (when E = 0) and exhibits a high entropy, along with arbitrarily aligned dipoles. This alignment leads to a decrease in the dipolar entropy and an increase in temperature from T to T+\u0394T. The latent heat is extracted from the material, resulting in a decrease in its temperature nearly equivalent to \u0394T. Usually, adiabatic electrocaloric temperature change (\u0394T) and entropy change ( \u0394S) are utilized to assess the efficiency of the electrocaloric effect in polar materials. The ECE of BCZT and BCST ceramics was evaluated using the indirect method, which involves calculations based on thermodynamic Maxwell's equations. The \u0394T and the \u0394S can be determined using the following equations : The symbol \u03c1 represents the density of the sample, whereas Cp represents the specific heat capacity, which is considered to be 400 JkgE^{\u22121}KE^{\u22121}. E 1 and E 2 represent the initial (E = 0) and final (E = 20 kV cmE^{\u22121}) electric fields, respectively. The thermal variation of \u0394T and \u0394S under various applied electric fields for both ceramics is illustrated in (a\u2013d). The results demonstrate that \u0394T and \u0394S rise on increasing the applied electric field. The BCZT ceramic exhibits a maximum temperature change \u0394Tmax \u223c0.72 K and maximum entropy change \u0394Smax \u223c0.77 J kgE^{\u22121}KE^{\u22121}. Similarly, in case of BCST, \u0394Tmax is 0.98 K, and \u0394Smax is 1.15 J kgE^{\u22121}KE^{\u22121} at an electric field of 20.0 kVcmE^{\u22121} near Tc. On comparison of two ceramics, BCST stands out in terms of its electrocaloric qualities since it has a lower density and a higher pyroelectric coefficient. The maximum electrocaloric responsivity (\u03bemax) derived from the ratio of \u0394Tmax /\u0394Emax is 0.36 K mm kVE^{\u22121} for the BCZT compound and 0.49 K mm kVE^{\u22121} for the BCST ceramic. These higher values make the BCST ceramic an excellent candidate for cooling devices. summarizes the electrocaloric properties of our compounds with other BT-based compositions. The obtained \u0394T in this study is comparable at lower applied field; however, \u03bemax value is quite higher for the BCST sample when compared with other BT-based ceramics as shown in. Diffuse reflectance spectroscopy (DRS) is a non-invasive analytical technique used to investigate the absorption properties of ceramics. (a) displays the absorbance spectrum of the BCST compound. The figure clearly shows that the ceramic demonstrates a notable rise in absorption near the absorption edge at a wavelength of 337.48 nm, which is slightly higher than the absorption edge of BCZT (335.6 nm) reported in Ref.. Based on the present study, it is concluded that BCST has a larger bandgap energy. The bandgap value determined from the inset of is around 3.18 eV for BCST, which is greater than that of BCZT (3.0 eV) ceramic. The bandgap value determined from the inset of (a) was around 3.18 eV for BCST, which is greater than that of BCZT (3.0 eV). The distinct difference in the band gap may be attributed to the different electronic structures of the dopants, SnE^{4+}/ZrE^{4+}. SnE^{4+} tends to induce less distortion in the crystal lattice and modifies the electronic states in a way that results in a wider band gap. In contrast, ZrE^{4+}, causes greater lattice distortion and electronic delocalization, leading to a narrower band gap in BCZT. In order to verify the type of the bandgap, (b) displays the relationship between the amount of light reflected and the corresponding wavelength for the BCST compound. Marotti et al. observed that the first derivative of reflectance, dR/d\u03bb, exhibits a peak in the vicinity of E g for a direct bandgap semiconductor. The inset in illustrates that dR/d\u03bb has a peak in the high-energy range around 3.22 eV confirming a direct bandgap for this compound. The contamination of industrial effluent by Methylene Blue (MB) and Rhodamine B (RhB) dyes is a major concern. The results on BCZT piezocatalysis have been published elsewhere , which revealed that BCZT degraded the RhB and MB dye molecules with an efficiency of 74.06 % and 62.69 %, respectively. The experimental results suggest that BCST catalysts achieved degradation efficiency of 62.89 % and 56.07 % for RhB and MB dye molecules, respectively, during a 120-min reaction time as shown in (a\u2013b). Thus, the BCST sample has a lower efficiency to degrade MB and RhB dyes in comparison to BCZT. The rate constants measured for both RhB and MB dyes using BCST ceramic are 78.9 \xd7 10E^{\u22124} minE^{\u22121} and 68.8 \xd7 10E^{\u22124} minE^{\u22121}, respectively, as shown in (c\u2013d). In order to comprehend the primary factors contributing to the lower degrading performance of BCST, it is crucial to have a thorough understanding of the piezocatalysis mechanism. These interactions lead to the creation of oxidized active species, including hydroxyl (\xb7OH) and superoxide (-O2\u2212) radicals. Superoxide ions (-O2\u2212) and hydroxyl radicals (\xb7OH) further react with organic dye molecules in a solution, and degrade them to unharmful products like CO2 and H2O. Therefore, due to smaller piezoelectric coefficient and greater energy bandgap of BCST exhibits lesser piezocatalytic degradation for both dyes when compared with BCZT. Therefore, despite possessing smaller grains, BCST compound exhibits a lower piezoelectric coefficient than BCZT compound and inferior piezocatalytic performance.
+
+# TITLE
+An in-depth comparison of dielectric, ferroelectric, piezoelectric, energy storage, electrocaloric, and piezocatalytic properties of Ba<inf>0.92</inf>Ca<inf>0.08</inf>Zr<inf>0.09</inf>Ti<inf>0.91</inf>O<inf>3</inf> and Ba<inf>0.92</inf>Ca<inf>0.08</inf>Sn<inf>0.09</inf>Ti<inf>0.91</inf>O<inf>3</inf> piezoceramics
+
+# ABSTRACT
+Keeping this in mind, an in-depth investigation and comparison of the dielectric, ferroelectric, piezoelectric, energy storage, electrocaloric, and piezocatalytic properties have been carried out on Ba0.92Ca0.08Zr0.09Ti0.91O3 (BCZT) and Ba0.92Ca0.08Sn0.09Ti0.91O3 (BCST) lead-free compounds synthesized through the conventional solid state reaction method. Further, the Rietveld refinement against the XRD patterns affirmed the coexistence of orthorhombic (Amm2) and tetragonal (P4mm) phases at room temperature for both compounds. While BCZT compound demonstrated remarkable dielectric, piezoelectric, and piezocatalytic characteristics with maximum dielectric constant (
+                     
+                        
+                           
+                              ε
+                              m
+                           
+                        
+                     
+                     ) ≈ 13304 near the Curie temperature (
+                        
+                           
+                              T
+                              c
+                           
+                        
+                      ≈ 105 °C), converse piezoelectric coefficient 
+                        
+                           (
+                           
+                              d
+                              33
+                              ∗
+                           
+                           )
+                        
+                      ≈ 609 p.m. V−1, power density (
+                        
+                           
+                              P
+                              d
+                           
+                        
+                     ) ≈ 89.71 kW cm−3 at room temperature, and 82.7 % Rhodamine B (RhB) dye degradation capability; on the other hand, BCST compound exceled in superior energy storage density (
+                        
+                           
+                              W
+                              
+                                 r
+                                 e
+                                 c
+                              
+                           
+                        
+                     ) ≈ 191.8 mJ cm−3 with efficiency η ≈ 73.26 % near room temperature and enhanced electrocaloric properties with adiabatic temperature change 
+                        
+                           (
+                           
+                              Δ
+                              T
+                           
+                           )
+                        
+                      ≈ 0.980 K, isothermal entropy change 
+                        
+                           (
+                           
+                              Δ
+                              S
+                           
+                           )
+                        
+                      ≈ 1.15 J kg−1K−1 and a higher electrocaloric responsivity 
+                        
+                           (
+                           Δ
+                           T
+                           /
+                           Δ
+                           E
+                        
+                     ) ≈ 0.49 K mm kV−1. These distinctions arise from the difference in ionic radii, lattice distortion, and the electronic configurations of the dopant ions, leading to a greater polarization change and a lower coercive electric field in the BCST ceramic.
+
+# INTRODUCTION
+Lead zirconate-titanate (PZT) perovskite is widely preferred as a piezoelectric and ferroelectric material in piezoelectric applications. In this direction, four appealing materials have emerged, namely barium titanate (BT), potassium-sodium niobate [(K, Na)NbO3], sodium-bismuth titanate [(Bi0.5Na0.5)TiO3], and bismuth ferrite (BiFeO3). Among all these alternatives, the BT-based ceramics are remarkable due to their stability, versatility, and flexibility in synthesis. In 2009, a major development was made in the field of BT-based ceramics. Researchers were able to produce a large piezoelectric charge coefficient (d33) value of around 620 pC NE^{\u22121} in Ba(Ti0.8Zr0.2)O3-(Ba0.7Ca0.3)TiO3 lead-free system. This was accomplished by modifying the chemical composition at the phase boundaries through substitution of CaE^{2+} and ZrE^{4+} ions. This finding provided an insightful direction and acted as a stimulant to further the development of new functionalities in BT-based ceramics. For example, substitution of CaE^{2+} at BaE^{2+} site was found to increase the stability of ferroelectric phase, causing the T R-O (rhombohedral to orthorhombic phase transition temperature) and T O-T (orthorhombic to tetragonal phase transition temperature) to occur at lower temperatures. It is also possible to tune the polymorphic phase transition to occur near room temperature with substitution of ZrE^{4+} and SnE^{4+} ions at TiE^{4+} site in BaTiO3 ceramics. Luo et al. substituted CaE^{2+} and NbE^{5+} ions in BT host matrix to broaden the temperature stability of the dielectric constant. CaE^{2+} doping enhances low-temperature stability and dielectric properties, while NbE^{5+} doping reduces and broadens the dielectric peak. Tihtih et al. demonstrated that with an increase in strontium (Sr) ion concentration, the bandgap energy of SrE^{2+} substituted BT ceramic decreases. Zang et al. designed tantalum (Ta) substituted BT-based ceramic to improve the energy storage performance and dielectric breakdown strength by adjusting the Ti-O bond length. Feng et al. revealed that the simultaneous doping of CaE^{2+} and SnE^{4+} in BT ceramic generated a coexisting state of ferroelectric domains and nanodomains at room temperature, which increased the adiabatic temperature change useful for electrocaloric cooling. Ahmed et al. reported that substitution of yttrium (Y) at BaE^{2+} site in BT lowered the oxygen vacancies and improved its piezoelectric behavior. Hoa et al. performed a study to evaluate the impact of LaE^{3+} substitution in BT-based ceramic on its piezocatalytic performance for the degradation of organic dyes. La doping was found to increase the BaE^{2+} vacancies, which enhances the sensitivity of charge carriers to ultrasonic vibrations and subsequently an elevation in the piezocatalytic performance. Achkar et al. showed that the incorporation of samarium (Sm) in BT ceramic broadened the range of temperature in which the electrocaloric effect can be utilized. Wang et al. conducted a study in which they substituted erbium (Er) in a BT-based compound to enhance its piezocatalytic properties. The enhancement was ascribed to the existence of oxygen vacancies and modification in electron cloud density due to the dopant's 4f orbital. Xu et al. proposed that the piezocatalytic performance of BT ceramic can be enhanced by incorporating cerium (Ce) ions, which induces local distortion in the TiO6 octahedra. Despite considerable research on BT-based ceramics for various applications, there is a lack of a comprehensive comparison of the multifunctional properties of isovalent ions substituted BT-based ceramics for advanced applications. Ba0.92Ca0.08TiO3 has been extensively studied, demonstrating an optimal c/a ratio and a Curie temperature (TC) comparable to that of pure BaTiO3. For B (TiE^{4+})-site substitution, the most commonly used cations are the valence-stable ZrE^{4+} and SnE^{4+} ions as they possess similar ionic radii and share the same valence state as that of TiE^{4+} ions. This similarity in ionic radii and valence state ensures that the dopants can be incorporated onto the TiE^{4+} sites without drastically altering the overall structure , while still allowing the tuning of the material's functional properties, such as dielectric, piezoelectric, and phase transition behaviors. The choice of the specific substitution 0.09 wt% for both ZrE^{4+}/SnE^{4+} dopants stem from the fact that the composition Ba0.92Ca0.08TiO3 has not yet been explored for these substituents. Hence, this study aims to synthesize, investigate, and compare the structural, electrical, energy storage, and piezocatalytic properties of Ba0.92Ca0.08Zr0.09Ti0.91O3 (BCZT) and Ba0.92Ca0.08Sn0.09Ti0.91O3 (BCST) ceramics.
+
+# CONCLUSION
+The solid-state reaction method was employed to successfully synthesize lead-free piezo-ceramics BCZT and BCST. BCZT compound exhibited outstanding performance in terms of dielectric, piezoelectric, and piezocatalytic characteristics with \u03b5m \u223c13304 at Tc \u223c105 \xb0C and d33\u2217 \u223c609 p.m. VE^{\u22121}. In contrast, BCST showcased higher energy storage density, reaching W rec\u223c 191.8 mJcmE^{\u22123} along with a high efficiency of about 73.26 %. Furthermore, it demonstrated enhanced electrocaloric properties with \u0394T \u223c0.980 K and \u0394S \u223c1.15 J kgE^{\u22121}KE^{\u22121}. BCST exhibited a higher optical bandgap value than that of BCZT compound. The degradation efficiency of BCST ceramics on MB and RhB dyes were inferior to BCZT ceramics. The discrepancies in the properties of BCZT and BCST ceramics were attributed to differences in the ionic radii and electronic configurations of the dopant ions.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-13 22:35:34: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Lattice attributes for BCZT and BCST ceramics derived from the Rietveld refinement of XRD data.
+|Composition|BCZT|BCST|Phase| T| O| T| O|
+|---|---|---|---|---|---|---|---|
+|a  (\xc5)|4.0080(2)|4.0019(4)|3.9993(2)|3.9976(2)|
+|b  (\xc5)|4.0080(2)|5.6893(6)|3.9993(2)|5.6628(8)|
+|c  (\xc5)|4.0287(4)|5.6765(7)|4.0132(2)|5.6665(6)|
+|V  (\xc5 E^{ } )|64.74(8)|129.24(2)|64.18(2)|126.27(5)|
+|c/a|1.0051|\u2013|1.0034|\u2013|
+|\u03c7 E^{ }|1.49|1.49|1.13|1.13|
+|Phase (  wt.  %)|55.18|44.82|48.10|51.90|
+
+Table 2. The Wyckoff positions of atoms in BCZT and BCST ceramics.
+|Ceramics|Phases|Atoms|Coordinates|x|y|Z|
+|---|---|---|---|---|---|---|
+|BCZT|T|Ba/Ca|0|0|0|
+|Ti/Zr|0.5|0.5|0.4541(5)|
+|O1|0.5|0.5|\u22120.0263(3)|
+|O2|0.5|0|0.5381(3)|
+|O|Ba/Ca|0|0|0|
+|Ti/Zr|0.5|0|0.4881(4)|
+|O1|0|0|0.4952(9)|
+|O2|0.5|0.2493(2)|0.2928(3)|
+|BCST|T|Ba/Ca|0|0|0|
+|Ti/Sn|0.5|0.5|0.5166(5)|
+|O1|0.5|0.5|\u22120.0416(8)|
+|O2|0.5|0|0.5100(2)|
+|O|Ba/Ca|0|0|0|
+|Ti/Sn|0.5|0|0.4903(5)|
+|O1|0|0|0.5371(6)|
+|O2|0.5|0.2346(3)|0.2757(2)|
+
+Table 3. Comparison of energy storage density parameters of the present with other BT-based compositions.
+|Ceramic| T (\xb0C)| E (kVcmE^{\u22121})| W tot (mJcmE^{\u22123})| W  rec. (mJcmE^{\u22123})| \u03b7 (%)|Ref.|
+|---|---|---|---|---|---|---|
+|Ba  0.92  Ca  0.08  Ti  0.91  Zr  0.09  O  3|35|20.0|201|127.0|63.18|This work|
+|Ba  0.92  Ca  0.08  Ti  0.91  Sn  0.09  O  3|35|20.0|261|191.8|73.26|This work|
+|Ba  0.90  Ca  0.10  Zr  0.15  Ti  0.85  O  3|27|29.8|257.4|92.8|36.1|[50]|
+|Ba  0.85  Ca  0.15  Zr  0.10  Ti  0.90  O  3|30|25.0|202|75|37|[44]|
+|Ba  0.85  Ca  0.15  Zr  0.90  Ti  0.10  O  3|27|20.0|136.7|97.4|71.3|[43]|
+|Ba  0.85  Ca  0.15  Zr  0.90  Ti  0.10  O  3|25|20.0|113.8|38.6|33.9|[51]|
+|BaTi  0.89  Sn  0.11  O  3|30|25.0|85.1|72.4|85.07|[52]|
+|Ba  0.9  Sr  0.1  Ti  0.9  Sn  0.1  O  3|45|20.0|68.8|58.08|84.36|[53]|
+|Ba  0.85  Ca  0.15  Zr  0.08  Sn  0.02  Ti  0.9  O  3|140|12.0|23.2|19|81.65|[54]|
+|Ba  0.85  Ca  0.15  Zr  0.10  Ti  0.90  O  3|129|6.5|16.5|14|80|[55]|
+
+Table 4. Comparison between electrocaloric parameters of this work with other BT-based compositions.
+|Ceramic| \u0394T (K)| E (kV mmE^{\u22121})| \u03be max (K mm kVE^{\u22121})|Ref.|
+|---|---|---|---|---|
+|Ba  0.92  Ca  0.08  Ti  0.91  Zr  0.09  O  3|0.720|2.0|0.360|This Work|
+|Ba  0.92  Ca  0.08  Ti  0.91  Sn  0.09  O  3|0.770|2.0|0.490|This Work|
+|Ba  0.85  Ca  0.15  Ti  0.90  Zr  0.10  O  3|0.414|1.6|0.250|[61]|
+|BaSn  0.08  Ti  0.92  O  3|0.460|1.6|0.280|[62]|
+|Ba  0.90  Sr  0.10  Ti  0.90  Hf  0.10  O  3|1.200|5.0|0.240|[63]|
+|BaTi  0.91  Sn  0.09  O  3|0.770|3.0|0.250|[64]|
+|Ba  1-1.5x  Sm  x  TiO  3  (x=0.02)|1.110|3.0|0.370|[65]|
+|0.4(Ba  0.7  Sr  0.3  TiO  3  -0.6Ba (Zr  0.2  Ti  0.8  ) O  3|0.530|3.0|0.176|[66]|
+|Ba  0.85  Sr  0.15  Hf  0.06  Ti  0.94  O  3|0.910|4.0|0.227|[67]|
+
+# RESULTS AND DISCUSSION
+(a) shows the room temperature X-ray diffraction (XRD) patterns of BCZT and BCST ceramics. These patterns reveal distinctive peaks that indicate a perovskite structure, devoid of any impurities, confirming the successful incorporation of CaE^{2+}, ZrE^{4+}, and SnE^{4+} ions into the BaTiO3 lattice. The characteristic peaks correspond to the established BaTiO3 diffraction patterns outlined in the Joint Committee on Powder Diffraction Standards (JCPDS) files #79\u20132264 and #81\u20132200, representing the tetragonal (T) and orthorhombic (O) phases of the BaTiO3 ceramic, respectively, The Gaussian fitting of the peaks at 2\u03b8 \u2248 45\xb0, as illustrated in (b), also corroborate the coexistence of tetragonal (T) and orthorhombic (O) phases in the studied ceramics. The result of Rietveld refinement performed against the X-ray diffraction (XRD) patterns of BCZT and BCST ceramics is depicted in (c\u2013d), respectively. From the refinement, it can be deduced that there exists a coexistence of tetragonal (T, P4mm) and orthorhombic (O, Amm2) phases. The BCZT ceramic comprises 55.18 wt% tetragonal phase and 44.82 wt% orthorhombic phase, while the BCST ceramic contains 48.10 wt% tetragonal phase and 51.90 wt% orthorhombic phase. The discrepancy in the phase distribution between BCZT and BCST may likely be attributed to the difference in ionic radii between ZrE^{4+} (0.72 \xc5) and SnE^{4+} (0.69 \xc5) ions. ZrE^{4+}, having a larger ionic radius in comparison to that of TiE^{4+} (0.605 \xc5), causes a greater elongation along the c-axis, leading to an enhanced lattice distortion. This increased distortion stabilizes the tetragonal symmetry, which is further supported by a higher c/a ratio observed in BCZT compound. Consequently, BCZT exhibits a higher proportion of the tetragonal phase. In contrast, SnE^{4+} ion, though slightly larger than TiE^{4+} ion, is smaller than ZrE^{4+} ion, results in lesser lattice distortion. This distortion favors the stabilization of the orthorhombic phase, explaining the higher orthorhombic phase percentage in BCST compound. The lattice parameters (a, b, c) obtained from the XRD refinement are presented in , which also encompasses the lattice volume (V) and goodness of fit (\u03c7 E^{2}) values for both compounds. The changes in unit cell volume from the parent lattice confirm the successful incorporation of CaE^{2+}, ZrE^{4+}, SnE^{4+} into BaTiO3 lattice. The increase in the unit cell volume of BCZT (64.74 \xc5\xb3 in tetragonal phase and 129.24 \xc5\xb3 in orthorhombic phase) compared to that of the parent BaTiO3 lattice (64.28 \xc5\xb3 in tetragonal phase and 128.76 \xc5\xb3 in orthorhombic phase) can be attributed to a larger ionic radius of ZrE^{4+} (0.72 \xc5) ion compared to that of TiE^{4+}(0.605 \xc5) ion. Conversely, in case of BCST, the unit cell volume (64.18 \xc5\xb3 in the tetragonal phase and 126.27 \xc5\xb3 in the orthorhombic phase) decreases in comparison to that of BaTiO3 despite the doping of SnE^{4+} (0.69 \xc5), which has a larger radius than TiE^{4+} ion. This discrepancy may be attributed to a significantly higher effective electron affinity of Sn (107.3 kJ/mol) when compared with that of Ti (7.6 kJ/mol). Further, it is also clear from that the BCZT ceramic exhibits a higher tetragonality ratio (c/a) in comparison to that of BCST ceramic. The bulk density of the ceramics was determined using the Archimedes' principle, providing values of 5.91 g cmE^{\u22123} and 5.80 g cmE^{\u22123} for BCZT and BCST ceramics, respectively. In terms of relative density, the BCZT ceramic has a density of 98.17 %, and the BCST ceramic has a density of 96.34 %. A higher density of BCZT indicates better dielectric and piezoelectric properties. presents the atomic coordinates for both BCZT and BCST ceramics. From there, it can be inferred that CaE^{2+} ions are substituted at BaE^{2+} site, while ZrE^{4+} and SnE^{4+} ions occupy the TiE^{4+} site in BCZT and BCST ceramics as confirmed from the similar Wyckoff positions. The VESTA software generated crystal structures of the BCZT and BCST compounds, as shown in the insets of (c\u2013d), using the parameters from and 2 The Fourier subprogram in FULLPROF was used to calculate the scattering density inside the unit cell of the ceramics. The application of Fast Fourier Transform (FFT) as a subroutine was used to speed up the calculation of the given expression. where, V represents the volume of the unit cell, H is the reciprocal lattice vector, r denotes the vector position within the unit cell, and F(H) corresponds to the complex Fourier coefficients employed for various Fourier transform operations. The unit of \u03c1(r) is determined by dividing the unit of F(H) by the unit of V. The electron density within the unit cell was determined and the same is illustrated in (a\u2013b) which suggests that the BCZT ceramic exhibits a higher electron density compared to that of BCST ceramic. ZrE^{4+} has a different electron distribution compared to SnE^{4+}. ZrE^{4+}, with its [Kr] 4 dE^{2} electronic configuration, tends to contribute more to the electron density in the crystal structure. On the other hand, SnE^{4+} ion, with a [Kr] 5sE^{2} 4 dE^{1}\u2070 configuration, does not influence the electron density as strongly. The higher electron density in BCZT can thus be attributed to the nature of the ZrE^{4+} ion's electron cloud and its interaction with surrounding atoms. At room temperature, both BCZT and BCST compounds exhibit dual-phase crystal structures. The FESEM images of sintered BCZT and BCST ceramics are shown in (a\u2013b). The BCZT ceramic shows the existence of more number of larger grains than those in the BCST compound. The disparity in grain size between the two compounds is also corroborated by the histograms shown in (c\u2013d) for the BCZT and BCST compounds, respectively. The histograms show a grain size distribution curve, indicating that a greater number of grains fall within the range of 3\u20134 \u03bcm for BCZT ceramic and 1\u20132 \u03bcm for BCST ceramic. (e\u2013f) displays the elemental composition of the ceramics as determined from the EDX analysis. The theoretical and experimental atomic percentages (at. %) of the constituent elements in the ceramics are presented in the insets of (e\u2013f). In BCZT ceramics, the experimental atomic ratios of Ba/Ca and Ti/Zr are found to be 11.66 and 10.98, respectively. For comparison, the Ba/Ca and Ti/Sn ratios in BCST ceramics are 11.94 and 9.54, respectively. Theoretical atomic ratios Ba/Ca and Ti/Zr or Ti/Sn are 11.5 and 10.11, respectively, revealing a fair match. Additional peaks appear in both EDX spectra at about 2.1 and 9.1 keV, indicating the presence of gold used to coat the samples for measurement. (a\u2013d) illustrates the temperature dependent dielectric constant (\u025b) and loss tangent (tan\u03b4) of BCZT and BCST compounds at different frequencies (0.1, 1, 5, and 10 KHz). (a) demonstrates that the BCZT compound undergoes two distinct phase transitions; the first from orthorhombic to tetragonal at temperature (T O-T) \u223c 52 \xb0C, and the second from tetragonal to cubic at the Curie temperature (T C) \u223c 105 \xb0C. In contrast, in (b), the BCST compound exhibits a single-phase transition from tetragonal to cubic phase at T C \u223c 70 \xb0C, a significantly lower temperature compared to that of BCZT ceramic. It is a well-established fact that substitution of SnE^{4+} ion at TiE^{4+} site in BT-based ceramics reduces the T C at much faster rate when compared to the substitution of ZrE^{4+} ion at TiE^{4+} site. Literature also confirms that substituting SnE^{4+} ion at TiE^{4+} site in BT-based ceramics reduces the phase transition temperatures. This can be understood as SnE^{4+} has a more isotropic electron cloud due to its electronic configuration ([Kr] 5sE^{2} 4 dE^{1}), which reduces the overall polarization of the material. Since T C is linked to the strength of the dipole-dipole interactions within the material, lower polarization caused by SnE^{4}\u207asubstitution weakens these interactions and decreases T C more significantly. Since the Rietveld refinement indicates presence of two phases in BCST ceramic, we confirmed this by taking the derivative of the dielectric constant at 0.1 kHz. The inset of depicts the derivate of the dielectric constant-versus temperature graph of BCST compound from where a noticeable hump near room temperature can be noticed. This attests a phase transition from tetragonal to orthorhombic phase in BCST compound near room temperature. Dielectric loss tangent (tan\u03b4) refers to the dissipation of energy that occurs when the polarization lags behind the applied electric field. The variation of tan\u03b4 with temperature at different frequencies is shown in (c\u2013d) for the studied compounds. The tan\u03b4 values for the compounds are maximum near the high-temperature dielectric peaks. The peak dielectric maximum (\u03b5m) and tan\u03b4 near the Curie temperature are \u223c13304 and \u223c0.06 for BCZT, and \u223c12112 and \u223c0.15 for BCST compound at 1 KHz applied frequency. Above 125 \xb0C, the dispersion in tan\u03b4 may be attributed to the predominance of the grain boundaries' influence in comparison to the grains. The formation of polar nano-regions (PNRs) may be responsible for the transition of the material from a normal ferroelectric to a relaxor ferroelectric. For this, Uchino and Nomura proposed a modified version of the Curie-Weiss law. where, T represents the temperature, C denotes the Curie\u2013Weiss constant, and the relaxation degree represented by \u03b3 (1 < \u03b3 < 2) characterizes the ferroelectric nature. The value of \u03b3 is 1 for regular ferroelectrics and 2 for optimal relaxor ferroelectrics. (a\u2013b) displays the relationship between the log ( 1\u025b\u2212 1 \u025bm) against log ( T\u2212 Tm) at a frequency of 1 kHz. The \u03b3 values observed for BCZT and BCST ceramics are 1.59 and 1.62, respectively. Although these values indicate that neither BCZT nor BCST ceramic exhibit strong relaxor behavior, their \u03b3 values being above 1 suggest the presence of slight relaxor characteristics. The hysteresis loops measurements depicting the percentage strain versus electric field and conducted up to a maximum field intensity of 20 kV cmE^{\u22121} and applied frequency of 10 Hz for the BCZT and BCST compounds are shown in (a\u2013b). The determined d33\u2217 values are \u223c609 p.m. VE^{\u22121} for BCZT and \u223c358 p.m. VE^{\u22121} for BCST ceramic. Despite exhibiting greater relaxor behavior, the BCST compound possesses a lower d33\u2217 value when compared with that of BCZT ceramic. This difference is due to a lower tetragonality ratio (1.0034) and bulk density (5.80 g cmE^{\u2212}\xb3) for the former than the tetragonality ratio (1.0051) and bulk density (5.91 g cmE^{\u2212}\xb3) for the latter compound. The superior d33\u2217 value of BCZT ceramic may also be attributed to its higher percentage of the tetragonal phase. Among the various phases present in BT-based ceramics, the tetragonal phase provides the highest piezoelectricity due to its highly asymmetric nature. Furthermore, the smaller grain size in BCST ceramic could lead to domain wall pinning by grain boundaries, resulting in reduced piezoelectricity in this compound. The pyroelectric coefficient (p= \u0394 Ps \u0394T) for the studied compounds was determined from the slope of a graph between the spontaneous polarization (Ps) and temperature (T). The graphs are shown in (a\u2013b). The pyroelectric coefficient exhibits its peak values at specific temperature intervals: 342\u2013368 K for BCZT compound, reaching \u22121861.9 \u03bcCmE^{-2} KE^{\u22121}, and 322\u2013343 K for BCST ceramic with a value of \u22122482.2 \u03bcCmE^{-2} KE^{\u22121}. Further, at lower temperatures (312\u2013337 K for BCZT and 347\u2013368 K for BCST), the pyroelectric coefficient remains substantial (\u22121396.9 \u03bcCmE^{-2} KE^{\u22121} for BCZT and \u22121794.0 \u03bcCmE^{-2} KE^{\u22121} for BCST), indicating the persistence of the ferroelectric behaviour. However, at higher temperatures (372\u2013393 K for BCZT and 347\u2013368 K for BCST), the pyroelectric coefficient sharply falls (\u221265.6 \u03bcCmE^{-2} KE^{\u22121} for BCZT and \u221267.8 \u03bcCmE^{-2} KE^{\u22121} for BCST). Furthermore, the comparison between BCZT and BCST reveals that BCZT exhibits a lower pyroelectric coefficient. This is because BCZT contains more acceptor ion dopants, particularly ZrE^{4+}. The enhanced pyroelectric coefficient observed in BCST suggests its potential for a higher electrocaloric effect, indicating its suitability for applications requiring efficient temperature-induced polarization changes. The enhanced pyroelectric coefficient observed in BCST suggests a higher electrocaloric effect in this compound. Each ferroelectric material possesses a distinct hysteresis loop (P-E loop) between electric polarization and applied electric field from which one can determine key parameters such as spontaneous polarization (Ps), remnant polarization (Pr), and coercive field (Ec). compares the room-temperature hysteresis loops of the BCZT and BCST compounds. From there, one may observe that the P-E loop for BCST is narrower than that of BCZT due to the presence of polar nanoregions and the ensuing relaxor behaviour in the former compound. The values of Pr (11.92 \u03bcC cmE^{\u22122}) and Ec (1.11 kV cmE^{\u22121}) in the BCST sample are lower than that of the BCZT compound (15.76 \u03bcC cmE^{\u22122} & 1.45 kV cmE^{\u22121}). However, the Pmax value (46.85 \u03bcC cmE^{\u22122}) in the BCST is larger than the Pmax value of BCZT (37.06 \u03bcC cmE^{\u22122}). Further, (b\u2013c) illustrates P-E loops at different temperatures for both BCZT and BCST ceramics. It can be noticed that as the temperature rises, the P\u2013E loops become narrower, and there is a gradual decrease in Pr, Ec, and Pmax values for both materials, which is a well-known fact. At temperatures above Tc (\u223c105 \xb0C for BCZT and \u223c70 \xb0C for BCST), the P-E loops exhibit a behaviour reminiscent of a paraelectric phase. The total energy density (W tot) and recoverable energy density (W rec), as well as the efficiency (\u03b7), of the studied compounds were determined by analyzing the P-E hysteresis loops using the following equations : It is important to remember that achieving high energy storage densities and efficiency in relaxor ferroelectric based-ceramics relies on optimizing the electrical breakdown strength, polarization, dielectric constant, and dielectric loss. (e\u2013f) illustrates the changes in the energy storage capacity of BCZT and BCST ceramics when subjected to thermal variation at an electric field strength of 20 kV cmE^{\u22121}. At 35 \xb0C, the values of W tot, W rec, and \u03b7 are 201, 127 mJcmE^{\u22123}, and 63.18 % for BCZT; and 261, 191.8 mJcmE^{\u22123}, and 73.26 % for BCST. The increased energy storage capability of the BCST compound can be attributed to a higher charge storage density (Q c = Pmax - P r ) owing to its smaller grain size and an enhanced relaxor behaviour. Near Tc, the values of W tot, W rec, and \u03b7 are 164.4 mJ cmE^{\u22123}, 152.0 mJ cmE^{\u22123}, and 92.41 % for BCZT; and 189.68 mJ cmE^{\u22123}, 164.27 mJ cmE^{\u22123}, and 88.68 % for BCST compound. The breakdown electric field (E b ) for BCZT and BCST ceramics can be estimated with the following Weibull distribution function. where, i, n, and Ei represent the serial number of each ceramic, the total number of compounds, and the breakdown electric field of the ceramic in ascending order, respectively. As shown in (a), the linear relationship between xi and yi for all samples demonstrates m value greater than 10, confirming the reliability of the breakdown electric field (Eb) for both ceramics. The P d is calculated using the equation  where f represents the frequency of the AC signal. The calculated Pd values for BCZT and BCST ceramics near room temperature (35 \xb0C) and at their respective Curie temperatures (T C ) are shown in (b). The electrocaloric effect (ECE) articulates the change in isothermal entropy or adiabatic temperature of a dielectric substance when an electric field is applied or removed. depicts a schematic representation of the ECE cooling cycle, which consists of four distinct phases (A-D). During the first stage of the cooling cycle, the polar material is at a temperature T (when E = 0) and exhibits a high entropy, along with arbitrarily aligned dipoles. This alignment leads to a decrease in the dipolar entropy and an increase in temperature from T to T+\u0394T. The latent heat is extracted from the material, resulting in a decrease in its temperature nearly equivalent to \u0394T. Usually, adiabatic electrocaloric temperature change (\u0394T) and entropy change ( \u0394S) are utilized to assess the efficiency of the electrocaloric effect in polar materials. The ECE of BCZT and BCST ceramics was evaluated using the indirect method, which involves calculations based on thermodynamic Maxwell's equations. The \u0394T and the \u0394S can be determined using the following equations : The symbol \u03c1 represents the density of the sample, whereas Cp represents the specific heat capacity, which is considered to be 400 JkgE^{\u22121}KE^{\u22121}. E 1 and E 2 represent the initial (E = 0) and final (E = 20 kV cmE^{\u22121}) electric fields, respectively. The thermal variation of \u0394T and \u0394S under various applied electric fields for both ceramics is illustrated in (a\u2013d). The results demonstrate that \u0394T and \u0394S rise on increasing the applied electric field. The BCZT ceramic exhibits a maximum temperature change \u0394Tmax \u223c0.72 K and maximum entropy change \u0394Smax \u223c0.77 J kgE^{\u22121}KE^{\u22121}. Similarly, in case of BCST, \u0394Tmax is 0.98 K, and \u0394Smax is 1.15 J kgE^{\u22121}KE^{\u22121} at an electric field of 20.0 kVcmE^{\u22121} near Tc. On comparison of two ceramics, BCST stands out in terms of its electrocaloric qualities since it has a lower density and a higher pyroelectric coefficient. The maximum electrocaloric responsivity (\u03bemax) derived from the ratio of \u0394Tmax /\u0394Emax is 0.36 K mm kVE^{\u22121} for the BCZT compound and 0.49 K mm kVE^{\u22121} for the BCST ceramic. These higher values make the BCST ceramic an excellent candidate for cooling devices. summarizes the electrocaloric properties of our compounds with other BT-based compositions. The obtained \u0394T in this study is comparable at lower applied field; however, \u03bemax value is quite higher for the BCST sample when compared with other BT-based ceramics as shown in. Diffuse reflectance spectroscopy (DRS) is a non-invasive analytical technique used to investigate the absorption properties of ceramics. (a) displays the absorbance spectrum of the BCST compound. The figure clearly shows that the ceramic demonstrates a notable rise in absorption near the absorption edge at a wavelength of 337.48 nm, which is slightly higher than the absorption edge of BCZT (335.6 nm) reported in Ref.. Based on the present study, it is concluded that BCST has a larger bandgap energy. The bandgap value determined from the inset of is around 3.18 eV for BCST, which is greater than that of BCZT (3.0 eV) ceramic. The bandgap value determined from the inset of (a) was around 3.18 eV for BCST, which is greater than that of BCZT (3.0 eV). The distinct difference in the band gap may be attributed to the different electronic structures of the dopants, SnE^{4+}/ZrE^{4+}. SnE^{4+} tends to induce less distortion in the crystal lattice and modifies the electronic states in a way that results in a wider band gap. In contrast, ZrE^{4+}, causes greater lattice distortion and electronic delocalization, leading to a narrower band gap in BCZT. In order to verify the type of the bandgap, (b) displays the relationship between the amount of light reflected and the corresponding wavelength for the BCST compound. Marotti et al. observed that the first derivative of reflectance, dR/d\u03bb, exhibits a peak in the vicinity of E g for a direct bandgap semiconductor. The inset in illustrates that dR/d\u03bb has a peak in the high-energy range around 3.22 eV confirming a direct bandgap for this compound. The contamination of industrial effluent by Methylene Blue (MB) and Rhodamine B (RhB) dyes is a major concern. The results on BCZT piezocatalysis have been published elsewhere , which revealed that BCZT degraded the RhB and MB dye molecules with an efficiency of 74.06 % and 62.69 %, respectively. The experimental results suggest that BCST catalysts achieved degradation efficiency of 62.89 % and 56.07 % for RhB and MB dye molecules, respectively, during a 120-min reaction time as shown in (a\u2013b). Thus, the BCST sample has a lower efficiency to degrade MB and RhB dyes in comparison to BCZT. The rate constants measured for both RhB and MB dyes using BCST ceramic are 78.9 \xd7 10E^{\u22124} minE^{\u22121} and 68.8 \xd7 10E^{\u22124} minE^{\u22121}, respectively, as shown in (c\u2013d). In order to comprehend the primary factors contributing to the lower degrading performance of BCST, it is crucial to have a thorough understanding of the piezocatalysis mechanism. These interactions lead to the creation of oxidized active species, including hydroxyl (\xb7OH) and superoxide (-O2\u2212) radicals. Superoxide ions (-O2\u2212) and hydroxyl radicals (\xb7OH) further react with organic dye molecules in a solution, and degrade them to unharmful products like CO2 and H2O. Therefore, due to smaller piezoelectric coefficient and greater energy bandgap of BCST exhibits lesser piezocatalytic degradation for both dyes when compared with BCZT. Therefore, despite possessing smaller grains, BCST compound exhibits a lower piezoelectric coefficient than BCZT compound and inferior piezocatalytic performance.
+
+# TITLE
+An in-depth comparison of dielectric, ferroelectric, piezoelectric, energy storage, electrocaloric, and piezocatalytic properties of Ba<inf>0.92</inf>Ca<inf>0.08</inf>Zr<inf>0.09</inf>Ti<inf>0.91</inf>O<inf>3</inf> and Ba<inf>0.92</inf>Ca<inf>0.08</inf>Sn<inf>0.09</inf>Ti<inf>0.91</inf>O<inf>3</inf> piezoceramics
+
+# ABSTRACT
+Keeping this in mind, an in-depth investigation and comparison of the dielectric, ferroelectric, piezoelectric, energy storage, electrocaloric, and piezocatalytic properties have been carried out on Ba0.92Ca0.08Zr0.09Ti0.91O3 (BCZT) and Ba0.92Ca0.08Sn0.09Ti0.91O3 (BCST) lead-free compounds synthesized through the conventional solid state reaction method. Further, the Rietveld refinement against the XRD patterns affirmed the coexistence of orthorhombic (Amm2) and tetragonal (P4mm) phases at room temperature for both compounds. While BCZT compound demonstrated remarkable dielectric, piezoelectric, and piezocatalytic characteristics with maximum dielectric constant (
+                     
+                        
+                           
+                              ε
+                              m
+                           
+                        
+                     
+                     ) ≈ 13304 near the Curie temperature (
+                        
+                           
+                              T
+                              c
+                           
+                        
+                      ≈ 105 °C), converse piezoelectric coefficient 
+                        
+                           (
+                           
+                              d
+                              33
+                              ∗
+                           
+                           )
+                        
+                      ≈ 609 p.m. V−1, power density (
+                        
+                           
+                              P
+                              d
+                           
+                        
+                     ) ≈ 89.71 kW cm−3 at room temperature, and 82.7 % Rhodamine B (RhB) dye degradation capability; on the other hand, BCST compound exceled in superior energy storage density (
+                        
+                           
+                              W
+                              
+                                 r
+                                 e
+                                 c
+                              
+                           
+                        
+                     ) ≈ 191.8 mJ cm−3 with efficiency η ≈ 73.26 % near room temperature and enhanced electrocaloric properties with adiabatic temperature change 
+                        
+                           (
+                           
+                              Δ
+                              T
+                           
+                           )
+                        
+                      ≈ 0.980 K, isothermal entropy change 
+                        
+                           (
+                           
+                              Δ
+                              S
+                           
+                           )
+                        
+                      ≈ 1.15 J kg−1K−1 and a higher electrocaloric responsivity 
+                        
+                           (
+                           Δ
+                           T
+                           /
+                           Δ
+                           E
+                        
+                     ) ≈ 0.49 K mm kV−1. These distinctions arise from the difference in ionic radii, lattice distortion, and the electronic configurations of the dopant ions, leading to a greater polarization change and a lower coercive electric field in the BCST ceramic.
+
+# INTRODUCTION
+Lead zirconate-titanate (PZT) perovskite is widely preferred as a piezoelectric and ferroelectric material in piezoelectric applications. In this direction, four appealing materials have emerged, namely barium titanate (BT), potassium-sodium niobate [(K, Na)NbO3], sodium-bismuth titanate [(Bi0.5Na0.5)TiO3], and bismuth ferrite (BiFeO3). Among all these alternatives, the BT-based ceramics are remarkable due to their stability, versatility, and flexibility in synthesis. In 2009, a major development was made in the field of BT-based ceramics. Researchers were able to produce a large piezoelectric charge coefficient (d33) value of around 620 pC NE^{\u22121} in Ba(Ti0.8Zr0.2)O3-(Ba0.7Ca0.3)TiO3 lead-free system. This was accomplished by modifying the chemical composition at the phase boundaries through substitution of CaE^{2+} and ZrE^{4+} ions. This finding provided an insightful direction and acted as a stimulant to further the development of new functionalities in BT-based ceramics. For example, substitution of CaE^{2+} at BaE^{2+} site was found to increase the stability of ferroelectric phase, causing the T R-O (rhombohedral to orthorhombic phase transition temperature) and T O-T (orthorhombic to tetragonal phase transition temperature) to occur at lower temperatures. It is also possible to tune the polymorphic phase transition to occur near room temperature with substitution of ZrE^{4+} and SnE^{4+} ions at TiE^{4+} site in BaTiO3 ceramics. Luo et al. substituted CaE^{2+} and NbE^{5+} ions in BT host matrix to broaden the temperature stability of the dielectric constant. CaE^{2+} doping enhances low-temperature stability and dielectric properties, while NbE^{5+} doping reduces and broadens the dielectric peak. Tihtih et al. demonstrated that with an increase in strontium (Sr) ion concentration, the bandgap energy of SrE^{2+} substituted BT ceramic decreases. Zang et al. designed tantalum (Ta) substituted BT-based ceramic to improve the energy storage performance and dielectric breakdown strength by adjusting the Ti-O bond length. Feng et al. revealed that the simultaneous doping of CaE^{2+} and SnE^{4+} in BT ceramic generated a coexisting state of ferroelectric domains and nanodomains at room temperature, which increased the adiabatic temperature change useful for electrocaloric cooling. Ahmed et al. reported that substitution of yttrium (Y) at BaE^{2+} site in BT lowered the oxygen vacancies and improved its piezoelectric behavior. Hoa et al. performed a study to evaluate the impact of LaE^{3+} substitution in BT-based ceramic on its piezocatalytic performance for the degradation of organic dyes. La doping was found to increase the BaE^{2+} vacancies, which enhances the sensitivity of charge carriers to ultrasonic vibrations and subsequently an elevation in the piezocatalytic performance. Achkar et al. showed that the incorporation of samarium (Sm) in BT ceramic broadened the range of temperature in which the electrocaloric effect can be utilized. Wang et al. conducted a study in which they substituted erbium (Er) in a BT-based compound to enhance its piezocatalytic properties. The enhancement was ascribed to the existence of oxygen vacancies and modification in electron cloud density due to the dopant's 4f orbital. Xu et al. proposed that the piezocatalytic performance of BT ceramic can be enhanced by incorporating cerium (Ce) ions, which induces local distortion in the TiO6 octahedra. Despite considerable research on BT-based ceramics for various applications, there is a lack of a comprehensive comparison of the multifunctional properties of isovalent ions substituted BT-based ceramics for advanced applications. Ba0.92Ca0.08TiO3 has been extensively studied, demonstrating an optimal c/a ratio and a Curie temperature (TC) comparable to that of pure BaTiO3. For B (TiE^{4+})-site substitution, the most commonly used cations are the valence-stable ZrE^{4+} and SnE^{4+} ions as they possess similar ionic radii and share the same valence state as that of TiE^{4+} ions. This similarity in ionic radii and valence state ensures that the dopants can be incorporated onto the TiE^{4+} sites without drastically altering the overall structure , while still allowing the tuning of the material's functional properties, such as dielectric, piezoelectric, and phase transition behaviors. The choice of the specific substitution 0.09 wt% for both ZrE^{4+}/SnE^{4+} dopants stem from the fact that the composition Ba0.92Ca0.08TiO3 has not yet been explored for these substituents. Hence, this study aims to synthesize, investigate, and compare the structural, electrical, energy storage, and piezocatalytic properties of Ba0.92Ca0.08Zr0.09Ti0.91O3 (BCZT) and Ba0.92Ca0.08Sn0.09Ti0.91O3 (BCST) ceramics.
+
+# CONCLUSION
+The solid-state reaction method was employed to successfully synthesize lead-free piezo-ceramics BCZT and BCST. BCZT compound exhibited outstanding performance in terms of dielectric, piezoelectric, and piezocatalytic characteristics with \u03b5m \u223c13304 at Tc \u223c105 \xb0C and d33\u2217 \u223c609 p.m. VE^{\u22121}. In contrast, BCST showcased higher energy storage density, reaching W rec\u223c 191.8 mJcmE^{\u22123} along with a high efficiency of about 73.26 %. Furthermore, it demonstrated enhanced electrocaloric properties with \u0394T \u223c0.980 K and \u0394S \u223c1.15 J kgE^{\u22121}KE^{\u22121}. BCST exhibited a higher optical bandgap value than that of BCZT compound. The degradation efficiency of BCST ceramics on MB and RhB dyes were inferior to BCZT ceramics. The discrepancies in the properties of BCZT and BCST ceramics were attributed to differences in the ionic radii and electronic configurations of the dopant ions.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Ba0.92Ca0.08Zr0.09Ti0.91O3": 609,
+      "Ba0.92Ca0.08Sn0.09Ti0.91O3": 358
+    },
+    "abbreviations": {
+      "BCZT": "Ba0.92Ca0.08Zr0.09Ti0.91O3",
+      "BCST": "Ba0.92Ca0.08Sn0.09Ti0.91O3"
+    },
+    "property_unit": "p.m. V−1",
+    "family": "BaTiO3"
+  }
+}"

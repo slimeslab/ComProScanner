@@ -1,0 +1,189 @@
+2025-07-11 13:33:38: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The performance and parameters of BCZT-xLa ceramics.
+|x| HV (GPa)| \u03c1 (g/cmE^{3})|\u0511r| Tc (\xb0C)|Pr (\u03bcC/cmE^{2})| Ec (kV/cm)| d  33 (pC/N)|
+|---|---|---|---|---|---|---|---|
+|0|6.271|5.750|5694.65|102|5.3509|3.5269|42|
+|0.004|5.239|5.699|7357.06|103|9.9694|5.1474|42|
+|0.008|4.480|5.506|8736.27|94|9.6886|3.4392|35|
+|0.012|4.296|5.447|6415.32|79|5.6794|2.8398|45|
+|0.016|1.551|5.237|5323.84|68|4.5363|2.8554|58|
+|0.020|1.547|5.078|4797.24|61|5.3029|1.9281|44|
+|0.024|1.438|4.923|4553.81|54|5.7491|2.1674|41|
+
+# RESULTS AND DISCUSSION
+shows the XRD patterns of BCZT-xLa ceramic precursor powders and ceramic powders in the 2\u03b8 range of 5\xb0\u201380\xb0 at room temperature. This result suggested that LaE^{3+} was incorporated into the lattice of the ceramics. The characteristic peak of BCZT-xLa shifted to a lower 2\u03b8 range direction with the increase in x, as shown in (b). This finding indicated that the lattice parameters could increase with La dopants, because the A site (BaE^{2+} and CaE^{2+} site) of the ABO3 structure was occupied by LaE^{3+}. The interplanar crystal spacing began to decrease when LaE^{3+} (1.06 \xc5) replaced CaE^{2+} (0.99 \xc5) in the structure. The XRD patterns of BCZT-xLa ceramics with different x contents at room temperature are shown in (c). They differed from the XRD patterns of precursor powders, and the changes were shown in the 2\u03b8 range of 44\xb0\u201346\xb0. With an increase in LaE^{3+} contents, the characteristic peak of the ceramics split firstly and then gradually became a single peak. According to the PDF cards, the split of the characteristic peak could be found when the ceramics possessed T or O phase. The XRD patterns were refined at about x = 0, 0.008 and 0.020 to study the phase transformation, and the results are shown in (e). The results of Rietveld refinement using the GASA \u2161 program are shown in (e). The proportions of T phase increased from 76.68 % to 85.06 % with an increase in LaE^{3+} contents from 0 to 0.008. However, when the LaE^{3+} contents increased to 0.020, the proportions of T phase decreased, whereas the proportions of O phase showed an opposite trend. The Rietveld refinement results suggested that the phase structure of the samples transformed from T phase to O phase at room temperature with increasing LaE^{3+} contents. The SEM images of BCZT-xLa ceramics are shown in. When the x contents increased from 0 to 0.008, the grain size displayed an increasing trend initially and then began to decrease with further increasing of x. The density of the ceramics showed a trend similar to that of grain size, due to the reduced oxygen vacancies in the structure when LaE^{3+} replaced for the A position in the ceramics. In the process of LaE^{3+} replacing the position of CaE^{2+}, some cation-oxygen bonds could be generated, whereas the concentrations of oxygen vacancies showed an opposite trend, which enlarged the grain size apparently. With the increase in LaE^{3+} contents, some LaE^{3+} could gradually diffuse from A site to B site, showing a change in donor doping to acceptor doping in the structure. XPS was applied to verify the variation of oxygen vacancies concentrations in the structure, and the XPS spectra of O 1s binding states for BCZT-xLa ceramics (x = 0, 0.004, 0.008 and 0.020) are shown in. Two peaks of the binding energy were observed at 529.01 and 531.06 eV. According to literature, the peak at 531.06 eV represents oxygen vacancies, and the peak at 529.01 eV corresponds to cation-oxygen bonds (oxygen of lattice). The results showed that the ratio of oxygen vacancies (OVacancy/OCation-oxygen bonds) appeared to have a decreasing trend from 0.54 to 0.39 firstly and then the ratio increased from 0.39 to 0.52 when the x contents increased to 0.020. The corresponding hardness value accessed with the actual contact area had the following relationship (Eq. ): where F represents the applied load in Kgf (1 Kgf = 9.80665 N), d is the average length of the diagonal of the indentation in mm and the \u03b8 is the angle between the opposite surfaces of the rhomboid indenter at 136\xb0. shows that the Vickers hardness of the ceramics displayed a decreased trend with increasing x. The reason for this phenomenon is that the increased lattice parameter when a larger radius of LaE^{3+} entered the lattice, leading to the reduction in lattice energy and increase in the fragility of BCZT-xLa ceramics. The ratio of oxygen vacancies increased and the average strength of C\u2013O bonds (cation-oxygen bonds) decreased when the x contents were 0.020, which may be an important other reason for the decrease in Vickers hardness values. The fluctuations of phase compositions may have an influence on the value of Vickers hardness for ceramics according to literature report. (a) reveals the relative permittivity of BCZT-xLa ceramics at 30 \xb0C\u2212180 \xb0C under a frequency of 10 kHz. The reason is the enlarged grains and densified structure in the ceramics because LaE^{3+} entered the lattice. The Curie temperature peak broadened and exhibited a certain diffusion phase transition with increasing addition of x. (b) shows the maximum dielectric constant of ceramics with varying x contents at various frequencies (100 Hz\u20131 MHz). This phenomenon could be attributed to the difference in valence when LaE^{3+} occupied the position of CaE^{2+} in the structure, which caused an electronic relaxation polarisation with the emergence of excessive electrons. (c) and show the Curie temperature (T C) with various La contents. The T C showed a decreasing trend with an increase in La contents, due to the oxygen octahedral centres of Ti and Zr shifting in outside direction after LaE^{3+} replaced CaE^{2+}. shows the relation for ln (1/\u0511 r-1/\u0511m) with ln (T-T m) at 10 kHz of BCZT-xLa ceramics with various x contents. The degree of diffused phase transition could be explored by the modified Curie\u2013Weiss law (Eq. ): where \u0511 r represents the relative dielectric constant, \u0511 m is the maximum dielectric constant, T m is the temperature for the maximum dielectric constant, C\u2032 is the modified Curie\u2013Weiss constant, and \u03b3 corresponds to the diffuseness exponent (slope of ln (1/\u0511 r-1/\u0511 m) versus ln (T-T m)). When the \u03b3 value is 1, the ceramics feature the characteristic of normal ferroelectricity. When the \u03b3 value is equal to 2, the ceramics become a relaxor ferroelectricity. The \u03b3 value showed a decreasing trend with an increase in x. Then, the \u03b3 values increased again with x contents greater than 0.008. The loops of P-E hysteresis of BCZT-xLa ceramics with various x contents are shown in (a). The piezoelectric constant (d 33) of BCZT-xLa is shown in (b) and. The d 33 of the ceramics changed with various x contents, and d 33 reached the maximum value when x was 0.016. When the grain size is larger than 1 \u03bcm, the d 33 increases as the grain size decreases, because the width of 90\xb0 domains could maintain a same trend with grain sizes changed. It could increase the activity of 90\xb0 domains when the grain size decreases, leading to enhanced piezoelectric properties. However, when the grain size is less than 1 \u03bcm, an opposite variation trend for d 33 could be detected.
+
+# TITLE
+Effects of electrical and mechanical properties of Ba<inf>0.92</inf>Ca<inf>0.08</inf>Zr<inf>0.05</inf>Ti<inf>0.95</inf>O<inf>3</inf> ceramics with lanthanum dopants
+
+# ABSTRACT
+In this study, Ba0·92Ca0·08Zr0·05Ti0·95O3-xLa (BCZT-xLa) piezoelectric ceramics were prepared by sol–gel method. The effects of La3+ contents on the phase structure, mechanical properties, and electrical properties of BCZT-xLa ceramics were investigated. Results showed that La3+ could affect the properties of ceramics by adjusting the concentration of oxygen vacancies and microstructure. When the La3+ contents were 0.008, the ceramics showed the best performance (the maximum permittivity was 8736.27, the remnant polarisation was 9.69 μC/cm2 and the coercive field was 3.44 kV/cm). The influences of Vickers hardness on ceramics were investigated using various La3+ contents. With an increment of x, the Vickers hardness values decreased from 6.271 GPa to 1.438 GPa. This study could provide a reference for BCZT piezoelectric ceramics doped with rare earth elements.
+
+# INTRODUCTION
+In the 1900s, Jaffe et al.  discovered Pb(Zr 1-x Ti x )O3 (PZT) ceramics, which have presented excellent piezoelectric properties. Nowadays, PZT ceramics are used in ultrasonic nebulisers, radars, various transducers, sensors and actuators. However, they produce harmful materials, such as Pb x O y (PbO, PbO2), during production and usage process. Therefore, obtaining lead-free piezoelectric ceramics is necessary to replace PZT ceramics in practical applications. BaTiO3 (BT) ceramics are one of the important parts of lead-free piezoelectric ceramics, and they are the first perovskite piezoelectric material applied in practice. Therefore, researchers pay much attention on BT ceramics for replacing PZT ceramics. However, the developments of BT ceramics are limited by inferior electrical properties and low Curie temperature. Therefore, researchers want to improve the performance of BT ceramics through various means. In 2009, Liu et al.  synthesised Ba(Ti0\xb78Zr0.2)O3-(Ba0\xb77Ca0.3)TiO3 ceramics by Ca/Zr co-doping and successfully constructed a morphotropic phase boundary to achieve excellent electrical properties. In 2011, Wang et al.  adjusted CaE^{2+} and ZrE^{4+} contents to synthesise Ba0\xb785Ca0\xb715Zr0\xb71Ti0\xb79O3 ceramics, and the ceramics showed remarkable electrical properties. Li et al.  prepared (Ba1-x Ca x ) (Ti0\xb795Zr0.05)O3 lead-free ceramics and found the coexistence of rhombohedral (R) and tetragonal phase (T) at room temperature when the Ca content was between 0.6 and 1.0. Especially when Ca content was 0.08, the ceramics possessed a high Curie temperature (110 \xb0C), and outstanding ferroelectric properties (12.1 \u03bcC/cmE^{2}) and piezoelectric properties (365 pC/N). Commonly, (Ba1-x Ca x ) (Ti0\xb795Zr0.05)O3 ceramics would feature many excellent electrical properties in the R-T coexistence region. These studies indicate that (Ba1-x Ca x ) (Ti y Zr1-y )O3 (BCZT) lead-free ceramics have considerably potential. Although the electrical properties of BCZT ceramics can be improved by regulating composition and phase structure, using them as a replacement for PZT ceramics in piezoelectric materials remains difficult. Therefore, researchers began to optimise the electrical properties of BCZT ceramics by doping other elements. Sun et al.  prepared (Ba0\xb799Ca0.01) (Ti0\xb798Zr0.02)O3-xM (M = Co/Mn) piezoelectric ceramics and showed that the activation energy of the ceramics decreased by doping on Co or Mn. He et al.  doped FeE^{3+}, BiE^{3+}, and NbE^{5+} on Ba0\xb785Ca0\xb715Zr0\xb71Ti0\xb79O3 piezoelectric ceramics. The ceramics doped on NbE^{5+} were in favour of domain wall motion due to the low polarisation anisotropy near the tetragonal (T)-orthorhombic (O) phase transitions and the persistent miniaturised ferroelectric domains under continuous heating, thus bringing great piezoelectric coefficients and enhancing thermal stability. Shang et al.  doped Y elements on (Ba0\xb795Ca0.05) (Zr0\xb719Ti0.81)O3 piezoelectric ceramics. These works have some importance reference for BCZT-based piezoelectric ceramics by doping other elements. Although many reports have been conducted on BCZT ceramics doped with other elements, they concentrated on describing the electrical properties influenced by doping elements. Moreover, the effects of rare earth elements doped on BCZT ceramics for Vickers hardness are rarely reported. In this work, BCZT-xLa ceramics were prepared by sol\u2013gel method. The effects of LaE^{3+} doping on the phase structure, mechanical properties and electrical properties were investigated. Additionally, the mechanism of oxygen vacancies and LaE^{3+} dopants on the mechanical properties of ceramics was deduced.
+
+# CONCLUSION
+In this study, Ba0\xb792Ca0\xb708Zr0\xb705Ti0\xb795O3-xLa ceramics were prepared by sol\u2013gel method. The best electrical properties (the \u0511 m, P r, and E c were 8736.27, 9.69 \u03bcC/cmE^{2} and 3.44 kV/cm, respectively) were obtained when x = 0.008. In addition, the Vickers hardness values decreased from 6.271 GPa to 1.438 GPa with an increase in x contents. This study showed that BCZT-based ceramics could become a potential lead-free piezoelectric candidate for various piezoelectric devices by doping rare-earth elements.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-11 13:33:42: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The performance and parameters of BCZT-xLa ceramics.
+|x| HV (GPa)| \u03c1 (g/cmE^{3})|\u0511r| Tc (\xb0C)|Pr (\u03bcC/cmE^{2})| Ec (kV/cm)| d  33 (pC/N)|
+|---|---|---|---|---|---|---|---|
+|0|6.271|5.750|5694.65|102|5.3509|3.5269|42|
+|0.004|5.239|5.699|7357.06|103|9.9694|5.1474|42|
+|0.008|4.480|5.506|8736.27|94|9.6886|3.4392|35|
+|0.012|4.296|5.447|6415.32|79|5.6794|2.8398|45|
+|0.016|1.551|5.237|5323.84|68|4.5363|2.8554|58|
+|0.020|1.547|5.078|4797.24|61|5.3029|1.9281|44|
+|0.024|1.438|4.923|4553.81|54|5.7491|2.1674|41|
+
+# RESULTS AND DISCUSSION
+shows the XRD patterns of BCZT-xLa ceramic precursor powders and ceramic powders in the 2\u03b8 range of 5\xb0\u201380\xb0 at room temperature. This result suggested that LaE^{3+} was incorporated into the lattice of the ceramics. The characteristic peak of BCZT-xLa shifted to a lower 2\u03b8 range direction with the increase in x, as shown in (b). This finding indicated that the lattice parameters could increase with La dopants, because the A site (BaE^{2+} and CaE^{2+} site) of the ABO3 structure was occupied by LaE^{3+}. The interplanar crystal spacing began to decrease when LaE^{3+} (1.06 \xc5) replaced CaE^{2+} (0.99 \xc5) in the structure. The XRD patterns of BCZT-xLa ceramics with different x contents at room temperature are shown in (c). They differed from the XRD patterns of precursor powders, and the changes were shown in the 2\u03b8 range of 44\xb0\u201346\xb0. With an increase in LaE^{3+} contents, the characteristic peak of the ceramics split firstly and then gradually became a single peak. According to the PDF cards, the split of the characteristic peak could be found when the ceramics possessed T or O phase. The XRD patterns were refined at about x = 0, 0.008 and 0.020 to study the phase transformation, and the results are shown in (e). The results of Rietveld refinement using the GASA \u2161 program are shown in (e). The proportions of T phase increased from 76.68 % to 85.06 % with an increase in LaE^{3+} contents from 0 to 0.008. However, when the LaE^{3+} contents increased to 0.020, the proportions of T phase decreased, whereas the proportions of O phase showed an opposite trend. The Rietveld refinement results suggested that the phase structure of the samples transformed from T phase to O phase at room temperature with increasing LaE^{3+} contents. The SEM images of BCZT-xLa ceramics are shown in. When the x contents increased from 0 to 0.008, the grain size displayed an increasing trend initially and then began to decrease with further increasing of x. The density of the ceramics showed a trend similar to that of grain size, due to the reduced oxygen vacancies in the structure when LaE^{3+} replaced for the A position in the ceramics. In the process of LaE^{3+} replacing the position of CaE^{2+}, some cation-oxygen bonds could be generated, whereas the concentrations of oxygen vacancies showed an opposite trend, which enlarged the grain size apparently. With the increase in LaE^{3+} contents, some LaE^{3+} could gradually diffuse from A site to B site, showing a change in donor doping to acceptor doping in the structure. XPS was applied to verify the variation of oxygen vacancies concentrations in the structure, and the XPS spectra of O 1s binding states for BCZT-xLa ceramics (x = 0, 0.004, 0.008 and 0.020) are shown in. Two peaks of the binding energy were observed at 529.01 and 531.06 eV. According to literature, the peak at 531.06 eV represents oxygen vacancies, and the peak at 529.01 eV corresponds to cation-oxygen bonds (oxygen of lattice). The results showed that the ratio of oxygen vacancies (OVacancy/OCation-oxygen bonds) appeared to have a decreasing trend from 0.54 to 0.39 firstly and then the ratio increased from 0.39 to 0.52 when the x contents increased to 0.020. The corresponding hardness value accessed with the actual contact area had the following relationship (Eq. ): where F represents the applied load in Kgf (1 Kgf = 9.80665 N), d is the average length of the diagonal of the indentation in mm and the \u03b8 is the angle between the opposite surfaces of the rhomboid indenter at 136\xb0. shows that the Vickers hardness of the ceramics displayed a decreased trend with increasing x. The reason for this phenomenon is that the increased lattice parameter when a larger radius of LaE^{3+} entered the lattice, leading to the reduction in lattice energy and increase in the fragility of BCZT-xLa ceramics. The ratio of oxygen vacancies increased and the average strength of C\u2013O bonds (cation-oxygen bonds) decreased when the x contents were 0.020, which may be an important other reason for the decrease in Vickers hardness values. The fluctuations of phase compositions may have an influence on the value of Vickers hardness for ceramics according to literature report. (a) reveals the relative permittivity of BCZT-xLa ceramics at 30 \xb0C\u2212180 \xb0C under a frequency of 10 kHz. The reason is the enlarged grains and densified structure in the ceramics because LaE^{3+} entered the lattice. The Curie temperature peak broadened and exhibited a certain diffusion phase transition with increasing addition of x. (b) shows the maximum dielectric constant of ceramics with varying x contents at various frequencies (100 Hz\u20131 MHz). This phenomenon could be attributed to the difference in valence when LaE^{3+} occupied the position of CaE^{2+} in the structure, which caused an electronic relaxation polarisation with the emergence of excessive electrons. (c) and show the Curie temperature (T C) with various La contents. The T C showed a decreasing trend with an increase in La contents, due to the oxygen octahedral centres of Ti and Zr shifting in outside direction after LaE^{3+} replaced CaE^{2+}. shows the relation for ln (1/\u0511 r-1/\u0511m) with ln (T-T m) at 10 kHz of BCZT-xLa ceramics with various x contents. The degree of diffused phase transition could be explored by the modified Curie\u2013Weiss law (Eq. ): where \u0511 r represents the relative dielectric constant, \u0511 m is the maximum dielectric constant, T m is the temperature for the maximum dielectric constant, C\u2032 is the modified Curie\u2013Weiss constant, and \u03b3 corresponds to the diffuseness exponent (slope of ln (1/\u0511 r-1/\u0511 m) versus ln (T-T m)). When the \u03b3 value is 1, the ceramics feature the characteristic of normal ferroelectricity. When the \u03b3 value is equal to 2, the ceramics become a relaxor ferroelectricity. The \u03b3 value showed a decreasing trend with an increase in x. Then, the \u03b3 values increased again with x contents greater than 0.008. The loops of P-E hysteresis of BCZT-xLa ceramics with various x contents are shown in (a). The piezoelectric constant (d 33) of BCZT-xLa is shown in (b) and. The d 33 of the ceramics changed with various x contents, and d 33 reached the maximum value when x was 0.016. When the grain size is larger than 1 \u03bcm, the d 33 increases as the grain size decreases, because the width of 90\xb0 domains could maintain a same trend with grain sizes changed. It could increase the activity of 90\xb0 domains when the grain size decreases, leading to enhanced piezoelectric properties. However, when the grain size is less than 1 \u03bcm, an opposite variation trend for d 33 could be detected.
+
+# TITLE
+Effects of electrical and mechanical properties of Ba<inf>0.92</inf>Ca<inf>0.08</inf>Zr<inf>0.05</inf>Ti<inf>0.95</inf>O<inf>3</inf> ceramics with lanthanum dopants
+
+# ABSTRACT
+In this study, Ba0·92Ca0·08Zr0·05Ti0·95O3-xLa (BCZT-xLa) piezoelectric ceramics were prepared by sol–gel method. The effects of La3+ contents on the phase structure, mechanical properties, and electrical properties of BCZT-xLa ceramics were investigated. Results showed that La3+ could affect the properties of ceramics by adjusting the concentration of oxygen vacancies and microstructure. When the La3+ contents were 0.008, the ceramics showed the best performance (the maximum permittivity was 8736.27, the remnant polarisation was 9.69 μC/cm2 and the coercive field was 3.44 kV/cm). The influences of Vickers hardness on ceramics were investigated using various La3+ contents. With an increment of x, the Vickers hardness values decreased from 6.271 GPa to 1.438 GPa. This study could provide a reference for BCZT piezoelectric ceramics doped with rare earth elements.
+
+# INTRODUCTION
+In the 1900s, Jaffe et al.  discovered Pb(Zr 1-x Ti x )O3 (PZT) ceramics, which have presented excellent piezoelectric properties. Nowadays, PZT ceramics are used in ultrasonic nebulisers, radars, various transducers, sensors and actuators. However, they produce harmful materials, such as Pb x O y (PbO, PbO2), during production and usage process. Therefore, obtaining lead-free piezoelectric ceramics is necessary to replace PZT ceramics in practical applications. BaTiO3 (BT) ceramics are one of the important parts of lead-free piezoelectric ceramics, and they are the first perovskite piezoelectric material applied in practice. Therefore, researchers pay much attention on BT ceramics for replacing PZT ceramics. However, the developments of BT ceramics are limited by inferior electrical properties and low Curie temperature. Therefore, researchers want to improve the performance of BT ceramics through various means. In 2009, Liu et al.  synthesised Ba(Ti0\xb78Zr0.2)O3-(Ba0\xb77Ca0.3)TiO3 ceramics by Ca/Zr co-doping and successfully constructed a morphotropic phase boundary to achieve excellent electrical properties. In 2011, Wang et al.  adjusted CaE^{2+} and ZrE^{4+} contents to synthesise Ba0\xb785Ca0\xb715Zr0\xb71Ti0\xb79O3 ceramics, and the ceramics showed remarkable electrical properties. Li et al.  prepared (Ba1-x Ca x ) (Ti0\xb795Zr0.05)O3 lead-free ceramics and found the coexistence of rhombohedral (R) and tetragonal phase (T) at room temperature when the Ca content was between 0.6 and 1.0. Especially when Ca content was 0.08, the ceramics possessed a high Curie temperature (110 \xb0C), and outstanding ferroelectric properties (12.1 \u03bcC/cmE^{2}) and piezoelectric properties (365 pC/N). Commonly, (Ba1-x Ca x ) (Ti0\xb795Zr0.05)O3 ceramics would feature many excellent electrical properties in the R-T coexistence region. These studies indicate that (Ba1-x Ca x ) (Ti y Zr1-y )O3 (BCZT) lead-free ceramics have considerably potential. Although the electrical properties of BCZT ceramics can be improved by regulating composition and phase structure, using them as a replacement for PZT ceramics in piezoelectric materials remains difficult. Therefore, researchers began to optimise the electrical properties of BCZT ceramics by doping other elements. Sun et al.  prepared (Ba0\xb799Ca0.01) (Ti0\xb798Zr0.02)O3-xM (M = Co/Mn) piezoelectric ceramics and showed that the activation energy of the ceramics decreased by doping on Co or Mn. He et al.  doped FeE^{3+}, BiE^{3+}, and NbE^{5+} on Ba0\xb785Ca0\xb715Zr0\xb71Ti0\xb79O3 piezoelectric ceramics. The ceramics doped on NbE^{5+} were in favour of domain wall motion due to the low polarisation anisotropy near the tetragonal (T)-orthorhombic (O) phase transitions and the persistent miniaturised ferroelectric domains under continuous heating, thus bringing great piezoelectric coefficients and enhancing thermal stability. Shang et al.  doped Y elements on (Ba0\xb795Ca0.05) (Zr0\xb719Ti0.81)O3 piezoelectric ceramics. These works have some importance reference for BCZT-based piezoelectric ceramics by doping other elements. Although many reports have been conducted on BCZT ceramics doped with other elements, they concentrated on describing the electrical properties influenced by doping elements. Moreover, the effects of rare earth elements doped on BCZT ceramics for Vickers hardness are rarely reported. In this work, BCZT-xLa ceramics were prepared by sol\u2013gel method. The effects of LaE^{3+} doping on the phase structure, mechanical properties and electrical properties were investigated. Additionally, the mechanism of oxygen vacancies and LaE^{3+} dopants on the mechanical properties of ceramics was deduced.
+
+# CONCLUSION
+In this study, Ba0\xb792Ca0\xb708Zr0\xb705Ti0\xb795O3-xLa ceramics were prepared by sol\u2013gel method. The best electrical properties (the \u0511 m, P r, and E c were 8736.27, 9.69 \u03bcC/cmE^{2} and 3.44 kV/cm, respectively) were obtained when x = 0.008. In addition, the Vickers hardness values decreased from 6.271 GPa to 1.438 GPa with an increase in x contents. This study showed that BCZT-based ceramics could become a potential lead-free piezoelectric candidate for various piezoelectric devices by doping rare-earth elements.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "compositions": {
+    "Ba0.92Ca0.08Zr0.05Ti0.95O3 where x=0": 42,
+    "Ba0.92Ca0.08Zr0.05Ti0.95O3 where x=0.004": 42,
+    "Ba0.92Ca0.08Zr0.05Ti0.95O3 where x=0.008": 35,
+    "Ba0.92Ca0.08Zr0.05Ti0.95O3 where x=0.012": 45,
+    "Ba0.92Ca0.08Zr0.05Ti0.95O3 where x=0.016": 58,
+    "Ba0.92Ca0.08Zr0.05Ti0.95O3 where x=0.02": 44,
+    "Ba0.92Ca0.08Zr0.05Ti0.95O3 where x=0.024": 41
+  },
+  "property_unit": "pC/N",
+  "family": "BaTiO3",
+  "abbreviations": {
+    "BCZT-xLa": "Ba0.92Ca0.08Zr0.05Ti0.95O3-xLa"
+  }
+}"

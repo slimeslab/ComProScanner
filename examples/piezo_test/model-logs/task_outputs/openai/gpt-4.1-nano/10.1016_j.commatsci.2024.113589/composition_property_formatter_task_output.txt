@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BN(21.8)":1.79,"F-BNn(21.8)":1.65,"H/F-BNn(21.8)":0.42,"BNn(27.8)":-0.01,"F-BNn(27.8)":-0.84,"H/F-BNn(27.8)":-0.12,"h-AlN":2.75,"AB-AlNn":1.26,"AA'-AlNn":1.32,"AlNn(27.8)":-0.14,"F-AlNn(27.8)":16.4,"H/F-AlNn(27.8)":-3.11,"h-GaN":2.0,"H/F-GaN":15.7,"GaNn(27.8)":0.19},"property_unit":"pC/N","family":"Piezoelectric"}}

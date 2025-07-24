@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Na0.25K0.25Bi2.5-xCexNb2-yWyO9":20.5,"Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9":24.4,"NKBN":11.7},"property_unit":"pC/N","family":"BLSFs"}}

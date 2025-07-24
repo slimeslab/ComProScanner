@@ -1,0 +1,1 @@
+{"synthesis_formatted_data":{"method":"","precursors":[],"steps":[],"characterization_techniques":["XRD","Raman Spectroscopy","SEM","TEM","Bader charge analysis","ELF analysis","PDOS analysis","Berry phase formalism"]}}

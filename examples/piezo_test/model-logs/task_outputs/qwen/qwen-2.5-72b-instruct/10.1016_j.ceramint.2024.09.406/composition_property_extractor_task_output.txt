@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"CaBi4Ti4O15":7.2,"CaBi4Ti4O15 + 4% Nb/Mn":21.4,"CaBi4Ti4O15 + 8% Nb/Mn":24.8,"CaBi4Ti4O15 + 12% Nb/Mn":26.8,"CaBi4Ti4O15 + 20% Nb/Mn":24.7},"abbreviations":{},"property_unit":"pC/N","family":"CaBi4Ti4O15"}}

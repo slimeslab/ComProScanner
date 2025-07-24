@@ -1,0 +1,1 @@
+{"synthesis_extracted_data":{"method":"","precursors":[],"steps":[],"characterization_techniques":["XRD","SEM","TEM","HRTEM","XPS","PL","TRPL","PFM","EIS"]}}

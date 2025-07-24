@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi3La1Ti3O12":11.57,"Bi4Ti3O12":7.75,"BT-ST":4.25},"abbreviations":{"BT-ST":"Bi4Ti3O12 irregular particles prepared by solid state phase method","BT":"Bi4Ti3O12","1.0BLT":"Bi3La1Ti3O12"},"property_unit":"pm/V","family":"Bi4Ti3O12"}}

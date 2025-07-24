@@ -1,0 +1,64 @@
+2025-07-11 12:42:06: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0': 17.0, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.05': 15.0, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.1': 21.7, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.15': 18.0, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.2': 16.0}, 'abbreviations': {'CLBBN-xCe': '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9', 'CBN': 'CaBi2Nb2O9'}, 'property_unit': 'pC/N', 'family': 'BLSFs/CBN'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0': 17.0, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.05': 15.0, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.1': 21.7, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.15': 18.0, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.2': 16.0}, 'abbreviations': {'CLBBN-xCe': '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9', 'CBN': 'CaBi2Nb2O9'}, 'property_unit': 'pC/N', 'family': 'BLSFs/CBN'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-11 12:42:09: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0': 17.0, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.05': 15.0, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.1': 21.7, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.15': 18.0, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.2': 16.0}, 'abbreviations': {'CLBBN-xCe': '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9', 'CBN': 'CaBi2Nb2O9'}, 'property_unit': 'pC/N', 'family': 'BLSFs/CBN'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0': 17.0, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.05': 15.0, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.1': 21.7, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.15': 18.0, '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9 where x=0.2': 16.0}, 'abbreviations': {'CLBBN-xCe': '(1-x)(Ca0.6)(Li0.5Bi0.5)(x)Bi2-0.4xCe0.4xNb2O9', 'CBN': 'CaBi2Nb2O9'}, 'property_unit': 'pC/N', 'family': 'BLSFs/CBN'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="{
+  "composition_formatted_data": {
+    "compositions_property_values": {
+      "(Ca0.6)Bi2Nb2O9": 17.0,
+      "(0.95)(Ca0.6)(Li0.025Bi0.025)Bi1.98Ce0.02Nb2O9": 15.0,
+      "(0.9)(Ca0.6)(Li0.05Bi0.05)Bi1.96Ce0.04Nb2O9": 21.7,
+      "(0.85)(Ca0.6)(Li0.075Bi0.075)Bi1.94Ce0.06Nb2O9": 18.0,
+      "(0.8)(Ca0.6)(Li0.1Bi0.1)Bi1.92Ce0.08Nb2O9": 16.0
+    },
+    "property_unit": "pC/N",
+    "family": "BLSFs/CBN"
+  }
+}"

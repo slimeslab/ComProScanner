@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Ba0.95Ca0.05Ti0.89Sn0.11O3":232,"Ba0.95Ca0.05Ti0.89Sn0.11O3 + 1% BiFeO3":188,"Ba0.95Ca0.05Ti0.89Sn0.11O3 + 5% BiFeO3":20,"Ba0.95Ca0.05Ti0.89Sn0.11O3 + 9% BiFeO3":2},"abbreviations":{},"property_unit":"pC/N","family":"BaTiO3"}}

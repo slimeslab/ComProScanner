@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BaTiO3":null,"2% Li–BaTiO3":null,"4% Li–BaTiO3":null,"(Ba1-x-yCaxLiy)(Ti1-u-v-wZruSnvHfw)O3 where 0 < x, y < 0.3, 0 < u, v, w < 0.2":null,"Ba0.85Ca0.15Zr0.1Ti0.9O3":520},"property_unit":"pC/N","family":"BaTiO3"}}

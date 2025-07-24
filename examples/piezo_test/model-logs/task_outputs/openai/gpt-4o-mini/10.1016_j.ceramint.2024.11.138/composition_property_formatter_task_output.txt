@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Pb(Yn1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 + Mn":607,"Pb(Yn1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 + Mn (random)":306},"property_unit":"pC/N","family":"PZN-PT"}}

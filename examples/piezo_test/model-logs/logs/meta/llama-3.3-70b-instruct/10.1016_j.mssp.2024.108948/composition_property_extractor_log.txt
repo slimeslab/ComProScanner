@@ -1,0 +1,183 @@
+2025-07-11 11:17:46: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+shows the XRD diffraction patterns of 0.67BF-0.33BT-0.02BZT-xBA (0.00\u2264x \u2264 0.05) ceramics. The standard diffraction patterns of BT-C phase (PDF#74\u20131963) and BF-R phase (PDF#71\u20132494) are also listed below the figure for reference. The diffraction peaks of all the samples correspond to those of the ABO3-type compounds, indicating that the ceramics of this system are of perovskite structure , and contain a small amount of Bi25FeO40 impurity (PDF#46\u20130416) around ca.28\xb0. The extended XRD patterns (c) show that the diffraction angle (referred to as 2\u03b8phase (hkl)) of the main peak appears at ca. 39\xb0 for 2\u03b8 Pm 3\u203em (111). As shown in (b), a single 2\u03b8 Pm 3\u203em (200) peak was observed. The introduction of BA changed the ceramic phase structure, and the localized magnified image shows that the double peak near 39\xb0 gradually evolved into a single peak with the increase of BA content, indicating that the R and Pc phases coexisted at 0.00\u2264x \u2264 0.04, and the Pc phase was Pc at x = 0.05. In particular, 0.67BF-0.33BT-0.02BZT-0.01BA ceramics is the structure in which the R-Pc phase coexists. In order to provide more comprehensive and accurate information about the ceramic phase structure, we have refined the XRD data of 0.67BF-0.33BT-0.02BZT-xBA ceramics by Rietveld. The experimental data are in good agreement with the fitting results, which are reliable with R wp around 6.0 %. (a\u2013c) shows the phase fractions of the ceramics, with C R /C Pc of 69/31, 73/27 and 66/34 at x = 0, 0.01 and 0.03, respectively. It can be seen that the proportion of the R phase volume increases with the introduction of BA (x < 0.01). Excess BA increases the phase fraction of Pc phase. (d) shows the trend of lattice distortion of the ceramics, The degree of lattice distortion induced by BA doping (x = 0\u20130.05) does not vary widely, with c/a ratios generally in the range of 1\u20131.002. The distortion reaches a maximum c/a \u223c1.002 when x = 0.03. The tolerance factor of BiAlO3 (t = 1.003) is higher than that of Bi(Zn0.5Ti0.5)O3 (t = 0.83), implying that the introduction of BA reduces the lattice distortion caused by the high tetragonal degree of BZT, which makes it easy for the switching of ferroelectric domains. shows the SEM micrographs of 0.67BF-0.33BT-0.02BZT-xBA ceramic sections. The small amount of BA doping promotes the grain growth, and the maximum average grain size D\u03bb = 8.08 \u03bcm. When doped with BA = 0.03 mol, the average grain size decreases to 5.34 \u03bcm, and the proportion of small-size grains gradually increases, indicating that the grain size is highly sensitive to the BA content. The increase in grain boundary density favors the formation and growth of nuclei, but limits the growth of grains, resulting in a large number of fine grains, and the substitution of FeE^{3+} ions by AlE^{3+} ions leads to an increase in nucleation sites, which reduces the crystal symmetry, and also leads to smaller grain size, which is not conducive to the continuation of grain transfer and hinders the growth process of grains. From the sintering process, the melting point of Bi2O3 is 825 \xb0C, which is much lower than the melting point of Al2O3 of 2054 \xb0C. When the BA doping increases, the residual AlE^{3+} ions are more likely to gather at the grain boundaries, which inhibits the grain growth. In order to investigate the high temperature piezoelectric properties of 0.67BF-0.33BT+0.02BZT + xBA ceramics, we performed in-situ d 33 tests as shown in (a). The ceramics have excellent d 33 values at high temperatures. A small amount of BA doping can substantially improve the high-temperature piezoelectric properties. X = 0.01 ceramics have d 33 as high as 801 pC/N along with a high T dr = 361 \xb0C. X = 0.03 ceramics have a reduced piezoelectricity at high temperatures of d 33 = 509 pC/N, T dr = 314 \xb0C, but the high-temperature piezoelectric fluctuations are reduced. Moderate amount of BA doping favors high temperature piezoelectricity. (c) and (d) show the P-E and I-E loops of the ceramics measured at 50 kV/cm. X = 0.01 ceramic exhibits a maximum residual polarization of 15.62 \u03bcC/cmE^{2}, whereas the undoped ceramics with x = 0.05 ceramic have a finer P-E curve with a very small residual polarization of 7.12 \u03bcC/cmE^{2}, as shown in (b). A small amount of doping of BA (x < 0.03 mol) increases the polar phase share and improves the domain ordering, while the decrease in E c promotes more non-180\xb0 domain flips, thus increasing d 33 and P r. The decrease in x = 0.03 ceramic E c is attributed to the decrease in the average grain size and increase in the grain boundary volume. Increased BA doping up to 0.05 is subjected to an increase in E c due to the action of coercive field, and the decomposition of the long-range ferroelectric phase produces a nonpolar phase, which hampers the domain evolution process and decreases the polarizability. shows the dielectric temperature spectrum of 0.67BF-0.33BT-0.02BZT-xBA (x = 0, 0.01, 0.02, 0.03, 0.04, 0.05) ceramics at frequencies of 1 kHz, 10 kHz and 100 kHz, and the temperature range of room temperature-550 \xb0C. The measured relative dielectric constant (\u025b r) and dielectric loss (tan\u03b4) show a regular variation with increasing temperature, with T c around 420\xb0C\u2013440 \xb0C. Overall, the introduction of BA reduces the tan\u03b4, i.e., the leakage conduction loss of the samples at elevated temperatures , and also results in a decrease in the maximum dielectric constant \u025b m. Since the radius of AlE^{3+} (0.535 \xc5) is similar to that of FeE^{3+} (0.645 \xc5) and TiE^{4+} (0.605 \xc5) at the B-site, and the radii of BiE^{3+} (1.03 \xc5) and BaE^{2+} (1.35 \xc5) at the A-site are much larger than the radius of the B-site ions, the doped AlE^{3+} easily replaces the ions at the B-site. However, the doped AlE^{3+} causes fluctuations in the components while replacing the ions in the B-site. With the increase of AlE^{3+} doping content, the long-range ordered ferroelectric phase structure is disrupted and the cell structure is more disordered, and the increase of AlE^{3+} content will make the state of the B-site ions in the sample show more disorder. The disorder of the cell structure leads to more pronounced relaxation characteristics of the doped BA samples. In order to quantitatively study the relaxation of 0.67BF-0.33BT-0.02BZT-xBA ceramics, the dispersion factor \u03b3 can be obtained by fitting the Curie-Weiss law, which is expressed as follows. In Eq. , \u025b r represents the dielectric constant, \u025b m and T m represent the maximum dielectric constant and the corresponding temperature at the maximum dielectric constant. c is the Curie-Exis constant and \u03b3 is the relaxation factor (1 \u2264 \u03b3 \u2264 2). In a classical relaxor, \u03b3 = 2; in an ideal ferroelectric \u03b3 = 1; and in a relaxing ferroelectric 1 < \u03b3 < 2. The \u03b3 values of the doped ceramics are all greater than 1, indicating that all are relaxing ferroelectrics.BA doping enhances the relaxation properties of the ceramics and the \u03b3 value increases to 1.869 at x = 0.03 as shown in. shows the domain structure of 0.67BF-0.33BT-0.02BZT-0.01BA ceramics after polarization. A locally distributed inhomogeneous domain structure can be observed, with the presence of Moir\xe9 stripes(blue dashed box) with a width of about 1.7 nm in (a) and thumb-like domains in (c). These domain structures are identified as polar nanoregions (PNRs) with non-homogeneous local compositions , formed due to the enhancement of aligned disordering induced by ion doping substitutions. The lattice spacing d 1 is 0.157 nm and d 2 is 0.256 nm for the two enlarged lattices in (b).
+
+# TITLE
+Enhanced in-situ piezoelectric properties and thermal stability of lead-free BiFeO<inf>3</inf>-BaTiO<inf>3</inf> ceramics by local structural heterogeneity
+
+# ABSTRACT
+In perovskite-structure Bi-based piezoelectric ceramics, an increase in the actual operating temperature is usually accompanied by a sharp deterioration of the piezoelectric constant (d
+                     33), an unresolved paradox that severely limits their practical applications. In this paper, 0.67BF-0.33BT-0.02BZT-xBA lead-free piezoelectric ceramics designed using a synergistic strategy are presented. High T
+                     dr and large d
+                     33 compatibility is achieved by regulating the ratio of polar phases in multiphase coexistence, grain size and domain structure. X = 0.01 ceramics have an in-situ d
+                     33 ranging up to 801 pC/N, T
+                     dr = 361 °C, and T
+                     c = 432 °C. The results of this study provide a novel design idea for the preparation of high-performance BF-BT lead-free piezoelectric ceramics.
+
+# INTRODUCTION
+Extraction of stable in-situ quasi-static \u201cT-d 33\u201d curves is crucial for the study of high-temperature piezoelectricity. However, in BF-BT ceramics, due to defects as well as contributions from domain reorientation, the \u201cT-d 33\u201d curve may become steep or even appear as a step, which is not conducive to stabilizing the output electrical signal. Hence, it is important to comprehend the influencing factors of the \u201cT-d 33\u201d curve. BF-BT ceramics with perovskite structure have become one of the research focuses in recent decades because of their large polarization due to the hybridization of the BiE^{3+}6s and OE^{2-} 2p orbitals and their lead-free nature in line with the requirements of sustainable development. Affected by compositional fluctuations, the distorted superposition produces localized polar nano-regions (PNRs). The domain structure consisting of nanoscale domains and finer scale PNRs and the domain wall movements play an important role in improving the piezoelectric effect on the response speed of domains, which is known as the extrinsic effect, it grows attractive as a solution to bridge the lack of electrical properties of BF-BT ceramics. The domain-related piezoelectric extrinsic enhancement can be realized by fabricating disordered states of ion distribution through partial doping substitution of ions at A and B sites (eg., Ga, Zn, Nd), construction of defective dipoles, and introduction of a third group element (eg., BNT\u3001BMN), in which the piezoelectricity coefficient of (Zn0.5Ti0.5)E^{3+}-modified BF-BT ceramics is significantly and drastically increased by the temperature-induced. Non-180\xb0 nanodomain switching dominates the high-temperature piezoelectric response, and a high-temperature decomposition degradation process of non-180\xb0 nanodomains in high-pressure electrically responsive BF-BT ceramics has been observed. Similarly, kim et al.  quantified the intrinsic and extrinsic contributions to the electrical strain of BF-BT ceramics using SR-XRD measurement, emphasizing the nanodomain reorientation due to BiE^{3+} disorder in the extrinsic contribution. In addition, grain effects also play a role in promoting adequate piezoelectric response, especially in BF-BT-BZT ceramics. Yang et al.  reported that coarse crystalline BF-BT-BZT ceramics (3.6 \u03bcm) were more prone to obtain adequate piezoelectric response (d 33 > 145 pC/N). Yue et al.  found that d 33 of 0.67BF-0.33BT ceramics with grain sizes larger than 2.83 \u03bcm increases sharply with increasing grain size. Zheng et al.  reported the grain dependence of the strain response of 0.63BF-0.3BT-0.07BMN ceramics, where the microscopic dielectric relaxation behavior due to grain inhomogeneity contributes to the larger values of electrostrictive strains (S = 0.18%\u20130.27 %). The presence of component-related morphotropic phase boundary (MPB) at room temperature was reported for the piezoelectric ceramics of the lead-free BF-BT system by Yang et al.. Great d 33 usually appears near the phase boundary of rhombic-pseudo-cubic phase (R-Pc) coexistence/rhombic-tetragona phase (R-T) coexistence. This raises two problems, one is the origin of piezoelectricity in the non-polar cubic/pseudo-cubic phase structure of lead-free BF-BT ceramics, and the other is the origin of the high-temperature intrinsic piezoelectric contribution. Zhou et al.  obtained enhanced piezoelectric properties with better piezoelectric thermal stability by introducing rhombic BiAlO3(BA) to appropriately modulate the degree of local structural distortion in BF-BT ceramics: d 33 = 196 pC/N, k p = 31.1 %, T c = 487 \xb0C, T d = 250 \xb0C, BiAlO3 contributes to the piezoelectric thermal stability. For the thermal evolution of the BF-BT ceramic structure, Yang et al.  reported that the structural distortion of rhombohedron is abnormally enhanced with increasing temperature. The peak of the obtained in-situ quasi-static \u201cT-d 33\u201d curve is the maximum in-situ piezoelectric coefficient (in-situ d 33), and the peak corresponds to the \u201creal-time\u201d depolarization temperature (T dr), i.e., the temperature at which the in-situ piezoelectric coefficient collapses. The results of phase structure, microscopic images, dielectric behavior, ferroelectric as well as high temperature piezoelectric degradation of 0.67BiFeO3-0.33BaTiO3-0.02Bi(Zn0.5Ti0.5)O3-xBiAlO3 ceramics are given in this paper.
+
+# CONCLUSION
+In this work, 0.67BF-0.33BT ceramics were modified by double solid solution to obtain ultra-high in-situ piezoelectric coefficient with better thermal stability. XRD analysis shows that the introduction of BA leads to a pseudo-cubic structure of 0.67BF-0.33BT-0.02BZT ceramics. TEM results show that the ceramics have an inhomogeneous localized structure. The polar nano-regions originate from the inhomogeneity of the local composition. 0.67BF-0.33BT-0.02BZT-0.01BA ceramics with d 33 = 801 pC/N and T dr = 361 \xb0C have an increased T dr as compared to the undoped ceramics.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-11 11:17:53: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+shows the XRD diffraction patterns of 0.67BF-0.33BT-0.02BZT-xBA (0.00\u2264x \u2264 0.05) ceramics. The standard diffraction patterns of BT-C phase (PDF#74\u20131963) and BF-R phase (PDF#71\u20132494) are also listed below the figure for reference. The diffraction peaks of all the samples correspond to those of the ABO3-type compounds, indicating that the ceramics of this system are of perovskite structure , and contain a small amount of Bi25FeO40 impurity (PDF#46\u20130416) around ca.28\xb0. The extended XRD patterns (c) show that the diffraction angle (referred to as 2\u03b8phase (hkl)) of the main peak appears at ca. 39\xb0 for 2\u03b8 Pm 3\u203em (111). As shown in (b), a single 2\u03b8 Pm 3\u203em (200) peak was observed. The introduction of BA changed the ceramic phase structure, and the localized magnified image shows that the double peak near 39\xb0 gradually evolved into a single peak with the increase of BA content, indicating that the R and Pc phases coexisted at 0.00\u2264x \u2264 0.04, and the Pc phase was Pc at x = 0.05. In particular, 0.67BF-0.33BT-0.02BZT-0.01BA ceramics is the structure in which the R-Pc phase coexists. In order to provide more comprehensive and accurate information about the ceramic phase structure, we have refined the XRD data of 0.67BF-0.33BT-0.02BZT-xBA ceramics by Rietveld. The experimental data are in good agreement with the fitting results, which are reliable with R wp around 6.0 %. (a\u2013c) shows the phase fractions of the ceramics, with C R /C Pc of 69/31, 73/27 and 66/34 at x = 0, 0.01 and 0.03, respectively. It can be seen that the proportion of the R phase volume increases with the introduction of BA (x < 0.01). Excess BA increases the phase fraction of Pc phase. (d) shows the trend of lattice distortion of the ceramics, The degree of lattice distortion induced by BA doping (x = 0\u20130.05) does not vary widely, with c/a ratios generally in the range of 1\u20131.002. The distortion reaches a maximum c/a \u223c1.002 when x = 0.03. The tolerance factor of BiAlO3 (t = 1.003) is higher than that of Bi(Zn0.5Ti0.5)O3 (t = 0.83), implying that the introduction of BA reduces the lattice distortion caused by the high tetragonal degree of BZT, which makes it easy for the switching of ferroelectric domains. shows the SEM micrographs of 0.67BF-0.33BT-0.02BZT-xBA ceramic sections. The small amount of BA doping promotes the grain growth, and the maximum average grain size D\u03bb = 8.08 \u03bcm. When doped with BA = 0.03 mol, the average grain size decreases to 5.34 \u03bcm, and the proportion of small-size grains gradually increases, indicating that the grain size is highly sensitive to the BA content. The increase in grain boundary density favors the formation and growth of nuclei, but limits the growth of grains, resulting in a large number of fine grains, and the substitution of FeE^{3+} ions by AlE^{3+} ions leads to an increase in nucleation sites, which reduces the crystal symmetry, and also leads to smaller grain size, which is not conducive to the continuation of grain transfer and hinders the growth process of grains. From the sintering process, the melting point of Bi2O3 is 825 \xb0C, which is much lower than the melting point of Al2O3 of 2054 \xb0C. When the BA doping increases, the residual AlE^{3+} ions are more likely to gather at the grain boundaries, which inhibits the grain growth. In order to investigate the high temperature piezoelectric properties of 0.67BF-0.33BT+0.02BZT + xBA ceramics, we performed in-situ d 33 tests as shown in (a). The ceramics have excellent d 33 values at high temperatures. A small amount of BA doping can substantially improve the high-temperature piezoelectric properties. X = 0.01 ceramics have d 33 as high as 801 pC/N along with a high T dr = 361 \xb0C. X = 0.03 ceramics have a reduced piezoelectricity at high temperatures of d 33 = 509 pC/N, T dr = 314 \xb0C, but the high-temperature piezoelectric fluctuations are reduced. Moderate amount of BA doping favors high temperature piezoelectricity. (c) and (d) show the P-E and I-E loops of the ceramics measured at 50 kV/cm. X = 0.01 ceramic exhibits a maximum residual polarization of 15.62 \u03bcC/cmE^{2}, whereas the undoped ceramics with x = 0.05 ceramic have a finer P-E curve with a very small residual polarization of 7.12 \u03bcC/cmE^{2}, as shown in (b). A small amount of doping of BA (x < 0.03 mol) increases the polar phase share and improves the domain ordering, while the decrease in E c promotes more non-180\xb0 domain flips, thus increasing d 33 and P r. The decrease in x = 0.03 ceramic E c is attributed to the decrease in the average grain size and increase in the grain boundary volume. Increased BA doping up to 0.05 is subjected to an increase in E c due to the action of coercive field, and the decomposition of the long-range ferroelectric phase produces a nonpolar phase, which hampers the domain evolution process and decreases the polarizability. shows the dielectric temperature spectrum of 0.67BF-0.33BT-0.02BZT-xBA (x = 0, 0.01, 0.02, 0.03, 0.04, 0.05) ceramics at frequencies of 1 kHz, 10 kHz and 100 kHz, and the temperature range of room temperature-550 \xb0C. The measured relative dielectric constant (\u025b r) and dielectric loss (tan\u03b4) show a regular variation with increasing temperature, with T c around 420\xb0C\u2013440 \xb0C. Overall, the introduction of BA reduces the tan\u03b4, i.e., the leakage conduction loss of the samples at elevated temperatures , and also results in a decrease in the maximum dielectric constant \u025b m. Since the radius of AlE^{3+} (0.535 \xc5) is similar to that of FeE^{3+} (0.645 \xc5) and TiE^{4+} (0.605 \xc5) at the B-site, and the radii of BiE^{3+} (1.03 \xc5) and BaE^{2+} (1.35 \xc5) at the A-site are much larger than the radius of the B-site ions, the doped AlE^{3+} easily replaces the ions at the B-site. However, the doped AlE^{3+} causes fluctuations in the components while replacing the ions in the B-site. With the increase of AlE^{3+} doping content, the long-range ordered ferroelectric phase structure is disrupted and the cell structure is more disordered, and the increase of AlE^{3+} content will make the state of the B-site ions in the sample show more disorder. The disorder of the cell structure leads to more pronounced relaxation characteristics of the doped BA samples. In order to quantitatively study the relaxation of 0.67BF-0.33BT-0.02BZT-xBA ceramics, the dispersion factor \u03b3 can be obtained by fitting the Curie-Weiss law, which is expressed as follows. In Eq. , \u025b r represents the dielectric constant, \u025b m and T m represent the maximum dielectric constant and the corresponding temperature at the maximum dielectric constant. c is the Curie-Exis constant and \u03b3 is the relaxation factor (1 \u2264 \u03b3 \u2264 2). In a classical relaxor, \u03b3 = 2; in an ideal ferroelectric \u03b3 = 1; and in a relaxing ferroelectric 1 < \u03b3 < 2. The \u03b3 values of the doped ceramics are all greater than 1, indicating that all are relaxing ferroelectrics.BA doping enhances the relaxation properties of the ceramics and the \u03b3 value increases to 1.869 at x = 0.03 as shown in. shows the domain structure of 0.67BF-0.33BT-0.02BZT-0.01BA ceramics after polarization. A locally distributed inhomogeneous domain structure can be observed, with the presence of Moir\xe9 stripes(blue dashed box) with a width of about 1.7 nm in (a) and thumb-like domains in (c). These domain structures are identified as polar nanoregions (PNRs) with non-homogeneous local compositions , formed due to the enhancement of aligned disordering induced by ion doping substitutions. The lattice spacing d 1 is 0.157 nm and d 2 is 0.256 nm for the two enlarged lattices in (b).
+
+# TITLE
+Enhanced in-situ piezoelectric properties and thermal stability of lead-free BiFeO<inf>3</inf>-BaTiO<inf>3</inf> ceramics by local structural heterogeneity
+
+# ABSTRACT
+In perovskite-structure Bi-based piezoelectric ceramics, an increase in the actual operating temperature is usually accompanied by a sharp deterioration of the piezoelectric constant (d
+                     33), an unresolved paradox that severely limits their practical applications. In this paper, 0.67BF-0.33BT-0.02BZT-xBA lead-free piezoelectric ceramics designed using a synergistic strategy are presented. High T
+                     dr and large d
+                     33 compatibility is achieved by regulating the ratio of polar phases in multiphase coexistence, grain size and domain structure. X = 0.01 ceramics have an in-situ d
+                     33 ranging up to 801 pC/N, T
+                     dr = 361 °C, and T
+                     c = 432 °C. The results of this study provide a novel design idea for the preparation of high-performance BF-BT lead-free piezoelectric ceramics.
+
+# INTRODUCTION
+Extraction of stable in-situ quasi-static \u201cT-d 33\u201d curves is crucial for the study of high-temperature piezoelectricity. However, in BF-BT ceramics, due to defects as well as contributions from domain reorientation, the \u201cT-d 33\u201d curve may become steep or even appear as a step, which is not conducive to stabilizing the output electrical signal. Hence, it is important to comprehend the influencing factors of the \u201cT-d 33\u201d curve. BF-BT ceramics with perovskite structure have become one of the research focuses in recent decades because of their large polarization due to the hybridization of the BiE^{3+}6s and OE^{2-} 2p orbitals and their lead-free nature in line with the requirements of sustainable development. Affected by compositional fluctuations, the distorted superposition produces localized polar nano-regions (PNRs). The domain structure consisting of nanoscale domains and finer scale PNRs and the domain wall movements play an important role in improving the piezoelectric effect on the response speed of domains, which is known as the extrinsic effect, it grows attractive as a solution to bridge the lack of electrical properties of BF-BT ceramics. The domain-related piezoelectric extrinsic enhancement can be realized by fabricating disordered states of ion distribution through partial doping substitution of ions at A and B sites (eg., Ga, Zn, Nd), construction of defective dipoles, and introduction of a third group element (eg., BNT\u3001BMN), in which the piezoelectricity coefficient of (Zn0.5Ti0.5)E^{3+}-modified BF-BT ceramics is significantly and drastically increased by the temperature-induced. Non-180\xb0 nanodomain switching dominates the high-temperature piezoelectric response, and a high-temperature decomposition degradation process of non-180\xb0 nanodomains in high-pressure electrically responsive BF-BT ceramics has been observed. Similarly, kim et al.  quantified the intrinsic and extrinsic contributions to the electrical strain of BF-BT ceramics using SR-XRD measurement, emphasizing the nanodomain reorientation due to BiE^{3+} disorder in the extrinsic contribution. In addition, grain effects also play a role in promoting adequate piezoelectric response, especially in BF-BT-BZT ceramics. Yang et al.  reported that coarse crystalline BF-BT-BZT ceramics (3.6 \u03bcm) were more prone to obtain adequate piezoelectric response (d 33 > 145 pC/N). Yue et al.  found that d 33 of 0.67BF-0.33BT ceramics with grain sizes larger than 2.83 \u03bcm increases sharply with increasing grain size. Zheng et al.  reported the grain dependence of the strain response of 0.63BF-0.3BT-0.07BMN ceramics, where the microscopic dielectric relaxation behavior due to grain inhomogeneity contributes to the larger values of electrostrictive strains (S = 0.18%\u20130.27 %). The presence of component-related morphotropic phase boundary (MPB) at room temperature was reported for the piezoelectric ceramics of the lead-free BF-BT system by Yang et al.. Great d 33 usually appears near the phase boundary of rhombic-pseudo-cubic phase (R-Pc) coexistence/rhombic-tetragona phase (R-T) coexistence. This raises two problems, one is the origin of piezoelectricity in the non-polar cubic/pseudo-cubic phase structure of lead-free BF-BT ceramics, and the other is the origin of the high-temperature intrinsic piezoelectric contribution. Zhou et al.  obtained enhanced piezoelectric properties with better piezoelectric thermal stability by introducing rhombic BiAlO3(BA) to appropriately modulate the degree of local structural distortion in BF-BT ceramics: d 33 = 196 pC/N, k p = 31.1 %, T c = 487 \xb0C, T d = 250 \xb0C, BiAlO3 contributes to the piezoelectric thermal stability. For the thermal evolution of the BF-BT ceramic structure, Yang et al.  reported that the structural distortion of rhombohedron is abnormally enhanced with increasing temperature. The peak of the obtained in-situ quasi-static \u201cT-d 33\u201d curve is the maximum in-situ piezoelectric coefficient (in-situ d 33), and the peak corresponds to the \u201creal-time\u201d depolarization temperature (T dr), i.e., the temperature at which the in-situ piezoelectric coefficient collapses. The results of phase structure, microscopic images, dielectric behavior, ferroelectric as well as high temperature piezoelectric degradation of 0.67BiFeO3-0.33BaTiO3-0.02Bi(Zn0.5Ti0.5)O3-xBiAlO3 ceramics are given in this paper.
+
+# CONCLUSION
+In this work, 0.67BF-0.33BT ceramics were modified by double solid solution to obtain ultra-high in-situ piezoelectric coefficient with better thermal stability. XRD analysis shows that the introduction of BA leads to a pseudo-cubic structure of 0.67BF-0.33BT-0.02BZT ceramics. TEM results show that the ceramics have an inhomogeneous localized structure. The polar nano-regions originate from the inhomogeneity of the local composition. 0.67BF-0.33BT-0.02BZT-0.01BA ceramics with d 33 = 801 pC/N and T dr = 361 \xb0C have an increased T dr as compared to the undoped ceramics.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "0.67BiFeO3-0.33BaTiO3-0.02Bi(Zn0.5Ti0.5)O3-0.01BiAlO3": 801,
+      "0.67BiFeO3-0.33BaTiO3-0.02Bi(Zn0.5Ti0.5)O3-0.03BiAlO3": 509
+    },
+    "abbreviations": {
+      "BF": "BiFeO3",
+      "BT": "BaTiO3",
+      "BZT": "Bi(Zn0.5Ti0.5)O3",
+      "BA": "BiAlO3"
+    },
+    "property_unit": "pC/N",
+    "family": "BiFeO3-BaTiO3"
+  }
+}"

@@ -1,0 +1,209 @@
+2025-07-11 09:35:06: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Crystal data for \u2212100xBi-NKBN ceramics.
+|Compound| x\u202f=\u202f0| x\u202f=\u202f-0.01| x\u202f=\u202f-0.03| x\u202f=\u202f-0.05| x\u202f=\u202f-0.07| x\u202f=\u202f-0.10|
+|---|---|---|---|---|---|---|
+|Space group|A21 am (36)|A21 am (36)|A21 am (36)|A21 am (36)|A21 am (36)|A21 am (36)|
+|a (\xc5)|5.4833(3)|5.4884(2)|5.4863(2)|5.4885(2)|5.4910(2)|5.4852(2)|
+|b (\xc5)|5.4758(3)|5.4769(1)|5.4758(2)|5.4746(2)|5.4746(2)|5.4758(2)|
+|c (\xc5)|25.043(1)|25.069(1)|25.063(1)|25.067(1)|25.077(1)|25.046(1)|
+|V (\xc5E^{3})|751.91(9)|753.56(4)|752.96(8)|753.18(5)|753.77(8)|752.28(5)|
+|Rwp (%)|9.39|9.89|9.66|12.95|13.08|13.82|
+|Rp (%)|6.85|7.24|7.08|9.65|9.79|10.42|
+|Rexp (%)|2.64|2.80|2.72|3.06|3.54|3.59|
+|a/b|1.0013|1.0020|1.0020|1.0025|1.0030|1.0017|
+
+# RESULTS AND DISCUSSION
+XRD refinement allows better analysis of ceramic sample crystal structure changes. shows \u2212100xBi-NKBN sample structure refinement by using Jana 2006 software with the A21 am space group. The main phases of all samples matched the diffraction peaks of JCPDS No. 97\u2013018\u20136933, indicating that the \u2212100xBi-NKBN ceramics were successfully synthesized in the Bi deficiency. lists the crystal data and lattice parameter of \u2212100xBi-NKBN ceramics. The ratio of a/b in the orthorhombic crystal system indicates the degree of structural distortion, and the closer the ratio is to 1, the smaller the degree of structural distortion. The ratios of a/b for Bi deficiency samples are all greater than NKBN, suggesting that increasing Bi deficiency leads to an increase in structural distortion. The lattice parameters a, b, c, and unit cell volume V value of \u2212100xBi-NKBN are shown in. Noguchi et al. found that the perovskite layers are more prone to produce Bi vacancies than (Bi2O2)E^{2+} layers by calculating E vacancy, suggesting that the Bi deficiency originates mainly from the perovskite layers. In addition, there is compressive stress between the perovskite layer and the (Bi2O2)E^{2+} layer due to the mismatch of cell parameters of the two layers. The natural surface electron microscopy images of the \u2212100xBi-NKBN ceramic samples as shown in (a)-(f). Due to the low surface free energy in the a-b plane, the growth rate in this plane is faster than in other planes, resulting in all ceramic samples exhibiting a plate-like morphology typical of BLSFs. With the increasing Bi deficiency, the grain size and grain thickness also decrease gradually, which may be due to the reduced liquid medium of molten Bi2O3 in the Bi deficiency, which hinders the migration and diffusion of the reactants. The high sintering temperature of the ceramic samples resulted in the volatilization of Bi2O3. To verify whether the Bi deficiency of NKBN can mitigate the volatilization of Bi2O3, XPS measurements of NKBN and 5Bi-NKBN were performed to estimate the oxygen vacancy concentration. (a)-(b) are the XPS spectra of NKBN and 5Bi-NKBN, respectively. It was found that the XPS spectra of NKBN and 5Bi-NKBN show peak splitting and were fitted with peak splitting using Advantage software. The peak with a binding energy of 531.1 eV is the oxygen-deficient region V o \u2033, while the peak at 530.5 eV is the lattice oxygenV o x. In general, the oxygen vacancy concentration is the ratio of the area of V o \u2033 to the area of V o x in the sample. The oxygen vacancy concentration was calculated to be 0.30 for NKBN and 0.25 for 5Bi-NKBN. Oxygen vacancy concentration was significantly reduced, suggesting that the volatilization of Bi2O3 in NKBN can be alleviated by the Bi deficiency. DC resistivity is the main means of characterizing the insulating properties of piezoelectric ceramics. (a) shows DC resistivity of \u2212100xBi-NKBN. The DC resistivity decreases significantly with increasing temperature, it is clear that the DC resistivity is negatively correlated with the temperature. In addition, it can be found that the resistivity is close to 10E^{6} \u03a9\xb7cm at 600 \u2103. This may be due to reduced oxygen vacancies and holes due to the mitigated volatilization of Bi2O3 in the Bi deficiency. (b) shows the carrier activation energy (E a) of \u2212100xBi-NKBN ceramics calculated according to the Arrhenius equation. The E a of \u2212100xBi-NKBN was slightly lower compared to the E a of NKBN, which may be attributed to the decrease in grain size due to Bi deficiency, defect carriers and impurity ions are more likely to accumulate at grain boundaries. It can be found that the E a increases from 1.23 eV to 1.42 eV with the increasing Bi deficiency. This may be due to an increase in Bi deficiency resulting in increased barrier energy for the transport of charged carriers. (a) shows the \u03b5r and tan\u03b4 of \u2212100xBi-NKBN at 1 MHz. It can be found that the T c slightly decreases with the increase of Bi deficiency, and the T c of \u2212100xBi-NKBN is higher than 650 \u2103. (b) shows the variation of T c and tan\u03b4 at 600 \u2103 of \u2212100xBi-NKBN. The T c of 5Bi-NKBN and 7Bi-NKBN is the lowest, and the lowest T c is 651 \u2103, which indicates that the ceramic samples can still maintain high T c under the Bi deficiency. In addition, dielectric loss tan\u03b4 represents a significant parameter in practical applications. It can be found that the tan\u03b4 rises sharply above 500 \u2103, but even at 600 \u2103 the tan\u03b4 of Bi deficiency samples is as low as 0.08, while the tan\u03b4 of NKBN is 0.32. This may be attributed to a reduction in the concentration of oxygen vacancies and further verifies that the volatilization of Bi2O3 in NKBN can be mitigated by the Bi deficiency. (a) shows the radar diagram of NKBN and 5Bi-NKBN, which is mainly considered from five aspects, including T c, d 33, \u03c1 @600 \u2103, tan\u03b4 @600 \u2103, and oxygen vacancy concentration. The results show that the d 33 and DC resistivity are improved, tan\u03b4 and oxygen vacancy concentration are decreased while maintaining a higher T c in 5Bi-NKBN. Although the T c of 5Bi-NKBN has decreased, it remains at 651 \u2103. To study the thermal stability of NKBN in the Bi deficiency, all samples were annealed. (b) shows the variation of d 33 of \u2212100Bix-NKBN with annealing temperature. The results showed that the d 33 of all ceramics samples decreased rapidly exceeding 600 \u2103. Notably, the d 33 of 5Bi-NKBN only slightly decreases when the annealing temperature reaches 600 \xb0C, which keeps 97 % of the initial value of the d 33. In contrast, the d 33 of NKBN at 600 \u2103 is only 67 % of the initial value. It indicates that the thermal stability of NKBN has been greatly improved by the Bi deficiency, which lays a good foundation for the application of NKBN.
+
+# TITLE
+Superb thermal stability achieved in Na<inf>0.25</inf>K<inf>0.25</inf>Bi<inf>2.5</inf>Nb<inf>2</inf>O<inf>9</inf>-based piezoelectric ceramics via Bi deficiency
+
+# ABSTRACT
+Na0.25K0.25Bi2.5Nb2O9-based ceramics woule become one of the excellent candidate materials suitable for high-temperature applications, given that their piezoelectric properties can be effectively improved. In this work, a strategy of reducing the Bi content was used to improve the piezoelectric properties and thermal stability of Na0.25K0.25Bi2.5Nb2O9-based ceramics by means of designing the compositions of the Na0.25K0.25Bi2.5+x
+                     Nb2O9+3x/2 (−100xBi-NKBN, x = 0, −0.01, −0.03, −0.05, −0.07, −0.10). The effect of the Bi deficiency on the crystal structure, microscopic morphology, and electrical properties of NKBN-based ceramics was systematically investigated. By comparison, the Na0.25K0.25Bi2.45Nb2O8.925 ceramic obtains a large d
+                     33 of 20 pC/N, a high T
+                     c of 651 ℃, and a high resistivity ρ
+                     dc of 3.3 × 105 Ω cm at 600 ℃. The results demonstrate that the good d
+                     33 mainly stems from the increased lattice distortion and reduced oxygen vacancy concentration. More importantly, the d
+                     33 value can maintain 97 % of its initial value after it was annealed at 600 ℃, showing excellent thermal stability. This work provides a new idea for solving the problem of poor piezoelectricity of NKBN-based ceramics and lays the foundation for applying NKBN-based ceramics in the high-temperature field.
+
+# INTRODUCTION
+For example, in aerospace, sensors are generally required to operate in environments 500 \u2103 or higher. However, the actual operating temperature of piezoelectric ceramics is only 1/2 \u223c 3/4 of the Curie temperature (T c), because close to the T c the depolarization phenomenon occurs and leads to piezoelectricity loss. Bismuth layered structural ferroelectrics (BLSFs) consist of (Am-1BmO3m+1)E^{2-} and (Bi2O2)E^{2+} arranged into a specific structure according to a certain law, and its chemical formula is (Bi2O2)E^{2+}(A m-1B m O3m+1)E^{2-}, which has the characteristics of high T c, high resistivity and low ageing rate, and it is the preferred material for high-temperature sensors nowadays. According to the report, Na0.25K0.25Bi2.5Nb2O9 (NKBN) is a typical m = 2 bismuth layered lead-free piezoelectric ceramic with high T c of 650 \u2103, large d 33 of 14 pC/N, high resistivity and electrical insulation. However, it also suffers from the same problem as the BLSFs. At present, chemical doping is a common method of enhancing the piezoelectric activity and thermal stability of NKBN materials. For example, the d 33 was increased to 28 pC/N, 23 p/N, and 25 pC/N by doping NKBN with Ce, Co, and Mn, respectively, but the d 33 decreased rapidly when the temperature approached 450 \u2103. On the other hand, since the Bi2O3 has a melting point of 817 \u2103, it is easily volatilized during ceramic sintering, increasing the carrier concentration and generating oxygen vacancies and holes. There are fewer reports on solving the problem of Bi volatilization in NKBN. In 0.7BiFeO3-0.3BaTiO3-based ceramics, it was found that an appropriate amount of compensation for Bi can promote domain switching, and a high d 33 of 214 pC/N, a T c of 528 \u2103 was obtained at 0.7Bi1.02FeO3-0.3BaTiO3. Excess Bi is an effective method of reducing oxygen vacancies in (K, Na)NbO3-based ceramic. The d 33 of 0.96K0.48Na0.52Nb0.96Sb0.04O3-0.04Bi0.525Na0.5ZrO3 reaches a maximum value of 522 pC/N, with a T c of 235 \u2103. In CaBi2Nb2O9-based ceramics, Li et al. used an excess of Bi to compensate for volatilization and achieved better performance. When the compensation amount of Bi is 0.04, the d 33 is as high as 15.1 pC/N and maintains 90 % of the starting value at 900 \u2103, the T c is 942 \u2103, and the resistivity is 2 \xd7 10E^{6} \u03a9 cm at 600 \u2103. In the BiFeO3 thin films system, it was found that lattice distortion could be induced by adding excess Bi, increasing the saturation polarization P s to 14.8 \u03bcC cmE^{\u22122}. A strategy to alleviate the volatilization of Bi by the Bi deficiency in NKBN-based ceramics was found, and it also could improve the piezoelectric properties while greatly improving the thermal stability. This work systematically studies the piezoelectric properties and thermal stability of NKBN-based ceramics in the Bi deficiency. The chemical formula is Na0.25K0.25Bi2.5+x Nb2O9+3x/2 (\u2212100xBi-NKBN) and obtained a high d 33 of 20 pC/N, a high T c of 651 \u2103 and good thermal stability (the d 33 remaining at 97 % of initial value when the annealing temperature is 600 \u2103) when x = \u22120.05.
+
+# CONCLUSION
+Na0.25K0.25Bi2.5+x Nb2O9+3x/2 ceramics were synthesized using a solid-state reaction method. XRD refinement and SEM results show that \u2212100xBi-NKBN ceramics were successfully synthesized in the Bi deficiency, and the Bi deficiency led to an increase in structural distortion. The oxygen vacancy concentration was calculated by XPS characterization and it found oxygen vacancy concentration decreased by Bi deficiency. Of all the samples, 5Bi-NKBN obtained the best overall performance, with a high d 33 of 20 pC/N, a high T c maintained at 651 \u2103, a high \u03c1 dc of 3.3 \xd7 10E^{5} \u03a9 cm at 600 \u2103 and super thermal stability (the d 33 remaining at 97 % of initial value when the annealing temperature is 600 \u2103). These findings provide new ideas to improve the performance of NKBN and lay the foundation for the application of NKBN in high-temperature fields.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-11 09:35:08: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Crystal data for \u2212100xBi-NKBN ceramics.
+|Compound| x\u202f=\u202f0| x\u202f=\u202f-0.01| x\u202f=\u202f-0.03| x\u202f=\u202f-0.05| x\u202f=\u202f-0.07| x\u202f=\u202f-0.10|
+|---|---|---|---|---|---|---|
+|Space group|A21 am (36)|A21 am (36)|A21 am (36)|A21 am (36)|A21 am (36)|A21 am (36)|
+|a (\xc5)|5.4833(3)|5.4884(2)|5.4863(2)|5.4885(2)|5.4910(2)|5.4852(2)|
+|b (\xc5)|5.4758(3)|5.4769(1)|5.4758(2)|5.4746(2)|5.4746(2)|5.4758(2)|
+|c (\xc5)|25.043(1)|25.069(1)|25.063(1)|25.067(1)|25.077(1)|25.046(1)|
+|V (\xc5E^{3})|751.91(9)|753.56(4)|752.96(8)|753.18(5)|753.77(8)|752.28(5)|
+|Rwp (%)|9.39|9.89|9.66|12.95|13.08|13.82|
+|Rp (%)|6.85|7.24|7.08|9.65|9.79|10.42|
+|Rexp (%)|2.64|2.80|2.72|3.06|3.54|3.59|
+|a/b|1.0013|1.0020|1.0020|1.0025|1.0030|1.0017|
+
+# RESULTS AND DISCUSSION
+XRD refinement allows better analysis of ceramic sample crystal structure changes. shows \u2212100xBi-NKBN sample structure refinement by using Jana 2006 software with the A21 am space group. The main phases of all samples matched the diffraction peaks of JCPDS No. 97\u2013018\u20136933, indicating that the \u2212100xBi-NKBN ceramics were successfully synthesized in the Bi deficiency. lists the crystal data and lattice parameter of \u2212100xBi-NKBN ceramics. The ratio of a/b in the orthorhombic crystal system indicates the degree of structural distortion, and the closer the ratio is to 1, the smaller the degree of structural distortion. The ratios of a/b for Bi deficiency samples are all greater than NKBN, suggesting that increasing Bi deficiency leads to an increase in structural distortion. The lattice parameters a, b, c, and unit cell volume V value of \u2212100xBi-NKBN are shown in. Noguchi et al. found that the perovskite layers are more prone to produce Bi vacancies than (Bi2O2)E^{2+} layers by calculating E vacancy, suggesting that the Bi deficiency originates mainly from the perovskite layers. In addition, there is compressive stress between the perovskite layer and the (Bi2O2)E^{2+} layer due to the mismatch of cell parameters of the two layers. The natural surface electron microscopy images of the \u2212100xBi-NKBN ceramic samples as shown in (a)-(f). Due to the low surface free energy in the a-b plane, the growth rate in this plane is faster than in other planes, resulting in all ceramic samples exhibiting a plate-like morphology typical of BLSFs. With the increasing Bi deficiency, the grain size and grain thickness also decrease gradually, which may be due to the reduced liquid medium of molten Bi2O3 in the Bi deficiency, which hinders the migration and diffusion of the reactants. The high sintering temperature of the ceramic samples resulted in the volatilization of Bi2O3. To verify whether the Bi deficiency of NKBN can mitigate the volatilization of Bi2O3, XPS measurements of NKBN and 5Bi-NKBN were performed to estimate the oxygen vacancy concentration. (a)-(b) are the XPS spectra of NKBN and 5Bi-NKBN, respectively. It was found that the XPS spectra of NKBN and 5Bi-NKBN show peak splitting and were fitted with peak splitting using Advantage software. The peak with a binding energy of 531.1 eV is the oxygen-deficient region V o \u2033, while the peak at 530.5 eV is the lattice oxygenV o x. In general, the oxygen vacancy concentration is the ratio of the area of V o \u2033 to the area of V o x in the sample. The oxygen vacancy concentration was calculated to be 0.30 for NKBN and 0.25 for 5Bi-NKBN. Oxygen vacancy concentration was significantly reduced, suggesting that the volatilization of Bi2O3 in NKBN can be alleviated by the Bi deficiency. DC resistivity is the main means of characterizing the insulating properties of piezoelectric ceramics. (a) shows DC resistivity of \u2212100xBi-NKBN. The DC resistivity decreases significantly with increasing temperature, it is clear that the DC resistivity is negatively correlated with the temperature. In addition, it can be found that the resistivity is close to 10E^{6} \u03a9\xb7cm at 600 \u2103. This may be due to reduced oxygen vacancies and holes due to the mitigated volatilization of Bi2O3 in the Bi deficiency. (b) shows the carrier activation energy (E a) of \u2212100xBi-NKBN ceramics calculated according to the Arrhenius equation. The E a of \u2212100xBi-NKBN was slightly lower compared to the E a of NKBN, which may be attributed to the decrease in grain size due to Bi deficiency, defect carriers and impurity ions are more likely to accumulate at grain boundaries. It can be found that the E a increases from 1.23 eV to 1.42 eV with the increasing Bi deficiency. This may be due to an increase in Bi deficiency resulting in increased barrier energy for the transport of charged carriers. (a) shows the \u03b5r and tan\u03b4 of \u2212100xBi-NKBN at 1 MHz. It can be found that the T c slightly decreases with the increase of Bi deficiency, and the T c of \u2212100xBi-NKBN is higher than 650 \u2103. (b) shows the variation of T c and tan\u03b4 at 600 \u2103 of \u2212100xBi-NKBN. The T c of 5Bi-NKBN and 7Bi-NKBN is the lowest, and the lowest T c is 651 \u2103, which indicates that the ceramic samples can still maintain high T c under the Bi deficiency. In addition, dielectric loss tan\u03b4 represents a significant parameter in practical applications. It can be found that the tan\u03b4 rises sharply above 500 \u2103, but even at 600 \u2103 the tan\u03b4 of Bi deficiency samples is as low as 0.08, while the tan\u03b4 of NKBN is 0.32. This may be attributed to a reduction in the concentration of oxygen vacancies and further verifies that the volatilization of Bi2O3 in NKBN can be mitigated by the Bi deficiency. (a) shows the radar diagram of NKBN and 5Bi-NKBN, which is mainly considered from five aspects, including T c, d 33, \u03c1 @600 \u2103, tan\u03b4 @600 \u2103, and oxygen vacancy concentration. The results show that the d 33 and DC resistivity are improved, tan\u03b4 and oxygen vacancy concentration are decreased while maintaining a higher T c in 5Bi-NKBN. Although the T c of 5Bi-NKBN has decreased, it remains at 651 \u2103. To study the thermal stability of NKBN in the Bi deficiency, all samples were annealed. (b) shows the variation of d 33 of \u2212100Bix-NKBN with annealing temperature. The results showed that the d 33 of all ceramics samples decreased rapidly exceeding 600 \u2103. Notably, the d 33 of 5Bi-NKBN only slightly decreases when the annealing temperature reaches 600 \xb0C, which keeps 97 % of the initial value of the d 33. In contrast, the d 33 of NKBN at 600 \u2103 is only 67 % of the initial value. It indicates that the thermal stability of NKBN has been greatly improved by the Bi deficiency, which lays a good foundation for the application of NKBN.
+
+# TITLE
+Superb thermal stability achieved in Na<inf>0.25</inf>K<inf>0.25</inf>Bi<inf>2.5</inf>Nb<inf>2</inf>O<inf>9</inf>-based piezoelectric ceramics via Bi deficiency
+
+# ABSTRACT
+Na0.25K0.25Bi2.5Nb2O9-based ceramics woule become one of the excellent candidate materials suitable for high-temperature applications, given that their piezoelectric properties can be effectively improved. In this work, a strategy of reducing the Bi content was used to improve the piezoelectric properties and thermal stability of Na0.25K0.25Bi2.5Nb2O9-based ceramics by means of designing the compositions of the Na0.25K0.25Bi2.5+x
+                     Nb2O9+3x/2 (−100xBi-NKBN, x = 0, −0.01, −0.03, −0.05, −0.07, −0.10). The effect of the Bi deficiency on the crystal structure, microscopic morphology, and electrical properties of NKBN-based ceramics was systematically investigated. By comparison, the Na0.25K0.25Bi2.45Nb2O8.925 ceramic obtains a large d
+                     33 of 20 pC/N, a high T
+                     c of 651 ℃, and a high resistivity ρ
+                     dc of 3.3 × 105 Ω cm at 600 ℃. The results demonstrate that the good d
+                     33 mainly stems from the increased lattice distortion and reduced oxygen vacancy concentration. More importantly, the d
+                     33 value can maintain 97 % of its initial value after it was annealed at 600 ℃, showing excellent thermal stability. This work provides a new idea for solving the problem of poor piezoelectricity of NKBN-based ceramics and lays the foundation for applying NKBN-based ceramics in the high-temperature field.
+
+# INTRODUCTION
+For example, in aerospace, sensors are generally required to operate in environments 500 \u2103 or higher. However, the actual operating temperature of piezoelectric ceramics is only 1/2 \u223c 3/4 of the Curie temperature (T c), because close to the T c the depolarization phenomenon occurs and leads to piezoelectricity loss. Bismuth layered structural ferroelectrics (BLSFs) consist of (Am-1BmO3m+1)E^{2-} and (Bi2O2)E^{2+} arranged into a specific structure according to a certain law, and its chemical formula is (Bi2O2)E^{2+}(A m-1B m O3m+1)E^{2-}, which has the characteristics of high T c, high resistivity and low ageing rate, and it is the preferred material for high-temperature sensors nowadays. According to the report, Na0.25K0.25Bi2.5Nb2O9 (NKBN) is a typical m = 2 bismuth layered lead-free piezoelectric ceramic with high T c of 650 \u2103, large d 33 of 14 pC/N, high resistivity and electrical insulation. However, it also suffers from the same problem as the BLSFs. At present, chemical doping is a common method of enhancing the piezoelectric activity and thermal stability of NKBN materials. For example, the d 33 was increased to 28 pC/N, 23 p/N, and 25 pC/N by doping NKBN with Ce, Co, and Mn, respectively, but the d 33 decreased rapidly when the temperature approached 450 \u2103. On the other hand, since the Bi2O3 has a melting point of 817 \u2103, it is easily volatilized during ceramic sintering, increasing the carrier concentration and generating oxygen vacancies and holes. There are fewer reports on solving the problem of Bi volatilization in NKBN. In 0.7BiFeO3-0.3BaTiO3-based ceramics, it was found that an appropriate amount of compensation for Bi can promote domain switching, and a high d 33 of 214 pC/N, a T c of 528 \u2103 was obtained at 0.7Bi1.02FeO3-0.3BaTiO3. Excess Bi is an effective method of reducing oxygen vacancies in (K, Na)NbO3-based ceramic. The d 33 of 0.96K0.48Na0.52Nb0.96Sb0.04O3-0.04Bi0.525Na0.5ZrO3 reaches a maximum value of 522 pC/N, with a T c of 235 \u2103. In CaBi2Nb2O9-based ceramics, Li et al. used an excess of Bi to compensate for volatilization and achieved better performance. When the compensation amount of Bi is 0.04, the d 33 is as high as 15.1 pC/N and maintains 90 % of the starting value at 900 \u2103, the T c is 942 \u2103, and the resistivity is 2 \xd7 10E^{6} \u03a9 cm at 600 \u2103. In the BiFeO3 thin films system, it was found that lattice distortion could be induced by adding excess Bi, increasing the saturation polarization P s to 14.8 \u03bcC cmE^{\u22122}. A strategy to alleviate the volatilization of Bi by the Bi deficiency in NKBN-based ceramics was found, and it also could improve the piezoelectric properties while greatly improving the thermal stability. This work systematically studies the piezoelectric properties and thermal stability of NKBN-based ceramics in the Bi deficiency. The chemical formula is Na0.25K0.25Bi2.5+x Nb2O9+3x/2 (\u2212100xBi-NKBN) and obtained a high d 33 of 20 pC/N, a high T c of 651 \u2103 and good thermal stability (the d 33 remaining at 97 % of initial value when the annealing temperature is 600 \u2103) when x = \u22120.05.
+
+# CONCLUSION
+Na0.25K0.25Bi2.5+x Nb2O9+3x/2 ceramics were synthesized using a solid-state reaction method. XRD refinement and SEM results show that \u2212100xBi-NKBN ceramics were successfully synthesized in the Bi deficiency, and the Bi deficiency led to an increase in structural distortion. The oxygen vacancy concentration was calculated by XPS characterization and it found oxygen vacancy concentration decreased by Bi deficiency. Of all the samples, 5Bi-NKBN obtained the best overall performance, with a high d 33 of 20 pC/N, a high T c maintained at 651 \u2103, a high \u03c1 dc of 3.3 \xd7 10E^{5} \u03a9 cm at 600 \u2103 and super thermal stability (the d 33 remaining at 97 % of initial value when the annealing temperature is 600 \u2103). These findings provide new ideas to improve the performance of NKBN and lay the foundation for the application of NKBN in high-temperature fields.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="```json
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Na0.25K0.25Bi2.5Nb2O9": 14,
+      "Na0.25K0.25Bi2.5Nb2O9 where x=0": 14,
+      "Na0.25K0.25Bi2.49Nb2O8.985 where x=-0.01": null,
+      "Na0.25K0.25Bi2.47Nb2O8.955 where x=-0.03": null,
+      "Na0.25K0.25Bi2.45Nb2O8.925 where x=-0.05": 20,
+      "Na0.25K0.25Bi2.43Nb2O8.895 where x=-0.07": null,
+      "Na0.25K0.25Bi2.4Nb2O8.85 where x=-0.10": null
+    },
+    "abbreviations": {
+      "NKBN": "Na0.25K0.25Bi2.5Nb2O9"
+    },
+    "property_unit": "pC/N",
+    "family": "Na0.25K0.25Bi2.5Nb2O9"
+  }
+}
+```"

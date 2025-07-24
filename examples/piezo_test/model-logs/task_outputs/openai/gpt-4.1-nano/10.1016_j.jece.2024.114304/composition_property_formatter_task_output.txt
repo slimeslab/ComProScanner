@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"In2Se3":1800,"SnSe":1600,"In2Se3@SnSe-3":13800,"(1-0)In2Se3 - (0)SnSe":1800,"(1-0.1)In2Se3 - (0.1)SnSe":13800,"(1-0.2)In2Se3 - (0.2)SnSe":13800,"(1-0.3)In2Se3 - (0.3)SnSe":13800,"(1-0.4)In2Se3 - (0.4)SnSe":13800,"(1-0.5)In2Se3 - (0.5)SnSe":13800},"property_unit":"pC/N","family":"BaTiO3"}}

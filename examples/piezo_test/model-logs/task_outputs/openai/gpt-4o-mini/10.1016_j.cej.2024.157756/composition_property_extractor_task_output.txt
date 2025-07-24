@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"P(VDF-TrFE) 80/20":-1044,"P(VDF-TrFE) 80/20 - corona-poled in water":-1045},"abbreviations":{"P(VDF-TrFE)":"Poly(vinylidene fluoride-co-trifluoroethylene)"},"property_unit":"pC/N","family":"Polymer"}}

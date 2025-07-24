@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Ba0.97Ca0.03TiO3":105,"Ba1-xCaxTiO3 where x=0":97,"Ba1-xCaxTiO3 where x=0.03":105,"Ba1-xCaxTiO3 where x=0.05":88,"Ba1-xCaxTiO3 where x=0.08":110},"abbreviations":{},"property_unit":"pC/N","family":"BaTiO3"}}

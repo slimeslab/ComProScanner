@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi4Ti3O12 (solid-phase synthesized)":4.25,"Bi4Ti3O12 (molten salt synthesized)":7.75,"Bi3La1Ti3O12":11.57},"abbreviations":{"BT-ST":"Bi4Ti3O12","BT":"Bi4Ti3O12","xBLT":"Bi4-xLaxTi3O12"},"property_unit":"pm/V","family":"Bi4Ti3O12"}}

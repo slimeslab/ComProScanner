@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"(K0.5Na0.5)0.99Eu0.01NbO3":null,"(K0.5Na0.5)1.00Eu0.01NbO3":135,"(K0.5Na0.5)1.01Eu0.01NbO3":null},"abbreviations":{"KNN":"(K0.5Na0.5)NbO3","KNEN":"(K0.50Na0.50)xEu0.01NbO3","PZT":"Pb(Zr,Ti)O3","RE":"rare-earth"},"property_unit":"pC/N","family":"KNbO3"}}

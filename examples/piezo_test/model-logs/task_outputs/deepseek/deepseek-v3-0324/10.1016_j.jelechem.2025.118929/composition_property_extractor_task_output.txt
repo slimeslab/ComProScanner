@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"LiTaO3":8},"abbreviations":{"LCO":"LiCoO2","LTO":"LiTaO3","STO":"SrTiO3","MTO":"MgTiO3"},"property_unit":"pC/N","family":"LiTaO3"}}

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BaTiO3":190,"BNNT":null,"B₂Ba₆TiO₆":null,"Ti₄N₃B₂":null},"property_unit":"pC/N","family":"Perovskites"}}

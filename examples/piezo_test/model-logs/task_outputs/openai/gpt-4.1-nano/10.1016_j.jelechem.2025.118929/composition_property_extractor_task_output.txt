@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"LiTaO3":8,"LiTaO3 - (Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords).":8},"abbreviations":{"LTO":"LiTaO3","STO":"SrTiO3","MTO":"MgTiO3"},"property_unit":"pC/N","family":"Piezoelectric/Ferroelectric"}}

@@ -1,0 +1,176 @@
+2025-07-09 13:21:52: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+a presents XRD pattern of (001)-BT platelets prepared by topochemical microcrystal conversion. The split (001)/(100) and (002)/(200) peaks reveal tetragonal perovskite structure of BT plates. The aspect ratio of single-crystal plates is > 10, length \u223c10\u201315 \u03bcm and thickness \u223c0.8\u20131.0 \u03bcm. The XRD patterns of Mn-doped PYN-PMN-PT ceramics, both textured and non-textured, are shown in a. In comparison to the random ceramics, the (110) peak is significantly reduced in the textured samples, while the (100)/(200) peaks show a remarkable increase, indicating a highly oriented grain orientation along [001]. The sintering process resulted in heteroepitaxial growth with approximately F 001 \u223c90 % achieved using aligned BaTiO3 plate templates. d reveals rocking curves of the random and textured ceramics along <002> peaks. And the modified March-Dollase function was used to fit the orientation distribution: where r represents orientation parameters of the textured grains and \u03c9 represents the angle between the scattering vector and the texturing axis. The lower r value \u223c0.28 further verifies the highly [001]-preferred grain orientation of textured ceramics. The grain orientation is further confirmed by the microstructure features, as depicted in b and c, for the cross-section images of both random and textured PYN-PMN-PT ceramics. Despite having similar average grain sizes (\u223c13.5 \u03bcm), they display distinct arrangements and distributions. Besides, the BT templates can be distinguished from the backscattered electron images, as indicated by the black sheets in b, which demonstrates the effective alignment of BT templates achieved through tape casting and resulting in a highly [001]-oriented grain morphology. However, it is worth noting that a few small randomly ordered grains are still observable in textured PYN-PMN-PT ceramics, suggesting incomplete consumption of random matrix grains during the texturing evolution. Temperature dependence of dielectric constant (\u03b5 r) and loss (tan\u03b4) of random and textured ceramics were shown in a and c. To explicate the relaxor behavior of them, relaxation factor r was calculated by the modified Curie-Weiss equation as follow: where \u03b5 m and T m are the maximum dielectric constant and the corresponding temperature. r values of both samples were \u223c1.90 at 1k Hz and slightly increased at higher frequency. It means that Mn-doped PYN-PMN-PT solution belongs to the typical relaxor-based ferroelectric. Owning to the lower T c (\u223c120 \xb0C) of BaTiO3 , T c of textured ceramics decreased slightly to 181 \xb0C, compared with 190 \xb0C in random samples. Another phase transition from rhombohedral to tetragonal occurred at \u223c115 \xb0C in random samples, but the peaks became hardly detectable in textured Mn-doped PYN-PMN-PT ceramics. The mismatch between BT templates and matrix would result in structure shift toward to tetragonal and domain wall motions clamping effects near the interfaces between heterogeneous templates and textured grains. Also, all temperature dependence of dielectric content curves shown small shape peaks around 150 \xb0C and 130 \xb0C for random and textured sample, respectively. This could be attributed to transition of PNRs in PYN-PMN-PT ferroelectrics. Compared to random samples, textured Mn-doped PYN-PMN-PT ceramics possessed larger dielectric constant \u03b5 r at room temperature and smaller maximum dielectric constant \u03b5 m at T c. At 1 kHz, \u03b5 r at room temperature and \u03b5 m at T c for random and textured ceramics were 1250, 16687 and 2367, 11110, respectively. The changes of dielectric contain in textured ceramics mainly own to the [001]-oriented grain morphology. Contributed to forming of \u201c4R\u201d domain configuration in rhombohedral and \u201c1T\u201d domain configuration in tetragonal as poled along [001] direction, naturally, perovskite ferroelectrics hold the highest dielectric constants in rhombohedral and the lowest values in tetragonal. Both random and textured ceramics possessed very low dielectric loss tan\u03b4. The value of tan\u03b4 was \u223c0.38 % for random and \u223c0.52 % for textured samples. The mechanical quality factor Q m sharply decreased from \u223c590 in random sample to \u223c133 in textured Mn-doped ceramics. The tendency was same as the previous reports of Mn-doped textured PT-based ceramics. The formation of [001]-orientation microstructure relaxes the pinning effect caused by Mn-doping, leading to \u201csoften\u201d electrical properties in textured ceramics. The piezoelectric coefficient d 33 of textured Mn-doped PYN-PMN-PT sample was 607 pC/N, nearly double of value (306 pC/N) in random ceramic. The electromechanical coupling factor k p also increased from 0.50 to 0.65 in textured samples. Compared to random sample, the textured ceramics exhibited much higher peak-to-peak strain value of S pp\u223c0.48 %, demonstrating its feasibility in actuator devices. The enhancement could own to the highly [001] oriented grain structure and reducing of pinning effects from oxygen vacancy defects, which would significantly facilitate polarization rotation. Additionally, both random and textured ceramics shown asymmetric butterfly S-E loops, typical phenomenon of \u201chard\u201d piezoelectrics. High electric fields with frequency f = 2 Hz were applied to measure the P-E loops of Mn-doped PYN-PMN-PT ceramics, and the results are shown in b. Owing to the [001] grains orientation, the remnant polarization (P r) of textured ceramics decreased slightly. The coercive fields (E c) increased from 9.9 kV/cm in random ceramics to 10.8 kV/cm in textured samples. Local internal stress-rich areas were built up close to the interfaces of templates and textured grains, which come from crystal lattices parameter mismatch between BT and PYN-PMN-PT. Based on the previous publication of Electron Spin Resonance spectra on Mn-doped relaxor-PT ferroelectric , MnE^{2+} ions exist and replace higher valence ions in B sites, forming oxygen vacancies. Both loops in b are asymmetrical, where E i was 1.03 kV/cm and 0.66 kV/cm for random and textured ceramics, respectively. It means the defect dipoles, rather than clamping effect by BT templates, are dominant to internal bias fields. Two different kinds of dipoles, spontaneous dipoles and defect dipoles, are coexistent in Mn-doped PYN-PMN-PT ceramics. Owning to the [001] orientation in textured ceramics, defect dipoles switch occurred from {111} to [001], which were much easier than those reorientation with larger angles changed in random ceramics. Consequently, electric properties of textured ceramics would be \u201csoften\u201d. Further clarify the effect of texturing on E i in Mn-doped PMN-PMN-PT ceramics, 30 kV/cm electric fields with frequency range of 0.25\u201320 Hz were applied. a shows the P-E loops of textured ceramics measured at various frequencies. The E i values were calculated via Equation , and b displays the comparation of E i values for random and textured Mn-doped PMN-PMN-PT ceramics. For the textured sample, E i increases from 0.37 kV/cm at 0.25 Hz to about 0.91 kV/cm at 5 Hz, then reaches 1.18 kV/cm at 20 Hz. It seems that E i saturated frequency of [001]-textured ceramic is lower than random ceramics. This might be related to the clamping effect by residual BT templates via TGG. The hysteresis loops of Mn-doped PYN-PMN-PT ceramics were measured in temperature range of 30\u2013160 \xb0C. Both samples shown similar linear decreasing until 115 \xb0C, after which decline peaks appear between 115 \xb0C and 130 \xb0C. It should be noticed that E i drop of textured ceramics is much larger than that of random samples, which decrease from 0.47 kV/cm at 115 \xb0C to 0.23 kV/cm at 130 \xb0C, compared with a 0.08 kV/cm drop in random ceramics. The E i of random samples hold steady as further increased temperature to 160 \xb0C, compared with a near-zero E i in [001]-textured ceramics. The textured ceramics are highly [001]-oriented. As temperature raised up to 115 \xb0C, phase transition from rhombohedral to tetragonal occurred, resulting in domain configuration changing from \u201c4R\u201d to \u201c1T\u201d. As we known, spontaneous dipoles of tetragonal ferroelectric are along [001]. The defect dipole orientation in Mn-doped [001]-textured ceramics is parallel to external field, leading to the sharply drop of E i as phase transition occurred.
+
+# TITLE
+Synergetic enhancement in the piezoelectric coefficient and electromechanical factor in PYN-PMN-PT ceramics via texture engineering
+
+# ABSTRACT
+[001] textured Mn-doped Pb(Yn1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (PYN-PMN-PT) ceramics were fabricated via the template grain growth (TGG) method using 3 vol% BaTiO3 (BT) plate-like templates. Benefit to the [001] grain orientation and “4R” domain configuration, Mn-doped PYN-PMN-PT textured ceramics exhibited significantly enhanced piezoelectric and electromechanical properties. In comparison to randomly oriented ceramics, the textured sample exhibited a nearly doubled piezoelectric coefficient d
+                     33 of 607 pC/N (compared to 306 pC/N) and an increased electromechanical coupling factor k
+                     p from 0.50 to 0.65. The smaller internal bias field and near-zero values as temperature over T
+                     R-T in [001] textured ceramics indicated facilitated polarization rotation and smoothed pinning effect induced by Mn doping. As a consequence, by forming oriented polarization configuration, [001]-textured ceramics become softer, leading to high piezoelectric properties.
+
+# INTRODUCTION
+Hard piezoelectric materials with high mechanical quality factor Q m and low dielectric loss tan\u03b4 are urgently desired in high-powder devices. Highly [001]-textured ferroelectric ceramics, particularly relaxor-PbTiO3 (PT) compositions near the morphotropic phase boundary (MPB), have achieved remarkably high electromechanical and piezoelectric properties. Notably, highly [001]-oriented PT-based textured ferroelectrics have reported piezoelectric coefficients d 33 > 1000 pC/N. Furthermore, the electromechanical coupling factor k 33 of these highly [001]-textured relaxor-PT ceramics is approximately 0.90 - a value close to that of single crystals. For instance, [001]-textured Mn-doped PIN-PMN-PT textured ceramics exhibited d 33\u223c517 pC/N, Q m\u223c1147 and tan\u03b4 = 0.49 %. Cu/Mn co-doped PIN-PMN-PT ceramics increased d 33 to 713 pC/N while maintaining a high Q m \u223c 950. However, it should also be noted that the Q m values of textured ceramics are still lower than those of randomly oriented ceramics (Q m of 2381 for Mn-doped PIN-PMN-PT random ceramic). In this study, the Mn-doped Pb(Yn1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (PYN-PMN-PT) was textured using the template grain growth method (TGG), with (001)-BaTiO3 (BT) microplates as templates. The microstructure and electrical properties of [001]-textured Mn-doped PYN-PMN-PT ceramics were investigated, specifically focusing on the frequency and temperature dependence of P\u2013E loops in both random and textured ceramics to elucidate the relationship between internal bias field E i and temperature/frequency.
+
+# CONCLUSION
+[001]-textured Mn-doped PYN-PMN-PT ceramics with texture degree F 001\u223c90 % were fabricated by TGG method using BaTiO3 templates. Owing to forming of special \u201c4R\u201d domain configuration, the textured ceramics become soften. Dielectric loss tan\u03b4 slightly increases and mechanical quality factor Q m sharply decreased, changing from \u223c0.38 % to \u223c590 for random to \u223c0.52 % and \u223c133 for textured samples, respectively. The textured ceramics show enhanced electromechanical properties: \u03b5 r = 2367, d 33 = 607 pC/N, k p = 0.65 and S pp\u223c0.48 %. The [001] oriented grains rearrange the defect dipoles, weakening internal bias fields in textured ceramics.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-09 13:21:55: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+a presents XRD pattern of (001)-BT platelets prepared by topochemical microcrystal conversion. The split (001)/(100) and (002)/(200) peaks reveal tetragonal perovskite structure of BT plates. The aspect ratio of single-crystal plates is > 10, length \u223c10\u201315 \u03bcm and thickness \u223c0.8\u20131.0 \u03bcm. The XRD patterns of Mn-doped PYN-PMN-PT ceramics, both textured and non-textured, are shown in a. In comparison to the random ceramics, the (110) peak is significantly reduced in the textured samples, while the (100)/(200) peaks show a remarkable increase, indicating a highly oriented grain orientation along [001]. The sintering process resulted in heteroepitaxial growth with approximately F 001 \u223c90 % achieved using aligned BaTiO3 plate templates. d reveals rocking curves of the random and textured ceramics along <002> peaks. And the modified March-Dollase function was used to fit the orientation distribution: where r represents orientation parameters of the textured grains and \u03c9 represents the angle between the scattering vector and the texturing axis. The lower r value \u223c0.28 further verifies the highly [001]-preferred grain orientation of textured ceramics. The grain orientation is further confirmed by the microstructure features, as depicted in b and c, for the cross-section images of both random and textured PYN-PMN-PT ceramics. Despite having similar average grain sizes (\u223c13.5 \u03bcm), they display distinct arrangements and distributions. Besides, the BT templates can be distinguished from the backscattered electron images, as indicated by the black sheets in b, which demonstrates the effective alignment of BT templates achieved through tape casting and resulting in a highly [001]-oriented grain morphology. However, it is worth noting that a few small randomly ordered grains are still observable in textured PYN-PMN-PT ceramics, suggesting incomplete consumption of random matrix grains during the texturing evolution. Temperature dependence of dielectric constant (\u03b5 r) and loss (tan\u03b4) of random and textured ceramics were shown in a and c. To explicate the relaxor behavior of them, relaxation factor r was calculated by the modified Curie-Weiss equation as follow: where \u03b5 m and T m are the maximum dielectric constant and the corresponding temperature. r values of both samples were \u223c1.90 at 1k Hz and slightly increased at higher frequency. It means that Mn-doped PYN-PMN-PT solution belongs to the typical relaxor-based ferroelectric. Owning to the lower T c (\u223c120 \xb0C) of BaTiO3 , T c of textured ceramics decreased slightly to 181 \xb0C, compared with 190 \xb0C in random samples. Another phase transition from rhombohedral to tetragonal occurred at \u223c115 \xb0C in random samples, but the peaks became hardly detectable in textured Mn-doped PYN-PMN-PT ceramics. The mismatch between BT templates and matrix would result in structure shift toward to tetragonal and domain wall motions clamping effects near the interfaces between heterogeneous templates and textured grains. Also, all temperature dependence of dielectric content curves shown small shape peaks around 150 \xb0C and 130 \xb0C for random and textured sample, respectively. This could be attributed to transition of PNRs in PYN-PMN-PT ferroelectrics. Compared to random samples, textured Mn-doped PYN-PMN-PT ceramics possessed larger dielectric constant \u03b5 r at room temperature and smaller maximum dielectric constant \u03b5 m at T c. At 1 kHz, \u03b5 r at room temperature and \u03b5 m at T c for random and textured ceramics were 1250, 16687 and 2367, 11110, respectively. The changes of dielectric contain in textured ceramics mainly own to the [001]-oriented grain morphology. Contributed to forming of \u201c4R\u201d domain configuration in rhombohedral and \u201c1T\u201d domain configuration in tetragonal as poled along [001] direction, naturally, perovskite ferroelectrics hold the highest dielectric constants in rhombohedral and the lowest values in tetragonal. Both random and textured ceramics possessed very low dielectric loss tan\u03b4. The value of tan\u03b4 was \u223c0.38 % for random and \u223c0.52 % for textured samples. The mechanical quality factor Q m sharply decreased from \u223c590 in random sample to \u223c133 in textured Mn-doped ceramics. The tendency was same as the previous reports of Mn-doped textured PT-based ceramics. The formation of [001]-orientation microstructure relaxes the pinning effect caused by Mn-doping, leading to \u201csoften\u201d electrical properties in textured ceramics. The piezoelectric coefficient d 33 of textured Mn-doped PYN-PMN-PT sample was 607 pC/N, nearly double of value (306 pC/N) in random ceramic. The electromechanical coupling factor k p also increased from 0.50 to 0.65 in textured samples. Compared to random sample, the textured ceramics exhibited much higher peak-to-peak strain value of S pp\u223c0.48 %, demonstrating its feasibility in actuator devices. The enhancement could own to the highly [001] oriented grain structure and reducing of pinning effects from oxygen vacancy defects, which would significantly facilitate polarization rotation. Additionally, both random and textured ceramics shown asymmetric butterfly S-E loops, typical phenomenon of \u201chard\u201d piezoelectrics. High electric fields with frequency f = 2 Hz were applied to measure the P-E loops of Mn-doped PYN-PMN-PT ceramics, and the results are shown in b. Owing to the [001] grains orientation, the remnant polarization (P r) of textured ceramics decreased slightly. The coercive fields (E c) increased from 9.9 kV/cm in random ceramics to 10.8 kV/cm in textured samples. Local internal stress-rich areas were built up close to the interfaces of templates and textured grains, which come from crystal lattices parameter mismatch between BT and PYN-PMN-PT. Based on the previous publication of Electron Spin Resonance spectra on Mn-doped relaxor-PT ferroelectric , MnE^{2+} ions exist and replace higher valence ions in B sites, forming oxygen vacancies. Both loops in b are asymmetrical, where E i was 1.03 kV/cm and 0.66 kV/cm for random and textured ceramics, respectively. It means the defect dipoles, rather than clamping effect by BT templates, are dominant to internal bias fields. Two different kinds of dipoles, spontaneous dipoles and defect dipoles, are coexistent in Mn-doped PYN-PMN-PT ceramics. Owning to the [001] orientation in textured ceramics, defect dipoles switch occurred from {111} to [001], which were much easier than those reorientation with larger angles changed in random ceramics. Consequently, electric properties of textured ceramics would be \u201csoften\u201d. Further clarify the effect of texturing on E i in Mn-doped PMN-PMN-PT ceramics, 30 kV/cm electric fields with frequency range of 0.25\u201320 Hz were applied. a shows the P-E loops of textured ceramics measured at various frequencies. The E i values were calculated via Equation , and b displays the comparation of E i values for random and textured Mn-doped PMN-PMN-PT ceramics. For the textured sample, E i increases from 0.37 kV/cm at 0.25 Hz to about 0.91 kV/cm at 5 Hz, then reaches 1.18 kV/cm at 20 Hz. It seems that E i saturated frequency of [001]-textured ceramic is lower than random ceramics. This might be related to the clamping effect by residual BT templates via TGG. The hysteresis loops of Mn-doped PYN-PMN-PT ceramics were measured in temperature range of 30\u2013160 \xb0C. Both samples shown similar linear decreasing until 115 \xb0C, after which decline peaks appear between 115 \xb0C and 130 \xb0C. It should be noticed that E i drop of textured ceramics is much larger than that of random samples, which decrease from 0.47 kV/cm at 115 \xb0C to 0.23 kV/cm at 130 \xb0C, compared with a 0.08 kV/cm drop in random ceramics. The E i of random samples hold steady as further increased temperature to 160 \xb0C, compared with a near-zero E i in [001]-textured ceramics. The textured ceramics are highly [001]-oriented. As temperature raised up to 115 \xb0C, phase transition from rhombohedral to tetragonal occurred, resulting in domain configuration changing from \u201c4R\u201d to \u201c1T\u201d. As we known, spontaneous dipoles of tetragonal ferroelectric are along [001]. The defect dipole orientation in Mn-doped [001]-textured ceramics is parallel to external field, leading to the sharply drop of E i as phase transition occurred.
+
+# TITLE
+Synergetic enhancement in the piezoelectric coefficient and electromechanical factor in PYN-PMN-PT ceramics via texture engineering
+
+# ABSTRACT
+[001] textured Mn-doped Pb(Yn1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (PYN-PMN-PT) ceramics were fabricated via the template grain growth (TGG) method using 3 vol% BaTiO3 (BT) plate-like templates. Benefit to the [001] grain orientation and “4R” domain configuration, Mn-doped PYN-PMN-PT textured ceramics exhibited significantly enhanced piezoelectric and electromechanical properties. In comparison to randomly oriented ceramics, the textured sample exhibited a nearly doubled piezoelectric coefficient d
+                     33 of 607 pC/N (compared to 306 pC/N) and an increased electromechanical coupling factor k
+                     p from 0.50 to 0.65. The smaller internal bias field and near-zero values as temperature over T
+                     R-T in [001] textured ceramics indicated facilitated polarization rotation and smoothed pinning effect induced by Mn doping. As a consequence, by forming oriented polarization configuration, [001]-textured ceramics become softer, leading to high piezoelectric properties.
+
+# INTRODUCTION
+Hard piezoelectric materials with high mechanical quality factor Q m and low dielectric loss tan\u03b4 are urgently desired in high-powder devices. Highly [001]-textured ferroelectric ceramics, particularly relaxor-PbTiO3 (PT) compositions near the morphotropic phase boundary (MPB), have achieved remarkably high electromechanical and piezoelectric properties. Notably, highly [001]-oriented PT-based textured ferroelectrics have reported piezoelectric coefficients d 33 > 1000 pC/N. Furthermore, the electromechanical coupling factor k 33 of these highly [001]-textured relaxor-PT ceramics is approximately 0.90 - a value close to that of single crystals. For instance, [001]-textured Mn-doped PIN-PMN-PT textured ceramics exhibited d 33\u223c517 pC/N, Q m\u223c1147 and tan\u03b4 = 0.49 %. Cu/Mn co-doped PIN-PMN-PT ceramics increased d 33 to 713 pC/N while maintaining a high Q m \u223c 950. However, it should also be noted that the Q m values of textured ceramics are still lower than those of randomly oriented ceramics (Q m of 2381 for Mn-doped PIN-PMN-PT random ceramic). In this study, the Mn-doped Pb(Yn1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (PYN-PMN-PT) was textured using the template grain growth method (TGG), with (001)-BaTiO3 (BT) microplates as templates. The microstructure and electrical properties of [001]-textured Mn-doped PYN-PMN-PT ceramics were investigated, specifically focusing on the frequency and temperature dependence of P\u2013E loops in both random and textured ceramics to elucidate the relationship between internal bias field E i and temperature/frequency.
+
+# CONCLUSION
+[001]-textured Mn-doped PYN-PMN-PT ceramics with texture degree F 001\u223c90 % were fabricated by TGG method using BaTiO3 templates. Owing to forming of special \u201c4R\u201d domain configuration, the textured ceramics become soften. Dielectric loss tan\u03b4 slightly increases and mechanical quality factor Q m sharply decreased, changing from \u223c0.38 % to \u223c590 for random to \u223c0.52 % and \u223c133 for textured samples, respectively. The textured ceramics show enhanced electromechanical properties: \u03b5 r = 2367, d 33 = 607 pC/N, k p = 0.65 and S pp\u223c0.48 %. The [001] oriented grains rearrange the defect dipoles, weakening internal bias fields in textured ceramics.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Pb(Yn1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 + Mn": 607,
+      "Pb(Yn1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 + Mn (random)": 306
+    },
+    "abbreviations": {
+      "BT": "BaTiO3",
+      "PT": "PbTiO3",
+      "PYN-PMN-PT": "Pb(Yn1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3"
+    },
+    "property_unit": "pC/N",
+    "family": "PZN-PT"
+  }
+}"

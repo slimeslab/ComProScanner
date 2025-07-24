@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"PZT-8":218},"property_unit":"pC/N","family":"PZT"}}

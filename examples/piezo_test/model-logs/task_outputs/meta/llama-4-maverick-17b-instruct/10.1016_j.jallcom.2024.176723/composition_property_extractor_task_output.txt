@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"AlN":5.0},"abbreviations":{},"property_unit":"pC/N","family":"AlN"}}

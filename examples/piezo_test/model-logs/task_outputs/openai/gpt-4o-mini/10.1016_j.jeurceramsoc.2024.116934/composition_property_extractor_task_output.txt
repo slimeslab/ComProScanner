@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"(Ba0.85Ca0.15)(Zr0.1Ti0.9)O3":513,"BCZT":395},"abbreviations":{"BCZT":"(Ba0.85Ca0.15)(Zr0.1Ti0.9)O3","ITO":"Indium Tin Oxide"},"property_unit":"pC/N","family":"BCZT"}}

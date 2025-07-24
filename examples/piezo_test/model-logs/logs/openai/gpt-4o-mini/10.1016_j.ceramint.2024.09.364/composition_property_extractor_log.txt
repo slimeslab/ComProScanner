@@ -1,0 +1,408 @@
+2025-07-10 09:59:03: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The principal properties of BTN-100xCe ceramics.
+|Sample| d 33 (pC/N)| T c (\xb0C)| \u03c1 (\u03a9\xb7cm)@500\xa0\xb0C|tan\u03b4 @1\xa0MHz,500\xa0\xb0C| E a1 (eV)| E a2 (eV)|
+|---|---|---|---|---|---|---|
+|x\xa0=\xa00|3.1|890.2|2.76\xa0\xd7\xa010E^{4}|0.584|0.67|1.21|
+|x\xa0=\xa00.01|5|891.4|2.17\xa0\xd7\xa010E^{5}|0.255|0.71|1.65|
+|x\xa0=\xa00.03|12.4|890.8|2.41\xa0\xd7\xa010E^{6}|0.037|0.74|1.43|
+|x\xa0=\xa00.05|15.1|880.4|4.58\xa0\xd7\xa010E^{5}|0.054|0.6|1.16|
+|x\xa0=\xa00.07|17.1|886.5|1.22\xa0\xd7\xa010E^{6}|0.043|0.61|1.3|
+|x\xa0=\xa00.09|15.7|873.7|3.35\xa0\xd7\xa010E^{5}|0.079|0.57|0.98|
+|x\xa0=\xa00.11|12.5|866.6|2.43\xa0\xd7\xa010E^{5}|0.106|0.59|0.95|
+
+# RESULTS AND DISCUSSION
+(a) shows the XRD patterns of BTN-100xCe ceramics. It can be seen that all the patterns match well with a BTN standard card (PDF#00-039-0233), and no any secondary phases can be detected, indicating that Ce ions should be successfully incorporated into the lattice of BTN to form a solid solution. The strongest diffraction peak of the (115) plane is consistent with the most intense reflection of (112 m + 1) in BLSF. Basically, CeE^{4+} ion has different ionic radius depending on its coordination number (CN), i.e., CeE^{4+} (r i = 1.14 \xc5, CN = 12) and CeE^{4+} (r i = 0.87 \xc5, CN = 6). Therefore, CeE^{4+} ion can not only enter the BiE^{3+} (r i = 1.35 \xc5, CN = 12) position in the A-site to shrink the lattice, but also enter the TiE^{4+} (r i = 0.605 \xc5, CN = 6) or NbE^{5+} (r i = 0.64 \xc5, CN = 6) position in the B-site to expand the lattice. As shown in (b), from x = 0 to 0.03, the position of (115) peak remains basically unchanged, indicating that CeE^{4+} ions may enter both A- and B-sites simultaneously, and the lattice shrinkage and expansion are basically balanced. For the sample with x = 0.05, however, the (115) peak suddenly shifts towards a lower angle, indicating that the B-site substitution dominates. Subsequently, the (115) peak gradually shifts towards higher angles, demonstrating a change of mode dominated by A-site substitution. Generally, The orthorhombicity \u0394 is defined as 2|a-b|/(a+b) and used to describe the orthorhombic distortion. The calculated \u0394 and unit cell volume as a function of Ce doping amount are shown in (d). It can be seen that the change in unit cell volume is basically the same as the shift of (115) peak in (b). However, the variation of \u0394 with Ce doping amount does not follow the same law, which should be closely related to the complex lattice distortion caused by Ce ions entering both A- and B-sites simultaneously. To further explain the \u0394 anomalies, as shown in , the BTN-100xCe ceramics with x = 0, 0.03, 0.07 and 0.11 were refined by GSAS II software, and the visual crystal structure models were drawn using VESTA software. It can be seen that the offset angle of the [Ti/NbO6] octahedron along the c-axis becomes large, then small and then large again with the increase of Ce doping amount, which corresponds to the change of \u0394. Since Ce ions enter both A-site and B-site at the same time, and the space of B-site is small, the effect of expanding the lattice is greater when the doping amount is low, which leads to a significant shift of the [Ti/NbO6] octahedron along the c-axis. When the doping amount increases, more Ce ions enter the A-site, the effect of lattice shrinkage gradually increases, at which time the shift of the [Ti/NbO6] octahedron is partially canceled. The lattice shrinkage will be more pronounced when the doping amount is higher, resulting in the offset of the [Ti/NbO6] octahedron becoming large again. In order to further investigate the effect of Ce doping on the structure of BTN-100xCe ceramics, Raman spectroscopy measurement is performed to analyze local phase structure characteristics. As shown in (a), all Raman patterns of BTN-100xCe ceramics at room temperature have similar configuration associated with orthorhombic symmetry, further indicating that Ce ions should incorporate into the crystal lattice and do not change the structural symmetry. The fitted Raman pattern for the represented BTN-7Ce ceramic sample is shown in (b), which displays that the Raman pattern can be well fitted and decomposed into seven independent Raman peaks marked from v1 to v7 according to the increase of wave number, in agreement with previously reported. For different BTN-100xCe ceramics, the wave number of fitted Raman peaks as a function of Ce doping amount are shown in (c) and (d). As seen from (c), the mode v1, being related to the vibration of Bi ions in the (Bi2O2)E^{2+} layers, is basically no change with Ce doping. The modes v2 and v3, which are linked to the vibration of BiE^{3+} ions in the A-site of perovskite-like layers, show a certain Raman shift with Ce doping amount, especially after Ce doping amount x \u2265 0.05, indicating that the influence of Ce doping on A-site is more significant in this situation, which is highly consistent with the XRD structural analysis results in. Nevertheless, the mode v4, as well as the modes v5, v6 and v7 shown in (d), exhibit varying degrees of fluctuations as a function of Ce doping amount. It is believed that the mode v4 is associated with the vibration of B-site ions (TiE^{4+}/NbE^{5+}) along c-direction, while modes v5, v6 and v7 relate to rocking, external apical oxygen atom and symmetric stretching of the [Ti/NbO6] octahedron in the a-b plane respectively. The microstructure features of BTN-100xCe ceramics are shown in (a)\u20134(g), and the grain length and thickness, as well as L/T ratio as a function of Ce doping amount is given in (h). As seen from (a), pure BTN ceramics exhibits a typical BLSF anisotropic morphology with large aspect ratio plate-like grains. Actually, similar phenomenon has also been observed in our previous work on Ce-doped CaBi2Nb2O9 ceramics, which is attributed to Ce doping can effectively reduce the diffusion of ions along the a-b plane during sintering. It will enable the ceramics to withstand higher voltages during polarization and achieve better piezoelectric properties. gives the temperature dependent dielectric constant and loss of BTN-100xCe ceramics, and the inset shows the Curie temperature T C as a function of Ce doping amount. The P-E loops of BTN-100xCe ceramics are shown in (a). For the ceramics with x \u2264 0.07, under an applied electric field of 150 kV/cm, only a well saturated P-E loop with a strongly enhanced P r can be achieved in BTN-7Ce ceramics, indicating its improved ferroelectric domain switching. However, for the ceramics with x \u2265 0.09, the samples cannot be subjected to a higher electric field due to excessive leakage current during testing, and the P-E loops look like \u2018\u2018smiling mouth\u2019\u2019 as previously reported. For BLSF ceramics, it was reported that defects and larger displacement of the B-site ions will lead to larger coercive field, which may cause the ferroelectric domains difficult to be switched. As discussed in , the lattice distortion of the samples becomes large and the offset of the [Ti/NbO6] octahedron along the c-axis increases when x = 0.01\u20130.05, which leads to a large coercive field, resulting in unsaturated P-E loops. However, for the sample x = 0.07, the offset of the [Ti/NbO6] octahedron along the c-axis decreases, and such abnormal orthorhombic distortion may lower the coercive field and then make the P-E loop becoming saturated. It was known that the piezoelectric properties were closely related to polarization obeyed by an equation d = 2\u03b5P r Q for ferroelectric materials. As seen from (b), which shows the remnant polarization P r and piezoelectric constant d 33 as a function of Ce doping amount, the d 33 basically follows a similar changing trend to P r. The exact d 33 values are also listed in. For the ceramic sample with x = 0.07, a peak d 33 value of 17.1 pC/N can be obtained, which is nearly 6 times that of pure BTN ceramics (d 33 \u2248 3 pC/N). The electrical resistivity \u03c1 of BTN-100xCe ceramics as a function of temperature is shown in (a). The electrical resistivity at 500 \xb0C as a function of Ce doping amount is plotted in (b). As is known, BLSF ceramics normally exhibit p-type conductivity behavior due to the volatilization of Bi during sintering. In this work, replacing BiE^{3+} with CeE^{4+} may generate electrons (Ce +\u2192 CeBi\xb7+ e\u2032E^{4}), thereby neutralizing holes (h\xb7+ e\u2032\u2192null) and reducing conductivity. So it can be seen from (b) that a small amount of Ce doping (x \u2264 0.03) significantly increases the resistivity. With further increasing Ce doping amount (x \u2265 0.05), the resistivity has slightly fluctuated and decreased again, which is also probably due to the simultaneous entry of Ce ions into both A- and B-sites. (c) presents Arrhenius relationship between conductivity and temperature of BTN-100xCe ceramics. The activation energy E a is calculated by fitting the experimental data according to Arrhenius equation of \u03c3= \u03c30exp ( \u2212 Ea/kT), and the results are provided in (d), where \u03c3 0 is the pre-exponential factor, E a is the activation energy and k represents the Boltzmann's constant. The conduction behavior of BTN-100xCe ceramics can be characterized by two different temperature regions with an inflexion at 460 \xb0C, showing similar phenomenon to our previous work. In low temperature region (<460 \xb0C), the calculated E a1 is 0.56 eV\u20130.74 eV, demonstrating the conductivity mechanism is extrinsic conductance dominated by defects. In high-temperature region (>460 \xb0C), however, the calculated E a2 is 0.95 eV\u20131.65 eV, implying the intrinsic charge carrier conduction mechanism. summarizes the comparison of d 33 of BTN-based piezoelectric ceramics prepared in this work with previous reports , and it can be found that the d 33 obtained in this work is superior to most of the reports. The principal properties of BTN-100xCe ceramics are summarized and listed in.
+
+# TITLE
+Significantly enhanced piezoelectric response in Aurivillius Bi<inf>3</inf>TiNbO<inf>9</inf> ceramics simply by Ce doping
+
+# ABSTRACT
+Bi3-x
+                     Ce
+                        x
+                     TiNbO9 (BTN-100xCe, x = 0, 0.01, 0.03, 0.05, 0.07, 0.09, 0.11) piezoelectric ceramics with ultra-high Curie temperature were fabricated by a solid-state sintering method, and the effect of Ce doping on the structure, dielectric and piezoelectric properties of the ceramics was investigated. The resistivity markedly increases after Ce modification, and a significantly enhanced piezoelectric constant d
+                     33 of 17.1 pC/N can be achieved in the optimized BTN-7Ce ceramics, which is nearly 6 times that of pure Bi3TiNbO9 (d
+                     33 ≈ 3 pC/N). In addition to ultra-high Curie temperature (T
+                     C = 886.5 °C) and relatively high resistivity (ρ = 1.2 × 106 Ω cm @ 500 °C), the BTN-7Ce ceramics should be very promising for piezoelectric sensor under the application in high temperature conditions.
+
+# INTRODUCTION
+Although the most widely used Pb(Zr,Ti)O3 based piezoelectric ceramics have extremely piezoelectric activity, their Curie temperature rarely exceeds 500 \xb0C. Among numerous piezoelectric materials, Aurivillius-type bismuth layered structure ferroelectric (BLSF) ceramics not only have high Curie temperature, but also have advantages such as low dielectric loss and excellent fatigue resistance, showing great potential in sensor applications under high temperature conditions. However, due to the anisotropic structural characteristics and high coercive field (E c) of BLSF ceramics, their piezoelectric activity is usually low and needs to be further improved to expand their applications in high temperature fields. The chemical formula of BLSF is (Bi2O2)E^{2+}(A m-1B m O3m+1)E^{2-}, where (Bi2O2)E^{2+} fluorite-like layers and (A m-1B m O3m+1)E^{2-} perovskite-like layers are arranged in a regularly alternating order. Basically, A-site allows 12-coordinated cations, while B-site allows 6-coordinated cations to occupy, and m represents the number of perovskite-like layers. The ferroelectricity of BLSF mainly comes from the shift of the B-site cations, the tilt of the [BO6] octahedron along the c-axis and the rotation of the [BO6] octahedron in the a-b plane of the (A m-1B m O3m+1)E^{2-} perovskite-like layers. Bi3TiNbO9 (abbreviated as BTN) is a member of BLSF family with m = 2, which possesses an ultra-high Curie temperature (T C ~ 913 \xb0C). However, due to restricted spontaneous polarization steering caused by its unique two-dimensional crystal structure, it can only achieve very low piezoelectric activity with a piezoelectric constant d 33 \u2248 3 pC/N. In order to improve piezoelectric activity, oriented grain growth techniques, such as hot pressing (HP) and tape casting, are used to prepare BTN-based ceramics and can achieve good results. On the other hand, chemical modification, including A-site doping, B-site doping, and A/B-sites co-doping, is a simple and feasible method widely used to improve the comprehensive piezoelectric properties of BLSF ceramics. Especially, A-site complex ions doping, such as Li/Ce, Na/Ce, and K/Ce, has been extensively investigated to enhance the piezoelectric properties of BLSF ceramics. In recent years, some research results have shown that simply doping Ce can reduce the dielectric loss and grain size of BLSF ceramics, while increasing their piezoelectric constant and high-temperature resistivity. Based on the above considerations, in this work, the effect of Ce doping on the structure and electrical properties of BTN ceramics was investigated, and nearly 6 times increasing in piezoelectric constant can be achieved in the optimized composition.
+
+# CONCLUSION
+In this work, we successfully prepared single Aurivillius Bi3-x Ce x TiNbO9 (BTN-100xCe) BLSF ceramics simply doped with Ce in BTN. Specifically, in the optimized ceramics of x = 0.07 (BTN-7Ce), the obtained piezoelectric constant d 33 increases by nearly 6 times as compared to pure BTN, reaching 17.1 pC/N, and exhibits ultra-high Curie temperature (T C = 886.5 \xb0C) and high resistivity in the order of 10E^{6} \u03a9 cm at 500 \xb0C. This work provides an excellent candidate BLSF ceramics for piezoelectric sensors applicable to high temperature conditions in a simple processing way.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 09:59:08: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The principal properties of BTN-100xCe ceramics.
+|Sample| d 33 (pC/N)| T c (\xb0C)| \u03c1 (\u03a9\xb7cm)@500\xa0\xb0C|tan\u03b4 @1\xa0MHz,500\xa0\xb0C| E a1 (eV)| E a2 (eV)|
+|---|---|---|---|---|---|---|
+|x\xa0=\xa00|3.1|890.2|2.76\xa0\xd7\xa010E^{4}|0.584|0.67|1.21|
+|x\xa0=\xa00.01|5|891.4|2.17\xa0\xd7\xa010E^{5}|0.255|0.71|1.65|
+|x\xa0=\xa00.03|12.4|890.8|2.41\xa0\xd7\xa010E^{6}|0.037|0.74|1.43|
+|x\xa0=\xa00.05|15.1|880.4|4.58\xa0\xd7\xa010E^{5}|0.054|0.6|1.16|
+|x\xa0=\xa00.07|17.1|886.5|1.22\xa0\xd7\xa010E^{6}|0.043|0.61|1.3|
+|x\xa0=\xa00.09|15.7|873.7|3.35\xa0\xd7\xa010E^{5}|0.079|0.57|0.98|
+|x\xa0=\xa00.11|12.5|866.6|2.43\xa0\xd7\xa010E^{5}|0.106|0.59|0.95|
+
+# RESULTS AND DISCUSSION
+(a) shows the XRD patterns of BTN-100xCe ceramics. It can be seen that all the patterns match well with a BTN standard card (PDF#00-039-0233), and no any secondary phases can be detected, indicating that Ce ions should be successfully incorporated into the lattice of BTN to form a solid solution. The strongest diffraction peak of the (115) plane is consistent with the most intense reflection of (112 m + 1) in BLSF. Basically, CeE^{4+} ion has different ionic radius depending on its coordination number (CN), i.e., CeE^{4+} (r i = 1.14 \xc5, CN = 12) and CeE^{4+} (r i = 0.87 \xc5, CN = 6). Therefore, CeE^{4+} ion can not only enter the BiE^{3+} (r i = 1.35 \xc5, CN = 12) position in the A-site to shrink the lattice, but also enter the TiE^{4+} (r i = 0.605 \xc5, CN = 6) or NbE^{5+} (r i = 0.64 \xc5, CN = 6) position in the B-site to expand the lattice. As shown in (b), from x = 0 to 0.03, the position of (115) peak remains basically unchanged, indicating that CeE^{4+} ions may enter both A- and B-sites simultaneously, and the lattice shrinkage and expansion are basically balanced. For the sample with x = 0.05, however, the (115) peak suddenly shifts towards a lower angle, indicating that the B-site substitution dominates. Subsequently, the (115) peak gradually shifts towards higher angles, demonstrating a change of mode dominated by A-site substitution. Generally, The orthorhombicity \u0394 is defined as 2|a-b|/(a+b) and used to describe the orthorhombic distortion. The calculated \u0394 and unit cell volume as a function of Ce doping amount are shown in (d). It can be seen that the change in unit cell volume is basically the same as the shift of (115) peak in (b). However, the variation of \u0394 with Ce doping amount does not follow the same law, which should be closely related to the complex lattice distortion caused by Ce ions entering both A- and B-sites simultaneously. To further explain the \u0394 anomalies, as shown in , the BTN-100xCe ceramics with x = 0, 0.03, 0.07 and 0.11 were refined by GSAS II software, and the visual crystal structure models were drawn using VESTA software. It can be seen that the offset angle of the [Ti/NbO6] octahedron along the c-axis becomes large, then small and then large again with the increase of Ce doping amount, which corresponds to the change of \u0394. Since Ce ions enter both A-site and B-site at the same time, and the space of B-site is small, the effect of expanding the lattice is greater when the doping amount is low, which leads to a significant shift of the [Ti/NbO6] octahedron along the c-axis. When the doping amount increases, more Ce ions enter the A-site, the effect of lattice shrinkage gradually increases, at which time the shift of the [Ti/NbO6] octahedron is partially canceled. The lattice shrinkage will be more pronounced when the doping amount is higher, resulting in the offset of the [Ti/NbO6] octahedron becoming large again. In order to further investigate the effect of Ce doping on the structure of BTN-100xCe ceramics, Raman spectroscopy measurement is performed to analyze local phase structure characteristics. As shown in (a), all Raman patterns of BTN-100xCe ceramics at room temperature have similar configuration associated with orthorhombic symmetry, further indicating that Ce ions should incorporate into the crystal lattice and do not change the structural symmetry. The fitted Raman pattern for the represented BTN-7Ce ceramic sample is shown in (b), which displays that the Raman pattern can be well fitted and decomposed into seven independent Raman peaks marked from v1 to v7 according to the increase of wave number, in agreement with previously reported. For different BTN-100xCe ceramics, the wave number of fitted Raman peaks as a function of Ce doping amount are shown in (c) and (d). As seen from (c), the mode v1, being related to the vibration of Bi ions in the (Bi2O2)E^{2+} layers, is basically no change with Ce doping. The modes v2 and v3, which are linked to the vibration of BiE^{3+} ions in the A-site of perovskite-like layers, show a certain Raman shift with Ce doping amount, especially after Ce doping amount x \u2265 0.05, indicating that the influence of Ce doping on A-site is more significant in this situation, which is highly consistent with the XRD structural analysis results in. Nevertheless, the mode v4, as well as the modes v5, v6 and v7 shown in (d), exhibit varying degrees of fluctuations as a function of Ce doping amount. It is believed that the mode v4 is associated with the vibration of B-site ions (TiE^{4+}/NbE^{5+}) along c-direction, while modes v5, v6 and v7 relate to rocking, external apical oxygen atom and symmetric stretching of the [Ti/NbO6] octahedron in the a-b plane respectively. The microstructure features of BTN-100xCe ceramics are shown in (a)\u20134(g), and the grain length and thickness, as well as L/T ratio as a function of Ce doping amount is given in (h). As seen from (a), pure BTN ceramics exhibits a typical BLSF anisotropic morphology with large aspect ratio plate-like grains. Actually, similar phenomenon has also been observed in our previous work on Ce-doped CaBi2Nb2O9 ceramics, which is attributed to Ce doping can effectively reduce the diffusion of ions along the a-b plane during sintering. It will enable the ceramics to withstand higher voltages during polarization and achieve better piezoelectric properties. gives the temperature dependent dielectric constant and loss of BTN-100xCe ceramics, and the inset shows the Curie temperature T C as a function of Ce doping amount. The P-E loops of BTN-100xCe ceramics are shown in (a). For the ceramics with x \u2264 0.07, under an applied electric field of 150 kV/cm, only a well saturated P-E loop with a strongly enhanced P r can be achieved in BTN-7Ce ceramics, indicating its improved ferroelectric domain switching. However, for the ceramics with x \u2265 0.09, the samples cannot be subjected to a higher electric field due to excessive leakage current during testing, and the P-E loops look like \u2018\u2018smiling mouth\u2019\u2019 as previously reported. For BLSF ceramics, it was reported that defects and larger displacement of the B-site ions will lead to larger coercive field, which may cause the ferroelectric domains difficult to be switched. As discussed in , the lattice distortion of the samples becomes large and the offset of the [Ti/NbO6] octahedron along the c-axis increases when x = 0.01\u20130.05, which leads to a large coercive field, resulting in unsaturated P-E loops. However, for the sample x = 0.07, the offset of the [Ti/NbO6] octahedron along the c-axis decreases, and such abnormal orthorhombic distortion may lower the coercive field and then make the P-E loop becoming saturated. It was known that the piezoelectric properties were closely related to polarization obeyed by an equation d = 2\u03b5P r Q for ferroelectric materials. As seen from (b), which shows the remnant polarization P r and piezoelectric constant d 33 as a function of Ce doping amount, the d 33 basically follows a similar changing trend to P r. The exact d 33 values are also listed in. For the ceramic sample with x = 0.07, a peak d 33 value of 17.1 pC/N can be obtained, which is nearly 6 times that of pure BTN ceramics (d 33 \u2248 3 pC/N). The electrical resistivity \u03c1 of BTN-100xCe ceramics as a function of temperature is shown in (a). The electrical resistivity at 500 \xb0C as a function of Ce doping amount is plotted in (b). As is known, BLSF ceramics normally exhibit p-type conductivity behavior due to the volatilization of Bi during sintering. In this work, replacing BiE^{3+} with CeE^{4+} may generate electrons (Ce +\u2192 CeBi\xb7+ e\u2032E^{4}), thereby neutralizing holes (h\xb7+ e\u2032\u2192null) and reducing conductivity. So it can be seen from (b) that a small amount of Ce doping (x \u2264 0.03) significantly increases the resistivity. With further increasing Ce doping amount (x \u2265 0.05), the resistivity has slightly fluctuated and decreased again, which is also probably due to the simultaneous entry of Ce ions into both A- and B-sites. (c) presents Arrhenius relationship between conductivity and temperature of BTN-100xCe ceramics. The activation energy E a is calculated by fitting the experimental data according to Arrhenius equation of \u03c3= \u03c30exp ( \u2212 Ea/kT), and the results are provided in (d), where \u03c3 0 is the pre-exponential factor, E a is the activation energy and k represents the Boltzmann's constant. The conduction behavior of BTN-100xCe ceramics can be characterized by two different temperature regions with an inflexion at 460 \xb0C, showing similar phenomenon to our previous work. In low temperature region (<460 \xb0C), the calculated E a1 is 0.56 eV\u20130.74 eV, demonstrating the conductivity mechanism is extrinsic conductance dominated by defects. In high-temperature region (>460 \xb0C), however, the calculated E a2 is 0.95 eV\u20131.65 eV, implying the intrinsic charge carrier conduction mechanism. summarizes the comparison of d 33 of BTN-based piezoelectric ceramics prepared in this work with previous reports , and it can be found that the d 33 obtained in this work is superior to most of the reports. The principal properties of BTN-100xCe ceramics are summarized and listed in.
+
+# TITLE
+Significantly enhanced piezoelectric response in Aurivillius Bi<inf>3</inf>TiNbO<inf>9</inf> ceramics simply by Ce doping
+
+# ABSTRACT
+Bi3-x
+                     Ce
+                        x
+                     TiNbO9 (BTN-100xCe, x = 0, 0.01, 0.03, 0.05, 0.07, 0.09, 0.11) piezoelectric ceramics with ultra-high Curie temperature were fabricated by a solid-state sintering method, and the effect of Ce doping on the structure, dielectric and piezoelectric properties of the ceramics was investigated. The resistivity markedly increases after Ce modification, and a significantly enhanced piezoelectric constant d
+                     33 of 17.1 pC/N can be achieved in the optimized BTN-7Ce ceramics, which is nearly 6 times that of pure Bi3TiNbO9 (d
+                     33 ≈ 3 pC/N). In addition to ultra-high Curie temperature (T
+                     C = 886.5 °C) and relatively high resistivity (ρ = 1.2 × 106 Ω cm @ 500 °C), the BTN-7Ce ceramics should be very promising for piezoelectric sensor under the application in high temperature conditions.
+
+# INTRODUCTION
+Although the most widely used Pb(Zr,Ti)O3 based piezoelectric ceramics have extremely piezoelectric activity, their Curie temperature rarely exceeds 500 \xb0C. Among numerous piezoelectric materials, Aurivillius-type bismuth layered structure ferroelectric (BLSF) ceramics not only have high Curie temperature, but also have advantages such as low dielectric loss and excellent fatigue resistance, showing great potential in sensor applications under high temperature conditions. However, due to the anisotropic structural characteristics and high coercive field (E c) of BLSF ceramics, their piezoelectric activity is usually low and needs to be further improved to expand their applications in high temperature fields. The chemical formula of BLSF is (Bi2O2)E^{2+}(A m-1B m O3m+1)E^{2-}, where (Bi2O2)E^{2+} fluorite-like layers and (A m-1B m O3m+1)E^{2-} perovskite-like layers are arranged in a regularly alternating order. Basically, A-site allows 12-coordinated cations, while B-site allows 6-coordinated cations to occupy, and m represents the number of perovskite-like layers. The ferroelectricity of BLSF mainly comes from the shift of the B-site cations, the tilt of the [BO6] octahedron along the c-axis and the rotation of the [BO6] octahedron in the a-b plane of the (A m-1B m O3m+1)E^{2-} perovskite-like layers. Bi3TiNbO9 (abbreviated as BTN) is a member of BLSF family with m = 2, which possesses an ultra-high Curie temperature (T C ~ 913 \xb0C). However, due to restricted spontaneous polarization steering caused by its unique two-dimensional crystal structure, it can only achieve very low piezoelectric activity with a piezoelectric constant d 33 \u2248 3 pC/N. In order to improve piezoelectric activity, oriented grain growth techniques, such as hot pressing (HP) and tape casting, are used to prepare BTN-based ceramics and can achieve good results. On the other hand, chemical modification, including A-site doping, B-site doping, and A/B-sites co-doping, is a simple and feasible method widely used to improve the comprehensive piezoelectric properties of BLSF ceramics. Especially, A-site complex ions doping, such as Li/Ce, Na/Ce, and K/Ce, has been extensively investigated to enhance the piezoelectric properties of BLSF ceramics. In recent years, some research results have shown that simply doping Ce can reduce the dielectric loss and grain size of BLSF ceramics, while increasing their piezoelectric constant and high-temperature resistivity. Based on the above considerations, in this work, the effect of Ce doping on the structure and electrical properties of BTN ceramics was investigated, and nearly 6 times increasing in piezoelectric constant can be achieved in the optimized composition.
+
+# CONCLUSION
+In this work, we successfully prepared single Aurivillius Bi3-x Ce x TiNbO9 (BTN-100xCe) BLSF ceramics simply doped with Ce in BTN. Specifically, in the optimized ceramics of x = 0.07 (BTN-7Ce), the obtained piezoelectric constant d 33 increases by nearly 6 times as compared to pure BTN, reaching 17.1 pC/N, and exhibits ultra-high Curie temperature (T C = 886.5 \xb0C) and high resistivity in the order of 10E^{6} \u03a9 cm at 500 \xb0C. This work provides an excellent candidate BLSF ceramics for piezoelectric sensors applicable to high temperature conditions in a simple processing way.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Bi3TiNbO9": 3.1,
+      "Bi3-xCe(x)TiNbO9 where x=0.01": 5,
+      "Bi3-xCe(x)TiNbO9 where x=0.03": 12.4,
+      "Bi3-xCe(x)TiNbO9 where x=0.05": 15.1,
+      "Bi3-xCe(x)TiNbO9 where x=0.07": 17.1,
+      "Bi3-xCe(x)TiNbO9 where x=0.09": 15.7,
+      "Bi3-xCe(x)TiNbO9 where x=0.11": 12.5
+    },
+    "abbreviations": {
+      "BTN": "Bi3TiNbO9",
+      "BLSF": "Bismuth Layered Structure Ferroelectric"
+    },
+    "property_unit": "pC/N",
+    "family": "BLSF"
+  }
+}"
+2025-07-10 10:01:09: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The principal properties of BTN-100xCe ceramics.
+|Sample| d 33 (pC/N)| T c (\xb0C)| \u03c1 (\u03a9\xb7cm)@500\xa0\xb0C|tan\u03b4 @1\xa0MHz,500\xa0\xb0C| E a1 (eV)| E a2 (eV)|
+|---|---|---|---|---|---|---|
+|x\xa0=\xa00|3.1|890.2|2.76\xa0\xd7\xa010E^{4}|0.584|0.67|1.21|
+|x\xa0=\xa00.01|5|891.4|2.17\xa0\xd7\xa010E^{5}|0.255|0.71|1.65|
+|x\xa0=\xa00.03|12.4|890.8|2.41\xa0\xd7\xa010E^{6}|0.037|0.74|1.43|
+|x\xa0=\xa00.05|15.1|880.4|4.58\xa0\xd7\xa010E^{5}|0.054|0.6|1.16|
+|x\xa0=\xa00.07|17.1|886.5|1.22\xa0\xd7\xa010E^{6}|0.043|0.61|1.3|
+|x\xa0=\xa00.09|15.7|873.7|3.35\xa0\xd7\xa010E^{5}|0.079|0.57|0.98|
+|x\xa0=\xa00.11|12.5|866.6|2.43\xa0\xd7\xa010E^{5}|0.106|0.59|0.95|
+
+# RESULTS AND DISCUSSION
+(a) shows the XRD patterns of BTN-100xCe ceramics. It can be seen that all the patterns match well with a BTN standard card (PDF#00-039-0233), and no any secondary phases can be detected, indicating that Ce ions should be successfully incorporated into the lattice of BTN to form a solid solution. The strongest diffraction peak of the (115) plane is consistent with the most intense reflection of (112 m + 1) in BLSF. Basically, CeE^{4+} ion has different ionic radius depending on its coordination number (CN), i.e., CeE^{4+} (r i = 1.14 \xc5, CN = 12) and CeE^{4+} (r i = 0.87 \xc5, CN = 6). Therefore, CeE^{4+} ion can not only enter the BiE^{3+} (r i = 1.35 \xc5, CN = 12) position in the A-site to shrink the lattice, but also enter the TiE^{4+} (r i = 0.605 \xc5, CN = 6) or NbE^{5+} (r i = 0.64 \xc5, CN = 6) position in the B-site to expand the lattice. As shown in (b), from x = 0 to 0.03, the position of (115) peak remains basically unchanged, indicating that CeE^{4+} ions may enter both A- and B-sites simultaneously, and the lattice shrinkage and expansion are basically balanced. For the sample with x = 0.05, however, the (115) peak suddenly shifts towards a lower angle, indicating that the B-site substitution dominates. Subsequently, the (115) peak gradually shifts towards higher angles, demonstrating a change of mode dominated by A-site substitution. Generally, The orthorhombicity \u0394 is defined as 2|a-b|/(a+b) and used to describe the orthorhombic distortion. The calculated \u0394 and unit cell volume as a function of Ce doping amount are shown in (d). It can be seen that the change in unit cell volume is basically the same as the shift of (115) peak in (b). However, the variation of \u0394 with Ce doping amount does not follow the same law, which should be closely related to the complex lattice distortion caused by Ce ions entering both A- and B-sites simultaneously. To further explain the \u0394 anomalies, as shown in , the BTN-100xCe ceramics with x = 0, 0.03, 0.07 and 0.11 were refined by GSAS II software, and the visual crystal structure models were drawn using VESTA software. It can be seen that the offset angle of the [Ti/NbO6] octahedron along the c-axis becomes large, then small and then large again with the increase of Ce doping amount, which corresponds to the change of \u0394. Since Ce ions enter both A-site and B-site at the same time, and the space of B-site is small, the effect of expanding the lattice is greater when the doping amount is low, which leads to a significant shift of the [Ti/NbO6] octahedron along the c-axis. When the doping amount increases, more Ce ions enter the A-site, the effect of lattice shrinkage gradually increases, at which time the shift of the [Ti/NbO6] octahedron is partially canceled. The lattice shrinkage will be more pronounced when the doping amount is higher, resulting in the offset of the [Ti/NbO6] octahedron becoming large again. In order to further investigate the effect of Ce doping on the structure of BTN-100xCe ceramics, Raman spectroscopy measurement is performed to analyze local phase structure characteristics. As shown in (a), all Raman patterns of BTN-100xCe ceramics at room temperature have similar configuration associated with orthorhombic symmetry, further indicating that Ce ions should incorporate into the crystal lattice and do not change the structural symmetry. The fitted Raman pattern for the represented BTN-7Ce ceramic sample is shown in (b), which displays that the Raman pattern can be well fitted and decomposed into seven independent Raman peaks marked from v1 to v7 according to the increase of wave number, in agreement with previously reported. For different BTN-100xCe ceramics, the wave number of fitted Raman peaks as a function of Ce doping amount are shown in (c) and (d). As seen from (c), the mode v1, being related to the vibration of Bi ions in the (Bi2O2)E^{2+} layers, is basically no change with Ce doping. The modes v2 and v3, which are linked to the vibration of BiE^{3+} ions in the A-site of perovskite-like layers, show a certain Raman shift with Ce doping amount, especially after Ce doping amount x \u2265 0.05, indicating that the influence of Ce doping on A-site is more significant in this situation, which is highly consistent with the XRD structural analysis results in. Nevertheless, the mode v4, as well as the modes v5, v6 and v7 shown in (d), exhibit varying degrees of fluctuations as a function of Ce doping amount. It is believed that the mode v4 is associated with the vibration of B-site ions (TiE^{4+}/NbE^{5+}) along c-direction, while modes v5, v6 and v7 relate to rocking, external apical oxygen atom and symmetric stretching of the [Ti/NbO6] octahedron in the a-b plane respectively. The microstructure features of BTN-100xCe ceramics are shown in (a)\u20134(g), and the grain length and thickness, as well as L/T ratio as a function of Ce doping amount is given in (h). As seen from (a), pure BTN ceramics exhibits a typical BLSF anisotropic morphology with large aspect ratio plate-like grains. Actually, similar phenomenon has also been observed in our previous work on Ce-doped CaBi2Nb2O9 ceramics, which is attributed to Ce doping can effectively reduce the diffusion of ions along the a-b plane during sintering. It will enable the ceramics to withstand higher voltages during polarization and achieve better piezoelectric properties. gives the temperature dependent dielectric constant and loss of BTN-100xCe ceramics, and the inset shows the Curie temperature T C as a function of Ce doping amount. The P-E loops of BTN-100xCe ceramics are shown in (a). For the ceramics with x \u2264 0.07, under an applied electric field of 150 kV/cm, only a well saturated P-E loop with a strongly enhanced P r can be achieved in BTN-7Ce ceramics, indicating its improved ferroelectric domain switching. However, for the ceramics with x \u2265 0.09, the samples cannot be subjected to a higher electric field due to excessive leakage current during testing, and the P-E loops look like \u2018\u2018smiling mouth\u2019\u2019 as previously reported. For BLSF ceramics, it was reported that defects and larger displacement of the B-site ions will lead to larger coercive field, which may cause the ferroelectric domains difficult to be switched. As discussed in , the lattice distortion of the samples becomes large and the offset of the [Ti/NbO6] octahedron along the c-axis increases when x = 0.01\u20130.05, which leads to a large coercive field, resulting in unsaturated P-E loops. However, for the sample x = 0.07, the offset of the [Ti/NbO6] octahedron along the c-axis decreases, and such abnormal orthorhombic distortion may lower the coercive field and then make the P-E loop becoming saturated. It was known that the piezoelectric properties were closely related to polarization obeyed by an equation d = 2\u03b5P r Q for ferroelectric materials. As seen from (b), which shows the remnant polarization P r and piezoelectric constant d 33 as a function of Ce doping amount, the d 33 basically follows a similar changing trend to P r. The exact d 33 values are also listed in. For the ceramic sample with x = 0.07, a peak d 33 value of 17.1 pC/N can be obtained, which is nearly 6 times that of pure BTN ceramics (d 33 \u2248 3 pC/N). The electrical resistivity \u03c1 of BTN-100xCe ceramics as a function of temperature is shown in (a). The electrical resistivity at 500 \xb0C as a function of Ce doping amount is plotted in (b). As is known, BLSF ceramics normally exhibit p-type conductivity behavior due to the volatilization of Bi during sintering. In this work, replacing BiE^{3+} with CeE^{4+} may generate electrons (Ce +\u2192 CeBi\xb7+ e\u2032E^{4}), thereby neutralizing holes (h\xb7+ e\u2032\u2192null) and reducing conductivity. So it can be seen from (b) that a small amount of Ce doping (x \u2264 0.03) significantly increases the resistivity. With further increasing Ce doping amount (x \u2265 0.05), the resistivity has slightly fluctuated and decreased again, which is also probably due to the simultaneous entry of Ce ions into both A- and B-sites. (c) presents Arrhenius relationship between conductivity and temperature of BTN-100xCe ceramics. The activation energy E a is calculated by fitting the experimental data according to Arrhenius equation of \u03c3= \u03c30exp ( \u2212 Ea/kT), and the results are provided in (d), where \u03c3 0 is the pre-exponential factor, E a is the activation energy and k represents the Boltzmann's constant. The conduction behavior of BTN-100xCe ceramics can be characterized by two different temperature regions with an inflexion at 460 \xb0C, showing similar phenomenon to our previous work. In low temperature region (<460 \xb0C), the calculated E a1 is 0.56 eV\u20130.74 eV, demonstrating the conductivity mechanism is extrinsic conductance dominated by defects. In high-temperature region (>460 \xb0C), however, the calculated E a2 is 0.95 eV\u20131.65 eV, implying the intrinsic charge carrier conduction mechanism. summarizes the comparison of d 33 of BTN-based piezoelectric ceramics prepared in this work with previous reports , and it can be found that the d 33 obtained in this work is superior to most of the reports. The principal properties of BTN-100xCe ceramics are summarized and listed in.
+
+# TITLE
+Significantly enhanced piezoelectric response in Aurivillius Bi<inf>3</inf>TiNbO<inf>9</inf> ceramics simply by Ce doping
+
+# ABSTRACT
+Bi3-x
+                     Ce
+                        x
+                     TiNbO9 (BTN-100xCe, x = 0, 0.01, 0.03, 0.05, 0.07, 0.09, 0.11) piezoelectric ceramics with ultra-high Curie temperature were fabricated by a solid-state sintering method, and the effect of Ce doping on the structure, dielectric and piezoelectric properties of the ceramics was investigated. The resistivity markedly increases after Ce modification, and a significantly enhanced piezoelectric constant d
+                     33 of 17.1 pC/N can be achieved in the optimized BTN-7Ce ceramics, which is nearly 6 times that of pure Bi3TiNbO9 (d
+                     33 ≈ 3 pC/N). In addition to ultra-high Curie temperature (T
+                     C = 886.5 °C) and relatively high resistivity (ρ = 1.2 × 106 Ω cm @ 500 °C), the BTN-7Ce ceramics should be very promising for piezoelectric sensor under the application in high temperature conditions.
+
+# INTRODUCTION
+Although the most widely used Pb(Zr,Ti)O3 based piezoelectric ceramics have extremely piezoelectric activity, their Curie temperature rarely exceeds 500 \xb0C. Among numerous piezoelectric materials, Aurivillius-type bismuth layered structure ferroelectric (BLSF) ceramics not only have high Curie temperature, but also have advantages such as low dielectric loss and excellent fatigue resistance, showing great potential in sensor applications under high temperature conditions. However, due to the anisotropic structural characteristics and high coercive field (E c) of BLSF ceramics, their piezoelectric activity is usually low and needs to be further improved to expand their applications in high temperature fields. The chemical formula of BLSF is (Bi2O2)E^{2+}(A m-1B m O3m+1)E^{2-}, where (Bi2O2)E^{2+} fluorite-like layers and (A m-1B m O3m+1)E^{2-} perovskite-like layers are arranged in a regularly alternating order. Basically, A-site allows 12-coordinated cations, while B-site allows 6-coordinated cations to occupy, and m represents the number of perovskite-like layers. The ferroelectricity of BLSF mainly comes from the shift of the B-site cations, the tilt of the [BO6] octahedron along the c-axis and the rotation of the [BO6] octahedron in the a-b plane of the (A m-1B m O3m+1)E^{2-} perovskite-like layers. Bi3TiNbO9 (abbreviated as BTN) is a member of BLSF family with m = 2, which possesses an ultra-high Curie temperature (T C ~ 913 \xb0C). However, due to restricted spontaneous polarization steering caused by its unique two-dimensional crystal structure, it can only achieve very low piezoelectric activity with a piezoelectric constant d 33 \u2248 3 pC/N. In order to improve piezoelectric activity, oriented grain growth techniques, such as hot pressing (HP) and tape casting, are used to prepare BTN-based ceramics and can achieve good results. On the other hand, chemical modification, including A-site doping, B-site doping, and A/B-sites co-doping, is a simple and feasible method widely used to improve the comprehensive piezoelectric properties of BLSF ceramics. Especially, A-site complex ions doping, such as Li/Ce, Na/Ce, and K/Ce, has been extensively investigated to enhance the piezoelectric properties of BLSF ceramics. In recent years, some research results have shown that simply doping Ce can reduce the dielectric loss and grain size of BLSF ceramics, while increasing their piezoelectric constant and high-temperature resistivity. Based on the above considerations, in this work, the effect of Ce doping on the structure and electrical properties of BTN ceramics was investigated, and nearly 6 times increasing in piezoelectric constant can be achieved in the optimized composition.
+
+# CONCLUSION
+In this work, we successfully prepared single Aurivillius Bi3-x Ce x TiNbO9 (BTN-100xCe) BLSF ceramics simply doped with Ce in BTN. Specifically, in the optimized ceramics of x = 0.07 (BTN-7Ce), the obtained piezoelectric constant d 33 increases by nearly 6 times as compared to pure BTN, reaching 17.1 pC/N, and exhibits ultra-high Curie temperature (T C = 886.5 \xb0C) and high resistivity in the order of 10E^{6} \u03a9 cm at 500 \xb0C. This work provides an excellent candidate BLSF ceramics for piezoelectric sensors applicable to high temperature conditions in a simple processing way.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 10:01:15: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The principal properties of BTN-100xCe ceramics.
+|Sample| d 33 (pC/N)| T c (\xb0C)| \u03c1 (\u03a9\xb7cm)@500\xa0\xb0C|tan\u03b4 @1\xa0MHz,500\xa0\xb0C| E a1 (eV)| E a2 (eV)|
+|---|---|---|---|---|---|---|
+|x\xa0=\xa00|3.1|890.2|2.76\xa0\xd7\xa010E^{4}|0.584|0.67|1.21|
+|x\xa0=\xa00.01|5|891.4|2.17\xa0\xd7\xa010E^{5}|0.255|0.71|1.65|
+|x\xa0=\xa00.03|12.4|890.8|2.41\xa0\xd7\xa010E^{6}|0.037|0.74|1.43|
+|x\xa0=\xa00.05|15.1|880.4|4.58\xa0\xd7\xa010E^{5}|0.054|0.6|1.16|
+|x\xa0=\xa00.07|17.1|886.5|1.22\xa0\xd7\xa010E^{6}|0.043|0.61|1.3|
+|x\xa0=\xa00.09|15.7|873.7|3.35\xa0\xd7\xa010E^{5}|0.079|0.57|0.98|
+|x\xa0=\xa00.11|12.5|866.6|2.43\xa0\xd7\xa010E^{5}|0.106|0.59|0.95|
+
+# RESULTS AND DISCUSSION
+(a) shows the XRD patterns of BTN-100xCe ceramics. It can be seen that all the patterns match well with a BTN standard card (PDF#00-039-0233), and no any secondary phases can be detected, indicating that Ce ions should be successfully incorporated into the lattice of BTN to form a solid solution. The strongest diffraction peak of the (115) plane is consistent with the most intense reflection of (112 m + 1) in BLSF. Basically, CeE^{4+} ion has different ionic radius depending on its coordination number (CN), i.e., CeE^{4+} (r i = 1.14 \xc5, CN = 12) and CeE^{4+} (r i = 0.87 \xc5, CN = 6). Therefore, CeE^{4+} ion can not only enter the BiE^{3+} (r i = 1.35 \xc5, CN = 12) position in the A-site to shrink the lattice, but also enter the TiE^{4+} (r i = 0.605 \xc5, CN = 6) or NbE^{5+} (r i = 0.64 \xc5, CN = 6) position in the B-site to expand the lattice. As shown in (b), from x = 0 to 0.03, the position of (115) peak remains basically unchanged, indicating that CeE^{4+} ions may enter both A- and B-sites simultaneously, and the lattice shrinkage and expansion are basically balanced. For the sample with x = 0.05, however, the (115) peak suddenly shifts towards a lower angle, indicating that the B-site substitution dominates. Subsequently, the (115) peak gradually shifts towards higher angles, demonstrating a change of mode dominated by A-site substitution. Generally, The orthorhombicity \u0394 is defined as 2|a-b|/(a+b) and used to describe the orthorhombic distortion. The calculated \u0394 and unit cell volume as a function of Ce doping amount are shown in (d). It can be seen that the change in unit cell volume is basically the same as the shift of (115) peak in (b). However, the variation of \u0394 with Ce doping amount does not follow the same law, which should be closely related to the complex lattice distortion caused by Ce ions entering both A- and B-sites simultaneously. To further explain the \u0394 anomalies, as shown in , the BTN-100xCe ceramics with x = 0, 0.03, 0.07 and 0.11 were refined by GSAS II software, and the visual crystal structure models were drawn using VESTA software. It can be seen that the offset angle of the [Ti/NbO6] octahedron along the c-axis becomes large, then small and then large again with the increase of Ce doping amount, which corresponds to the change of \u0394. Since Ce ions enter both A-site and B-site at the same time, and the space of B-site is small, the effect of expanding the lattice is greater when the doping amount is low, which leads to a significant shift of the [Ti/NbO6] octahedron along the c-axis. When the doping amount increases, more Ce ions enter the A-site, the effect of lattice shrinkage gradually increases, at which time the shift of the [Ti/NbO6] octahedron is partially canceled. The lattice shrinkage will be more pronounced when the doping amount is higher, resulting in the offset of the [Ti/NbO6] octahedron becoming large again. In order to further investigate the effect of Ce doping on the structure of BTN-100xCe ceramics, Raman spectroscopy measurement is performed to analyze local phase structure characteristics. As shown in (a), all Raman patterns of BTN-100xCe ceramics at room temperature have similar configuration associated with orthorhombic symmetry, further indicating that Ce ions should incorporate into the crystal lattice and do not change the structural symmetry. The fitted Raman pattern for the represented BTN-7Ce ceramic sample is shown in (b), which displays that the Raman pattern can be well fitted and decomposed into seven independent Raman peaks marked from v1 to v7 according to the increase of wave number, in agreement with previously reported. For different BTN-100xCe ceramics, the wave number of fitted Raman peaks as a function of Ce doping amount are shown in (c) and (d). As seen from (c), the mode v1, being related to the vibration of Bi ions in the (Bi2O2)E^{2+} layers, is basically no change with Ce doping. The modes v2 and v3, which are linked to the vibration of BiE^{3+} ions in the A-site of perovskite-like layers, show a certain Raman shift with Ce doping amount, especially after Ce doping amount x \u2265 0.05, indicating that the influence of Ce doping on A-site is more significant in this situation, which is highly consistent with the XRD structural analysis results in. Nevertheless, the mode v4, as well as the modes v5, v6 and v7 shown in (d), exhibit varying degrees of fluctuations as a function of Ce doping amount. It is believed that the mode v4 is associated with the vibration of B-site ions (TiE^{4+}/NbE^{5+}) along c-direction, while modes v5, v6 and v7 relate to rocking, external apical oxygen atom and symmetric stretching of the [Ti/NbO6] octahedron in the a-b plane respectively. The microstructure features of BTN-100xCe ceramics are shown in (a)\u20134(g), and the grain length and thickness, as well as L/T ratio as a function of Ce doping amount is given in (h). As seen from (a), pure BTN ceramics exhibits a typical BLSF anisotropic morphology with large aspect ratio plate-like grains. Actually, similar phenomenon has also been observed in our previous work on Ce-doped CaBi2Nb2O9 ceramics, which is attributed to Ce doping can effectively reduce the diffusion of ions along the a-b plane during sintering. It will enable the ceramics to withstand higher voltages during polarization and achieve better piezoelectric properties. gives the temperature dependent dielectric constant and loss of BTN-100xCe ceramics, and the inset shows the Curie temperature T C as a function of Ce doping amount. The P-E loops of BTN-100xCe ceramics are shown in (a). For the ceramics with x \u2264 0.07, under an applied electric field of 150 kV/cm, only a well saturated P-E loop with a strongly enhanced P r can be achieved in BTN-7Ce ceramics, indicating its improved ferroelectric domain switching. However, for the ceramics with x \u2265 0.09, the samples cannot be subjected to a higher electric field due to excessive leakage current during testing, and the P-E loops look like \u2018\u2018smiling mouth\u2019\u2019 as previously reported. For BLSF ceramics, it was reported that defects and larger displacement of the B-site ions will lead to larger coercive field, which may cause the ferroelectric domains difficult to be switched. As discussed in , the lattice distortion of the samples becomes large and the offset of the [Ti/NbO6] octahedron along the c-axis increases when x = 0.01\u20130.05, which leads to a large coercive field, resulting in unsaturated P-E loops. However, for the sample x = 0.07, the offset of the [Ti/NbO6] octahedron along the c-axis decreases, and such abnormal orthorhombic distortion may lower the coercive field and then make the P-E loop becoming saturated. It was known that the piezoelectric properties were closely related to polarization obeyed by an equation d = 2\u03b5P r Q for ferroelectric materials. As seen from (b), which shows the remnant polarization P r and piezoelectric constant d 33 as a function of Ce doping amount, the d 33 basically follows a similar changing trend to P r. The exact d 33 values are also listed in. For the ceramic sample with x = 0.07, a peak d 33 value of 17.1 pC/N can be obtained, which is nearly 6 times that of pure BTN ceramics (d 33 \u2248 3 pC/N). The electrical resistivity \u03c1 of BTN-100xCe ceramics as a function of temperature is shown in (a). The electrical resistivity at 500 \xb0C as a function of Ce doping amount is plotted in (b). As is known, BLSF ceramics normally exhibit p-type conductivity behavior due to the volatilization of Bi during sintering. In this work, replacing BiE^{3+} with CeE^{4+} may generate electrons (Ce +\u2192 CeBi\xb7+ e\u2032E^{4}), thereby neutralizing holes (h\xb7+ e\u2032\u2192null) and reducing conductivity. So it can be seen from (b) that a small amount of Ce doping (x \u2264 0.03) significantly increases the resistivity. With further increasing Ce doping amount (x \u2265 0.05), the resistivity has slightly fluctuated and decreased again, which is also probably due to the simultaneous entry of Ce ions into both A- and B-sites. (c) presents Arrhenius relationship between conductivity and temperature of BTN-100xCe ceramics. The activation energy E a is calculated by fitting the experimental data according to Arrhenius equation of \u03c3= \u03c30exp ( \u2212 Ea/kT), and the results are provided in (d), where \u03c3 0 is the pre-exponential factor, E a is the activation energy and k represents the Boltzmann's constant. The conduction behavior of BTN-100xCe ceramics can be characterized by two different temperature regions with an inflexion at 460 \xb0C, showing similar phenomenon to our previous work. In low temperature region (<460 \xb0C), the calculated E a1 is 0.56 eV\u20130.74 eV, demonstrating the conductivity mechanism is extrinsic conductance dominated by defects. In high-temperature region (>460 \xb0C), however, the calculated E a2 is 0.95 eV\u20131.65 eV, implying the intrinsic charge carrier conduction mechanism. summarizes the comparison of d 33 of BTN-based piezoelectric ceramics prepared in this work with previous reports , and it can be found that the d 33 obtained in this work is superior to most of the reports. The principal properties of BTN-100xCe ceramics are summarized and listed in.
+
+# TITLE
+Significantly enhanced piezoelectric response in Aurivillius Bi<inf>3</inf>TiNbO<inf>9</inf> ceramics simply by Ce doping
+
+# ABSTRACT
+Bi3-x
+                     Ce
+                        x
+                     TiNbO9 (BTN-100xCe, x = 0, 0.01, 0.03, 0.05, 0.07, 0.09, 0.11) piezoelectric ceramics with ultra-high Curie temperature were fabricated by a solid-state sintering method, and the effect of Ce doping on the structure, dielectric and piezoelectric properties of the ceramics was investigated. The resistivity markedly increases after Ce modification, and a significantly enhanced piezoelectric constant d
+                     33 of 17.1 pC/N can be achieved in the optimized BTN-7Ce ceramics, which is nearly 6 times that of pure Bi3TiNbO9 (d
+                     33 ≈ 3 pC/N). In addition to ultra-high Curie temperature (T
+                     C = 886.5 °C) and relatively high resistivity (ρ = 1.2 × 106 Ω cm @ 500 °C), the BTN-7Ce ceramics should be very promising for piezoelectric sensor under the application in high temperature conditions.
+
+# INTRODUCTION
+Although the most widely used Pb(Zr,Ti)O3 based piezoelectric ceramics have extremely piezoelectric activity, their Curie temperature rarely exceeds 500 \xb0C. Among numerous piezoelectric materials, Aurivillius-type bismuth layered structure ferroelectric (BLSF) ceramics not only have high Curie temperature, but also have advantages such as low dielectric loss and excellent fatigue resistance, showing great potential in sensor applications under high temperature conditions. However, due to the anisotropic structural characteristics and high coercive field (E c) of BLSF ceramics, their piezoelectric activity is usually low and needs to be further improved to expand their applications in high temperature fields. The chemical formula of BLSF is (Bi2O2)E^{2+}(A m-1B m O3m+1)E^{2-}, where (Bi2O2)E^{2+} fluorite-like layers and (A m-1B m O3m+1)E^{2-} perovskite-like layers are arranged in a regularly alternating order. Basically, A-site allows 12-coordinated cations, while B-site allows 6-coordinated cations to occupy, and m represents the number of perovskite-like layers. The ferroelectricity of BLSF mainly comes from the shift of the B-site cations, the tilt of the [BO6] octahedron along the c-axis and the rotation of the [BO6] octahedron in the a-b plane of the (A m-1B m O3m+1)E^{2-} perovskite-like layers. Bi3TiNbO9 (abbreviated as BTN) is a member of BLSF family with m = 2, which possesses an ultra-high Curie temperature (T C ~ 913 \xb0C). However, due to restricted spontaneous polarization steering caused by its unique two-dimensional crystal structure, it can only achieve very low piezoelectric activity with a piezoelectric constant d 33 \u2248 3 pC/N. In order to improve piezoelectric activity, oriented grain growth techniques, such as hot pressing (HP) and tape casting, are used to prepare BTN-based ceramics and can achieve good results. On the other hand, chemical modification, including A-site doping, B-site doping, and A/B-sites co-doping, is a simple and feasible method widely used to improve the comprehensive piezoelectric properties of BLSF ceramics. Especially, A-site complex ions doping, such as Li/Ce, Na/Ce, and K/Ce, has been extensively investigated to enhance the piezoelectric properties of BLSF ceramics. In recent years, some research results have shown that simply doping Ce can reduce the dielectric loss and grain size of BLSF ceramics, while increasing their piezoelectric constant and high-temperature resistivity. Based on the above considerations, in this work, the effect of Ce doping on the structure and electrical properties of BTN ceramics was investigated, and nearly 6 times increasing in piezoelectric constant can be achieved in the optimized composition.
+
+# CONCLUSION
+In this work, we successfully prepared single Aurivillius Bi3-x Ce x TiNbO9 (BTN-100xCe) BLSF ceramics simply doped with Ce in BTN. Specifically, in the optimized ceramics of x = 0.07 (BTN-7Ce), the obtained piezoelectric constant d 33 increases by nearly 6 times as compared to pure BTN, reaching 17.1 pC/N, and exhibits ultra-high Curie temperature (T C = 886.5 \xb0C) and high resistivity in the order of 10E^{6} \u03a9 cm at 500 \xb0C. This work provides an excellent candidate BLSF ceramics for piezoelectric sensors applicable to high temperature conditions in a simple processing way.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Bi3TiNbO9": 3.1,
+      "Bi3(0.99)Ce(0.01)TiNbO9": 5,
+      "Bi3(0.97)Ce(0.03)TiNbO9": 12.4,
+      "Bi3(0.95)Ce(0.05)TiNbO9": 15.1,
+      "Bi3(0.93)Ce(0.07)TiNbO9": 17.1,
+      "Bi3(0.91)Ce(0.09)TiNbO9": 15.7,
+      "Bi3(0.89)Ce(0.11)TiNbO9": 12.5
+    },
+    "abbreviations": {
+      "BTN": "Bi3TiNbO9",
+      "BLSF": "Bismuth Layered Structure Ferroelectric"
+    },
+    "property_unit": "pC/N",
+    "family": "BLSF"
+  }
+}"

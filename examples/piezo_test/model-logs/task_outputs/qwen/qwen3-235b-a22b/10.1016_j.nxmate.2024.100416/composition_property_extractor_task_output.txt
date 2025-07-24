@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"P(VDF-TrFE)-NBT0.6CeO2":49},"abbreviations":{"NBT":"Na0.5Bi0.5TiO3","CeO2":"Cerium Oxide"},"property_unit":"pC/N","family":"NBT"}}

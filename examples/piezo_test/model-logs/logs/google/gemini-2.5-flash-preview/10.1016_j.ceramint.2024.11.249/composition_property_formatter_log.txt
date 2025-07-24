@@ -1,0 +1,230 @@
+2025-07-11 09:38:11: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 15.67, '25% Bi4Ti3O12 - 0% rGO - Chitosan matrix': 14.04, '0% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 0, '50% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 28.21, '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 6)': 15.68, '7.32233% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix': 8.38, '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 8)': 15.66, '42.6777% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix': 18.57, '25% Bi4Ti3O12 - 1% rGO - Chitosan matrix': 16.3, '42.6777% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix': 24.82, '7.32233% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix': 5.21}, 'abbreviations': {'BiTO': 'Bi4Ti3O12', 'rGO': 'reduced graphene oxide', 'Ch': 'Chitosan'}, 'property_unit': 'pC/N', 'family': 'Bi4Ti3O12'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 15.67, '25% Bi4Ti3O12 - 0% rGO - Chitosan matrix': 14.04, '0% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 0, '50% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 28.21, '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 6)': 15.68, '7.32233% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix': 8.38, '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 8)': 15.66, '42.6777% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix': 18.57, '25% Bi4Ti3O12 - 1% rGO - Chitosan matrix': 16.3, '42.6777% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix': 24.82, '7.32233% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix': 5.21}, 'abbreviations': {'BiTO': 'Bi4Ti3O12', 'rGO': 'reduced graphene oxide', 'Ch': 'Chitosan'}, 'property_unit': 'pC/N', 'family': 'Bi4Ti3O12'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-11 09:38:33: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 15.67, '25% Bi4Ti3O12 - 0% rGO - Chitosan matrix': 14.04, '0% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 0, '50% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 28.21, '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 6)': 15.68, '7.32233% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix': 8.38, '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 8)': 15.66, '42.6777% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix': 18.57, '25% Bi4Ti3O12 - 1% rGO - Chitosan matrix': 16.3, '42.6777% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix': 24.82, '7.32233% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix': 5.21}, 'abbreviations': {'BiTO': 'Bi4Ti3O12', 'rGO': 'reduced graphene oxide', 'Ch': 'Chitosan'}, 'property_unit': 'pC/N', 'family': 'Bi4Ti3O12'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 15.67, '25% Bi4Ti3O12 - 0% rGO - Chitosan matrix': 14.04, '0% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 0, '50% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 28.21, '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 6)': 15.68, '7.32233% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix': 8.38, '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 8)': 15.66, '42.6777% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix': 18.57, '25% Bi4Ti3O12 - 1% rGO - Chitosan matrix': 16.3, '42.6777% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix': 24.82, '7.32233% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix': 5.21}, 'abbreviations': {'BiTO': 'Bi4Ti3O12', 'rGO': 'reduced graphene oxide', 'Ch': 'Chitosan'}, 'property_unit': 'pC/N', 'family': 'Bi4Ti3O12'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="The user wants to format the extracted material composition and properties data.
+I need to perform the following steps:
+1. Replace abbreviations with their full forms in the composition strings.
+2. Check for duplicate entries and remove them.
+3. The compositions do not contain any variables that need to be resolved by the `Material Formula Parser` tool. The percentages are fixed values.
+4. Format the output as a dictionary with 'compositions_property_values', 'property_unit', and 'family'.
+
+Let's start by replacing the abbreviations.
+
+Original data:
+{'composition_extracted_data': {'compositions_property_values': {'25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 15.67, '25% Bi4Ti3O12 - 0% rGO - Chitosan matrix': 14.04, '0% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 0, '50% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 28.21, '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 6)': 15.68, '7.32233% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix': 8.38, '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 8)': 15.66, '42.6777% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix': 18.57, '25% Bi4Ti3O12 - 1% rGO - Chitosan matrix': 16.3, '42.6777% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix': 24.82, '7.32233% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix': 5.21}, 'abbreviations': {'BiTO': 'Bi4Ti3O12', 'rGO': 'reduced graphene oxide', 'Ch': 'Chitosan'}, 'property_unit': 'pC/N', 'family': 'Bi4Ti3O12'}}
+
+Abbreviations:
+'BiTO': 'Bi4Ti3O12'
+'rGO': 'reduced graphene oxide'
+'Ch': 'Chitosan'
+
+Let's process each composition:
+1. '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix' -> '25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix' (value: 15.67)
+2. '25% Bi4Ti3O12 - 0% rGO - Chitosan matrix' -> '25% Bi4Ti3O12 - 0% reduced graphene oxide - Chitosan matrix' (value: 14.04)
+3. '0% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix' -> '0% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix' (value: 0)
+4. '50% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix' -> '50% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix' (value: 28.21)
+5. '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 6)' -> '25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix' (value: 15.68) - This is a duplicate of entry 1, but with a slightly different value. I will keep the first one and remove the (Run X) part.
+6. '7.32233% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix' -> '7.32233% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix' (value: 8.38)
+7. '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 8)' -> '25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix' (value: 15.66) - Another duplicate of entry 1.
+8. '42.6777% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix' -> '42.6777% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix' (value: 18.57)
+9. '25% Bi4Ti3O12 - 1% rGO - Chitosan matrix' -> '25% Bi4Ti3O12 - 1% reduced graphene oxide - Chitosan matrix' (value: 16.3)
+10. '42.6777% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix' -> '42.6777% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix' (value: 24.82)
+11. '7.32233% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix' -> '7.32233% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix' (value: 5.21)
+
+Let's handle duplicates. The instruction says "If any duplicate composition-property entry is there or not for compositions. If yes, remove the duplicate." It doesn't specify which value to keep if values differ for the same composition. I will keep the first encountered value.
+
+Cleaned compositions and values:
+- '25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix': 15.67
+- '25% Bi4Ti3O12 - 0% reduced graphene oxide - Chitosan matrix': 14.04
+- '0% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix': 0
+- '50% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix': 28.21
+- '7.32233% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix': 8.38
+- '42.6777% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix': 18.57
+- '25% Bi4Ti3O12 - 1% reduced graphene oxide - Chitosan matrix': 16.3
+- '42.6777% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix': 24.82
+- '7.32233% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix': 5.21
+
+No variables are present in the compositions that require the `Material Formula Parser` tool. The percentages are fixed numerical values.
+The final output structure should be:
+{
+  "composition_formatted_data": {
+  "compositions_property_values": Dict[str, Optional[Union[int, float]]],
+  "property_unit": str,
+  "family": str
+}
+}
+Thought: The user wants me to format the provided material composition and property data.
+I need to:
+1. Replace any abbreviated forms of composition with their actual composition.
+2. Check for and remove duplicate composition-property entries, keeping the first encountered value for a given composition.
+3. Ensure the final output matches the specified JSON structure.
+
+Let's go through the compositions and apply the abbreviations:
+Original abbreviations: `{'BiTO': 'Bi4Ti3O12', 'rGO': 'reduced graphene oxide', 'Ch': 'Chitosan'}`.
+The compositions already use 'Bi4Ti3O12' and 'rGO'. 'Chitosan matrix' is already in its full form. So, the main replacement is 'rGO' to 'reduced graphene oxide'.
+
+Let's process the compositions and handle duplicates:
+
+Input `compositions_property_values`:
+```
+{
+    '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 15.67,
+    '25% Bi4Ti3O12 - 0% rGO - Chitosan matrix': 14.04,
+    '0% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 0,
+    '50% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix': 28.21,
+    '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 6)': 15.68,
+    '7.32233% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix': 8.38,
+    '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 8)': 15.66,
+    '42.6777% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix': 18.57,
+    '25% Bi4Ti3O12 - 1% rGO - Chitosan matrix': 16.3,
+    '42.6777% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix': 24.82,
+    '7.32233% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix': 5.21
+}
+```
+
+1. **Replace abbreviations and normalize names (remove "(Run X)")**:
+   - '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix' -> '25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'
+   - '25% Bi4Ti3O12 - 0% rGO - Chitosan matrix' -> '25% Bi4Ti3O12 - 0% reduced graphene oxide - Chitosan matrix'
+   - '0% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix' -> '0% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'
+   - '50% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix' -> '50% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'
+   - '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 6)' -> '25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'
+   - '7.32233% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix' -> '7.32233% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix'
+   - '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 8)' -> '25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'
+   - '42.6777% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix' -> '42.6777% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix'
+   - '25% Bi4Ti3O12 - 1% rGO - Chitosan matrix' -> '25% Bi4Ti3O12 - 1% reduced graphene oxide - Chitosan matrix'
+   - '42.6777% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix' -> '42.6777% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix'
+   - '7.32233% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix' -> '7.32233% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix'
+
+2. **Handle duplicates**:
+   Use a new dictionary to store unique compositions. If a normalized composition is already in the new dictionary, skip it.
+
+   `formatted_compositions = {}`
+
+   - Original: '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix', Value: 15.67
+     Normalized: '25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'
+     `formatted_compositions['25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'] = 15.67`
+
+   - Original: '25% Bi4Ti3O12 - 0% rGO - Chitosan matrix', Value: 14.04
+     Normalized: '25% Bi4Ti3O12 - 0% reduced graphene oxide - Chitosan matrix'
+     `formatted_compositions['25% Bi4Ti3O12 - 0% reduced graphene oxide - Chitosan matrix'] = 14.04`
+
+   - Original: '0% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix', Value: 0
+     Normalized: '0% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'
+     `formatted_compositions['0% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'] = 0`
+
+   - Original: '50% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix', Value: 28.21
+     Normalized: '50% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'
+     `formatted_compositions['50% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'] = 28.21`
+
+   - Original: '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 6)', Value: 15.68
+     Normalized: '25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'
+     This key already exists in `formatted_compositions`. Skip.
+
+   - Original: '7.32233% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix', Value: 8.38
+     Normalized: '7.32233% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix'
+     `formatted_compositions['7.32233% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix'] = 8.38`
+
+   - Original: '25% Bi4Ti3O12 - 0.5% rGO - Chitosan matrix (Run 8)', Value: 15.66
+     Normalized: '25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix'
+     This key already exists in `formatted_compositions`. Skip.
+
+   - Original: '42.6777% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix', Value: 18.57
+     Normalized: '42.6777% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix'
+     `formatted_compositions['42.6777% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix'] = 18.57`
+
+   - Original: '25% Bi4Ti3O12 - 1% rGO - Chitosan matrix', Value: 16.3
+     Normalized: '25% Bi4Ti3O12 - 1% reduced graphene oxide - Chitosan matrix'
+     `formatted_compositions['25% Bi4Ti3O12 - 1% reduced graphene oxide - Chitosan matrix'] = 16.3`
+
+   - Original: '42.6777% Bi4Ti3O12 - 0.853553% rGO - Chitosan matrix', Value: 24.82
+     Normalized: '42.6777% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix'
+     `formatted_compositions['42.6777% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix'] = 24.82`
+
+   - Original: '7.32233% Bi4Ti3O12 - 0.146447% rGO - Chitosan matrix', Value: 5.21
+     Normalized: '7.32233% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix'
+     `formatted_compositions['7.32233% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix'] = 5.21`
+
+The `Material Formula Parser` tool is not needed as there are no variables or complex formulas to resolve. The percentages are direct values.
+
+Final `compositions_property_values`:
+```json
+{
+    "25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix": 15.67,
+    "25% Bi4Ti3O12 - 0% reduced graphene oxide - Chitosan matrix": 14.04,
+    "0% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix": 0,
+    "50% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix": 28.21,
+    "7.32233% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix": 8.38,
+    "42.6777% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix": 18.57,
+    "25% Bi4Ti3O12 - 1% reduced graphene oxide - Chitosan matrix": 16.3,
+    "42.6777% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix": 24.82,
+    "7.32233% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix": 5.21
+}
+```
+The `property_unit` is 'pC/N' and `family` is 'Bi4Ti3O12'.
+I now have all the necessary information to construct the final answer.```json
+{
+  "composition_formatted_data": {
+    "compositions_property_values": {
+      "25% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix": 15.67,
+      "25% Bi4Ti3O12 - 0% reduced graphene oxide - Chitosan matrix": 14.04,
+      "0% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix": 0,
+      "50% Bi4Ti3O12 - 0.5% reduced graphene oxide - Chitosan matrix": 28.21,
+      "7.32233% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix": 8.38,
+      "42.6777% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix": 18.57,
+      "25% Bi4Ti3O12 - 1% reduced graphene oxide - Chitosan matrix": 16.3,
+      "42.6777% Bi4Ti3O12 - 0.853553% reduced graphene oxide - Chitosan matrix": 24.82,
+      "7.32233% Bi4Ti3O12 - 0.146447% reduced graphene oxide - Chitosan matrix": 5.21
+    },
+    "property_unit": "pC/N",
+    "family": "Bi4Ti3O12"
+  }
+}
+```"

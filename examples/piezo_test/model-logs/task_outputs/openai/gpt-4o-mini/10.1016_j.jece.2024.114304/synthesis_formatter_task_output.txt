@@ -1,0 +1,1 @@
+{"synthesis_formatted_data":{"method":"Chemical reaction","precursors":["In2Se3","SnSe"],"steps":[],"characterization_techniques":["XRD","SEM","TEM","XPS","PL","EIS","TRPL","EPR"]}}

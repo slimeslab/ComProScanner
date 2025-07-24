@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Ba(0.92)Ca(0.08)Zr(0.09)Ti(0.91)O3":609,"Ba(0.92)Ca(0.08)Sn(0.09)Ti(0.91)O3":358},"property_unit":"pm/V","family":"BaTiO3"}}

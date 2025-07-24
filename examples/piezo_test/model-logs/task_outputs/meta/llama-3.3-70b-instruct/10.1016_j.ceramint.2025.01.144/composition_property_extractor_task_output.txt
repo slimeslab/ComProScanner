@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.8(Bi0.5Na0.5)TiO3–0.2(Bi0.5K0.5)TiO3":295},"abbreviations":{"BNBT-100x":"(1-x)(Bi0.5Na0.5)TiO3–xBaTiO3","BNKT-100y":"(1-y)(Bi0.5Na0.5)TiO3–y(Bi0.5K0.5)TiO3","BNBK 100a/100b/100c":"a(Bi0.5Na0.5)TiO3–bBaTiO3–c(Bi0.5K0.5)TiO3"},"property_unit":"pC/N","family":"BNT"}}

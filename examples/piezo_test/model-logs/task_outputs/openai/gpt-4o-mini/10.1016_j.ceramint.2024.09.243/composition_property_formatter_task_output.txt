@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BaTiO3/Ca10(PO4)6(OH)2 where porosity=70%":5,"Ba0.70Ca0.30TiO3":9,"Ba3(PO4)2":2},"property_unit":"pC/N","family":"BaTiO3"}}

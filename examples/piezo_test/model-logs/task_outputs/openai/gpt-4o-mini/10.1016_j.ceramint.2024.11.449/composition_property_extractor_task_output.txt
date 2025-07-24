@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Ca1-2x(NaCe)xBi2Nb2-x(W0.75Mn0.25)xO9 where x=0.03":17.2,"CBN":5.5},"abbreviations":{"NaCe":"NaCe","WMn":"W0.75Mn0.25","CBNCWM":"CaBi2Nb2O9-based ceramics"},"property_unit":"pC/N","family":"BLSFs"}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"(Na0.5Bi0.5)TiO3 - Ba(Ti0.98Zr0.02)":175},"abbreviations":{"NBT":"(Na0.5Bi0.5)TiO3","BZT":"Ba(Ti0.98Zr0.02)"},"property_unit":"pC/N","family":"NaBiTiO3"}}

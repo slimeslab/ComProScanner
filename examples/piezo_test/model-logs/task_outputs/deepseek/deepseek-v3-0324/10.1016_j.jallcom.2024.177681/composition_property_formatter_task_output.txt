@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"K0.5Na0.5NbO3-BiFeO3-0Bi0.5Na0.5ZrO3":293,"K0.5Na0.5NbO3-BiFeO3-0.03Bi0.5Na0.5ZrO3":358,"K0.5Na0.5NbO3-BiFeO3-0.06Bi0.5Na0.5ZrO3":null,"K0.5Na0.5NbO3-BiFeO3-0.09Bi0.5Na0.5ZrO3":null,"K0.5Na0.5NbO3-BiFeO3-0.12Bi0.5Na0.5ZrO3":null},"property_unit":"pC/N","family":"KNNS-based"}}

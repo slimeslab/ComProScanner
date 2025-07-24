@@ -1,0 +1,506 @@
+[
+  {
+    "name": "Nova Lite",
+    "leaderboard_name": "amazon-nova-lite-v1.0",
+    "api_name": "amazon-nova-lite-v1.0",
+    "rating": 1213.3556442764755,
+    "output_token_price": 0.24,
+    "organization": "Amazon",
+    "input_token_price": 0.06
+  },
+  {
+    "name": "Nova Micro",
+    "leaderboard_name": "amazon-nova-micro-v1.0",
+    "api_name": "amazon-nova-micro-v1.0",
+    "rating": 1194.4800317483837,
+    "output_token_price": 0.14,
+    "organization": "Amazon",
+    "input_token_price": 0.04
+  },
+  {
+    "name": "Nova Pro",
+    "leaderboard_name": "amazon-nova-pro-v1.0",
+    "api_name": "amazon-nova-pro-v1.0",
+    "rating": 1241.4784948096253,
+    "output_token_price": 3.2,
+    "organization": "Amazon",
+    "input_token_price": 0.8
+  },
+  {
+    "name": "Athene-v2-Chat-72B",
+    "leaderboard_name": "athene-v2-chat",
+    "api_name": "athene-v2-chat",
+    "rating": 1271.883094429519,
+    "output_token_price": 0.9,
+    "organization": "NexusFlow",
+    "input_token_price": 0.9
+  },
+  {
+    "name": "Aya-Expanse-32B",
+    "leaderboard_name": "c4ai-aya-expanse-32b",
+    "api_name": "c4ai-aya-expanse-32b",
+    "rating": 1205.7155062743877,
+    "output_token_price": 1.5,
+    "organization": "Cohere",
+    "input_token_price": 0.5
+  },
+  {
+    "name": "Gemini-2.5-Flash-Preview",
+    "leaderboard_name": "gemini-2.5-flash-preview-05-20",
+    "api_name": "gemini-2.5-flash-preview-05-20",
+    "rating": 1418.321760820568,
+    "output_token_price": 0.6,
+    "organization": "Google",
+    "input_token_price": 0.15
+  },
+  {
+    "name": "GPT-4o",
+    "leaderboard_name": "chatgpt-4o-latest-20241120",
+    "api_name": "chatgpt-4o-latest-20241120",
+    "rating": 1361.920525133796,
+    "output_token_price": 10.0,
+    "organization": "OpenAI",
+    "input_token_price": 2.5
+  },
+  {
+    "name": "Claude 3.5 Haiku",
+    "leaderboard_name": "claude-3-5-haiku-20241022",
+    "api_name": "claude-3-5-haiku-20241022",
+    "rating": 1233.7570755165566,
+    "output_token_price": 4.0,
+    "organization": "Anthropic",
+    "input_token_price": 0.8
+  },
+  {
+    "name": "Claude 3.5 Sonnet",
+    "leaderboard_name": "claude-3-5-sonnet-20241022",
+    "api_name": "claude-3-5-sonnet-20241022",
+    "rating": 1279.5324691026526,
+    "output_token_price": 15.0,
+    "organization": "Anthropic",
+    "input_token_price": 3.0
+  },
+  {
+    "name": "Claude 3.7 Sonnet",
+    "leaderboard_name": "claude-3-7-sonnet-20250219",
+    "api_name": "claude-3-7-sonnet-20250219",
+    "rating": 1286.841153672007,
+    "output_token_price": 15.0,
+    "organization": "Anthropic",
+    "input_token_price": 3.0
+  },
+  {
+    "name": "Claude 3.7 Sonnet",
+    "leaderboard_name": "claude-3-7-sonnet-20250219-thinking-32k",
+    "api_name": "claude-3-7-sonnet-20250219",
+    "rating": 1295.7970373199637,
+    "output_token_price": 15.0,
+    "organization": "Anthropic",
+    "input_token_price": 3.0
+  },
+  {
+    "name": "Claude 3 Opus",
+    "leaderboard_name": "claude-3-opus-20240229",
+    "api_name": "claude-3-opus-20240229",
+    "rating": 1243.7799841171873,
+    "output_token_price": 75.0,
+    "organization": "Anthropic",
+    "input_token_price": 15.0
+  },
+  {
+    "name": "Command R+ (08-2024)",
+    "leaderboard_name": "command-r",
+    "api_name": "command-r-plus-08-2024",
+    "rating": 1145.1438732692036,
+    "output_token_price": 10.0,
+    "organization": "Cohere",
+    "input_token_price": 2.5
+  },
+  {
+    "name": "Command R (08-2024)",
+    "leaderboard_name": "command-r-08-2024",
+    "api_name": "command-r-08-2024",
+    "rating": 1176.2172356631006,
+    "output_token_price": 0.6,
+    "organization": "Cohere",
+    "input_token_price": 0.15
+  },
+  {
+    "name": "Command R+ (08-2024)",
+    "leaderboard_name": "command-r-plus",
+    "api_name": "command-r-plus-08-2024",
+    "rating": 1186.427369775253,
+    "output_token_price": 10.0,
+    "organization": "Cohere",
+    "input_token_price": 2.5
+  },
+  {
+    "name": "Command R+ (08-2024)",
+    "leaderboard_name": "command-r-plus-08-2024",
+    "api_name": "command-r-plus-08-2024",
+    "rating": 1211.7639277418207,
+    "output_token_price": 10.0,
+    "organization": "Cohere",
+    "input_token_price": 2.5
+  },
+  {
+    "name": "DeepSeek-R1",
+    "leaderboard_name": "deepseek-r1",
+    "api_name": "deepseek-r1",
+    "rating": 1354.4623871309889,
+    "output_token_price": 2.19,
+    "organization": "DeepSeek",
+    "input_token_price": 0.55
+  },
+  {
+    "name": "DeepSeek-V3",
+    "leaderboard_name": "deepseek-v3",
+    "api_name": "deepseek-v3",
+    "rating": 1314.8638590899238,
+    "output_token_price": 1.1,
+    "organization": "DeepSeek",
+    "input_token_price": 0.27
+  },
+  {
+    "name": "DeepSeek-V3",
+    "leaderboard_name": "deepseek-v3-0324",
+    "api_name": "deepseek-v3",
+    "rating": 1367.7974715822286,
+    "output_token_price": 1.1,
+    "organization": "DeepSeek",
+    "input_token_price": 0.27
+  },
+  {
+    "name": "Gemini 1.5 Flash",
+    "leaderboard_name": "gemini-1.5-flash-002",
+    "api_name": "gemini-1.5-flash-002",
+    "rating": 1267.9295031815732,
+    "output_token_price": 0.3,
+    "organization": "Google",
+    "input_token_price": 0.075
+  },
+  {
+    "name": "Gemini 1.5 Flash-8B",
+    "leaderboard_name": "gemini-1.5-flash-8b-001",
+    "api_name": "gemini-1.5-flash-8b-001",
+    "rating": 1209.1042570921486,
+    "output_token_price": 0.3,
+    "organization": "Google",
+    "input_token_price": 0.075
+  },
+  {
+    "name": "Gemini 1.5 Pro",
+    "leaderboard_name": "gemini-1.5-pro-002",
+    "api_name": "gemini-1.5-pro-002",
+    "rating": 1298.6426536881843,
+    "output_token_price": 10.0,
+    "organization": "Google",
+    "input_token_price": 2.5
+  },
+  {
+    "name": "Gemini 2.0 Flash",
+    "leaderboard_name": "gemini-2.0-flash-001",
+    "api_name": "gemini-2.0-flash-001",
+    "rating": 1351.4577233799685,
+    "output_token_price": 0.4,
+    "organization": "Google",
+    "input_token_price": 0.1
+  },
+  {
+    "name": "Gemini 2.0 Flash-Lite",
+    "leaderboard_name": "gemini-2.0-flash-lite-preview-02-05",
+    "api_name": "gemini-2.0-flash-lite-preview-02-05",
+    "rating": 1309.1435939634816,
+    "output_token_price": 0.3,
+    "organization": "Google",
+    "input_token_price": 0.075
+  },
+  {
+    "name": "Gemini-2.5-Pro-Preview",
+    "leaderboard_name": "gemini-2.5-pro-exp-03-25",
+    "api_name": "gemini-2.5-pro-exp-03-25",
+    "rating": 1433.258004402091,
+    "output_token_price": 10.0,
+    "organization": "Google",
+    "input_token_price": 1.25
+  },
+  {
+    "name": "Gemma 2 9B",
+    "leaderboard_name": "gemma-2-9b-it",
+    "api_name": "gemma-2-9b-it",
+    "rating": 1188.5326800262474,
+    "output_token_price": 0.3,
+    "organization": "Google",
+    "input_token_price": 0.3
+  },
+  {
+    "name": "Gemma 2 9B",
+    "leaderboard_name": "gemma-2-9b-it-simpo",
+    "api_name": "gemma-2-9b-it",
+    "rating": 1212.632168740156,
+    "output_token_price": 0.3,
+    "organization": "Google",
+    "input_token_price": 0.3
+  },
+  {
+    "name": "Gemma-3 27B",
+    "leaderboard_name": "gemma-3-27b-it",
+    "api_name": "gemma-3-27b-it",
+    "rating": 1338.9978381123256,
+    "output_token_price": 0.07,
+    "organization": "Google",
+    "input_token_price": 0.07
+  },
+  {
+    "name": "GLM-4-Plus",
+    "leaderboard_name": "glm-4-plus",
+    "api_name": "glm-4-plus-0111",
+    "rating": 1270.469664416659,
+    "output_token_price": 6.9,
+    "organization": "Zhipu",
+    "input_token_price": 6.9
+  },
+  {
+    "name": "GLM-4-Plus",
+    "leaderboard_name": "glm-4-plus-0111",
+    "api_name": "glm-4-plus-0111",
+    "rating": 1307.3309037368458,
+    "output_token_price": 6.9,
+    "organization": "Zhipu",
+    "input_token_price": 6.9
+  },
+  {
+    "name": "GPT-4.1",
+    "leaderboard_name": "gpt-4.1-2025-04-14",
+    "api_name": "gpt-4.1-2025-04-14",
+    "rating": 1365.1007745312331,
+    "output_token_price": 8.0,
+    "organization": "OpenAI",
+    "input_token_price": 2.0
+  },
+  {
+    "name": "GPT-4.1 Mini",
+    "leaderboard_name": "gpt-4.1-mini-2025-04-14",
+    "api_name": "gpt-4.1-mini-2025-04-14",
+    "rating": 1318.5071085577176,
+    "output_token_price": 1.6,
+    "organization": "OpenAI",
+    "input_token_price": 0.4
+  },
+  {
+    "name": "GPT-4.1 Nano",
+    "leaderboard_name": "gpt-4.1-nano-2025-04-14",
+    "api_name": "gpt-4.1-nano-2025-04-14",
+    "rating": 1268.6987682627246,
+    "output_token_price": 0.4,
+    "organization": "OpenAI",
+    "input_token_price": 0.1
+  },
+  {
+    "name": "GPT-4.5-Preview",
+    "leaderboard_name": "gpt-4.5-preview-2025-02-27",
+    "api_name": "gpt-4.5-preview-2025-02-27",
+    "rating": 1394.230232390176,
+    "output_token_price": 150.0,
+    "organization": "OpenAI",
+    "input_token_price": 75.0
+  },
+  {
+    "name": "GPT-4o mini",
+    "leaderboard_name": "gpt-4o-mini-2024-07-18",
+    "api_name": "gpt-4o-mini-2024-07-18",
+    "rating": 1268.7354884566726,
+    "output_token_price": 0.6,
+    "organization": "OpenAI",
+    "input_token_price": 0.15
+  },
+  {
+    "name": "Llama 3.1 405B",
+    "leaderboard_name": "llama-3.1-405b-instruct-fp8",
+    "api_name": "llama-3.1-405b-instruct-fp8",
+    "rating": 1263.977390080248,
+    "output_token_price": 3.5,
+    "organization": "Meta",
+    "input_token_price": 3.5
+  },
+  {
+    "name": "Llama-3.1-70B",
+    "leaderboard_name": "llama-3.1-70b-instruct",
+    "api_name": "llama-3.1-70b-instruct",
+    "rating": 1244.239130336549,
+    "output_token_price": 0.88,
+    "organization": "Meta",
+    "input_token_price": 0.88
+  },
+  {
+    "name": "Llama 3.1 8B",
+    "leaderboard_name": "llama-3.1-8b-instruct",
+    "api_name": "llama-3.1-8b-instruct",
+    "rating": 1172.1745055585552,
+    "output_token_price": 0.18,
+    "organization": "Meta",
+    "input_token_price": 0.18
+  },
+  {
+    "name": "Llama 3.3 70B",
+    "leaderboard_name": "llama-3.3-70b-instruct",
+    "api_name": "llama-3.3-70b-instruct",
+    "rating": 1253.0987483519475,
+    "output_token_price": 0.88,
+    "organization": "Meta",
+    "input_token_price": 0.88
+  },
+  {
+    "name": "Llama-4-Maverick",
+    "leaderboard_name": "llama-4-maverick-03-26-experimental",
+    "api_name": "llama-4-maverick-03-26-experimental",
+    "rating": 1394.3083181034328,
+    "output_token_price": 0.85,
+    "organization": "Meta",
+    "input_token_price": 0.27
+  },
+  {
+    "name": "Ministral 8B",
+    "leaderboard_name": "ministral-8b-2410",
+    "api_name": "ministral-8b-2410",
+    "rating": 1178.7638154902252,
+    "output_token_price": 0.1,
+    "organization": "Mistral",
+    "input_token_price": 0.1
+  },
+  {
+    "name": "Mistral-Large-2407",
+    "leaderboard_name": "mistral-large-2407",
+    "api_name": "mistral-large-2407",
+    "rating": 1248.0809543377113,
+    "output_token_price": 6.0,
+    "organization": "Mistral",
+    "input_token_price": 2.0
+  },
+  {
+    "name": "Mistral-Small-24B-Instruct-2501",
+    "leaderboard_name": "mistral-small-24b-instruct-2501",
+    "api_name": "mistral-small-24b-instruct-2501",
+    "rating": 1213.8859024518836,
+    "output_token_price": 0.3,
+    "organization": "Mistral",
+    "input_token_price": 0.1
+  },
+  {
+    "name": "o1",
+    "leaderboard_name": "o1-2024-12-17",
+    "api_name": "o1-2024-12-17",
+    "rating": 1346.1795921863884,
+    "output_token_price": 60.0,
+    "organization": "OpenAI",
+    "input_token_price": 15.0
+  },
+  {
+    "name": "o1-mini",
+    "leaderboard_name": "o1-mini",
+    "api_name": "o1-mini",
+    "rating": 1300.3706955173905,
+    "output_token_price": 4.4,
+    "organization": "OpenAI",
+    "input_token_price": 1.1
+  },
+  {
+    "name": "o1-preview",
+    "leaderboard_name": "o1-preview",
+    "api_name": "o1-preview",
+    "rating": 1331.4220994563343,
+    "output_token_price": 60.0,
+    "organization": "OpenAI",
+    "input_token_price": 15.0
+  },
+  {
+    "name": "o3",
+    "leaderboard_name": "o3-2025-04-16",
+    "api_name": "o3-2025-04-16",
+    "rating": 1409.263549088233,
+    "output_token_price": 40.0,
+    "organization": "OpenAI",
+    "input_token_price": 10.0
+  },
+  {
+    "name": "o3-mini",
+    "leaderboard_name": "o3-mini",
+    "api_name": "o3-mini",
+    "rating": 1301.7581432237537,
+    "output_token_price": 4.4,
+    "organization": "OpenAI",
+    "input_token_price": 1.1
+  },
+  {
+    "name": "o3-mini",
+    "leaderboard_name": "o3-mini-high",
+    "api_name": "o3-mini",
+    "rating": 1320.9915575761881,
+    "output_token_price": 4.4,
+    "organization": "OpenAI",
+    "input_token_price": 1.1
+  },
+  {
+    "name": "o4-mini",
+    "leaderboard_name": "o4-mini-2025-04-16",
+    "api_name": "o4-mini-2025-04-16",
+    "rating": 1343.0409052519435,
+    "output_token_price": 4.4,
+    "organization": "OpenAI",
+    "input_token_price": 1.1
+  },
+  {
+    "name": "Qwen2.5-72B-Instruct",
+    "leaderboard_name": "qwen2.5-72b-instruct",
+    "api_name": "qwen2.5-72b-instruct",
+    "rating": 1253.6160579786542,
+    "output_token_price": 1.2,
+    "organization": "Alibaba",
+    "input_token_price": 1.2
+  },
+  {
+    "name": "Qwen2.5-Coder-32B-Instruct",
+    "leaderboard_name": "qwen2.5-coder-32b-instruct",
+    "api_name": "qwen2.5-coder-32b-instruct",
+    "rating": 1213.7917574458834,
+    "output_token_price": 0.8,
+    "organization": "Alibaba",
+    "input_token_price": 0.8
+  },
+  {
+    "name": "Qwen2.5-Max",
+    "leaderboard_name": "qwen2.5-max",
+    "api_name": "qwen2.5-max",
+    "rating": 1337.356990307427,
+    "output_token_price": 6.4,
+    "organization": "Alibaba",
+    "input_token_price": 1.6
+  },
+  {
+    "name": "Qwen2.5-plus-1127",
+    "leaderboard_name": "qwen2.5-plus-1127",
+    "api_name": "qwen2.5-plus-1127",
+    "rating": 1278.63234983567,
+    "output_token_price": 1.2,
+    "organization": "Alibaba",
+    "input_token_price": 0.4
+  },
+  {
+    "name": "Yi-Lightning",
+    "leaderboard_name": "yi-lightning",
+    "api_name": "yi-lightning",
+    "rating": 1283.5599851541742,
+    "output_token_price": 0.14,
+    "organization": "01 AI",
+    "input_token_price": 0.14
+  },
+  {
+    "name": "Yi-Lightning",
+    "leaderboard_name": "yi-lightning-lite",
+    "api_name": "yi-lightning",
+    "rating": 1260.8395613566045,
+    "output_token_price": 0.14,
+    "organization": "01 AI",
+    "input_token_price": 0.14
+  }
+]

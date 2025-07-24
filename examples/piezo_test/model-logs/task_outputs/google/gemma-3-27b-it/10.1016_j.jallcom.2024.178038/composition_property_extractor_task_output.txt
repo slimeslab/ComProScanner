@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PbZr0.52Ti0.48O3":null,"TiO2":null,"LaNiO3":null,"LaNiO3/TiO2":null,"PZT":null,"PbTiO3":null},"abbreviations":{"PZT":"PbZr0.52Ti0.48O3","LNO":"LaNiO3","PTO":"PbTiO3"},"property_unit":"pm/V","family":"Perovskite"}}

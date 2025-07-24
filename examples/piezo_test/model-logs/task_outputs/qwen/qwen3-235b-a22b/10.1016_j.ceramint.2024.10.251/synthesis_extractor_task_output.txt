@@ -1,0 +1,1 @@
+{"synthesis_extracted_data":{"method":"mixed oxide method","precursors":["barium carbonate","zirconium dioxide","titanium dioxide"],"steps":["Calcining barium carbonate, zirco"],"characterization_techniques":[]}}

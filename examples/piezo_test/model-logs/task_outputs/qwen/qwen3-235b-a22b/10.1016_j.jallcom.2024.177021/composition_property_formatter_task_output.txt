@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi3Ti1.5Nb0.0W0.5O9":7.5,"Bi3Ti1.48Nb0.02W0.5O9":13},"property_unit":"pC/N","family":"Bi3Ti1.5W0.5O9"}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BCTSO":232,"BCTSO-1":188,"BCTSO-5":20,"BCTSO-9":2,"(Ba0.95Ca0.05)(Ti0.89Sn0.11)O3":232,"(Ba0.95Ca0.05)(Ti0.89Sn0.11)O3-BFO":2},"abbreviations":{"BCTSO":"(Ba0.95Ca0.05)(Ti0.89Sn0.11)O3","BFO":"BiFeO3"},"property_unit":"pC/N","family":"BaTiO3"}}

@@ -1,0 +1,201 @@
+2025-07-12 01:16:30: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Material parameters of the high-frequency piezoelectric ultrasonic transducer.
+|Material|Part|Density (kg/mE^{3})|Young\u2019s modulus (GPa)|Sound velocity (m/s)|
+|---|---|---|---|---|
+|H68 brass|Damping back cover|8530|113|4516|
+|PZT-8|Piezoelectric ceramic stack|7700|89|4165|
+|7075 aluminum alloy|Flange plate; Fixture rod; Amplifying front cover; Tool rod|2800|72|6173|
+
+Table 2. Main parameters of PZT-8 ceramics.
+|parameter| k33| \u03b533X| s33E(eE^{-12}mE^{2}/N)| d33(eE^{-12}C/N)| tan\u03b4\u2032| tan\u03d5\u2032| tan\u03b8\u2032|
+|---|---|---|---|---|---|---|---|
+|Value|0.6|1150 \u03b50|13.8|218|0.3\xa0%|0.46\xa0%|1\xa0%|
+
+Table 3. The design geometric dimensions of the high-frequency piezoelectric ultrasonic transducer.
+|Parameter| l1| lp| l2| l3| l4| le| \u03c4|
+|---|---|---|---|---|---|---|---|
+|Value (mm)|9|6|3|8|15|20|2.5|
+|Parameter|d1|dp|d2|de1|de2|d3|d4|
+|Value (mm)|16|16|24|16|8|8|5|
+
+Table 4. The proportionality constants of the temperature and force.
+|Force constant| a1m| a2m| a3m| b1m| b2m| b3m|
+|---|---|---|---|---|---|---|
+|value|1.6\u03b50|\u22122.56e-14|\u22124.1e-13|0.01|0.001|0.002|
+|Temperature constant|a1t|a2t|a3t|b1t|b2t|b3t|
+|value|1.06\u03b50|1.51e-14|\u22121.02e-13|0.01|\u22120.00006|0.002|
+
+# ABSTRACT
+However, the mechanical and thermal loads of the high-frequency piezoelectric ultrasonic transducer (HPUT) of ultrasonic micromachining systems have serious interference with the precise control of resonance frequency tracking, which further causes uncontrollable processing quality and precision. To improve the controllability of resonance frequency tracking, a thermo-mechanical coupling load model for HPUTs is proposed to establish the relationship between the resonance frequency and thermo-mechanical coupling load by introducing the force load constants and thermal load constants into the 6-terminal network electromechanical equivalent circuit. The experimental results show that the proposed thermo-mechanical coupling load model can accurately predict the trend of the resonance frequency when the thermo-mechanical coupling load is under the axial force range of 0–10 N and temperature range of 35–60°C.
+
+# INTRODUCTION
+Therefore, developing piezoelectric ultrasonic transducers (PUTs) with high resonance controllability in the power ultrasonic applications field is an urgent requirement, especially the high-frequency (\u2265 60 kHz) piezoelectric ultrasonic transducer (HPUT) with the modal dense effect and high self-heating effect. The control performance of HPUTs is closely related to its thermo-mechanical load model and piezoelectric ceramics materials. Generally, when the temperature is less than 100\xb0C, the loss factor, dielectric constant, piezoelectric constant, and elastic constant increase approximately linearly with increasing temperature. Besides, the material parameters of different piezoelectric ceramics, such as the PZT-5H, PZT-4, and PZT-8, have a significant influence on HPUT\u2019s frequency characteristics. Among them, the piezoelectric constant linearity of PZT-8 increasing with temperature is optimal at 0\u2013120\xb0C. To improve the thermal stability of HPUTs in the wide temperature range, developing high-temperature piezoelectric materials based on phase evolution, microstructure, and other mechanisms is beneficial for the high controllability of HPUTs at high temperatures. Although the performance enhancement of piezoelectric materials effectively improves thermal stability, conversion efficiency, and mechanical loss, making HPUTs reliably operate in the non-resonant region still cannot be ensured. Therefore, the resonant automatic tracking method should be used to suppress frequency drifting and reduce PUT\u2019s performance degradation, which to some extent weakens the adverse effects caused by changes in temperature and force loads. Based on response surface methodology, Li et al. studied a resonance frequency prediction model for three temperature regions (30\u201355\xb0C, 55\u2013110\xb0C, 110\u2013160\xb0C), which promotes the practical application of PZT-based ceramics automatic tuning. Liu et al. implemented the experimental study under the tracking conditions of temperature less than 80\xb0C and input electrical power less than 10 W, the proposed nitinol Langevin ultrasonic transducer demonstrates dynamic stability with respect to frequency, electrical impedance, and vibration amplitude. Then based on a dynamic model, the influence of thermo-mechanical coupling loads on PUT\u2019s vibration characteristics was analyzed, and the results indicate that a critical load effect exists in the vibration system under the action of thermo-mechanical coupling loads. Rao et al. introduced a force load constant in the 6-terminal network Mason equivalent circuit to provide theoretical guidance for resonance frequency tracking and parameters prediction under the force-loaded conditions. Furthermore, due to the increasing dielectric loss with increasing frequency, it has higher losses for HPUTs. Therefore, it is of great value to study HPUT\u2019s thermo-mechanical coupling load model by electromechanical equivalence losses model. In this paper, based on the 6-terminal network electromechanical equivalent circuit, a thermo-mechanical coupling load model of HPUT (91.3 kHz) is established in the optimal temperature and force ranges by introducing the force load constants and thermal load constants, which lays the foundation for the control mechanism of transducers under high-frequency conditions. This paper is structured as follows. proposes a thermo-mechanical coupling load model for HPUTs based on an electromechanical equivalent circuit. performs the theoretical analysis of HPUT\u2019s thermo-mechanical load model. implements experimental verification to optimize the optimal region for model application. summarizes the research work of this paper and prospects for future works.
+
+# CONCLUSION
+Through theoretical modeling and analyzing, and experimental study, the following conclusions were achieved: (1) The proposed thermo-mechanical coupling load model reveals the change rule of frequency drifting with the increase of temperature and force, which indicates that the force load effect on frequency and impedance is opposite to that of the temperature load effect, but the force load plays a dominant role in general. (2) Based on theoretical inferences of thermo-mechanical coupling load model and experimental verifications, the optimal operating region was determined to be in the axial force range of 0\u201310 N and temperature range of 35\u201360\xb0C, where the key parameters of f s, f p, C e, R m, Q m, and K eff have a strong linear relationship with the change of axial force and temperature. (3) Although theoretical modeling of high-frequency piezoelectric ultrasonic transducers with thermo-mechanical coupling loads requires more input parameters, which makes it difficult to establish accurate models, the thermo-mechanical coupling load model is more accurate than the ideal model. Based on theoretical inferences of thermo-mechanical coupling load model and experimental verifications, the optimal operating region was determined to be in the axial force range of 0\u201310 N and temperature range of 35\u201360\xb0C, where the key parameters of f s, f p, C e, R m, Q m, and K eff have a strong linear relationship with the change of axial force and temperature.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-12 01:17:32: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Material parameters of the high-frequency piezoelectric ultrasonic transducer.
+|Material|Part|Density (kg/mE^{3})|Young\u2019s modulus (GPa)|Sound velocity (m/s)|
+|---|---|---|---|---|
+|H68 brass|Damping back cover|8530|113|4516|
+|PZT-8|Piezoelectric ceramic stack|7700|89|4165|
+|7075 aluminum alloy|Flange plate; Fixture rod; Amplifying front cover; Tool rod|2800|72|6173|
+
+Table 2. Main parameters of PZT-8 ceramics.
+|parameter| k33| \u03b533X| s33E(eE^{-12}mE^{2}/N)| d33(eE^{-12}C/N)| tan\u03b4\u2032| tan\u03d5\u2032| tan\u03b8\u2032|
+|---|---|---|---|---|---|---|---|
+|Value|0.6|1150 \u03b50|13.8|218|0.3\xa0%|0.46\xa0%|1\xa0%|
+
+Table 3. The design geometric dimensions of the high-frequency piezoelectric ultrasonic transducer.
+|Parameter| l1| lp| l2| l3| l4| le| \u03c4|
+|---|---|---|---|---|---|---|---|
+|Value (mm)|9|6|3|8|15|20|2.5|
+|Parameter|d1|dp|d2|de1|de2|d3|d4|
+|Value (mm)|16|16|24|16|8|8|5|
+
+Table 4. The proportionality constants of the temperature and force.
+|Force constant| a1m| a2m| a3m| b1m| b2m| b3m|
+|---|---|---|---|---|---|---|
+|value|1.6\u03b50|\u22122.56e-14|\u22124.1e-13|0.01|0.001|0.002|
+|Temperature constant|a1t|a2t|a3t|b1t|b2t|b3t|
+|value|1.06\u03b50|1.51e-14|\u22121.02e-13|0.01|\u22120.00006|0.002|
+
+# ABSTRACT
+However, the mechanical and thermal loads of the high-frequency piezoelectric ultrasonic transducer (HPUT) of ultrasonic micromachining systems have serious interference with the precise control of resonance frequency tracking, which further causes uncontrollable processing quality and precision. To improve the controllability of resonance frequency tracking, a thermo-mechanical coupling load model for HPUTs is proposed to establish the relationship between the resonance frequency and thermo-mechanical coupling load by introducing the force load constants and thermal load constants into the 6-terminal network electromechanical equivalent circuit. The experimental results show that the proposed thermo-mechanical coupling load model can accurately predict the trend of the resonance frequency when the thermo-mechanical coupling load is under the axial force range of 0–10 N and temperature range of 35–60°C.
+
+# INTRODUCTION
+Therefore, developing piezoelectric ultrasonic transducers (PUTs) with high resonance controllability in the power ultrasonic applications field is an urgent requirement, especially the high-frequency (\u2265 60 kHz) piezoelectric ultrasonic transducer (HPUT) with the modal dense effect and high self-heating effect. The control performance of HPUTs is closely related to its thermo-mechanical load model and piezoelectric ceramics materials. Generally, when the temperature is less than 100\xb0C, the loss factor, dielectric constant, piezoelectric constant, and elastic constant increase approximately linearly with increasing temperature. Besides, the material parameters of different piezoelectric ceramics, such as the PZT-5H, PZT-4, and PZT-8, have a significant influence on HPUT\u2019s frequency characteristics. Among them, the piezoelectric constant linearity of PZT-8 increasing with temperature is optimal at 0\u2013120\xb0C. To improve the thermal stability of HPUTs in the wide temperature range, developing high-temperature piezoelectric materials based on phase evolution, microstructure, and other mechanisms is beneficial for the high controllability of HPUTs at high temperatures. Although the performance enhancement of piezoelectric materials effectively improves thermal stability, conversion efficiency, and mechanical loss, making HPUTs reliably operate in the non-resonant region still cannot be ensured. Therefore, the resonant automatic tracking method should be used to suppress frequency drifting and reduce PUT\u2019s performance degradation, which to some extent weakens the adverse effects caused by changes in temperature and force loads. Based on response surface methodology, Li et al. studied a resonance frequency prediction model for three temperature regions (30\u201355\xb0C, 55\u2013110\xb0C, 110\u2013160\xb0C), which promotes the practical application of PZT-based ceramics automatic tuning. Liu et al. implemented the experimental study under the tracking conditions of temperature less than 80\xb0C and input electrical power less than 10 W, the proposed nitinol Langevin ultrasonic transducer demonstrates dynamic stability with respect to frequency, electrical impedance, and vibration amplitude. Then based on a dynamic model, the influence of thermo-mechanical coupling loads on PUT\u2019s vibration characteristics was analyzed, and the results indicate that a critical load effect exists in the vibration system under the action of thermo-mechanical coupling loads. Rao et al. introduced a force load constant in the 6-terminal network Mason equivalent circuit to provide theoretical guidance for resonance frequency tracking and parameters prediction under the force-loaded conditions. Furthermore, due to the increasing dielectric loss with increasing frequency, it has higher losses for HPUTs. Therefore, it is of great value to study HPUT\u2019s thermo-mechanical coupling load model by electromechanical equivalence losses model. In this paper, based on the 6-terminal network electromechanical equivalent circuit, a thermo-mechanical coupling load model of HPUT (91.3 kHz) is established in the optimal temperature and force ranges by introducing the force load constants and thermal load constants, which lays the foundation for the control mechanism of transducers under high-frequency conditions. This paper is structured as follows. proposes a thermo-mechanical coupling load model for HPUTs based on an electromechanical equivalent circuit. performs the theoretical analysis of HPUT\u2019s thermo-mechanical load model. implements experimental verification to optimize the optimal region for model application. summarizes the research work of this paper and prospects for future works.
+
+# CONCLUSION
+Through theoretical modeling and analyzing, and experimental study, the following conclusions were achieved: (1) The proposed thermo-mechanical coupling load model reveals the change rule of frequency drifting with the increase of temperature and force, which indicates that the force load effect on frequency and impedance is opposite to that of the temperature load effect, but the force load plays a dominant role in general. (2) Based on theoretical inferences of thermo-mechanical coupling load model and experimental verifications, the optimal operating region was determined to be in the axial force range of 0\u201310 N and temperature range of 35\u201360\xb0C, where the key parameters of f s, f p, C e, R m, Q m, and K eff have a strong linear relationship with the change of axial force and temperature. (3) Although theoretical modeling of high-frequency piezoelectric ultrasonic transducers with thermo-mechanical coupling loads requires more input parameters, which makes it difficult to establish accurate models, the thermo-mechanical coupling load model is more accurate than the ideal model. Based on theoretical inferences of thermo-mechanical coupling load model and experimental verifications, the optimal operating region was determined to be in the axial force range of 0\u201310 N and temperature range of 35\u201360\xb0C, where the key parameters of f s, f p, C e, R m, Q m, and K eff have a strong linear relationship with the change of axial force and temperature.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "PZT-8": 218
+    },
+    "abbreviations": {},
+    "property_unit": "pC/N",
+    "family": "PZT"
+  }
+}"

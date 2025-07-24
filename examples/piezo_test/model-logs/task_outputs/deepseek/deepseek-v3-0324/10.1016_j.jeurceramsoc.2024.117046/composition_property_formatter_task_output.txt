@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"KICET-PZT8 with 0% porosity":330.0,"KICET-PZT8 with 7% porosity":320.1,"KICET-PZT8 with 13% porosity":313.5},"property_unit":"pC/N","family":"PZT"}}

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi4Ti3O12":0},"property_unit":"pC/N","family":"Bi4Ti3O12"}}

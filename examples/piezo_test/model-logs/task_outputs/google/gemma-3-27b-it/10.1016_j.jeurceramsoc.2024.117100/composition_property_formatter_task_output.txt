@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BaTi0.89Hf0.11O3":337,"BaTiO3-11Hf-1Fe":337,"BaTi1-x Hf x O3":null,"BaTiO3-xHf-yFe":null},"property_unit":"pC/N","family":"BaTiO3"}}

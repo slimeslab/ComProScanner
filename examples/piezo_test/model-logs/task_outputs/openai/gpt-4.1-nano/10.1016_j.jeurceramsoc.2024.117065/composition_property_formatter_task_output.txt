@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"CaBi2Nb2O9":6.0,"CaBi2Nb2O9 + 2%wt Tm":12.4},"property_unit":"pC/N","family":"CaBi2Nb2O9"}}

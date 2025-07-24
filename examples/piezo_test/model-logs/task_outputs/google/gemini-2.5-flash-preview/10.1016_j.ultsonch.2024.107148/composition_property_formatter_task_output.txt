@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Pb(Zr0.95Ti0.05)O3":218},"property_unit":"pC/N","family":"PZT"}}

@@ -1,0 +1,100 @@
+2025-07-08 15:17:21: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'Al0.99N0.01': 5, 'AlN': 4.5, 'Al0.98N0.02': 4.75, 'Al0.97N0.03': 4.75, 'Al0.96N0.04': 4.75, 'Al0.95N0.05': 4.75, 'Al0.94N0.06': 4.75, 'Al0.93N0.07': 4.75, 'Al0.92N0.08': 4.75, 'Al0.91N0.09': 4.75, 'Al0.90N0.10': 4.75, 'Al0.89N0.11': 4.75, 'Al0.88N0.12': 4.75, 'Al0.87N0.13': 4.75, 'Al0.86N0.14': 4.75, 'Al0.85N0.15': 4.75, 'Al0.84N0.16': 4.75, 'Al0.83N0.17': 4.75, 'Al0.82N0.18': 4.75, 'Al0.81N0.19': 4.75, 'Al0.80N0.20': 4.75, 'Al0.79N0.21': 4.75, 'Al0.78N0.22': 4.75, 'Al0.77N0.23': 4.75, 'Al0.76N0.24': 4.75, 'Al0.75N0.25': 4.75, 'Al0.74N0.26': 4.75, 'Al0.73N0.27': 4.75, 'Al0.72N0.28': 4.75, 'Al0.71N0.29': 4.75, 'Al0.70N0.30': 4.75, 'Al0.69N0.31': 4.75, 'Al0.68N0.32': 4.75, 'Al0.67N0.33': 4.75, 'Al0.66N0.34': 4.75, 'Al0.65N0.35': 4.75, 'Al0.64N0.36': 4.75, 'Al0.63N0.37': 4.75, 'Al0.62N0.38': 4.75, 'Al0.61N0.39': 4.75, 'Al0.60N0.40': 4.75, 'Al0.59N0.41': 4.75, 'Al0.58N0.42': 4.75, 'Al0.57N0.43': 4.75, 'Al0.56N0.44': 4.75, 'Al0.55N0.45': 4.75, 'Al0.54N0.46': 4.75, 'Al0.53N0.47': 4.75, 'Al0.52N0.48': 4.75, 'Al0.51N0.49': 4.75, 'Al0.50N0.50': 4.75}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'AlN'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'Al0.99N0.01': 5, 'AlN': 4.5, 'Al0.98N0.02': 4.75, 'Al0.97N0.03': 4.75, 'Al0.96N0.04': 4.75, 'Al0.95N0.05': 4.75, 'Al0.94N0.06': 4.75, 'Al0.93N0.07': 4.75, 'Al0.92N0.08': 4.75, 'Al0.91N0.09': 4.75, 'Al0.90N0.10': 4.75, 'Al0.89N0.11': 4.75, 'Al0.88N0.12': 4.75, 'Al0.87N0.13': 4.75, 'Al0.86N0.14': 4.75, 'Al0.85N0.15': 4.75, 'Al0.84N0.16': 4.75, 'Al0.83N0.17': 4.75, 'Al0.82N0.18': 4.75, 'Al0.81N0.19': 4.75, 'Al0.80N0.20': 4.75, 'Al0.79N0.21': 4.75, 'Al0.78N0.22': 4.75, 'Al0.77N0.23': 4.75, 'Al0.76N0.24': 4.75, 'Al0.75N0.25': 4.75, 'Al0.74N0.26': 4.75, 'Al0.73N0.27': 4.75, 'Al0.72N0.28': 4.75, 'Al0.71N0.29': 4.75, 'Al0.70N0.30': 4.75, 'Al0.69N0.31': 4.75, 'Al0.68N0.32': 4.75, 'Al0.67N0.33': 4.75, 'Al0.66N0.34': 4.75, 'Al0.65N0.35': 4.75, 'Al0.64N0.36': 4.75, 'Al0.63N0.37': 4.75, 'Al0.62N0.38': 4.75, 'Al0.61N0.39': 4.75, 'Al0.60N0.40': 4.75, 'Al0.59N0.41': 4.75, 'Al0.58N0.42': 4.75, 'Al0.57N0.43': 4.75, 'Al0.56N0.44': 4.75, 'Al0.55N0.45': 4.75, 'Al0.54N0.46': 4.75, 'Al0.53N0.47': 4.75, 'Al0.52N0.48': 4.75, 'Al0.51N0.49': 4.75, 'Al0.50N0.50': 4.75}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'AlN'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-08 15:21:53: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'Al0.99N0.01': 5, 'AlN': 4.5, 'Al0.98N0.02': 4.75, 'Al0.97N0.03': 4.75, 'Al0.96N0.04': 4.75, 'Al0.95N0.05': 4.75, 'Al0.94N0.06': 4.75, 'Al0.93N0.07': 4.75, 'Al0.92N0.08': 4.75, 'Al0.91N0.09': 4.75, 'Al0.90N0.10': 4.75, 'Al0.89N0.11': 4.75, 'Al0.88N0.12': 4.75, 'Al0.87N0.13': 4.75, 'Al0.86N0.14': 4.75, 'Al0.85N0.15': 4.75, 'Al0.84N0.16': 4.75, 'Al0.83N0.17': 4.75, 'Al0.82N0.18': 4.75, 'Al0.81N0.19': 4.75, 'Al0.80N0.20': 4.75, 'Al0.79N0.21': 4.75, 'Al0.78N0.22': 4.75, 'Al0.77N0.23': 4.75, 'Al0.76N0.24': 4.75, 'Al0.75N0.25': 4.75, 'Al0.74N0.26': 4.75, 'Al0.73N0.27': 4.75, 'Al0.72N0.28': 4.75, 'Al0.71N0.29': 4.75, 'Al0.70N0.30': 4.75, 'Al0.69N0.31': 4.75, 'Al0.68N0.32': 4.75, 'Al0.67N0.33': 4.75, 'Al0.66N0.34': 4.75, 'Al0.65N0.35': 4.75, 'Al0.64N0.36': 4.75, 'Al0.63N0.37': 4.75, 'Al0.62N0.38': 4.75, 'Al0.61N0.39': 4.75, 'Al0.60N0.40': 4.75, 'Al0.59N0.41': 4.75, 'Al0.58N0.42': 4.75, 'Al0.57N0.43': 4.75, 'Al0.56N0.44': 4.75, 'Al0.55N0.45': 4.75, 'Al0.54N0.46': 4.75, 'Al0.53N0.47': 4.75, 'Al0.52N0.48': 4.75, 'Al0.51N0.49': 4.75, 'Al0.50N0.50': 4.75}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'AlN'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'Al0.99N0.01': 5, 'AlN': 4.5, 'Al0.98N0.02': 4.75, 'Al0.97N0.03': 4.75, 'Al0.96N0.04': 4.75, 'Al0.95N0.05': 4.75, 'Al0.94N0.06': 4.75, 'Al0.93N0.07': 4.75, 'Al0.92N0.08': 4.75, 'Al0.91N0.09': 4.75, 'Al0.90N0.10': 4.75, 'Al0.89N0.11': 4.75, 'Al0.88N0.12': 4.75, 'Al0.87N0.13': 4.75, 'Al0.86N0.14': 4.75, 'Al0.85N0.15': 4.75, 'Al0.84N0.16': 4.75, 'Al0.83N0.17': 4.75, 'Al0.82N0.18': 4.75, 'Al0.81N0.19': 4.75, 'Al0.80N0.20': 4.75, 'Al0.79N0.21': 4.75, 'Al0.78N0.22': 4.75, 'Al0.77N0.23': 4.75, 'Al0.76N0.24': 4.75, 'Al0.75N0.25': 4.75, 'Al0.74N0.26': 4.75, 'Al0.73N0.27': 4.75, 'Al0.72N0.28': 4.75, 'Al0.71N0.29': 4.75, 'Al0.70N0.30': 4.75, 'Al0.69N0.31': 4.75, 'Al0.68N0.32': 4.75, 'Al0.67N0.33': 4.75, 'Al0.66N0.34': 4.75, 'Al0.65N0.35': 4.75, 'Al0.64N0.36': 4.75, 'Al0.63N0.37': 4.75, 'Al0.62N0.38': 4.75, 'Al0.61N0.39': 4.75, 'Al0.60N0.40': 4.75, 'Al0.59N0.41': 4.75, 'Al0.58N0.42': 4.75, 'Al0.57N0.43': 4.75, 'Al0.56N0.44': 4.75, 'Al0.55N0.45': 4.75, 'Al0.54N0.46': 4.75, 'Al0.53N0.47': 4.75, 'Al0.52N0.48': 4.75, 'Al0.51N0.49': 4.75, 'Al0.50N0.50': 4.75}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'AlN'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="{
+  "composition_formatted_data": {
+    "compositions_property_values": {
+      "Al(0.99-((0.99*0.01)/1))N(0.01-((0.99*0.01)/1))": 5,
+      "AlN": 4.5,
+      "Al(0.98-((0.98*0.02)/1))N(0.02-((0.98*0.02)/1))": 4.75,
+      "Al(0.97-((0.97*0.03)/1))N(0.03-((0.97*0.03)/1))": 4.75,
+      "Al(0.96-((0.96*0.04)/1))N(0.04-((0.96*0.04)/1))": 4.75,
+      "Al(0.95-((0.95*0.05)/1))N(0.05-((0.95*0.05)/1))": 4.75,
+      "Al(0.94-((0.94*0.06)/1))N(0.06-((0.94*0.06)/1))": 4.75,
+      "Al(0.93-((0.93*0.07)/1))N(0.07-((0.93*0.07)/1))": 4.75,
+      "Al(0.92-((0.92*0.08)/1))N(0.08-((0.92*0.08)/1))": 4.75,
+      "Al(0.91-((0.91*0.09)/1))N(0.09-((0.91*0.09)/1))": 4.75,
+      "Al(0.90-((0.90*0.10)/1))N(0.10-((0.90*0.10)/1))": 4.75,
+      "Al(0.89-((0.89*0.11)/1))N(0.11-((0.89*0.11)/1))": 4.75,
+      "Al(0.88-((0.88*0.12)/1))N(0.12-((0.88*0.12)/1))": 4.75,
+      "Al(0.87-((0.87*0.13)/1))N(0.13-((0.87*0.13)/1))": 4.75,
+      "Al(0.86-((0.86*0.14)/1))N(0.14-((0.86*0.14)/1))": 4.75,
+      "Al(0.85-((0.85*0.15)/1))N(0.15-((0.85*0.15)/1))": 4.75,
+      "Al(0.84-((0.84*0.16)/1))N(0.16-((0.84*0.16)/1))": 4.75,
+      "Al(0.83-((0.83*0.17)/1))N(0.17-((0.83*0.17)/1))": 4.75,
+      "Al(0.82-((0.82*0.18)/1))N(0.18-((0.82*0.18)/1))": 4.75,
+      "Al(0.81-((0.81*0.19)/1))N(0.19-((0.81*0.19)/1))": 4.75,
+      "Al(0.80-((0.80*0.20)/1))N(0.20-((0.80*0.20)/1))": 4.75,
+      "Al(0.79-((0.79*0.21)/1))N(0.21-((0.79*0.21)/1))": 4.75,
+      "Al(0.78-((0.78*0.22)/1))N(0.22-((0.78*0.22)/1))": 4.75,
+      "Al(0.77-((0.77*0.23)/1))N(0.23-((0.77*0.23)/1))": 4.75,
+      "Al(0.76-((0.76*0.24)/1))N(0.24-((0.76*0.24)/1))": 4.75,
+      "Al(0.75-((0.75*0.25)/1))N(0.25-((0.75*0.25)/1))": 4.75,
+      "Al(0.74-((0.74*0.26)/1))N(0.26-((0.74*0.26)/1))": 4.75,
+      "Al(0.73-((0.73*0.27)/1))N(0.27-((0.73*0.27)/1))": 4.75,
+      "Al(0.72-((0.72*0.28)/1))N(0.28-((0.72*0.28)/1))": 4.75,
+      "Al(0.71-((0.71*0.29)/1))N(0.29-((0.71*0.29)/1))": 4.75,
+      "Al(0.70-((0.70*0.30)/1))N(0.30-((0.70*0.30)/1))": 4.75,
+      "Al(0.69-((0.69*0.31)/1))N(0.31-((0.69*0.31)/1))": 4.75,
+      "Al(0.68-((0.68*0.32)/1))N(0.32-((0.68*0.32)/1))": 4.75,
+      "Al(0.67-((0.67*0.33)/1))N(0.33-((0.67*0.33)/1))": 4.75,
+      "Al(0.66-((0.66*0.34)/1))N(0.34-((0.66*0.34)/1))": 4.75,
+      "Al(0.65-((0.65*0.35)/1))N(0.35-((0.65*0.35)/1))": 4.75,
+      "Al(0.64-((0.64*0.36)/1))N(0.36-((0.64*0.36)/1))": 4.75,
+      "Al(0.63-((0.63*0.37)/1))N(0.37-((0.63*0.37)/1))": 4.75,
+      "Al(0.62-((0.62*0.38)/1))N(0.38-((0.62*0.38)/1))": 4.75,
+      "Al(0.61-((0.61*0.39)/1))N(0.39-((0.61*0.39)/1))": 4.75,
+      "Al(0.60-((0.60*0.40)/1))N(0.40-((0.60*0.40)/1))": 4.75
+    },
+    "property_unit": "pC/N",
+    "family": "AlN"
+  }
+}"

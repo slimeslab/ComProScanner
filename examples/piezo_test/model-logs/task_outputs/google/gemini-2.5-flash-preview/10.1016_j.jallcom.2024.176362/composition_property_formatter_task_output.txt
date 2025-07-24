@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.07Pb(Mn1/3Sb2/3)O3-0.93Pb(Zr0.48Ti0.52)O3":306,"0.075Pb(Mn1/3Sb2/3)O3-0.925Pb(Zr0.48Ti0.52)O3":318,"0.08Pb(Mn1/3Sb2/3)O3-0.92Pb(Zr0.48Ti0.52)O3":316,"0.085Pb(Mn1/3Sb2/3)O3-0.915Pb(Zr0.48Ti0.52)O3":312},"property_unit":"pC/N","family":"PZT"}}

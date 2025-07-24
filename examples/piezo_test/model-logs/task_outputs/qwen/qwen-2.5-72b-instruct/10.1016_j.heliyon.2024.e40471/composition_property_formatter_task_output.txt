@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Pb0.65 Ba0.35Nb2O6":170,"Pb0.62 Ba0.35 Nd0.02Nb2O6":175,"Pb0.59 Ba0.35 Nd0.04Nb2O6":185,"Pb0.56 Ba0.35 Nd0.06Nb2O6":236},"property_unit":"pC/N","family":"PBN"}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"(1-x)Bi0.997La0.003FeO3 - (x)BaTiO3 where x=0.295":179,"(1-x)Bi0.997La0.003FeO3 - (x)BaTiO3 where x=0.32Q":205},"abbreviations":{},"property_unit":"pC/N","family":"BiFeO3-BaTiO3"}}

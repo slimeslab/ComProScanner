@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BiFeO3":17.04,"CdS":20.24,"BiFeO3 + 10%wt CdS":26.48,"BiFeO3 + 20%wt CdS":35.2,"BiFeO3 + 30%wt CdS":29.5},"abbreviations":{},"property_unit":"pC/N","family":"BFO/CdS"}}

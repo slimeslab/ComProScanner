@@ -1,0 +1,273 @@
+2025-07-08 14:57:36: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(−0.05)Na0.25K0.25Bi2.45Nb2O8.925': 20, '(−0.01)Na0.25K0.25Bi2.49Nb2O9.015': 20, '(−0.03)Na0.25K0.25Bi2.47Nb2O8.985': 20, '(−0.07)Na0.25K0.25Bi2.43Nb2O8.935': 20, '(−0.10)Na0.25K0.25Bi2.40Nb2O8.90': 20, 'Na0.25K0.25Bi2.5Nb2O9': 14}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(−0.05)Na0.25K0.25Bi2.45Nb2O8.925': 20, '(−0.01)Na0.25K0.25Bi2.49Nb2O9.015': 20, '(−0.03)Na0.25K0.25Bi2.47Nb2O8.985': 20, '(−0.07)Na0.25K0.25Bi2.43Nb2O8.935': 20, '(−0.10)Na0.25K0.25Bi2.40Nb2O8.90': 20, 'Na0.25K0.25Bi2.5Nb2O9': 14}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-08 14:57:37: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(−0.05)Na0.25K0.25Bi2.45Nb2O8.925': 20, '(−0.01)Na0.25K0.25Bi2.49Nb2O9.015': 20, '(−0.03)Na0.25K0.25Bi2.47Nb2O8.985': 20, '(−0.07)Na0.25K0.25Bi2.43Nb2O8.935': 20, '(−0.10)Na0.25K0.25Bi2.40Nb2O8.90': 20, 'Na0.25K0.25Bi2.5Nb2O9': 14}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(−0.05)Na0.25K0.25Bi2.45Nb2O8.925': 20, '(−0.01)Na0.25K0.25Bi2.49Nb2O9.015': 20, '(−0.03)Na0.25K0.25Bi2.47Nb2O8.985': 20, '(−0.07)Na0.25K0.25Bi2.43Nb2O8.935': 20, '(−0.10)Na0.25K0.25Bi2.40Nb2O8.90': 20, 'Na0.25K0.25Bi2.5Nb2O9': 14}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="Action: Material Formula Parser"
+2025-07-08 16:27:08: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(−100x)Na0.25K0.25Bi2.5(x)Nb2O9 + (3x/2)': 20, 'Na0.25K0.25Bi2.45Nb2O8.925': 20}, 'abbreviations': {'NKBN': 'Na0.25K0.25Bi2.5Nb2O9'}, 'property_unit': 'pC/N', 'family': 'Bismuth layered structural ferroelectrics (BLSFs)'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(−100x)Na0.25K0.25Bi2.5(x)Nb2O9 + (3x/2)': 20, 'Na0.25K0.25Bi2.45Nb2O8.925': 20}, 'abbreviations': {'NKBN': 'Na0.25K0.25Bi2.5Nb2O9'}, 'property_unit': 'pC/N', 'family': 'Bismuth layered structural ferroelectrics (BLSFs)'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-08 16:27:10: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(−100x)Na0.25K0.25Bi2.5(x)Nb2O9 + (3x/2)': 20, 'Na0.25K0.25Bi2.45Nb2O8.925': 20}, 'abbreviations': {'NKBN': 'Na0.25K0.25Bi2.5Nb2O9'}, 'property_unit': 'pC/N', 'family': 'Bismuth layered structural ferroelectrics (BLSFs)'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(−100x)Na0.25K0.25Bi2.5(x)Nb2O9 + (3x/2)': 20, 'Na0.25K0.25Bi2.45Nb2O8.925': 20}, 'abbreviations': {'NKBN': 'Na0.25K0.25Bi2.5Nb2O9'}, 'property_unit': 'pC/N', 'family': 'Bismuth layered structural ferroelectrics (BLSFs)'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="Action: Material Formula Parser"
+2025-07-08 16:53:18: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=0)': 14, '(Na0.25K0.25Bi2.45Nb2O8.925)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.01)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.03)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.05)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.07)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.10)': 20}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=0)': 14, '(Na0.25K0.25Bi2.45Nb2O8.925)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.01)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.03)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.05)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.07)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.10)': 20}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-08 16:53:22: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=0)': 14, '(Na0.25K0.25Bi2.45Nb2O8.925)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.01)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.03)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.05)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.07)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.10)': 20}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=0)': 14, '(Na0.25K0.25Bi2.45Nb2O8.925)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.01)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.03)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.05)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.07)': 20, '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.10)': 20}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="Thought: I need to resolve the variables in the compositions using the Material Formula Parser tool, ensuring the formulas are written according to BODMAS rules, and then format the final data accordingly. The compositions with variables are '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=0)', '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.01)', '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.03)', '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.05)', '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.07)', and '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=-0.10)'. I will use the Material Formula Parser to resolve these formulas with their respective x values, then format the compositions accordingly, and remove any duplicates. The composition '(Na0.25K0.25Bi2.5+xNb2O9+3x/2 where x=0)' and '(Na0.25K0.25Bi2.45Nb2O8.925)' are different, so both should be kept. The others are similar but with different x values, so I will resolve each separately. After parsing, I will prepare the final dictionary with compositions, property unit, and family."
+2025-07-08 17:15:48: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=0': 14, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.01': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.03': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.05': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.07': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.10': 20, 'Na0.25K0.25Bi2.45Nb2O8.925': 20}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=0': 14, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.01': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.03': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.05': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.07': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.10': 20, 'Na0.25K0.25Bi2.45Nb2O8.925': 20}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-08 17:15:49: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=0': 14, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.01': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.03': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.05': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.07': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.10': 20, 'Na0.25K0.25Bi2.45Nb2O8.925': 20}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=0': 14, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.01': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.03': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.05': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.07': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.10': 20, 'Na0.25K0.25Bi2.45Nb2O8.925': 20}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="Action: Material Formula Parser"
+2025-07-08 17:27:16: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=0': 14, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.01': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.03': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.05': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.07': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.10': 20}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=0': 14, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.01': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.03': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.05': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.07': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.10': 20}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-08 17:28:19: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=0': 14, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.01': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.03': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.05': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.07': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.10': 20}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=0': 14, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.01': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.03': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.05': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.07': 20, '(Na0.25K0.25Bi2.5+x)Nb2O9+3x/2 where x=-0.10': 20}, 'abbreviations': {}, 'property_unit': 'pC/N', 'family': 'NaKBiNbO'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="{
+  "composition_formatted_data": {
+    "compositions_property_values": {
+      "(Na0.25K0.25Bi2.5+0)Nb2O9+3*0/2": 14,
+      "(Na0.25K0.25Bi2.5-0.01)Nb2O9+3*(-0.01)/2": 20,
+      "(Na0.25K0.25Bi2.5-0.03)Nb2O9+3*(-0.03)/2": 20,
+      "(Na0.25K0.25Bi2.5-0.05)Nb2O9+3*(-0.05)/2": 20,
+      "(Na0.25K0.25Bi2.5-0.07)Nb2O9+3*(-0.07)/2": 20,
+      "(Na0.25K0.25Bi2.5-0.10)Nb2O9+3*(-0.10)/2": 20
+    },
+    "property_unit": "pC/N",
+    "family": "NaKBiNbO"
+  }
+}"

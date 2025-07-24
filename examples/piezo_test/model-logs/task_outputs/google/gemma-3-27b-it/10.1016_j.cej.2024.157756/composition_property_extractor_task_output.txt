@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"P(VDF-TrFE) 80/20":-75,"P(VDF-TrFE) 80/20 - Air":551,"P(VDF-TrFE) 80/20 - Water":1044},"abbreviations":{},"property_unit":"pC/N","family":"P(VDF-TrFE)"}}

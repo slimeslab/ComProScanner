@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9":24.4,"Na0.25K0.25Bi(2.5-0.01)Ce0.01Nb(2-0.02)W0.02O9":null,"Na0.25K0.25Bi(2.5-0.03)Ce0.03Nb(2-0.02)W0.02O9":null,"Na0.25K0.25Bi(2.5-0.04)Ce0.04Nb(2-0.02)W0.02O9":null},"property_unit":"pC/N","family":"NKBN"}}

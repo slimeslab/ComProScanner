@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.5Ba(Zr0.2Ti0.8)O3 - 0.5(Ba0.7Sr0.3)TiO3":600},"abbreviations":{"BST-BZT":"0.5Ba(Zr0.2Ti0.8)O3 - 0.5(Ba0.7Sr0.3)TiO3"},"property_unit":"pC/N","family":"BaTiO3"}}

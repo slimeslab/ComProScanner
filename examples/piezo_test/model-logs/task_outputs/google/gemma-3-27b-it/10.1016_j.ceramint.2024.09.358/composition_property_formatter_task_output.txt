@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Ba0.92Ca0.08Ti0.91Zr0.09O3":609,"Ba0.92Ca0.08Ti0.91Sn0.09O3":358},"property_unit":"p.m. V−1","family":"BT-based"}}

@@ -1,0 +1,509 @@
+2025-07-10 10:39:13: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The lattice parameters of Moir\xe9 nitridanes with the twisted angles of 21.8\xb0 and 27.8\xb0. All values are in \xc5.
+||F|H|F/H|
+|---|---|---|---|
+|BN21.8|7.27|6.87|7.05|
+|BN27.8|11.6|11.8|11.8|
+|AlN27.8|11.3|11.3|11.3|
+|GaN27.8|9.19|9.37|9.28|
+
+Table 2. The calculated piezoelectric coefficients eijk (10-10C/m), piezoelectric moduli dijk (pm/V), elastic moduli c\u03b1\u03b2 (N/m), and cohesion energies Ecoh (eV/atom) of the examined nitridanes as compared to other 2D and bulk piezoelectric materials. The all piezoelectric constants and elastic moduli are in the matrix form.
+| Material|  e 22 |  e 31 |  e 33 |  d 22 |  d 31 |  d 33 |  c11  |  c12  |  Ecoh  |  Refs. |
+|---|---|---|---|---|---|---|---|---|---|---|
+|h-BN|3.71|||1.50|||291|62.0||[54]|
+|h-BN|3.57|||||||||[55]|
+|h-BN|3.70|||1.63|||290|64.2|8.69||
+|AA\u2019-BNn|0.45|||0.13|||391|56.0||[15]|
+|BNn21.8|1.79|0.28|\u22120.18|0.57|0.07|\u22120.11|371|55.0|4.88||
+|F-BNn21.8|3.53|\u22120.20|\u22120.22|1.65|\u22120.05|\u22120.21|294|80.9|5.42||
+|H/F-BNn21.8|1.06|0.92|0.50|0.42|0.24|0.40|319|66.5|5.11||
+|BNn27.8|1.56|0.01|\u22120.01|0.52|||339|39.8|5.62||
+|F-BNn27.8|3.44|0.01|\u22120.84|1.18||\u22120.58|345|54.7|6.15||
+|H/F-BNn27.8|\u22120.92|1.00|\u22120.12|\u22120.31|0.26|\u22120.08|343|45.2|5.85||
+|h-AlN|2.23||||||148|67.1||[56]|
+|h-AlN|\u22122.28|||||||||[44]|
+|h-AlN||||2.75||||||[57]|
+|h-AlN (H/F)|8.85|0.42||16.3|||89.0|34.7||[56]|
+|AB-AlNn|1.43|0.54||1.26|||170|56.6||[56]|
+|AA\u2019-AlNn|1.57|0.62||1.32|||173|54.6||[56]|
+|AlNn27.8|5.70|\u22120.06|\u22120.14|6.47|\u22120.01|\u22120.32|132|43.9|5.00||
+|F-AlNn27.8|6.19|1.91|16.4|34.4|2.05|182|55.5|37.5|5.67||
+|H/F-AlNn27.8|15.6|\u22122.08|\u22123.11|79.2|\u22121.28|\u221231.6|90.9|71.2|5.33||
+|h-GaN|1.48||||||142|67.9||[56]|
+|h-GaN||||2.00||||||[57]|
+|h-GaN (H/F)|6.12|0.49||15.7|||74.0|35.1||[56]|
+|AB-GaNn|1.01|0.44||1.05|||150|53.3||[56]|
+|AA\u2019-GaNn|0.60|0.44||0.60|||152|51.7||[56]|
+|GaNn27.8|\u22121.75|0.21|0.19|2.00|0.13|0.43|122|34.7|3.97||
+|F-GaNn27.8|2.28|\u22121.72|0.26|15.1|\u22121.26|16.7|75.9|60.8|4.29||
+|H/F-GaNn27.8|5.77|\u22121.22|\u22121.15|6.93|\u22120.81|\u22122.76|117|33.7|4.13||
+
+# RESULTS AND DISCUSSION
+To calculate the piezoelectric coefficients e i j k measured in different units for planar and bulk materials, we use inverse piezoelectric effect given by the formula  where \u03c3 j k is the mechanical stress tensor determined as the force per unit length in the direction perpendicular to the force and E i is the component of the external electric field. In this way, we obtain the ion-clamped piezoelectric tensor of Moir\xe9 BNn, AlNn, and GaNn bilayers with the twisted angle of 27.8\xb0. Our DFT calculations, which derive the ion-relaxed piezoelectric tensor, exactly meet this condition. Bulk piezoelectric crystals are characterized, in general, by 4 different piezoelectric constant tensors. For considered bilayers, the following relationships apply between e i j k and d i j k (the same convolution rule applies here):  In the last expression, the component of the elastic moduli tensor c33 in expanded form is represented as c1212. The calculated piezoelectric characteristics of the Moir\xe9 AlNn, BNn, and GaNn nitridanes as compared to other 2D and bulk piezoelectric materials are listed in. The empty cells in the last column \u201c Refs. \u201d correspond to our calculation in this paper. In addition to the elastic and piezoelectric constants, includes the cohesive energy calculated as E coh= \u2211 E free-\u2211 E totN, where Efree is the energy of free atoms, Etot is the full energy of the relaxed cell, and N is number of atoms in the cell. In the energetic sense the most stable are the fluorinated Moir\xe9 nitridanes. However, even their cohesive energies are separated from the corresponding value of monolayer boron nitride (h-BN) by a large gap. The energy stability of Moir\xe9 nitridanes with the twisted angle of 27.8\xb0 deteriorates in the series: boron nitridanes \u2192 aluminum nitridanes \u2192 gallium nitridanes. Boron nitride Moir\xe9 bilayers with the twisted angle of 27.8\xb0 are more energetically stable than similar bilayers with the twisted angle of 21.8\xb0. To insight into mechanical stability, we used the well-known Born-Huang criterion , which for the hexagonal lattice types has the following form: c11- c12>0 and c11+2 c12>0. From it follows that for all considered Moir\xe9 nitridane bilayers the mechanical stability criterion is satisfied. There is a correlation between boron nitridanes twisted at different angles: hydrogenated and fluorinated nitridanes with the twisted angles of 21.8\xb0 and 27.8\xb0 have close e 22, while the ratios of e 22 of fluorinated boron nitridanes (F-BNn21.8 and F-BNn27.8) to hydrogenated ones (BNn21.8 and BNn27.8) for both cases are approximately two. Moreover, despite the fact that the presented Moir\xe9 nitridanes are bilayer films, polarizations from adjacent layers do not cancel each other out, as happens in van der Waals multilayer heterostructures with an even number of layers. The calculation method was tested for compliance with experimental data for both bulk and 2D piezoelectric materials. Agreement with experimental data for 2D materials (using h-BN as an example) is also given in. The agreement between the results of the calculation method and classical piezoelectric materials was based on a comparison with the cubic phase of bulk boron nitride: Ref. gives the data range for the e 14 constants. It ranges from 0.20 to 3.34 C/mE^{2}. Our calculation (1.03 C/mE^{2}) falls within this interval. Also, excellent agreement is observed between our calculations and the Ref. , where the calculated value of the same component, but under unclamped crystal conditions, is 0.89 C/mE^{2} against our value of 0.87 C/mE^{2}. Hydrogenated or fluorinated Moir\xe9 boron nitridanes with the twisted angle of 21.8\xb0 have the same piezoelectric response in the direction normal to the nanosheet, i.e. described by the e 31 piezoelectric coefficient, as potassium- or lithium-doped graphene. The measured in-plane piezoelectric constant in the twisted graphene was 0.15 pm/V , which is close to d 22 of the AA\u2019-BNn structure (see ). The in-plane piezoelectric moduli of all the considered Moir\xe9 nitradane bilayers are higher. In the case of Moir\xe9 bilayers , it is clear that not all bonds of the \u201cboron\u2013adatom\u201d and \u201cnitrogen\u2013adatom\u201d types are perpendicular to the bilayer plane, which, on average, leads to a decrease in the lengths of the dipoles. However, as a computational experiment has shown, due to various passivation, the piezoelectric constant e 33 becomes non-zero. When compared with other bilayer materials, the piezoelectric response in this Moir\xe9 nitridane bilayers is stronger. Analysis of the formation energy of 2D and bulk materials shown that fluorinated structures based on graphene, AB, AA\u2019, Moir\xe9 diamanes and nitridanes are energetically more preferable, while hydrogenated structures are less energetically favorable. The piezoelectric effect in the vertical direction relative to the nanosheet, which is necessary for the excitation of flexural elastic waves , requires non-zero coefficients e 31 and e 33 ( d 31 and d 33 ). We see that the Moir\xe9 nitridanes can be used for these purposes. Moreover, due to the specifically close values of the elastic moduli tensor components c11 and c12 in F-AlNn27.8, H/F-AlNn27.8 and F-GaNn27.8, structures, the piezo moduli d11 and d33 are large. As can be seen from the data in the , in the Moir\xe9 bornitridanes with the twisted angle of 27.8\xb0 and in Moir\xe9 gallium nitridanes with the twisted angle of 21.8\xb0, the values of piezoelectric constants and piezoelectric moduli are higher than the corresponding values for untwisted nitridanes.
+
+# INTRODUCTION
+Two-dimensional (2D) materials are capable to form interesting vertical compounds \u2013 layered (pseudo two-dimensional) materials, the layers in which are held together by van der Waals forces or forces of a chemical nature. Twisted bi- or three-layer structures with periodic Moir\xe9 superlattices induced structural altering result in new electronic, optics and phononic phenomena. Another pseudo-2D diamond-like films, diamanes and nitridanes , based on two covalent-bonded carbon and nitride monolayers have recently attracted great interest for their unique properties. However, the ability to generate an electrical charge upon mechanical deformation has opened the way for piezoelectric pseudo-2D materials to many applications, from pressure sensors and acoustic transducers to high-voltage generators. Mono-, polycrystalline and polymer piezoelectrics are being replaced by novel materials, including those that have only two spatial dimensions, i.e. the pure or pseudo 2D materials. The first 2D material synthesized was a layer of carbon atoms arranged in a hexagonal pattern, called graphene. How to impart piezoelectric properties to novel pure or pseudo nanoscale 2D materials? There are two main ways. In the first case, it was proposed to \u201cinduce\u201d the piezoelectric properties of graphene by modifying its planar structure by periodic perforation, which violates centrosymmetricity , or by doping with foreign atoms. We have previously shown that this kind of piezoelectric effect can also occur in other 2D materials that have undergone pre-treatment. Such materials include hexagonal boron nitride , dichalcogenides and dioxides of transition metals , diatom 2D semiconductor structures and some others. Interest in the piezoelectric effect in 2D materials is of an applied nature. Taking into account the \u201cmonatomic (or diatomic) thickness\u201d of 2D (pseudo-2D) materials, the use of the piezoelectric effect can be expanded (compared to the classical application) by applying to curved organic surfaces, which may be useful in bioengineering technologies. Moir\xe9 bilayer structures show promise in this regard, as the assembly is preserved through passivation. In this article, we present an ab initio study on the piezoelectric characteristics of Moir\xe9 bilayer nitridanes, promising materials for twistronics, and compare them with single-layer, untwisted bilayer and bulk piezoelectric materials.
+
+# CONCLUSION
+In Moir\xe9 nitridane bilayers, a stronger piezoelectric effect can be observed than in AA and AB-stacked bilayers. With the help of the considered Moir\xe9 covalent-bonded bilayers, the possibility of controlling electronic and optical resonance properties opens up, since in them under the influence of electric and elastic fields it is possible to shift resonant narrow bands in the electronic spectrum with a high density of states. Considering the pronounced resonant optoelectronic properties, Moir\xe9 structures can also be very useful for creating resonant opto- and electromechanical nanodevices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 10:39:23: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The lattice parameters of Moir\xe9 nitridanes with the twisted angles of 21.8\xb0 and 27.8\xb0. All values are in \xc5.
+||F|H|F/H|
+|---|---|---|---|
+|BN21.8|7.27|6.87|7.05|
+|BN27.8|11.6|11.8|11.8|
+|AlN27.8|11.3|11.3|11.3|
+|GaN27.8|9.19|9.37|9.28|
+
+Table 2. The calculated piezoelectric coefficients eijk (10-10C/m), piezoelectric moduli dijk (pm/V), elastic moduli c\u03b1\u03b2 (N/m), and cohesion energies Ecoh (eV/atom) of the examined nitridanes as compared to other 2D and bulk piezoelectric materials. The all piezoelectric constants and elastic moduli are in the matrix form.
+| Material|  e 22 |  e 31 |  e 33 |  d 22 |  d 31 |  d 33 |  c11  |  c12  |  Ecoh  |  Refs. |
+|---|---|---|---|---|---|---|---|---|---|---|
+|h-BN|3.71|||1.50|||291|62.0||[54]|
+|h-BN|3.57|||||||||[55]|
+|h-BN|3.70|||1.63|||290|64.2|8.69||
+|AA\u2019-BNn|0.45|||0.13|||391|56.0||[15]|
+|BNn21.8|1.79|0.28|\u22120.18|0.57|0.07|\u22120.11|371|55.0|4.88||
+|F-BNn21.8|3.53|\u22120.20|\u22120.22|1.65|\u22120.05|\u22120.21|294|80.9|5.42||
+|H/F-BNn21.8|1.06|0.92|0.50|0.42|0.24|0.40|319|66.5|5.11||
+|BNn27.8|1.56|0.01|\u22120.01|0.52|||339|39.8|5.62||
+|F-BNn27.8|3.44|0.01|\u22120.84|1.18||\u22120.58|345|54.7|6.15||
+|H/F-BNn27.8|\u22120.92|1.00|\u22120.12|\u22120.31|0.26|\u22120.08|343|45.2|5.85||
+|h-AlN|2.23||||||148|67.1||[56]|
+|h-AlN|\u22122.28|||||||||[44]|
+|h-AlN||||2.75||||||[57]|
+|h-AlN (H/F)|8.85|0.42||16.3|||89.0|34.7||[56]|
+|AB-AlNn|1.43|0.54||1.26|||170|56.6||[56]|
+|AA\u2019-AlNn|1.57|0.62||1.32|||173|54.6||[56]|
+|AlNn27.8|5.70|\u22120.06|\u22120.14|6.47|\u22120.01|\u22120.32|132|43.9|5.00||
+|F-AlNn27.8|6.19|1.91|16.4|34.4|2.05|182|55.5|37.5|5.67||
+|H/F-AlNn27.8|15.6|\u22122.08|\u22123.11|79.2|\u22121.28|\u221231.6|90.9|71.2|5.33||
+|h-GaN|1.48||||||142|67.9||[56]|
+|h-GaN||||2.00||||||[57]|
+|h-GaN (H/F)|6.12|0.49||15.7|||74.0|35.1||[56]|
+|AB-GaNn|1.01|0.44||1.05|||150|53.3||[56]|
+|AA\u2019-GaNn|0.60|0.44||0.60|||152|51.7||[56]|
+|GaNn27.8|\u22121.75|0.21|0.19|2.00|0.13|0.43|122|34.7|3.97||
+|F-GaNn27.8|2.28|\u22121.72|0.26|15.1|\u22121.26|16.7|75.9|60.8|4.29||
+|H/F-GaNn27.8|5.77|\u22121.22|\u22121.15|6.93|\u22120.81|\u22122.76|117|33.7|4.13||
+
+# RESULTS AND DISCUSSION
+To calculate the piezoelectric coefficients e i j k measured in different units for planar and bulk materials, we use inverse piezoelectric effect given by the formula  where \u03c3 j k is the mechanical stress tensor determined as the force per unit length in the direction perpendicular to the force and E i is the component of the external electric field. In this way, we obtain the ion-clamped piezoelectric tensor of Moir\xe9 BNn, AlNn, and GaNn bilayers with the twisted angle of 27.8\xb0. Our DFT calculations, which derive the ion-relaxed piezoelectric tensor, exactly meet this condition. Bulk piezoelectric crystals are characterized, in general, by 4 different piezoelectric constant tensors. For considered bilayers, the following relationships apply between e i j k and d i j k (the same convolution rule applies here):  In the last expression, the component of the elastic moduli tensor c33 in expanded form is represented as c1212. The calculated piezoelectric characteristics of the Moir\xe9 AlNn, BNn, and GaNn nitridanes as compared to other 2D and bulk piezoelectric materials are listed in. The empty cells in the last column \u201c Refs. \u201d correspond to our calculation in this paper. In addition to the elastic and piezoelectric constants, includes the cohesive energy calculated as E coh= \u2211 E free-\u2211 E totN, where Efree is the energy of free atoms, Etot is the full energy of the relaxed cell, and N is number of atoms in the cell. In the energetic sense the most stable are the fluorinated Moir\xe9 nitridanes. However, even their cohesive energies are separated from the corresponding value of monolayer boron nitride (h-BN) by a large gap. The energy stability of Moir\xe9 nitridanes with the twisted angle of 27.8\xb0 deteriorates in the series: boron nitridanes \u2192 aluminum nitridanes \u2192 gallium nitridanes. Boron nitride Moir\xe9 bilayers with the twisted angle of 27.8\xb0 are more energetically stable than similar bilayers with the twisted angle of 21.8\xb0. To insight into mechanical stability, we used the well-known Born-Huang criterion , which for the hexagonal lattice types has the following form: c11- c12>0 and c11+2 c12>0. From it follows that for all considered Moir\xe9 nitridane bilayers the mechanical stability criterion is satisfied. There is a correlation between boron nitridanes twisted at different angles: hydrogenated and fluorinated nitridanes with the twisted angles of 21.8\xb0 and 27.8\xb0 have close e 22, while the ratios of e 22 of fluorinated boron nitridanes (F-BNn21.8 and F-BNn27.8) to hydrogenated ones (BNn21.8 and BNn27.8) for both cases are approximately two. Moreover, despite the fact that the presented Moir\xe9 nitridanes are bilayer films, polarizations from adjacent layers do not cancel each other out, as happens in van der Waals multilayer heterostructures with an even number of layers. The calculation method was tested for compliance with experimental data for both bulk and 2D piezoelectric materials. Agreement with experimental data for 2D materials (using h-BN as an example) is also given in. The agreement between the results of the calculation method and classical piezoelectric materials was based on a comparison with the cubic phase of bulk boron nitride: Ref. gives the data range for the e 14 constants. It ranges from 0.20 to 3.34 C/mE^{2}. Our calculation (1.03 C/mE^{2}) falls within this interval. Also, excellent agreement is observed between our calculations and the Ref. , where the calculated value of the same component, but under unclamped crystal conditions, is 0.89 C/mE^{2} against our value of 0.87 C/mE^{2}. Hydrogenated or fluorinated Moir\xe9 boron nitridanes with the twisted angle of 21.8\xb0 have the same piezoelectric response in the direction normal to the nanosheet, i.e. described by the e 31 piezoelectric coefficient, as potassium- or lithium-doped graphene. The measured in-plane piezoelectric constant in the twisted graphene was 0.15 pm/V , which is close to d 22 of the AA\u2019-BNn structure (see ). The in-plane piezoelectric moduli of all the considered Moir\xe9 nitradane bilayers are higher. In the case of Moir\xe9 bilayers , it is clear that not all bonds of the \u201cboron\u2013adatom\u201d and \u201cnitrogen\u2013adatom\u201d types are perpendicular to the bilayer plane, which, on average, leads to a decrease in the lengths of the dipoles. However, as a computational experiment has shown, due to various passivation, the piezoelectric constant e 33 becomes non-zero. When compared with other bilayer materials, the piezoelectric response in this Moir\xe9 nitridane bilayers is stronger. Analysis of the formation energy of 2D and bulk materials shown that fluorinated structures based on graphene, AB, AA\u2019, Moir\xe9 diamanes and nitridanes are energetically more preferable, while hydrogenated structures are less energetically favorable. The piezoelectric effect in the vertical direction relative to the nanosheet, which is necessary for the excitation of flexural elastic waves , requires non-zero coefficients e 31 and e 33 ( d 31 and d 33 ). We see that the Moir\xe9 nitridanes can be used for these purposes. Moreover, due to the specifically close values of the elastic moduli tensor components c11 and c12 in F-AlNn27.8, H/F-AlNn27.8 and F-GaNn27.8, structures, the piezo moduli d11 and d33 are large. As can be seen from the data in the , in the Moir\xe9 bornitridanes with the twisted angle of 27.8\xb0 and in Moir\xe9 gallium nitridanes with the twisted angle of 21.8\xb0, the values of piezoelectric constants and piezoelectric moduli are higher than the corresponding values for untwisted nitridanes.
+
+# INTRODUCTION
+Two-dimensional (2D) materials are capable to form interesting vertical compounds \u2013 layered (pseudo two-dimensional) materials, the layers in which are held together by van der Waals forces or forces of a chemical nature. Twisted bi- or three-layer structures with periodic Moir\xe9 superlattices induced structural altering result in new electronic, optics and phononic phenomena. Another pseudo-2D diamond-like films, diamanes and nitridanes , based on two covalent-bonded carbon and nitride monolayers have recently attracted great interest for their unique properties. However, the ability to generate an electrical charge upon mechanical deformation has opened the way for piezoelectric pseudo-2D materials to many applications, from pressure sensors and acoustic transducers to high-voltage generators. Mono-, polycrystalline and polymer piezoelectrics are being replaced by novel materials, including those that have only two spatial dimensions, i.e. the pure or pseudo 2D materials. The first 2D material synthesized was a layer of carbon atoms arranged in a hexagonal pattern, called graphene. How to impart piezoelectric properties to novel pure or pseudo nanoscale 2D materials? There are two main ways. In the first case, it was proposed to \u201cinduce\u201d the piezoelectric properties of graphene by modifying its planar structure by periodic perforation, which violates centrosymmetricity , or by doping with foreign atoms. We have previously shown that this kind of piezoelectric effect can also occur in other 2D materials that have undergone pre-treatment. Such materials include hexagonal boron nitride , dichalcogenides and dioxides of transition metals , diatom 2D semiconductor structures and some others. Interest in the piezoelectric effect in 2D materials is of an applied nature. Taking into account the \u201cmonatomic (or diatomic) thickness\u201d of 2D (pseudo-2D) materials, the use of the piezoelectric effect can be expanded (compared to the classical application) by applying to curved organic surfaces, which may be useful in bioengineering technologies. Moir\xe9 bilayer structures show promise in this regard, as the assembly is preserved through passivation. In this article, we present an ab initio study on the piezoelectric characteristics of Moir\xe9 bilayer nitridanes, promising materials for twistronics, and compare them with single-layer, untwisted bilayer and bulk piezoelectric materials.
+
+# CONCLUSION
+In Moir\xe9 nitridane bilayers, a stronger piezoelectric effect can be observed than in AA and AB-stacked bilayers. With the help of the considered Moir\xe9 covalent-bonded bilayers, the possibility of controlling electronic and optical resonance properties opens up, since in them under the influence of electric and elastic fields it is possible to shift resonant narrow bands in the electronic spectrum with a high density of states. Considering the pronounced resonant optoelectronic properties, Moir\xe9 structures can also be very useful for creating resonant opto- and electromechanical nanodevices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "BNn21.8": -0.11,
+      "F-BNn21.8": -0.21,
+      "H/F-BNn21.8": 0.40,
+      "BNn27.8": -0.01,
+      "F-BNn27.8": -0.58,
+      "H/F-BNn27.8": -0.08,
+      "h-AlN": 2.75,
+      "h-AlN (H/F)": 16.3,
+      "AB-AlNn": 1.26,
+      "AA-BNn": 0.13,
+      "AlNn27.8": -0.32,
+      "F-AlNn27.8": 182,
+      "H/F-AlNn27.8": -31.6,
+      "h-GaN": 2.00,
+      "h-GaN (H/F)": 15.7,
+      "AB-GaNn": 1.05,
+      "AA-GaNn": 0.60,
+      "GaNn27.8": 0.43,
+      "F-GaNn27.8": 16.7,
+      "H/F-GaNn27.8": -2.76
+    },
+    "abbreviations": {
+      "AA-BNn": "AA'-BNn",
+      "F-BNn": "Fluorinated-BNn",
+      "H/F-BNn": "Hydrogenated/Fluorinated-BNn",
+      "h-AlN": "Hexagonal-AlN",
+      "h-GaN": "Hexagonal-GaN",
+      "F-AlNn": "Fluorinated-AlNn",
+      "H/F-AlNn": "Hydrogenated/Fluorinated-AlNn",
+      "F-GaNn": "Fluorinated-GaNn",
+      "H/F-GaNn": "Hydrogenated/Fluorinated-GaNn"
+    },
+    "property_unit": "pm/V",
+    "family": "Nitridanes"
+  }
+}"
+2025-07-10 10:42:05: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The lattice parameters of Moir\xe9 nitridanes with the twisted angles of 21.8\xb0 and 27.8\xb0. All values are in \xc5.
+||F|H|F/H|
+|---|---|---|---|
+|BN21.8|7.27|6.87|7.05|
+|BN27.8|11.6|11.8|11.8|
+|AlN27.8|11.3|11.3|11.3|
+|GaN27.8|9.19|9.37|9.28|
+
+Table 2. The calculated piezoelectric coefficients eijk (10-10C/m), piezoelectric moduli dijk (pm/V), elastic moduli c\u03b1\u03b2 (N/m), and cohesion energies Ecoh (eV/atom) of the examined nitridanes as compared to other 2D and bulk piezoelectric materials. The all piezoelectric constants and elastic moduli are in the matrix form.
+| Material|  e 22 |  e 31 |  e 33 |  d 22 |  d 31 |  d 33 |  c11  |  c12  |  Ecoh  |  Refs. |
+|---|---|---|---|---|---|---|---|---|---|---|
+|h-BN|3.71|||1.50|||291|62.0||[54]|
+|h-BN|3.57|||||||||[55]|
+|h-BN|3.70|||1.63|||290|64.2|8.69||
+|AA\u2019-BNn|0.45|||0.13|||391|56.0||[15]|
+|BNn21.8|1.79|0.28|\u22120.18|0.57|0.07|\u22120.11|371|55.0|4.88||
+|F-BNn21.8|3.53|\u22120.20|\u22120.22|1.65|\u22120.05|\u22120.21|294|80.9|5.42||
+|H/F-BNn21.8|1.06|0.92|0.50|0.42|0.24|0.40|319|66.5|5.11||
+|BNn27.8|1.56|0.01|\u22120.01|0.52|||339|39.8|5.62||
+|F-BNn27.8|3.44|0.01|\u22120.84|1.18||\u22120.58|345|54.7|6.15||
+|H/F-BNn27.8|\u22120.92|1.00|\u22120.12|\u22120.31|0.26|\u22120.08|343|45.2|5.85||
+|h-AlN|2.23||||||148|67.1||[56]|
+|h-AlN|\u22122.28|||||||||[44]|
+|h-AlN||||2.75||||||[57]|
+|h-AlN (H/F)|8.85|0.42||16.3|||89.0|34.7||[56]|
+|AB-AlNn|1.43|0.54||1.26|||170|56.6||[56]|
+|AA\u2019-AlNn|1.57|0.62||1.32|||173|54.6||[56]|
+|AlNn27.8|5.70|\u22120.06|\u22120.14|6.47|\u22120.01|\u22120.32|132|43.9|5.00||
+|F-AlNn27.8|6.19|1.91|16.4|34.4|2.05|182|55.5|37.5|5.67||
+|H/F-AlNn27.8|15.6|\u22122.08|\u22123.11|79.2|\u22121.28|\u221231.6|90.9|71.2|5.33||
+|h-GaN|1.48||||||142|67.9||[56]|
+|h-GaN||||2.00||||||[57]|
+|h-GaN (H/F)|6.12|0.49||15.7|||74.0|35.1||[56]|
+|AB-GaNn|1.01|0.44||1.05|||150|53.3||[56]|
+|AA\u2019-GaNn|0.60|0.44||0.60|||152|51.7||[56]|
+|GaNn27.8|\u22121.75|0.21|0.19|2.00|0.13|0.43|122|34.7|3.97||
+|F-GaNn27.8|2.28|\u22121.72|0.26|15.1|\u22121.26|16.7|75.9|60.8|4.29||
+|H/F-GaNn27.8|5.77|\u22121.22|\u22121.15|6.93|\u22120.81|\u22122.76|117|33.7|4.13||
+
+# RESULTS AND DISCUSSION
+To calculate the piezoelectric coefficients e i j k measured in different units for planar and bulk materials, we use inverse piezoelectric effect given by the formula  where \u03c3 j k is the mechanical stress tensor determined as the force per unit length in the direction perpendicular to the force and E i is the component of the external electric field. In this way, we obtain the ion-clamped piezoelectric tensor of Moir\xe9 BNn, AlNn, and GaNn bilayers with the twisted angle of 27.8\xb0. Our DFT calculations, which derive the ion-relaxed piezoelectric tensor, exactly meet this condition. Bulk piezoelectric crystals are characterized, in general, by 4 different piezoelectric constant tensors. For considered bilayers, the following relationships apply between e i j k and d i j k (the same convolution rule applies here):  In the last expression, the component of the elastic moduli tensor c33 in expanded form is represented as c1212. The calculated piezoelectric characteristics of the Moir\xe9 AlNn, BNn, and GaNn nitridanes as compared to other 2D and bulk piezoelectric materials are listed in. The empty cells in the last column \u201c Refs. \u201d correspond to our calculation in this paper. In addition to the elastic and piezoelectric constants, includes the cohesive energy calculated as E coh= \u2211 E free-\u2211 E totN, where Efree is the energy of free atoms, Etot is the full energy of the relaxed cell, and N is number of atoms in the cell. In the energetic sense the most stable are the fluorinated Moir\xe9 nitridanes. However, even their cohesive energies are separated from the corresponding value of monolayer boron nitride (h-BN) by a large gap. The energy stability of Moir\xe9 nitridanes with the twisted angle of 27.8\xb0 deteriorates in the series: boron nitridanes \u2192 aluminum nitridanes \u2192 gallium nitridanes. Boron nitride Moir\xe9 bilayers with the twisted angle of 27.8\xb0 are more energetically stable than similar bilayers with the twisted angle of 21.8\xb0. To insight into mechanical stability, we used the well-known Born-Huang criterion , which for the hexagonal lattice types has the following form: c11- c12>0 and c11+2 c12>0. From it follows that for all considered Moir\xe9 nitridane bilayers the mechanical stability criterion is satisfied. There is a correlation between boron nitridanes twisted at different angles: hydrogenated and fluorinated nitridanes with the twisted angles of 21.8\xb0 and 27.8\xb0 have close e 22, while the ratios of e 22 of fluorinated boron nitridanes (F-BNn21.8 and F-BNn27.8) to hydrogenated ones (BNn21.8 and BNn27.8) for both cases are approximately two. Moreover, despite the fact that the presented Moir\xe9 nitridanes are bilayer films, polarizations from adjacent layers do not cancel each other out, as happens in van der Waals multilayer heterostructures with an even number of layers. The calculation method was tested for compliance with experimental data for both bulk and 2D piezoelectric materials. Agreement with experimental data for 2D materials (using h-BN as an example) is also given in. The agreement between the results of the calculation method and classical piezoelectric materials was based on a comparison with the cubic phase of bulk boron nitride: Ref. gives the data range for the e 14 constants. It ranges from 0.20 to 3.34 C/mE^{2}. Our calculation (1.03 C/mE^{2}) falls within this interval. Also, excellent agreement is observed between our calculations and the Ref. , where the calculated value of the same component, but under unclamped crystal conditions, is 0.89 C/mE^{2} against our value of 0.87 C/mE^{2}. Hydrogenated or fluorinated Moir\xe9 boron nitridanes with the twisted angle of 21.8\xb0 have the same piezoelectric response in the direction normal to the nanosheet, i.e. described by the e 31 piezoelectric coefficient, as potassium- or lithium-doped graphene. The measured in-plane piezoelectric constant in the twisted graphene was 0.15 pm/V , which is close to d 22 of the AA\u2019-BNn structure (see ). The in-plane piezoelectric moduli of all the considered Moir\xe9 nitradane bilayers are higher. In the case of Moir\xe9 bilayers , it is clear that not all bonds of the \u201cboron\u2013adatom\u201d and \u201cnitrogen\u2013adatom\u201d types are perpendicular to the bilayer plane, which, on average, leads to a decrease in the lengths of the dipoles. However, as a computational experiment has shown, due to various passivation, the piezoelectric constant e 33 becomes non-zero. When compared with other bilayer materials, the piezoelectric response in this Moir\xe9 nitridane bilayers is stronger. Analysis of the formation energy of 2D and bulk materials shown that fluorinated structures based on graphene, AB, AA\u2019, Moir\xe9 diamanes and nitridanes are energetically more preferable, while hydrogenated structures are less energetically favorable. The piezoelectric effect in the vertical direction relative to the nanosheet, which is necessary for the excitation of flexural elastic waves , requires non-zero coefficients e 31 and e 33 ( d 31 and d 33 ). We see that the Moir\xe9 nitridanes can be used for these purposes. Moreover, due to the specifically close values of the elastic moduli tensor components c11 and c12 in F-AlNn27.8, H/F-AlNn27.8 and F-GaNn27.8, structures, the piezo moduli d11 and d33 are large. As can be seen from the data in the , in the Moir\xe9 bornitridanes with the twisted angle of 27.8\xb0 and in Moir\xe9 gallium nitridanes with the twisted angle of 21.8\xb0, the values of piezoelectric constants and piezoelectric moduli are higher than the corresponding values for untwisted nitridanes.
+
+# INTRODUCTION
+Two-dimensional (2D) materials are capable to form interesting vertical compounds \u2013 layered (pseudo two-dimensional) materials, the layers in which are held together by van der Waals forces or forces of a chemical nature. Twisted bi- or three-layer structures with periodic Moir\xe9 superlattices induced structural altering result in new electronic, optics and phononic phenomena. Another pseudo-2D diamond-like films, diamanes and nitridanes , based on two covalent-bonded carbon and nitride monolayers have recently attracted great interest for their unique properties. However, the ability to generate an electrical charge upon mechanical deformation has opened the way for piezoelectric pseudo-2D materials to many applications, from pressure sensors and acoustic transducers to high-voltage generators. Mono-, polycrystalline and polymer piezoelectrics are being replaced by novel materials, including those that have only two spatial dimensions, i.e. the pure or pseudo 2D materials. The first 2D material synthesized was a layer of carbon atoms arranged in a hexagonal pattern, called graphene. How to impart piezoelectric properties to novel pure or pseudo nanoscale 2D materials? There are two main ways. In the first case, it was proposed to \u201cinduce\u201d the piezoelectric properties of graphene by modifying its planar structure by periodic perforation, which violates centrosymmetricity , or by doping with foreign atoms. We have previously shown that this kind of piezoelectric effect can also occur in other 2D materials that have undergone pre-treatment. Such materials include hexagonal boron nitride , dichalcogenides and dioxides of transition metals , diatom 2D semiconductor structures and some others. Interest in the piezoelectric effect in 2D materials is of an applied nature. Taking into account the \u201cmonatomic (or diatomic) thickness\u201d of 2D (pseudo-2D) materials, the use of the piezoelectric effect can be expanded (compared to the classical application) by applying to curved organic surfaces, which may be useful in bioengineering technologies. Moir\xe9 bilayer structures show promise in this regard, as the assembly is preserved through passivation. In this article, we present an ab initio study on the piezoelectric characteristics of Moir\xe9 bilayer nitridanes, promising materials for twistronics, and compare them with single-layer, untwisted bilayer and bulk piezoelectric materials.
+
+# CONCLUSION
+In Moir\xe9 nitridane bilayers, a stronger piezoelectric effect can be observed than in AA and AB-stacked bilayers. With the help of the considered Moir\xe9 covalent-bonded bilayers, the possibility of controlling electronic and optical resonance properties opens up, since in them under the influence of electric and elastic fields it is possible to shift resonant narrow bands in the electronic spectrum with a high density of states. Considering the pronounced resonant optoelectronic properties, Moir\xe9 structures can also be very useful for creating resonant opto- and electromechanical nanodevices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 10:42:14: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The lattice parameters of Moir\xe9 nitridanes with the twisted angles of 21.8\xb0 and 27.8\xb0. All values are in \xc5.
+||F|H|F/H|
+|---|---|---|---|
+|BN21.8|7.27|6.87|7.05|
+|BN27.8|11.6|11.8|11.8|
+|AlN27.8|11.3|11.3|11.3|
+|GaN27.8|9.19|9.37|9.28|
+
+Table 2. The calculated piezoelectric coefficients eijk (10-10C/m), piezoelectric moduli dijk (pm/V), elastic moduli c\u03b1\u03b2 (N/m), and cohesion energies Ecoh (eV/atom) of the examined nitridanes as compared to other 2D and bulk piezoelectric materials. The all piezoelectric constants and elastic moduli are in the matrix form.
+| Material|  e 22 |  e 31 |  e 33 |  d 22 |  d 31 |  d 33 |  c11  |  c12  |  Ecoh  |  Refs. |
+|---|---|---|---|---|---|---|---|---|---|---|
+|h-BN|3.71|||1.50|||291|62.0||[54]|
+|h-BN|3.57|||||||||[55]|
+|h-BN|3.70|||1.63|||290|64.2|8.69||
+|AA\u2019-BNn|0.45|||0.13|||391|56.0||[15]|
+|BNn21.8|1.79|0.28|\u22120.18|0.57|0.07|\u22120.11|371|55.0|4.88||
+|F-BNn21.8|3.53|\u22120.20|\u22120.22|1.65|\u22120.05|\u22120.21|294|80.9|5.42||
+|H/F-BNn21.8|1.06|0.92|0.50|0.42|0.24|0.40|319|66.5|5.11||
+|BNn27.8|1.56|0.01|\u22120.01|0.52|||339|39.8|5.62||
+|F-BNn27.8|3.44|0.01|\u22120.84|1.18||\u22120.58|345|54.7|6.15||
+|H/F-BNn27.8|\u22120.92|1.00|\u22120.12|\u22120.31|0.26|\u22120.08|343|45.2|5.85||
+|h-AlN|2.23||||||148|67.1||[56]|
+|h-AlN|\u22122.28|||||||||[44]|
+|h-AlN||||2.75||||||[57]|
+|h-AlN (H/F)|8.85|0.42||16.3|||89.0|34.7||[56]|
+|AB-AlNn|1.43|0.54||1.26|||170|56.6||[56]|
+|AA\u2019-AlNn|1.57|0.62||1.32|||173|54.6||[56]|
+|AlNn27.8|5.70|\u22120.06|\u22120.14|6.47|\u22120.01|\u22120.32|132|43.9|5.00||
+|F-AlNn27.8|6.19|1.91|16.4|34.4|2.05|182|55.5|37.5|5.67||
+|H/F-AlNn27.8|15.6|\u22122.08|\u22123.11|79.2|\u22121.28|\u221231.6|90.9|71.2|5.33||
+|h-GaN|1.48||||||142|67.9||[56]|
+|h-GaN||||2.00||||||[57]|
+|h-GaN (H/F)|6.12|0.49||15.7|||74.0|35.1||[56]|
+|AB-GaNn|1.01|0.44||1.05|||150|53.3||[56]|
+|AA\u2019-GaNn|0.60|0.44||0.60|||152|51.7||[56]|
+|GaNn27.8|\u22121.75|0.21|0.19|2.00|0.13|0.43|122|34.7|3.97||
+|F-GaNn27.8|2.28|\u22121.72|0.26|15.1|\u22121.26|16.7|75.9|60.8|4.29||
+|H/F-GaNn27.8|5.77|\u22121.22|\u22121.15|6.93|\u22120.81|\u22122.76|117|33.7|4.13||
+
+# RESULTS AND DISCUSSION
+To calculate the piezoelectric coefficients e i j k measured in different units for planar and bulk materials, we use inverse piezoelectric effect given by the formula  where \u03c3 j k is the mechanical stress tensor determined as the force per unit length in the direction perpendicular to the force and E i is the component of the external electric field. In this way, we obtain the ion-clamped piezoelectric tensor of Moir\xe9 BNn, AlNn, and GaNn bilayers with the twisted angle of 27.8\xb0. Our DFT calculations, which derive the ion-relaxed piezoelectric tensor, exactly meet this condition. Bulk piezoelectric crystals are characterized, in general, by 4 different piezoelectric constant tensors. For considered bilayers, the following relationships apply between e i j k and d i j k (the same convolution rule applies here):  In the last expression, the component of the elastic moduli tensor c33 in expanded form is represented as c1212. The calculated piezoelectric characteristics of the Moir\xe9 AlNn, BNn, and GaNn nitridanes as compared to other 2D and bulk piezoelectric materials are listed in. The empty cells in the last column \u201c Refs. \u201d correspond to our calculation in this paper. In addition to the elastic and piezoelectric constants, includes the cohesive energy calculated as E coh= \u2211 E free-\u2211 E totN, where Efree is the energy of free atoms, Etot is the full energy of the relaxed cell, and N is number of atoms in the cell. In the energetic sense the most stable are the fluorinated Moir\xe9 nitridanes. However, even their cohesive energies are separated from the corresponding value of monolayer boron nitride (h-BN) by a large gap. The energy stability of Moir\xe9 nitridanes with the twisted angle of 27.8\xb0 deteriorates in the series: boron nitridanes \u2192 aluminum nitridanes \u2192 gallium nitridanes. Boron nitride Moir\xe9 bilayers with the twisted angle of 27.8\xb0 are more energetically stable than similar bilayers with the twisted angle of 21.8\xb0. To insight into mechanical stability, we used the well-known Born-Huang criterion , which for the hexagonal lattice types has the following form: c11- c12>0 and c11+2 c12>0. From it follows that for all considered Moir\xe9 nitridane bilayers the mechanical stability criterion is satisfied. There is a correlation between boron nitridanes twisted at different angles: hydrogenated and fluorinated nitridanes with the twisted angles of 21.8\xb0 and 27.8\xb0 have close e 22, while the ratios of e 22 of fluorinated boron nitridanes (F-BNn21.8 and F-BNn27.8) to hydrogenated ones (BNn21.8 and BNn27.8) for both cases are approximately two. Moreover, despite the fact that the presented Moir\xe9 nitridanes are bilayer films, polarizations from adjacent layers do not cancel each other out, as happens in van der Waals multilayer heterostructures with an even number of layers. The calculation method was tested for compliance with experimental data for both bulk and 2D piezoelectric materials. Agreement with experimental data for 2D materials (using h-BN as an example) is also given in. The agreement between the results of the calculation method and classical piezoelectric materials was based on a comparison with the cubic phase of bulk boron nitride: Ref. gives the data range for the e 14 constants. It ranges from 0.20 to 3.34 C/mE^{2}. Our calculation (1.03 C/mE^{2}) falls within this interval. Also, excellent agreement is observed between our calculations and the Ref. , where the calculated value of the same component, but under unclamped crystal conditions, is 0.89 C/mE^{2} against our value of 0.87 C/mE^{2}. Hydrogenated or fluorinated Moir\xe9 boron nitridanes with the twisted angle of 21.8\xb0 have the same piezoelectric response in the direction normal to the nanosheet, i.e. described by the e 31 piezoelectric coefficient, as potassium- or lithium-doped graphene. The measured in-plane piezoelectric constant in the twisted graphene was 0.15 pm/V , which is close to d 22 of the AA\u2019-BNn structure (see ). The in-plane piezoelectric moduli of all the considered Moir\xe9 nitradane bilayers are higher. In the case of Moir\xe9 bilayers , it is clear that not all bonds of the \u201cboron\u2013adatom\u201d and \u201cnitrogen\u2013adatom\u201d types are perpendicular to the bilayer plane, which, on average, leads to a decrease in the lengths of the dipoles. However, as a computational experiment has shown, due to various passivation, the piezoelectric constant e 33 becomes non-zero. When compared with other bilayer materials, the piezoelectric response in this Moir\xe9 nitridane bilayers is stronger. Analysis of the formation energy of 2D and bulk materials shown that fluorinated structures based on graphene, AB, AA\u2019, Moir\xe9 diamanes and nitridanes are energetically more preferable, while hydrogenated structures are less energetically favorable. The piezoelectric effect in the vertical direction relative to the nanosheet, which is necessary for the excitation of flexural elastic waves , requires non-zero coefficients e 31 and e 33 ( d 31 and d 33 ). We see that the Moir\xe9 nitridanes can be used for these purposes. Moreover, due to the specifically close values of the elastic moduli tensor components c11 and c12 in F-AlNn27.8, H/F-AlNn27.8 and F-GaNn27.8, structures, the piezo moduli d11 and d33 are large. As can be seen from the data in the , in the Moir\xe9 bornitridanes with the twisted angle of 27.8\xb0 and in Moir\xe9 gallium nitridanes with the twisted angle of 21.8\xb0, the values of piezoelectric constants and piezoelectric moduli are higher than the corresponding values for untwisted nitridanes.
+
+# INTRODUCTION
+Two-dimensional (2D) materials are capable to form interesting vertical compounds \u2013 layered (pseudo two-dimensional) materials, the layers in which are held together by van der Waals forces or forces of a chemical nature. Twisted bi- or three-layer structures with periodic Moir\xe9 superlattices induced structural altering result in new electronic, optics and phononic phenomena. Another pseudo-2D diamond-like films, diamanes and nitridanes , based on two covalent-bonded carbon and nitride monolayers have recently attracted great interest for their unique properties. However, the ability to generate an electrical charge upon mechanical deformation has opened the way for piezoelectric pseudo-2D materials to many applications, from pressure sensors and acoustic transducers to high-voltage generators. Mono-, polycrystalline and polymer piezoelectrics are being replaced by novel materials, including those that have only two spatial dimensions, i.e. the pure or pseudo 2D materials. The first 2D material synthesized was a layer of carbon atoms arranged in a hexagonal pattern, called graphene. How to impart piezoelectric properties to novel pure or pseudo nanoscale 2D materials? There are two main ways. In the first case, it was proposed to \u201cinduce\u201d the piezoelectric properties of graphene by modifying its planar structure by periodic perforation, which violates centrosymmetricity , or by doping with foreign atoms. We have previously shown that this kind of piezoelectric effect can also occur in other 2D materials that have undergone pre-treatment. Such materials include hexagonal boron nitride , dichalcogenides and dioxides of transition metals , diatom 2D semiconductor structures and some others. Interest in the piezoelectric effect in 2D materials is of an applied nature. Taking into account the \u201cmonatomic (or diatomic) thickness\u201d of 2D (pseudo-2D) materials, the use of the piezoelectric effect can be expanded (compared to the classical application) by applying to curved organic surfaces, which may be useful in bioengineering technologies. Moir\xe9 bilayer structures show promise in this regard, as the assembly is preserved through passivation. In this article, we present an ab initio study on the piezoelectric characteristics of Moir\xe9 bilayer nitridanes, promising materials for twistronics, and compare them with single-layer, untwisted bilayer and bulk piezoelectric materials.
+
+# CONCLUSION
+In Moir\xe9 nitridane bilayers, a stronger piezoelectric effect can be observed than in AA and AB-stacked bilayers. With the help of the considered Moir\xe9 covalent-bonded bilayers, the possibility of controlling electronic and optical resonance properties opens up, since in them under the influence of electric and elastic fields it is possible to shift resonant narrow bands in the electronic spectrum with a high density of states. Considering the pronounced resonant optoelectronic properties, Moir\xe9 structures can also be very useful for creating resonant opto- and electromechanical nanodevices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "BNn21.8": -0.11,
+      "F-BNn21.8": -0.21,
+      "H/F-BNn21.8": 0.40,
+      "BNn27.8": -0.01,
+      "F-BNn27.8": -0.58,
+      "H/F-BNn27.8": -0.08,
+      "AlNn27.8": -0.32,
+      "F-AlNn27.8": 182,
+      "H/F-AlNn27.8": -231.6,
+      "GaNn27.8": 0.43,
+      "F-GaNn27.8": 16.7,
+      "H/F-GaNn27.8": -22.76
+    },
+    "abbreviations": {
+      "h-BN": "hexagonal Boron Nitride",
+      "AA'-BNn": "AA'-Boron Nitride Nitridane",
+      "F-BNn": "Fluorinated Boron Nitride Nitridane",
+      "H/F-BNn": "Hydrogenated/Fluorinated Boron Nitride Nitridane",
+      "h-AlN": "hexagonal Aluminum Nitride",
+      "AB-AlNn": "AB-Aluminum Nitride Nitridane",
+      "AA'-AlNn": "AA'-Aluminum Nitride Nitridane",
+      "F-AlNn": "Fluorinated Aluminum Nitride Nitridane",
+      "H/F-AlNn": "Hydrogenated/Fluorinated Aluminum Nitride Nitridane",
+      "h-GaN": "hexagonal Gallium Nitride",
+      "AB-GaNn": "AB-Gallium Nitride Nitridane",
+      "AA'-GaNn": "AA'-Gallium Nitride Nitridane",
+      "F-GaNn": "Fluorinated Gallium Nitride Nitridane",
+      "H/F-GaNn": "Hydrogenated/Fluorinated Gallium Nitride Nitridane"
+    },
+    "property_unit": "pm/V",
+    "family": "Nitridanes"
+  }
+}"

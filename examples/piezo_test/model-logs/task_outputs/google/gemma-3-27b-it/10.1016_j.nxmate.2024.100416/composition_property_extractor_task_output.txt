@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"P(VDF-TrFE)-BNT":115,"P(VDF-TrFE)-NBT0.6CeO2":49,"P(VDF-TrFE)-BaTiO3":null,"P(VDF-TrFE)-BNT-BKT-BT":40,"P(VDF-TrFE)-PZT":42,"NBT-0.6CeO2":90,"P(VDF-TrFE)":-38,"0.2P(VDF-TrFE)/NBT-0.6CeO2":49},"abbreviations":{},"property_unit":"pC/N","family":"P(VDF-TrFE)"}}

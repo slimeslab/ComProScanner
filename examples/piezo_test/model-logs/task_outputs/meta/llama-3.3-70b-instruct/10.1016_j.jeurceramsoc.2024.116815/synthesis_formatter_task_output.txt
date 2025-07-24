@@ -1,0 +1,1 @@
+{"synthesis_formatted_data":{"method":"conventional solid-state reaction route","precursors":["K2CO3","Na2CO3","Nb2O5"],"steps":["mixing","calcination","re-milling","cold sintering-assisted","thermal post-treatment","re-oxidization"],"characterization_techniques":["XRD","SEM","TEM","DTA/TGA","LCR meter","impedance analyzer"]}}

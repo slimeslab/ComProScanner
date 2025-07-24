@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"CaBi2Nb2O9":null,"CLBBN-xCe":null,"CLBBN-0.1Ce":21.7,"CLBBN-0.1Ce at 350°C":25.0},"property_unit":"pC/N","family":"CBN"}}

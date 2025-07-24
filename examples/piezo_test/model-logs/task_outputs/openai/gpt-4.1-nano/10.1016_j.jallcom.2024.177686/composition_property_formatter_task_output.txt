@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"PbZr(0.54)Ti(0.46)O3":530,"(0.01)TaE^{5+}-SmE^{3+}-PbZr(0.54)Ti(0.46)O3":530,"(0.00)TaE^{5+}-SmE^{3+}-PbZr(0.54)Ti(0.46)O3":513},"property_unit":"pC/N","family":"PbZrTiO3"}}

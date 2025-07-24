@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"LiTaO3":8,"LiCoO2":null,"SrTiO3":null,"MgTiO3":null},"property_unit":"pC/N","family":"Perovskite"}}

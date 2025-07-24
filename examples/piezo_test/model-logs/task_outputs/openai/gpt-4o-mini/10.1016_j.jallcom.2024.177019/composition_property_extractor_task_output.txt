@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.02Nd: BS-0.64PT":550},"abbreviations":{"BS":"BiScO3","PT":"PbTiO3","Nd":"Nd2O3"},"property_unit":"pC/N","family":"BS-PT"}}

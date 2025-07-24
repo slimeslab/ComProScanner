@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BiFeO3":17.04,"CdS":20.24,"BiFeO3/CdS (10%)":26.48,"BiFeO3/CdS (20%)":35.2,"BiFeO3/CdS (30%)":29.5},"property_unit":"pC/N","family":"BiFeO3"}}

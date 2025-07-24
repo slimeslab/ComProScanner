@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BaTiO3":190},"abbreviations":{"BNNT":"Boron Nitride Nanotubes","CVD":"Chemical Vapor Deposition","PFM":"Piezo-response Force Microscopy"},"property_unit":"pC/N","family":"BaTiO3"}}

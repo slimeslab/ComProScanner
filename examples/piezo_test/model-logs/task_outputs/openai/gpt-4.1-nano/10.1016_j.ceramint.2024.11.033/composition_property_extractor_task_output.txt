@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"MgO":1.0,"Mg2SiO4":1.9,"MgF":2.5},"abbreviations":{},"property_unit":"pC/N","family":"Ferroelectric Ceramics"}}

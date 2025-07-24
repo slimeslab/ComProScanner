@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi4Ti3O12 (BTO) (non-textured)":9,"Bi4Ti3O12 (BTO) (textured, parallel to c-axis, BTO(∥))":19},"abbreviations":{},"property_unit":"pC/N","family":"Bi4Ti3O12"}}

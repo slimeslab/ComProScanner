@@ -1,0 +1,895 @@
+2025-07-10 15:47:25: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Samples with a surface perpendicular to the c-axis were labeled as BTO(\u22a5), while samples with a surface parallel to the c-axis were labeled as BTO(\u2016). The XRD patterns of the textured BTO(\u22a5) and BTO(\u2016) ceramics at different sintering temperatures are shown in , where a maximum F 001 value of 98 % was achieved in the BTO textured ceramics sintered at 950 \xb0C. (b) shows the XRD patterns of the non-textured, BTO(\u2016), and BTO(\u22a5) ceramics, indicating that no impure phase was observed in any of the samples. Compared to the non-textured ceramic, the BTO (\u2016) and BTO (\u22a5) ceramics exhibited significant anisotropy. As shown in (c), the lattice constants were calculated using PowderX diffraction analysis software from the XRD patterns of the BTO(\u2016) ceramics. The average lattice strain \u03b7 hkl at different sintering temperatures with different F 001 values was calculated by the following formula : \u03b7 hkl = (d hkl - d CIF,hkl )/d CIF,hkl , where d hkl is the d spacing of (hkl) plane along the a-, b- or c-axis of the BTO ceramics, and d CIF,hkl is the d spacing of the reference crystallographic information file (CIF) with lattice constants of a = 5.4475 \xc5, b = 5.4082 \xc5, and c = 32.8066 \xc5. The lattice strain of the (200) plain was calculated, corresponding to the polarization direction of the BTO ceramics along the a-axis direction. The lattice strain \u03b7 (200) of the non-textured ceramics is 0.24 %. For textured ceramics, the \u03b7 (200) value become negative as F 001 increases. When the F 001 reached 98 %, the \u03b7 (200) value was \u22120.27 %, demonstrating the compressive lattice strain in the textured ceramics. The scanning electron microscopy (SEM) images of the BTO(\u2016) ceramics and non-textured ceramics are depicted in (d)(f). The observed grain size of the BTO(\u2016) ceramics was 19.8 \u03bcm in length and 1.97 \u03bcm in width, and these values were larger than the grain size of 18.2 \u03bcm in length and 1.86 \u03bcm in width for the non-textured ceramics. As shown in (e)(g), piezoresponse force microscopy (PFM) was used to investigate the domain structure of the BTO (\u2016) and non-textured ceramics, according to the literature. The domain size had a length of 2 \u03bcm and width of 1.33 \u03bcm in the BTO (\u2016) ceramic, which was larger than the non-textured ceramic, with a length of 1.8 \u03bcm and width of 1.14 \u03bcm. The increase in domain size was mainly due to the large lattice strain in the BTO(\u2016) ceramics , which was calculated by: \u03b7 i = (\u03b3 i P i E^{ })/K, where \u03b3 and K denote the strain-polarization coefficient and elastic constant, respectively , with the strain proportional to the square of polarization when the polarization was small. Based on this relationship, the large lattice strain in the BTO(\u2016) ceramics resulted in a higher polarization of the BTO(\u2016) ceramics compared to the non-textured ceramics. The polarization, dielectric and piezoelectric properties of the BTO(\u2016) ceramics and non-textured ceramics are described in detail below. The electrical properties of the BTO(\u2016), BTO(\u22a5), and non-textured ceramics at room temperature were compared, as shown in. (a) presents the polarization vs electric field (P-E) loops at 90 kV/cm, indicating that the ferroelectric properties exhibited high anisotropy. In the BTO (\u22a5) ceramics, the ferroelectricity was very weak due to the nonpolar c-axis of the BTO material. In the BTO (\u2016) ceramics, the remnant polarization P r was 16 \u03bcC/cmE^{2}, which was significantly higher than that of the non-textured ceramics (11 \u03bcC/cmE^{2}). As shown in (b), the dielectric constant \u03b5 r of the textured ceramics also exhibited obvious anisotropy. The dielectric anomaly was observed around \u223c680 \xb0C, corresponding to the ferroelectric-paraelectric phase transition temperature (Curie temperature T c). The \u03b5 r of the BTO (\u2016) ceramics was significantly higher than that of the BTO (\u22a5), and the \u03b5 r of the non-textured ceramics was between the BTO(\u2016) and BTO(\u22a5) ceramics. (c) presents the dielectric loss tan\u03b4 of the BTO textured ceramics and non-textured ceramics at 1 MHz as a function of temperature. Notably, the tan\u03b4 of BTO(\u22a5) was significantly lower than that of the BTO(\u2016) and non-textured ceramics, which is mainly attributed to (Bi2O2)E^{2+} acting as an insulating layer to prevent charge jumping. The DC resistivity of the BTO textured ceramics and non-textured ceramics from 200 \xb0C to 700 \xb0C is shown in. As illustrated in (a) and (b), P r and \u03b5 r were higher for the textured BTO (\u2016) ceramics compared to the non-textured ceramics. According to d 33\u221dP r \u03b5 r , d 33 increased by increasing P r and \u03b5 r. Therefore, we obtained the piezoelectric constants d 33 for the BTO (\u2016) and non-textured ceramics at different annealing temperatures, as shown in (d). The d 33 value of 19 pC/N for the BTO (\u2016) ceramics was twice the value of the non-textured ceramics (9 pC/N), consistent with PFM analysis. Moreover, the d 33 of BTO (\u2016) decreased by only 11.5 % when the annealing temperature reached 650 \xb0C, far below that of the non-textured ceramics (55.5 %). The T c and d 33 values of the BTO(\u2016) ceramics were compared with the other high-temperature piezoelectric ceramics, as shown in (e). The d 33 values of the BTO(\u2016) ceramics were higher than the values of CaBi2Nb2O9-based , Bi3TiNbO9-based , and other Bi4Ti3O12-based ceramics reported in the literature. The Raman spectra of the poled and unpoled BTO (\u2016) ceramics were obtained to further understand the lattice strain in the textured ceramics, as shown in (a). The polarization field strength for poling was 40 kV/cm. (b) and (c) presents the fitted results of the Raman spectra for the BTO (\u2016) ceramics before and after poling. The Raman modes at 850 cmE^{\u22121} and 615 cmE^{\u22121} corresponded to the A1g modes associated with the rotation or vibration of the TiO6 octahedron. The mode at 612 cmE^{\u22121} (unpoled) shifted towards 615 cmE^{\u22121} (poled), and the mode at 849 cmE^{\u22121} (unpoled) shifted towards 850 cmE^{\u22121} (poled) ((d)). The shift of the A1g mode to a higher wavenumber indicated that the TiO6 octahedron was under compressive strain. The decrease in FWHM indicated a greater tilt of the TiO6 octahedron, resulting in higher ferroelectric polarization. The modes at 89 cmE^{\u22121} and 114 cmE^{\u22121} were associated with the A-site ions in the pseudo-perovskite units. Meanwhile, the shift from 89 cmE^{\u22121} to 91 cmE^{\u22121} and from 114 cmE^{\u22121} to 118 cmE^{\u22121} indicated movement towards higher wavenumbers ((e)). After poling, the peak intensity at 89 cmE^{\u22121} decreased while the peak intensity at 114 cmE^{\u22121} increased. confirming that the displacement of Bi ions played a crucial role in ferroelectric polarization. For the BTO (\u22a5) ceramics, the modes before and after poling did not significantly change and the peak intensity was only slightly reduced ((f)). The BTO (\u2016) ceramics were easily polarized, establishing long-distance polar order caused by the electric field-induced domain switch, and resulting in better piezoelectric properties compared to the BTO (\u22a5) ceramics. In addition, the spontaneous polarization P s of BTO(\u2016) and the non-textured ceramics could be calculated using the Shimakawa model, based on atomic displacements : Ps= \u2211i mi\u2217\u25b3 xi\u2217 QieV, where m i represents site multiplicity, \u0394x i signifies each atomic displacement, Q i e is the ionic charge, V denotes the volume of the unit cell, and i is the index of each atom in the unit cell. As shown in (g) and (h), the P s of the BTO (\u2016) ceramics was approximately 30.4 \u03bcC/cmE^{2}, which was greater larger than that of the non-textured ceramics (17.3 \u03bcC/cmE^{2}). The increase in P s could be attributed to the compressive strain in the BTO (\u2016) ceramics, which was consistent with the PFM analysis results. The relationship between the piezoelectric constant d 33 and compressive strain could be summarized as a function of F 001, as shown in (i). The d 33 value increased with increasing compressive strain, indicating that lattice strain increased the piezoelectric properties in the textured ceramics. Finally, the XRD patterns of the ceramics were obtained in the range of 24 \xb0C\u2013600 \xb0C to verify the temperature stability of d 33 for the BTO (\u2016) ceramics. As shown in (a), no impure phase appeared with increasing temperature, and the (117) peak shifted to a lower angle as the temperature increased from 24 \xb0C to 600 \xb0C, as shown in (b), indicating that the phase structure of the ceramics remained stable in high-temperature environments and only led to lattice expansion. (c) shows the lattice constants as a function of temperature. The values of a, b, and c gradually increased, and the values of a and b converged near 600 \xb0C, which was close to T c.
+
+# TITLE
+Enhanced electrical properties in textured Bi<inf>4</inf>Ti<inf>3</inf>O<inf>12</inf> ceramics with negative strain
+
+# ABSTRACT
+In this work, we elucidated the reasons behind the superior electrical properties of Bi4Ti3O12 (BTO) textured ceramics compared to BTO non-textured ceramics from the perspective of lattice strain. The phase structure, domain structure, and electrical properties of BTO textured and non-textured ceramics were analyzed in detail. The calculated average lattice strain along the polarization axis of textured ceramics with optimized processing was −0.27 %, while that of non-textured ceramics was 0.24 %. Compared to non-textured ceramics, the remnant polarization P
+                     r of textured ceramics increased by 1.5 times, reaching 16 μC/cm2. In addition, the piezoelectric constant d
+                     33 was enhanced two times with a value of 19 pC/N. Notably, d
+                     33 increased with an increase in average compressive strain along the polarization axis, indicating the enhancement of piezoelectricity caused by compressive lattice strain in the textured ceramics. The variation in d
+                     33 was below 11.5 % in the heat-treatment temperature range of 25 °C–600 °C, demonstrating thermal stability in high-temperature service environments.
+
+# INTRODUCTION
+Bi4Ti3O12(BTO) is a typical bismuth-layered material belonging to the Aurivillius family with a ferroelectric Curie temperature T c of \u223c675 \xb0C and high spontaneous polarization P s value of \u223c50 \u03bcC/cmE^{2} in the a-b plane , making it suitable for high-temperature electronic sensors. However, the strains between neighbor grains block the excellent electric performance in such ferroelectric ceramic due to the anisotropic characteristic of crystal structure with c/a\u22486 ratio of lattice constants. As a result, the piezoelectric constant d 33 of BTO is typically less than 8 pC/N. Methods such as hot forging , hot pressing  and template grain growth (TGG)  have been employed to prepare textured ceramics, with the TGG method the most commonly used approach. As early as 1999, Messing et al.  used the TGG method to prepare mullite ceramics with an oriented grain structure. Li et al. prepared Pb(In1/2Nb1/2)O3-Pb(Sc1/2Nb1/2)O3-PbTiO3 textured ceramics using the TGG method and increased the d 33 value to 593 pC/N. Yan et al. obtained a high d 33 value of 1100 pC/N along the [001] direction and demonstrated the presence of rotational ferroelectricity in Pb(Mg1/3Nb2/3)O3-Pb(Zr,Ti)O3 textured ceramics prepared using the TGG method. In 2004, Satio et al. synthesized (K, Na)NbO3-based textured ceramics with high piezoelectric properties, achieving a significant 1.8-fold improvement in the piezoelectric coefficient d 33 (416 pC/N) compared to non-textured ceramics. Similarly, Na0.5Bi0.5TiO3\u2013BaTiO3 textured ceramics prepared using the TGG method demonstrated a 2-fold increase in the piezoelectric coefficient compared to non-textured ceramics. As indicated in the following equations, d33prop mainly includes d33imp an PA \u2202A \u2202\u03c3 two parts. d33prop= PA \u2202A \u2202\u03c3+ d33imp, d33imp= \u2202P \u2202\u03c3, where d33prop is the proper piezoelectric response (d33prop was measured in the experiment). P signifies polarization without stress in PA \u2202A \u2202\u03c3, where the change in stress only led to a change in cell area, and d33imp signifies the improper piezoelectric response, indicating the impact of stress/strain changes on polarization. Highly textured BTO ceramics with excellent piezoelectric and ferroelectric properties were prepared using a simple TGG method. The difference in lattice strain between the textured and non-textured ceramics was determined by X-ray diffraction (XRD).
+
+# CONCLUSION
+In this work, a novel strategy was proposed to elucidate the mechanism of enhancing the electrical properties of BTO textured ceramics. The lattice strain, lattice vibration, domain structure, and electrical properties of BTO textured and non-textured ceramics were evaluated. Compared to non-textured ceramics, the P r, \u03b5 r, and d 33 values of the BTO (\u2016) ceramic samples increase by 1.5-, 2.5-, and 2-fold, respectively. Notably, the d 33 exhibited strong stability below T c, demonstrating that the BTO textured ceramics could serve as a potential candidate for high-temperature piezoelectric sensor applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 15:47:27: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Samples with a surface perpendicular to the c-axis were labeled as BTO(\u22a5), while samples with a surface parallel to the c-axis were labeled as BTO(\u2016). The XRD patterns of the textured BTO(\u22a5) and BTO(\u2016) ceramics at different sintering temperatures are shown in , where a maximum F 001 value of 98 % was achieved in the BTO textured ceramics sintered at 950 \xb0C. (b) shows the XRD patterns of the non-textured, BTO(\u2016), and BTO(\u22a5) ceramics, indicating that no impure phase was observed in any of the samples. Compared to the non-textured ceramic, the BTO (\u2016) and BTO (\u22a5) ceramics exhibited significant anisotropy. As shown in (c), the lattice constants were calculated using PowderX diffraction analysis software from the XRD patterns of the BTO(\u2016) ceramics. The average lattice strain \u03b7 hkl at different sintering temperatures with different F 001 values was calculated by the following formula : \u03b7 hkl = (d hkl - d CIF,hkl )/d CIF,hkl , where d hkl is the d spacing of (hkl) plane along the a-, b- or c-axis of the BTO ceramics, and d CIF,hkl is the d spacing of the reference crystallographic information file (CIF) with lattice constants of a = 5.4475 \xc5, b = 5.4082 \xc5, and c = 32.8066 \xc5. The lattice strain of the (200) plain was calculated, corresponding to the polarization direction of the BTO ceramics along the a-axis direction. The lattice strain \u03b7 (200) of the non-textured ceramics is 0.24 %. For textured ceramics, the \u03b7 (200) value become negative as F 001 increases. When the F 001 reached 98 %, the \u03b7 (200) value was \u22120.27 %, demonstrating the compressive lattice strain in the textured ceramics. The scanning electron microscopy (SEM) images of the BTO(\u2016) ceramics and non-textured ceramics are depicted in (d)(f). The observed grain size of the BTO(\u2016) ceramics was 19.8 \u03bcm in length and 1.97 \u03bcm in width, and these values were larger than the grain size of 18.2 \u03bcm in length and 1.86 \u03bcm in width for the non-textured ceramics. As shown in (e)(g), piezoresponse force microscopy (PFM) was used to investigate the domain structure of the BTO (\u2016) and non-textured ceramics, according to the literature. The domain size had a length of 2 \u03bcm and width of 1.33 \u03bcm in the BTO (\u2016) ceramic, which was larger than the non-textured ceramic, with a length of 1.8 \u03bcm and width of 1.14 \u03bcm. The increase in domain size was mainly due to the large lattice strain in the BTO(\u2016) ceramics , which was calculated by: \u03b7 i = (\u03b3 i P i E^{ })/K, where \u03b3 and K denote the strain-polarization coefficient and elastic constant, respectively , with the strain proportional to the square of polarization when the polarization was small. Based on this relationship, the large lattice strain in the BTO(\u2016) ceramics resulted in a higher polarization of the BTO(\u2016) ceramics compared to the non-textured ceramics. The polarization, dielectric and piezoelectric properties of the BTO(\u2016) ceramics and non-textured ceramics are described in detail below. The electrical properties of the BTO(\u2016), BTO(\u22a5), and non-textured ceramics at room temperature were compared, as shown in. (a) presents the polarization vs electric field (P-E) loops at 90 kV/cm, indicating that the ferroelectric properties exhibited high anisotropy. In the BTO (\u22a5) ceramics, the ferroelectricity was very weak due to the nonpolar c-axis of the BTO material. In the BTO (\u2016) ceramics, the remnant polarization P r was 16 \u03bcC/cmE^{2}, which was significantly higher than that of the non-textured ceramics (11 \u03bcC/cmE^{2}). As shown in (b), the dielectric constant \u03b5 r of the textured ceramics also exhibited obvious anisotropy. The dielectric anomaly was observed around \u223c680 \xb0C, corresponding to the ferroelectric-paraelectric phase transition temperature (Curie temperature T c). The \u03b5 r of the BTO (\u2016) ceramics was significantly higher than that of the BTO (\u22a5), and the \u03b5 r of the non-textured ceramics was between the BTO(\u2016) and BTO(\u22a5) ceramics. (c) presents the dielectric loss tan\u03b4 of the BTO textured ceramics and non-textured ceramics at 1 MHz as a function of temperature. Notably, the tan\u03b4 of BTO(\u22a5) was significantly lower than that of the BTO(\u2016) and non-textured ceramics, which is mainly attributed to (Bi2O2)E^{2+} acting as an insulating layer to prevent charge jumping. The DC resistivity of the BTO textured ceramics and non-textured ceramics from 200 \xb0C to 700 \xb0C is shown in. As illustrated in (a) and (b), P r and \u03b5 r were higher for the textured BTO (\u2016) ceramics compared to the non-textured ceramics. According to d 33\u221dP r \u03b5 r , d 33 increased by increasing P r and \u03b5 r. Therefore, we obtained the piezoelectric constants d 33 for the BTO (\u2016) and non-textured ceramics at different annealing temperatures, as shown in (d). The d 33 value of 19 pC/N for the BTO (\u2016) ceramics was twice the value of the non-textured ceramics (9 pC/N), consistent with PFM analysis. Moreover, the d 33 of BTO (\u2016) decreased by only 11.5 % when the annealing temperature reached 650 \xb0C, far below that of the non-textured ceramics (55.5 %). The T c and d 33 values of the BTO(\u2016) ceramics were compared with the other high-temperature piezoelectric ceramics, as shown in (e). The d 33 values of the BTO(\u2016) ceramics were higher than the values of CaBi2Nb2O9-based , Bi3TiNbO9-based , and other Bi4Ti3O12-based ceramics reported in the literature. The Raman spectra of the poled and unpoled BTO (\u2016) ceramics were obtained to further understand the lattice strain in the textured ceramics, as shown in (a). The polarization field strength for poling was 40 kV/cm. (b) and (c) presents the fitted results of the Raman spectra for the BTO (\u2016) ceramics before and after poling. The Raman modes at 850 cmE^{\u22121} and 615 cmE^{\u22121} corresponded to the A1g modes associated with the rotation or vibration of the TiO6 octahedron. The mode at 612 cmE^{\u22121} (unpoled) shifted towards 615 cmE^{\u22121} (poled), and the mode at 849 cmE^{\u22121} (unpoled) shifted towards 850 cmE^{\u22121} (poled) ((d)). The shift of the A1g mode to a higher wavenumber indicated that the TiO6 octahedron was under compressive strain. The decrease in FWHM indicated a greater tilt of the TiO6 octahedron, resulting in higher ferroelectric polarization. The modes at 89 cmE^{\u22121} and 114 cmE^{\u22121} were associated with the A-site ions in the pseudo-perovskite units. Meanwhile, the shift from 89 cmE^{\u22121} to 91 cmE^{\u22121} and from 114 cmE^{\u22121} to 118 cmE^{\u22121} indicated movement towards higher wavenumbers ((e)). After poling, the peak intensity at 89 cmE^{\u22121} decreased while the peak intensity at 114 cmE^{\u22121} increased. confirming that the displacement of Bi ions played a crucial role in ferroelectric polarization. For the BTO (\u22a5) ceramics, the modes before and after poling did not significantly change and the peak intensity was only slightly reduced ((f)). The BTO (\u2016) ceramics were easily polarized, establishing long-distance polar order caused by the electric field-induced domain switch, and resulting in better piezoelectric properties compared to the BTO (\u22a5) ceramics. In addition, the spontaneous polarization P s of BTO(\u2016) and the non-textured ceramics could be calculated using the Shimakawa model, based on atomic displacements : Ps= \u2211i mi\u2217\u25b3 xi\u2217 QieV, where m i represents site multiplicity, \u0394x i signifies each atomic displacement, Q i e is the ionic charge, V denotes the volume of the unit cell, and i is the index of each atom in the unit cell. As shown in (g) and (h), the P s of the BTO (\u2016) ceramics was approximately 30.4 \u03bcC/cmE^{2}, which was greater larger than that of the non-textured ceramics (17.3 \u03bcC/cmE^{2}). The increase in P s could be attributed to the compressive strain in the BTO (\u2016) ceramics, which was consistent with the PFM analysis results. The relationship between the piezoelectric constant d 33 and compressive strain could be summarized as a function of F 001, as shown in (i). The d 33 value increased with increasing compressive strain, indicating that lattice strain increased the piezoelectric properties in the textured ceramics. Finally, the XRD patterns of the ceramics were obtained in the range of 24 \xb0C\u2013600 \xb0C to verify the temperature stability of d 33 for the BTO (\u2016) ceramics. As shown in (a), no impure phase appeared with increasing temperature, and the (117) peak shifted to a lower angle as the temperature increased from 24 \xb0C to 600 \xb0C, as shown in (b), indicating that the phase structure of the ceramics remained stable in high-temperature environments and only led to lattice expansion. (c) shows the lattice constants as a function of temperature. The values of a, b, and c gradually increased, and the values of a and b converged near 600 \xb0C, which was close to T c.
+
+# TITLE
+Enhanced electrical properties in textured Bi<inf>4</inf>Ti<inf>3</inf>O<inf>12</inf> ceramics with negative strain
+
+# ABSTRACT
+In this work, we elucidated the reasons behind the superior electrical properties of Bi4Ti3O12 (BTO) textured ceramics compared to BTO non-textured ceramics from the perspective of lattice strain. The phase structure, domain structure, and electrical properties of BTO textured and non-textured ceramics were analyzed in detail. The calculated average lattice strain along the polarization axis of textured ceramics with optimized processing was −0.27 %, while that of non-textured ceramics was 0.24 %. Compared to non-textured ceramics, the remnant polarization P
+                     r of textured ceramics increased by 1.5 times, reaching 16 μC/cm2. In addition, the piezoelectric constant d
+                     33 was enhanced two times with a value of 19 pC/N. Notably, d
+                     33 increased with an increase in average compressive strain along the polarization axis, indicating the enhancement of piezoelectricity caused by compressive lattice strain in the textured ceramics. The variation in d
+                     33 was below 11.5 % in the heat-treatment temperature range of 25 °C–600 °C, demonstrating thermal stability in high-temperature service environments.
+
+# INTRODUCTION
+Bi4Ti3O12(BTO) is a typical bismuth-layered material belonging to the Aurivillius family with a ferroelectric Curie temperature T c of \u223c675 \xb0C and high spontaneous polarization P s value of \u223c50 \u03bcC/cmE^{2} in the a-b plane , making it suitable for high-temperature electronic sensors. However, the strains between neighbor grains block the excellent electric performance in such ferroelectric ceramic due to the anisotropic characteristic of crystal structure with c/a\u22486 ratio of lattice constants. As a result, the piezoelectric constant d 33 of BTO is typically less than 8 pC/N. Methods such as hot forging , hot pressing  and template grain growth (TGG)  have been employed to prepare textured ceramics, with the TGG method the most commonly used approach. As early as 1999, Messing et al.  used the TGG method to prepare mullite ceramics with an oriented grain structure. Li et al. prepared Pb(In1/2Nb1/2)O3-Pb(Sc1/2Nb1/2)O3-PbTiO3 textured ceramics using the TGG method and increased the d 33 value to 593 pC/N. Yan et al. obtained a high d 33 value of 1100 pC/N along the [001] direction and demonstrated the presence of rotational ferroelectricity in Pb(Mg1/3Nb2/3)O3-Pb(Zr,Ti)O3 textured ceramics prepared using the TGG method. In 2004, Satio et al. synthesized (K, Na)NbO3-based textured ceramics with high piezoelectric properties, achieving a significant 1.8-fold improvement in the piezoelectric coefficient d 33 (416 pC/N) compared to non-textured ceramics. Similarly, Na0.5Bi0.5TiO3\u2013BaTiO3 textured ceramics prepared using the TGG method demonstrated a 2-fold increase in the piezoelectric coefficient compared to non-textured ceramics. As indicated in the following equations, d33prop mainly includes d33imp an PA \u2202A \u2202\u03c3 two parts. d33prop= PA \u2202A \u2202\u03c3+ d33imp, d33imp= \u2202P \u2202\u03c3, where d33prop is the proper piezoelectric response (d33prop was measured in the experiment). P signifies polarization without stress in PA \u2202A \u2202\u03c3, where the change in stress only led to a change in cell area, and d33imp signifies the improper piezoelectric response, indicating the impact of stress/strain changes on polarization. Highly textured BTO ceramics with excellent piezoelectric and ferroelectric properties were prepared using a simple TGG method. The difference in lattice strain between the textured and non-textured ceramics was determined by X-ray diffraction (XRD).
+
+# CONCLUSION
+In this work, a novel strategy was proposed to elucidate the mechanism of enhancing the electrical properties of BTO textured ceramics. The lattice strain, lattice vibration, domain structure, and electrical properties of BTO textured and non-textured ceramics were evaluated. Compared to non-textured ceramics, the P r, \u03b5 r, and d 33 values of the BTO (\u2016) ceramic samples increase by 1.5-, 2.5-, and 2-fold, respectively. Notably, the d 33 exhibited strong stability below T c, demonstrating that the BTO textured ceramics could serve as a potential candidate for high-temperature piezoelectric sensor applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="```json
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Bi4Ti3O12-textured": 19,
+      "Bi4Ti3O12-non-textured": 9
+    },
+    "abbreviations": {
+      "BTO": "Bi4Ti3O12",
+      "TGG": "template grain growth"
+    },
+    "property_unit": "pC/N",
+    "family": "Aurivillius"
+  }
+}
+```"
+2025-07-10 15:59:14: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Samples with a surface perpendicular to the c-axis were labeled as BTO(\u22a5), while samples with a surface parallel to the c-axis were labeled as BTO(\u2016). The XRD patterns of the textured BTO(\u22a5) and BTO(\u2016) ceramics at different sintering temperatures are shown in , where a maximum F 001 value of 98 % was achieved in the BTO textured ceramics sintered at 950 \xb0C. (b) shows the XRD patterns of the non-textured, BTO(\u2016), and BTO(\u22a5) ceramics, indicating that no impure phase was observed in any of the samples. Compared to the non-textured ceramic, the BTO (\u2016) and BTO (\u22a5) ceramics exhibited significant anisotropy. As shown in (c), the lattice constants were calculated using PowderX diffraction analysis software from the XRD patterns of the BTO(\u2016) ceramics. The average lattice strain \u03b7 hkl at different sintering temperatures with different F 001 values was calculated by the following formula : \u03b7 hkl = (d hkl - d CIF,hkl )/d CIF,hkl , where d hkl is the d spacing of (hkl) plane along the a-, b- or c-axis of the BTO ceramics, and d CIF,hkl is the d spacing of the reference crystallographic information file (CIF) with lattice constants of a = 5.4475 \xc5, b = 5.4082 \xc5, and c = 32.8066 \xc5. The lattice strain of the (200) plain was calculated, corresponding to the polarization direction of the BTO ceramics along the a-axis direction. The lattice strain \u03b7 (200) of the non-textured ceramics is 0.24 %. For textured ceramics, the \u03b7 (200) value become negative as F 001 increases. When the F 001 reached 98 %, the \u03b7 (200) value was \u22120.27 %, demonstrating the compressive lattice strain in the textured ceramics. The scanning electron microscopy (SEM) images of the BTO(\u2016) ceramics and non-textured ceramics are depicted in (d)(f). The observed grain size of the BTO(\u2016) ceramics was 19.8 \u03bcm in length and 1.97 \u03bcm in width, and these values were larger than the grain size of 18.2 \u03bcm in length and 1.86 \u03bcm in width for the non-textured ceramics. As shown in (e)(g), piezoresponse force microscopy (PFM) was used to investigate the domain structure of the BTO (\u2016) and non-textured ceramics, according to the literature. The domain size had a length of 2 \u03bcm and width of 1.33 \u03bcm in the BTO (\u2016) ceramic, which was larger than the non-textured ceramic, with a length of 1.8 \u03bcm and width of 1.14 \u03bcm. The increase in domain size was mainly due to the large lattice strain in the BTO(\u2016) ceramics , which was calculated by: \u03b7 i = (\u03b3 i P i E^{ })/K, where \u03b3 and K denote the strain-polarization coefficient and elastic constant, respectively , with the strain proportional to the square of polarization when the polarization was small. Based on this relationship, the large lattice strain in the BTO(\u2016) ceramics resulted in a higher polarization of the BTO(\u2016) ceramics compared to the non-textured ceramics. The polarization, dielectric and piezoelectric properties of the BTO(\u2016) ceramics and non-textured ceramics are described in detail below. The electrical properties of the BTO(\u2016), BTO(\u22a5), and non-textured ceramics at room temperature were compared, as shown in. (a) presents the polarization vs electric field (P-E) loops at 90 kV/cm, indicating that the ferroelectric properties exhibited high anisotropy. In the BTO (\u22a5) ceramics, the ferroelectricity was very weak due to the nonpolar c-axis of the BTO material. In the BTO (\u2016) ceramics, the remnant polarization P r was 16 \u03bcC/cmE^{2}, which was significantly higher than that of the non-textured ceramics (11 \u03bcC/cmE^{2}). As shown in (b), the dielectric constant \u03b5 r of the textured ceramics also exhibited obvious anisotropy. The dielectric anomaly was observed around \u223c680 \xb0C, corresponding to the ferroelectric-paraelectric phase transition temperature (Curie temperature T c). The \u03b5 r of the BTO (\u2016) ceramics was significantly higher than that of the BTO (\u22a5), and the \u03b5 r of the non-textured ceramics was between the BTO(\u2016) and BTO(\u22a5) ceramics. (c) presents the dielectric loss tan\u03b4 of the BTO textured ceramics and non-textured ceramics at 1 MHz as a function of temperature. Notably, the tan\u03b4 of BTO(\u22a5) was significantly lower than that of the BTO(\u2016) and non-textured ceramics, which is mainly attributed to (Bi2O2)E^{2+} acting as an insulating layer to prevent charge jumping. The DC resistivity of the BTO textured ceramics and non-textured ceramics from 200 \xb0C to 700 \xb0C is shown in. As illustrated in (a) and (b), P r and \u03b5 r were higher for the textured BTO (\u2016) ceramics compared to the non-textured ceramics. According to d 33\u221dP r \u03b5 r , d 33 increased by increasing P r and \u03b5 r. Therefore, we obtained the piezoelectric constants d 33 for the BTO (\u2016) and non-textured ceramics at different annealing temperatures, as shown in (d). The d 33 value of 19 pC/N for the BTO (\u2016) ceramics was twice the value of the non-textured ceramics (9 pC/N), consistent with PFM analysis. Moreover, the d 33 of BTO (\u2016) decreased by only 11.5 % when the annealing temperature reached 650 \xb0C, far below that of the non-textured ceramics (55.5 %). The T c and d 33 values of the BTO(\u2016) ceramics were compared with the other high-temperature piezoelectric ceramics, as shown in (e). The d 33 values of the BTO(\u2016) ceramics were higher than the values of CaBi2Nb2O9-based , Bi3TiNbO9-based , and other Bi4Ti3O12-based ceramics reported in the literature. The Raman spectra of the poled and unpoled BTO (\u2016) ceramics were obtained to further understand the lattice strain in the textured ceramics, as shown in (a). The polarization field strength for poling was 40 kV/cm. (b) and (c) presents the fitted results of the Raman spectra for the BTO (\u2016) ceramics before and after poling. The Raman modes at 850 cmE^{\u22121} and 615 cmE^{\u22121} corresponded to the A1g modes associated with the rotation or vibration of the TiO6 octahedron. The mode at 612 cmE^{\u22121} (unpoled) shifted towards 615 cmE^{\u22121} (poled), and the mode at 849 cmE^{\u22121} (unpoled) shifted towards 850 cmE^{\u22121} (poled) ((d)). The shift of the A1g mode to a higher wavenumber indicated that the TiO6 octahedron was under compressive strain. The decrease in FWHM indicated a greater tilt of the TiO6 octahedron, resulting in higher ferroelectric polarization. The modes at 89 cmE^{\u22121} and 114 cmE^{\u22121} were associated with the A-site ions in the pseudo-perovskite units. Meanwhile, the shift from 89 cmE^{\u22121} to 91 cmE^{\u22121} and from 114 cmE^{\u22121} to 118 cmE^{\u22121} indicated movement towards higher wavenumbers ((e)). After poling, the peak intensity at 89 cmE^{\u22121} decreased while the peak intensity at 114 cmE^{\u22121} increased. confirming that the displacement of Bi ions played a crucial role in ferroelectric polarization. For the BTO (\u22a5) ceramics, the modes before and after poling did not significantly change and the peak intensity was only slightly reduced ((f)). The BTO (\u2016) ceramics were easily polarized, establishing long-distance polar order caused by the electric field-induced domain switch, and resulting in better piezoelectric properties compared to the BTO (\u22a5) ceramics. In addition, the spontaneous polarization P s of BTO(\u2016) and the non-textured ceramics could be calculated using the Shimakawa model, based on atomic displacements : Ps= \u2211i mi\u2217\u25b3 xi\u2217 QieV, where m i represents site multiplicity, \u0394x i signifies each atomic displacement, Q i e is the ionic charge, V denotes the volume of the unit cell, and i is the index of each atom in the unit cell. As shown in (g) and (h), the P s of the BTO (\u2016) ceramics was approximately 30.4 \u03bcC/cmE^{2}, which was greater larger than that of the non-textured ceramics (17.3 \u03bcC/cmE^{2}). The increase in P s could be attributed to the compressive strain in the BTO (\u2016) ceramics, which was consistent with the PFM analysis results. The relationship between the piezoelectric constant d 33 and compressive strain could be summarized as a function of F 001, as shown in (i). The d 33 value increased with increasing compressive strain, indicating that lattice strain increased the piezoelectric properties in the textured ceramics. Finally, the XRD patterns of the ceramics were obtained in the range of 24 \xb0C\u2013600 \xb0C to verify the temperature stability of d 33 for the BTO (\u2016) ceramics. As shown in (a), no impure phase appeared with increasing temperature, and the (117) peak shifted to a lower angle as the temperature increased from 24 \xb0C to 600 \xb0C, as shown in (b), indicating that the phase structure of the ceramics remained stable in high-temperature environments and only led to lattice expansion. (c) shows the lattice constants as a function of temperature. The values of a, b, and c gradually increased, and the values of a and b converged near 600 \xb0C, which was close to T c.
+
+# TITLE
+Enhanced electrical properties in textured Bi<inf>4</inf>Ti<inf>3</inf>O<inf>12</inf> ceramics with negative strain
+
+# ABSTRACT
+In this work, we elucidated the reasons behind the superior electrical properties of Bi4Ti3O12 (BTO) textured ceramics compared to BTO non-textured ceramics from the perspective of lattice strain. The phase structure, domain structure, and electrical properties of BTO textured and non-textured ceramics were analyzed in detail. The calculated average lattice strain along the polarization axis of textured ceramics with optimized processing was −0.27 %, while that of non-textured ceramics was 0.24 %. Compared to non-textured ceramics, the remnant polarization P
+                     r of textured ceramics increased by 1.5 times, reaching 16 μC/cm2. In addition, the piezoelectric constant d
+                     33 was enhanced two times with a value of 19 pC/N. Notably, d
+                     33 increased with an increase in average compressive strain along the polarization axis, indicating the enhancement of piezoelectricity caused by compressive lattice strain in the textured ceramics. The variation in d
+                     33 was below 11.5 % in the heat-treatment temperature range of 25 °C–600 °C, demonstrating thermal stability in high-temperature service environments.
+
+# INTRODUCTION
+Bi4Ti3O12(BTO) is a typical bismuth-layered material belonging to the Aurivillius family with a ferroelectric Curie temperature T c of \u223c675 \xb0C and high spontaneous polarization P s value of \u223c50 \u03bcC/cmE^{2} in the a-b plane , making it suitable for high-temperature electronic sensors. However, the strains between neighbor grains block the excellent electric performance in such ferroelectric ceramic due to the anisotropic characteristic of crystal structure with c/a\u22486 ratio of lattice constants. As a result, the piezoelectric constant d 33 of BTO is typically less than 8 pC/N. Methods such as hot forging , hot pressing  and template grain growth (TGG)  have been employed to prepare textured ceramics, with the TGG method the most commonly used approach. As early as 1999, Messing et al.  used the TGG method to prepare mullite ceramics with an oriented grain structure. Li et al. prepared Pb(In1/2Nb1/2)O3-Pb(Sc1/2Nb1/2)O3-PbTiO3 textured ceramics using the TGG method and increased the d 33 value to 593 pC/N. Yan et al. obtained a high d 33 value of 1100 pC/N along the [001] direction and demonstrated the presence of rotational ferroelectricity in Pb(Mg1/3Nb2/3)O3-Pb(Zr,Ti)O3 textured ceramics prepared using the TGG method. In 2004, Satio et al. synthesized (K, Na)NbO3-based textured ceramics with high piezoelectric properties, achieving a significant 1.8-fold improvement in the piezoelectric coefficient d 33 (416 pC/N) compared to non-textured ceramics. Similarly, Na0.5Bi0.5TiO3\u2013BaTiO3 textured ceramics prepared using the TGG method demonstrated a 2-fold increase in the piezoelectric coefficient compared to non-textured ceramics. As indicated in the following equations, d33prop mainly includes d33imp an PA \u2202A \u2202\u03c3 two parts. d33prop= PA \u2202A \u2202\u03c3+ d33imp, d33imp= \u2202P \u2202\u03c3, where d33prop is the proper piezoelectric response (d33prop was measured in the experiment). P signifies polarization without stress in PA \u2202A \u2202\u03c3, where the change in stress only led to a change in cell area, and d33imp signifies the improper piezoelectric response, indicating the impact of stress/strain changes on polarization. Highly textured BTO ceramics with excellent piezoelectric and ferroelectric properties were prepared using a simple TGG method. The difference in lattice strain between the textured and non-textured ceramics was determined by X-ray diffraction (XRD).
+
+# CONCLUSION
+In this work, a novel strategy was proposed to elucidate the mechanism of enhancing the electrical properties of BTO textured ceramics. The lattice strain, lattice vibration, domain structure, and electrical properties of BTO textured and non-textured ceramics were evaluated. Compared to non-textured ceramics, the P r, \u03b5 r, and d 33 values of the BTO (\u2016) ceramic samples increase by 1.5-, 2.5-, and 2-fold, respectively. Notably, the d 33 exhibited strong stability below T c, demonstrating that the BTO textured ceramics could serve as a potential candidate for high-temperature piezoelectric sensor applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 15:59:16: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Samples with a surface perpendicular to the c-axis were labeled as BTO(\u22a5), while samples with a surface parallel to the c-axis were labeled as BTO(\u2016). The XRD patterns of the textured BTO(\u22a5) and BTO(\u2016) ceramics at different sintering temperatures are shown in , where a maximum F 001 value of 98 % was achieved in the BTO textured ceramics sintered at 950 \xb0C. (b) shows the XRD patterns of the non-textured, BTO(\u2016), and BTO(\u22a5) ceramics, indicating that no impure phase was observed in any of the samples. Compared to the non-textured ceramic, the BTO (\u2016) and BTO (\u22a5) ceramics exhibited significant anisotropy. As shown in (c), the lattice constants were calculated using PowderX diffraction analysis software from the XRD patterns of the BTO(\u2016) ceramics. The average lattice strain \u03b7 hkl at different sintering temperatures with different F 001 values was calculated by the following formula : \u03b7 hkl = (d hkl - d CIF,hkl )/d CIF,hkl , where d hkl is the d spacing of (hkl) plane along the a-, b- or c-axis of the BTO ceramics, and d CIF,hkl is the d spacing of the reference crystallographic information file (CIF) with lattice constants of a = 5.4475 \xc5, b = 5.4082 \xc5, and c = 32.8066 \xc5. The lattice strain of the (200) plain was calculated, corresponding to the polarization direction of the BTO ceramics along the a-axis direction. The lattice strain \u03b7 (200) of the non-textured ceramics is 0.24 %. For textured ceramics, the \u03b7 (200) value become negative as F 001 increases. When the F 001 reached 98 %, the \u03b7 (200) value was \u22120.27 %, demonstrating the compressive lattice strain in the textured ceramics. The scanning electron microscopy (SEM) images of the BTO(\u2016) ceramics and non-textured ceramics are depicted in (d)(f). The observed grain size of the BTO(\u2016) ceramics was 19.8 \u03bcm in length and 1.97 \u03bcm in width, and these values were larger than the grain size of 18.2 \u03bcm in length and 1.86 \u03bcm in width for the non-textured ceramics. As shown in (e)(g), piezoresponse force microscopy (PFM) was used to investigate the domain structure of the BTO (\u2016) and non-textured ceramics, according to the literature. The domain size had a length of 2 \u03bcm and width of 1.33 \u03bcm in the BTO (\u2016) ceramic, which was larger than the non-textured ceramic, with a length of 1.8 \u03bcm and width of 1.14 \u03bcm. The increase in domain size was mainly due to the large lattice strain in the BTO(\u2016) ceramics , which was calculated by: \u03b7 i = (\u03b3 i P i E^{ })/K, where \u03b3 and K denote the strain-polarization coefficient and elastic constant, respectively , with the strain proportional to the square of polarization when the polarization was small. Based on this relationship, the large lattice strain in the BTO(\u2016) ceramics resulted in a higher polarization of the BTO(\u2016) ceramics compared to the non-textured ceramics. The polarization, dielectric and piezoelectric properties of the BTO(\u2016) ceramics and non-textured ceramics are described in detail below. The electrical properties of the BTO(\u2016), BTO(\u22a5), and non-textured ceramics at room temperature were compared, as shown in. (a) presents the polarization vs electric field (P-E) loops at 90 kV/cm, indicating that the ferroelectric properties exhibited high anisotropy. In the BTO (\u22a5) ceramics, the ferroelectricity was very weak due to the nonpolar c-axis of the BTO material. In the BTO (\u2016) ceramics, the remnant polarization P r was 16 \u03bcC/cmE^{2}, which was significantly higher than that of the non-textured ceramics (11 \u03bcC/cmE^{2}). As shown in (b), the dielectric constant \u03b5 r of the textured ceramics also exhibited obvious anisotropy. The dielectric anomaly was observed around \u223c680 \xb0C, corresponding to the ferroelectric-paraelectric phase transition temperature (Curie temperature T c). The \u03b5 r of the BTO (\u2016) ceramics was significantly higher than that of the BTO (\u22a5), and the \u03b5 r of the non-textured ceramics was between the BTO(\u2016) and BTO(\u22a5) ceramics. (c) presents the dielectric loss tan\u03b4 of the BTO textured ceramics and non-textured ceramics at 1 MHz as a function of temperature. Notably, the tan\u03b4 of BTO(\u22a5) was significantly lower than that of the BTO(\u2016) and non-textured ceramics, which is mainly attributed to (Bi2O2)E^{2+} acting as an insulating layer to prevent charge jumping. The DC resistivity of the BTO textured ceramics and non-textured ceramics from 200 \xb0C to 700 \xb0C is shown in. As illustrated in (a) and (b), P r and \u03b5 r were higher for the textured BTO (\u2016) ceramics compared to the non-textured ceramics. According to d 33\u221dP r \u03b5 r , d 33 increased by increasing P r and \u03b5 r. Therefore, we obtained the piezoelectric constants d 33 for the BTO (\u2016) and non-textured ceramics at different annealing temperatures, as shown in (d). The d 33 value of 19 pC/N for the BTO (\u2016) ceramics was twice the value of the non-textured ceramics (9 pC/N), consistent with PFM analysis. Moreover, the d 33 of BTO (\u2016) decreased by only 11.5 % when the annealing temperature reached 650 \xb0C, far below that of the non-textured ceramics (55.5 %). The T c and d 33 values of the BTO(\u2016) ceramics were compared with the other high-temperature piezoelectric ceramics, as shown in (e). The d 33 values of the BTO(\u2016) ceramics were higher than the values of CaBi2Nb2O9-based , Bi3TiNbO9-based , and other Bi4Ti3O12-based ceramics reported in the literature. The Raman spectra of the poled and unpoled BTO (\u2016) ceramics were obtained to further understand the lattice strain in the textured ceramics, as shown in (a). The polarization field strength for poling was 40 kV/cm. (b) and (c) presents the fitted results of the Raman spectra for the BTO (\u2016) ceramics before and after poling. The Raman modes at 850 cmE^{\u22121} and 615 cmE^{\u22121} corresponded to the A1g modes associated with the rotation or vibration of the TiO6 octahedron. The mode at 612 cmE^{\u22121} (unpoled) shifted towards 615 cmE^{\u22121} (poled), and the mode at 849 cmE^{\u22121} (unpoled) shifted towards 850 cmE^{\u22121} (poled) ((d)). The shift of the A1g mode to a higher wavenumber indicated that the TiO6 octahedron was under compressive strain. The decrease in FWHM indicated a greater tilt of the TiO6 octahedron, resulting in higher ferroelectric polarization. The modes at 89 cmE^{\u22121} and 114 cmE^{\u22121} were associated with the A-site ions in the pseudo-perovskite units. Meanwhile, the shift from 89 cmE^{\u22121} to 91 cmE^{\u22121} and from 114 cmE^{\u22121} to 118 cmE^{\u22121} indicated movement towards higher wavenumbers ((e)). After poling, the peak intensity at 89 cmE^{\u22121} decreased while the peak intensity at 114 cmE^{\u22121} increased. confirming that the displacement of Bi ions played a crucial role in ferroelectric polarization. For the BTO (\u22a5) ceramics, the modes before and after poling did not significantly change and the peak intensity was only slightly reduced ((f)). The BTO (\u2016) ceramics were easily polarized, establishing long-distance polar order caused by the electric field-induced domain switch, and resulting in better piezoelectric properties compared to the BTO (\u22a5) ceramics. In addition, the spontaneous polarization P s of BTO(\u2016) and the non-textured ceramics could be calculated using the Shimakawa model, based on atomic displacements : Ps= \u2211i mi\u2217\u25b3 xi\u2217 QieV, where m i represents site multiplicity, \u0394x i signifies each atomic displacement, Q i e is the ionic charge, V denotes the volume of the unit cell, and i is the index of each atom in the unit cell. As shown in (g) and (h), the P s of the BTO (\u2016) ceramics was approximately 30.4 \u03bcC/cmE^{2}, which was greater larger than that of the non-textured ceramics (17.3 \u03bcC/cmE^{2}). The increase in P s could be attributed to the compressive strain in the BTO (\u2016) ceramics, which was consistent with the PFM analysis results. The relationship between the piezoelectric constant d 33 and compressive strain could be summarized as a function of F 001, as shown in (i). The d 33 value increased with increasing compressive strain, indicating that lattice strain increased the piezoelectric properties in the textured ceramics. Finally, the XRD patterns of the ceramics were obtained in the range of 24 \xb0C\u2013600 \xb0C to verify the temperature stability of d 33 for the BTO (\u2016) ceramics. As shown in (a), no impure phase appeared with increasing temperature, and the (117) peak shifted to a lower angle as the temperature increased from 24 \xb0C to 600 \xb0C, as shown in (b), indicating that the phase structure of the ceramics remained stable in high-temperature environments and only led to lattice expansion. (c) shows the lattice constants as a function of temperature. The values of a, b, and c gradually increased, and the values of a and b converged near 600 \xb0C, which was close to T c.
+
+# TITLE
+Enhanced electrical properties in textured Bi<inf>4</inf>Ti<inf>3</inf>O<inf>12</inf> ceramics with negative strain
+
+# ABSTRACT
+In this work, we elucidated the reasons behind the superior electrical properties of Bi4Ti3O12 (BTO) textured ceramics compared to BTO non-textured ceramics from the perspective of lattice strain. The phase structure, domain structure, and electrical properties of BTO textured and non-textured ceramics were analyzed in detail. The calculated average lattice strain along the polarization axis of textured ceramics with optimized processing was −0.27 %, while that of non-textured ceramics was 0.24 %. Compared to non-textured ceramics, the remnant polarization P
+                     r of textured ceramics increased by 1.5 times, reaching 16 μC/cm2. In addition, the piezoelectric constant d
+                     33 was enhanced two times with a value of 19 pC/N. Notably, d
+                     33 increased with an increase in average compressive strain along the polarization axis, indicating the enhancement of piezoelectricity caused by compressive lattice strain in the textured ceramics. The variation in d
+                     33 was below 11.5 % in the heat-treatment temperature range of 25 °C–600 °C, demonstrating thermal stability in high-temperature service environments.
+
+# INTRODUCTION
+Bi4Ti3O12(BTO) is a typical bismuth-layered material belonging to the Aurivillius family with a ferroelectric Curie temperature T c of \u223c675 \xb0C and high spontaneous polarization P s value of \u223c50 \u03bcC/cmE^{2} in the a-b plane , making it suitable for high-temperature electronic sensors. However, the strains between neighbor grains block the excellent electric performance in such ferroelectric ceramic due to the anisotropic characteristic of crystal structure with c/a\u22486 ratio of lattice constants. As a result, the piezoelectric constant d 33 of BTO is typically less than 8 pC/N. Methods such as hot forging , hot pressing  and template grain growth (TGG)  have been employed to prepare textured ceramics, with the TGG method the most commonly used approach. As early as 1999, Messing et al.  used the TGG method to prepare mullite ceramics with an oriented grain structure. Li et al. prepared Pb(In1/2Nb1/2)O3-Pb(Sc1/2Nb1/2)O3-PbTiO3 textured ceramics using the TGG method and increased the d 33 value to 593 pC/N. Yan et al. obtained a high d 33 value of 1100 pC/N along the [001] direction and demonstrated the presence of rotational ferroelectricity in Pb(Mg1/3Nb2/3)O3-Pb(Zr,Ti)O3 textured ceramics prepared using the TGG method. In 2004, Satio et al. synthesized (K, Na)NbO3-based textured ceramics with high piezoelectric properties, achieving a significant 1.8-fold improvement in the piezoelectric coefficient d 33 (416 pC/N) compared to non-textured ceramics. Similarly, Na0.5Bi0.5TiO3\u2013BaTiO3 textured ceramics prepared using the TGG method demonstrated a 2-fold increase in the piezoelectric coefficient compared to non-textured ceramics. As indicated in the following equations, d33prop mainly includes d33imp an PA \u2202A \u2202\u03c3 two parts. d33prop= PA \u2202A \u2202\u03c3+ d33imp, d33imp= \u2202P \u2202\u03c3, where d33prop is the proper piezoelectric response (d33prop was measured in the experiment). P signifies polarization without stress in PA \u2202A \u2202\u03c3, where the change in stress only led to a change in cell area, and d33imp signifies the improper piezoelectric response, indicating the impact of stress/strain changes on polarization. Highly textured BTO ceramics with excellent piezoelectric and ferroelectric properties were prepared using a simple TGG method. The difference in lattice strain between the textured and non-textured ceramics was determined by X-ray diffraction (XRD).
+
+# CONCLUSION
+In this work, a novel strategy was proposed to elucidate the mechanism of enhancing the electrical properties of BTO textured ceramics. The lattice strain, lattice vibration, domain structure, and electrical properties of BTO textured and non-textured ceramics were evaluated. Compared to non-textured ceramics, the P r, \u03b5 r, and d 33 values of the BTO (\u2016) ceramic samples increase by 1.5-, 2.5-, and 2-fold, respectively. Notably, the d 33 exhibited strong stability below T c, demonstrating that the BTO textured ceramics could serve as a potential candidate for high-temperature piezoelectric sensor applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="```json
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Bi4Ti3O12-textured": 19,
+      "Bi4Ti3O12-non-textured": 9
+    },
+    "abbreviations": {
+      "BTO": "Bi4Ti3O12",
+      "TGG": "template grain growth"
+    },
+    "property_unit": "pC/N",
+    "family": "Aurivillius"
+  }
+}
+```"
+2025-07-10 17:34:29: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Samples with a surface perpendicular to the c-axis were labeled as BTO(\u22a5), while samples with a surface parallel to the c-axis were labeled as BTO(\u2016). The XRD patterns of the textured BTO(\u22a5) and BTO(\u2016) ceramics at different sintering temperatures are shown in , where a maximum F 001 value of 98 % was achieved in the BTO textured ceramics sintered at 950 \xb0C. (b) shows the XRD patterns of the non-textured, BTO(\u2016), and BTO(\u22a5) ceramics, indicating that no impure phase was observed in any of the samples. Compared to the non-textured ceramic, the BTO (\u2016) and BTO (\u22a5) ceramics exhibited significant anisotropy. As shown in (c), the lattice constants were calculated using PowderX diffraction analysis software from the XRD patterns of the BTO(\u2016) ceramics. The average lattice strain \u03b7 hkl at different sintering temperatures with different F 001 values was calculated by the following formula : \u03b7 hkl = (d hkl - d CIF,hkl )/d CIF,hkl , where d hkl is the d spacing of (hkl) plane along the a-, b- or c-axis of the BTO ceramics, and d CIF,hkl is the d spacing of the reference crystallographic information file (CIF) with lattice constants of a = 5.4475 \xc5, b = 5.4082 \xc5, and c = 32.8066 \xc5. The lattice strain of the (200) plain was calculated, corresponding to the polarization direction of the BTO ceramics along the a-axis direction. The lattice strain \u03b7 (200) of the non-textured ceramics is 0.24 %. For textured ceramics, the \u03b7 (200) value become negative as F 001 increases. When the F 001 reached 98 %, the \u03b7 (200) value was \u22120.27 %, demonstrating the compressive lattice strain in the textured ceramics. The scanning electron microscopy (SEM) images of the BTO(\u2016) ceramics and non-textured ceramics are depicted in (d)(f). The observed grain size of the BTO(\u2016) ceramics was 19.8 \u03bcm in length and 1.97 \u03bcm in width, and these values were larger than the grain size of 18.2 \u03bcm in length and 1.86 \u03bcm in width for the non-textured ceramics. As shown in (e)(g), piezoresponse force microscopy (PFM) was used to investigate the domain structure of the BTO (\u2016) and non-textured ceramics, according to the literature. The domain size had a length of 2 \u03bcm and width of 1.33 \u03bcm in the BTO (\u2016) ceramic, which was larger than the non-textured ceramic, with a length of 1.8 \u03bcm and width of 1.14 \u03bcm. The increase in domain size was mainly due to the large lattice strain in the BTO(\u2016) ceramics , which was calculated by: \u03b7 i = (\u03b3 i P i E^{ })/K, where \u03b3 and K denote the strain-polarization coefficient and elastic constant, respectively , with the strain proportional to the square of polarization when the polarization was small. Based on this relationship, the large lattice strain in the BTO(\u2016) ceramics resulted in a higher polarization of the BTO(\u2016) ceramics compared to the non-textured ceramics. The polarization, dielectric and piezoelectric properties of the BTO(\u2016) ceramics and non-textured ceramics are described in detail below. The electrical properties of the BTO(\u2016), BTO(\u22a5), and non-textured ceramics at room temperature were compared, as shown in. (a) presents the polarization vs electric field (P-E) loops at 90 kV/cm, indicating that the ferroelectric properties exhibited high anisotropy. In the BTO (\u22a5) ceramics, the ferroelectricity was very weak due to the nonpolar c-axis of the BTO material. In the BTO (\u2016) ceramics, the remnant polarization P r was 16 \u03bcC/cmE^{2}, which was significantly higher than that of the non-textured ceramics (11 \u03bcC/cmE^{2}). As shown in (b), the dielectric constant \u03b5 r of the textured ceramics also exhibited obvious anisotropy. The dielectric anomaly was observed around \u223c680 \xb0C, corresponding to the ferroelectric-paraelectric phase transition temperature (Curie temperature T c). The \u03b5 r of the BTO (\u2016) ceramics was significantly higher than that of the BTO (\u22a5), and the \u03b5 r of the non-textured ceramics was between the BTO(\u2016) and BTO(\u22a5) ceramics. (c) presents the dielectric loss tan\u03b4 of the BTO textured ceramics and non-textured ceramics at 1 MHz as a function of temperature. Notably, the tan\u03b4 of BTO(\u22a5) was significantly lower than that of the BTO(\u2016) and non-textured ceramics, which is mainly attributed to (Bi2O2)E^{2+} acting as an insulating layer to prevent charge jumping. The DC resistivity of the BTO textured ceramics and non-textured ceramics from 200 \xb0C to 700 \xb0C is shown in. As illustrated in (a) and (b), P r and \u03b5 r were higher for the textured BTO (\u2016) ceramics compared to the non-textured ceramics. According to d 33\u221dP r \u03b5 r , d 33 increased by increasing P r and \u03b5 r. Therefore, we obtained the piezoelectric constants d 33 for the BTO (\u2016) and non-textured ceramics at different annealing temperatures, as shown in (d). The d 33 value of 19 pC/N for the BTO (\u2016) ceramics was twice the value of the non-textured ceramics (9 pC/N), consistent with PFM analysis. Moreover, the d 33 of BTO (\u2016) decreased by only 11.5 % when the annealing temperature reached 650 \xb0C, far below that of the non-textured ceramics (55.5 %). The T c and d 33 values of the BTO(\u2016) ceramics were compared with the other high-temperature piezoelectric ceramics, as shown in (e). The d 33 values of the BTO(\u2016) ceramics were higher than the values of CaBi2Nb2O9-based , Bi3TiNbO9-based , and other Bi4Ti3O12-based ceramics reported in the literature. The Raman spectra of the poled and unpoled BTO (\u2016) ceramics were obtained to further understand the lattice strain in the textured ceramics, as shown in (a). The polarization field strength for poling was 40 kV/cm. (b) and (c) presents the fitted results of the Raman spectra for the BTO (\u2016) ceramics before and after poling. The Raman modes at 850 cmE^{\u22121} and 615 cmE^{\u22121} corresponded to the A1g modes associated with the rotation or vibration of the TiO6 octahedron. The mode at 612 cmE^{\u22121} (unpoled) shifted towards 615 cmE^{\u22121} (poled), and the mode at 849 cmE^{\u22121} (unpoled) shifted towards 850 cmE^{\u22121} (poled) ((d)). The shift of the A1g mode to a higher wavenumber indicated that the TiO6 octahedron was under compressive strain. The decrease in FWHM indicated a greater tilt of the TiO6 octahedron, resulting in higher ferroelectric polarization. The modes at 89 cmE^{\u22121} and 114 cmE^{\u22121} were associated with the A-site ions in the pseudo-perovskite units. Meanwhile, the shift from 89 cmE^{\u22121} to 91 cmE^{\u22121} and from 114 cmE^{\u22121} to 118 cmE^{\u22121} indicated movement towards higher wavenumbers ((e)). After poling, the peak intensity at 89 cmE^{\u22121} decreased while the peak intensity at 114 cmE^{\u22121} increased. confirming that the displacement of Bi ions played a crucial role in ferroelectric polarization. For the BTO (\u22a5) ceramics, the modes before and after poling did not significantly change and the peak intensity was only slightly reduced ((f)). The BTO (\u2016) ceramics were easily polarized, establishing long-distance polar order caused by the electric field-induced domain switch, and resulting in better piezoelectric properties compared to the BTO (\u22a5) ceramics. In addition, the spontaneous polarization P s of BTO(\u2016) and the non-textured ceramics could be calculated using the Shimakawa model, based on atomic displacements : Ps= \u2211i mi\u2217\u25b3 xi\u2217 QieV, where m i represents site multiplicity, \u0394x i signifies each atomic displacement, Q i e is the ionic charge, V denotes the volume of the unit cell, and i is the index of each atom in the unit cell. As shown in (g) and (h), the P s of the BTO (\u2016) ceramics was approximately 30.4 \u03bcC/cmE^{2}, which was greater larger than that of the non-textured ceramics (17.3 \u03bcC/cmE^{2}). The increase in P s could be attributed to the compressive strain in the BTO (\u2016) ceramics, which was consistent with the PFM analysis results. The relationship between the piezoelectric constant d 33 and compressive strain could be summarized as a function of F 001, as shown in (i). The d 33 value increased with increasing compressive strain, indicating that lattice strain increased the piezoelectric properties in the textured ceramics. Finally, the XRD patterns of the ceramics were obtained in the range of 24 \xb0C\u2013600 \xb0C to verify the temperature stability of d 33 for the BTO (\u2016) ceramics. As shown in (a), no impure phase appeared with increasing temperature, and the (117) peak shifted to a lower angle as the temperature increased from 24 \xb0C to 600 \xb0C, as shown in (b), indicating that the phase structure of the ceramics remained stable in high-temperature environments and only led to lattice expansion. (c) shows the lattice constants as a function of temperature. The values of a, b, and c gradually increased, and the values of a and b converged near 600 \xb0C, which was close to T c.
+
+# TITLE
+Enhanced electrical properties in textured Bi<inf>4</inf>Ti<inf>3</inf>O<inf>12</inf> ceramics with negative strain
+
+# ABSTRACT
+In this work, we elucidated the reasons behind the superior electrical properties of Bi4Ti3O12 (BTO) textured ceramics compared to BTO non-textured ceramics from the perspective of lattice strain. The phase structure, domain structure, and electrical properties of BTO textured and non-textured ceramics were analyzed in detail. The calculated average lattice strain along the polarization axis of textured ceramics with optimized processing was −0.27 %, while that of non-textured ceramics was 0.24 %. Compared to non-textured ceramics, the remnant polarization P
+                     r of textured ceramics increased by 1.5 times, reaching 16 μC/cm2. In addition, the piezoelectric constant d
+                     33 was enhanced two times with a value of 19 pC/N. Notably, d
+                     33 increased with an increase in average compressive strain along the polarization axis, indicating the enhancement of piezoelectricity caused by compressive lattice strain in the textured ceramics. The variation in d
+                     33 was below 11.5 % in the heat-treatment temperature range of 25 °C–600 °C, demonstrating thermal stability in high-temperature service environments.
+
+# INTRODUCTION
+Bi4Ti3O12(BTO) is a typical bismuth-layered material belonging to the Aurivillius family with a ferroelectric Curie temperature T c of \u223c675 \xb0C and high spontaneous polarization P s value of \u223c50 \u03bcC/cmE^{2} in the a-b plane , making it suitable for high-temperature electronic sensors. However, the strains between neighbor grains block the excellent electric performance in such ferroelectric ceramic due to the anisotropic characteristic of crystal structure with c/a\u22486 ratio of lattice constants. As a result, the piezoelectric constant d 33 of BTO is typically less than 8 pC/N. Methods such as hot forging , hot pressing  and template grain growth (TGG)  have been employed to prepare textured ceramics, with the TGG method the most commonly used approach. As early as 1999, Messing et al.  used the TGG method to prepare mullite ceramics with an oriented grain structure. Li et al. prepared Pb(In1/2Nb1/2)O3-Pb(Sc1/2Nb1/2)O3-PbTiO3 textured ceramics using the TGG method and increased the d 33 value to 593 pC/N. Yan et al. obtained a high d 33 value of 1100 pC/N along the [001] direction and demonstrated the presence of rotational ferroelectricity in Pb(Mg1/3Nb2/3)O3-Pb(Zr,Ti)O3 textured ceramics prepared using the TGG method. In 2004, Satio et al. synthesized (K, Na)NbO3-based textured ceramics with high piezoelectric properties, achieving a significant 1.8-fold improvement in the piezoelectric coefficient d 33 (416 pC/N) compared to non-textured ceramics. Similarly, Na0.5Bi0.5TiO3\u2013BaTiO3 textured ceramics prepared using the TGG method demonstrated a 2-fold increase in the piezoelectric coefficient compared to non-textured ceramics. As indicated in the following equations, d33prop mainly includes d33imp an PA \u2202A \u2202\u03c3 two parts. d33prop= PA \u2202A \u2202\u03c3+ d33imp, d33imp= \u2202P \u2202\u03c3, where d33prop is the proper piezoelectric response (d33prop was measured in the experiment). P signifies polarization without stress in PA \u2202A \u2202\u03c3, where the change in stress only led to a change in cell area, and d33imp signifies the improper piezoelectric response, indicating the impact of stress/strain changes on polarization. Highly textured BTO ceramics with excellent piezoelectric and ferroelectric properties were prepared using a simple TGG method. The difference in lattice strain between the textured and non-textured ceramics was determined by X-ray diffraction (XRD).
+
+# CONCLUSION
+In this work, a novel strategy was proposed to elucidate the mechanism of enhancing the electrical properties of BTO textured ceramics. The lattice strain, lattice vibration, domain structure, and electrical properties of BTO textured and non-textured ceramics were evaluated. Compared to non-textured ceramics, the P r, \u03b5 r, and d 33 values of the BTO (\u2016) ceramic samples increase by 1.5-, 2.5-, and 2-fold, respectively. Notably, the d 33 exhibited strong stability below T c, demonstrating that the BTO textured ceramics could serve as a potential candidate for high-temperature piezoelectric sensor applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 17:34:31: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Samples with a surface perpendicular to the c-axis were labeled as BTO(\u22a5), while samples with a surface parallel to the c-axis were labeled as BTO(\u2016). The XRD patterns of the textured BTO(\u22a5) and BTO(\u2016) ceramics at different sintering temperatures are shown in , where a maximum F 001 value of 98 % was achieved in the BTO textured ceramics sintered at 950 \xb0C. (b) shows the XRD patterns of the non-textured, BTO(\u2016), and BTO(\u22a5) ceramics, indicating that no impure phase was observed in any of the samples. Compared to the non-textured ceramic, the BTO (\u2016) and BTO (\u22a5) ceramics exhibited significant anisotropy. As shown in (c), the lattice constants were calculated using PowderX diffraction analysis software from the XRD patterns of the BTO(\u2016) ceramics. The average lattice strain \u03b7 hkl at different sintering temperatures with different F 001 values was calculated by the following formula : \u03b7 hkl = (d hkl - d CIF,hkl )/d CIF,hkl , where d hkl is the d spacing of (hkl) plane along the a-, b- or c-axis of the BTO ceramics, and d CIF,hkl is the d spacing of the reference crystallographic information file (CIF) with lattice constants of a = 5.4475 \xc5, b = 5.4082 \xc5, and c = 32.8066 \xc5. The lattice strain of the (200) plain was calculated, corresponding to the polarization direction of the BTO ceramics along the a-axis direction. The lattice strain \u03b7 (200) of the non-textured ceramics is 0.24 %. For textured ceramics, the \u03b7 (200) value become negative as F 001 increases. When the F 001 reached 98 %, the \u03b7 (200) value was \u22120.27 %, demonstrating the compressive lattice strain in the textured ceramics. The scanning electron microscopy (SEM) images of the BTO(\u2016) ceramics and non-textured ceramics are depicted in (d)(f). The observed grain size of the BTO(\u2016) ceramics was 19.8 \u03bcm in length and 1.97 \u03bcm in width, and these values were larger than the grain size of 18.2 \u03bcm in length and 1.86 \u03bcm in width for the non-textured ceramics. As shown in (e)(g), piezoresponse force microscopy (PFM) was used to investigate the domain structure of the BTO (\u2016) and non-textured ceramics, according to the literature. The domain size had a length of 2 \u03bcm and width of 1.33 \u03bcm in the BTO (\u2016) ceramic, which was larger than the non-textured ceramic, with a length of 1.8 \u03bcm and width of 1.14 \u03bcm. The increase in domain size was mainly due to the large lattice strain in the BTO(\u2016) ceramics , which was calculated by: \u03b7 i = (\u03b3 i P i E^{ })/K, where \u03b3 and K denote the strain-polarization coefficient and elastic constant, respectively , with the strain proportional to the square of polarization when the polarization was small. Based on this relationship, the large lattice strain in the BTO(\u2016) ceramics resulted in a higher polarization of the BTO(\u2016) ceramics compared to the non-textured ceramics. The polarization, dielectric and piezoelectric properties of the BTO(\u2016) ceramics and non-textured ceramics are described in detail below. The electrical properties of the BTO(\u2016), BTO(\u22a5), and non-textured ceramics at room temperature were compared, as shown in. (a) presents the polarization vs electric field (P-E) loops at 90 kV/cm, indicating that the ferroelectric properties exhibited high anisotropy. In the BTO (\u22a5) ceramics, the ferroelectricity was very weak due to the nonpolar c-axis of the BTO material. In the BTO (\u2016) ceramics, the remnant polarization P r was 16 \u03bcC/cmE^{2}, which was significantly higher than that of the non-textured ceramics (11 \u03bcC/cmE^{2}). As shown in (b), the dielectric constant \u03b5 r of the textured ceramics also exhibited obvious anisotropy. The dielectric anomaly was observed around \u223c680 \xb0C, corresponding to the ferroelectric-paraelectric phase transition temperature (Curie temperature T c). The \u03b5 r of the BTO (\u2016) ceramics was significantly higher than that of the BTO (\u22a5), and the \u03b5 r of the non-textured ceramics was between the BTO(\u2016) and BTO(\u22a5) ceramics. (c) presents the dielectric loss tan\u03b4 of the BTO textured ceramics and non-textured ceramics at 1 MHz as a function of temperature. Notably, the tan\u03b4 of BTO(\u22a5) was significantly lower than that of the BTO(\u2016) and non-textured ceramics, which is mainly attributed to (Bi2O2)E^{2+} acting as an insulating layer to prevent charge jumping. The DC resistivity of the BTO textured ceramics and non-textured ceramics from 200 \xb0C to 700 \xb0C is shown in. As illustrated in (a) and (b), P r and \u03b5 r were higher for the textured BTO (\u2016) ceramics compared to the non-textured ceramics. According to d 33\u221dP r \u03b5 r , d 33 increased by increasing P r and \u03b5 r. Therefore, we obtained the piezoelectric constants d 33 for the BTO (\u2016) and non-textured ceramics at different annealing temperatures, as shown in (d). The d 33 value of 19 pC/N for the BTO (\u2016) ceramics was twice the value of the non-textured ceramics (9 pC/N), consistent with PFM analysis. Moreover, the d 33 of BTO (\u2016) decreased by only 11.5 % when the annealing temperature reached 650 \xb0C, far below that of the non-textured ceramics (55.5 %). The T c and d 33 values of the BTO(\u2016) ceramics were compared with the other high-temperature piezoelectric ceramics, as shown in (e). The d 33 values of the BTO(\u2016) ceramics were higher than the values of CaBi2Nb2O9-based , Bi3TiNbO9-based , and other Bi4Ti3O12-based ceramics reported in the literature. The Raman spectra of the poled and unpoled BTO (\u2016) ceramics were obtained to further understand the lattice strain in the textured ceramics, as shown in (a). The polarization field strength for poling was 40 kV/cm. (b) and (c) presents the fitted results of the Raman spectra for the BTO (\u2016) ceramics before and after poling. The Raman modes at 850 cmE^{\u22121} and 615 cmE^{\u22121} corresponded to the A1g modes associated with the rotation or vibration of the TiO6 octahedron. The mode at 612 cmE^{\u22121} (unpoled) shifted towards 615 cmE^{\u22121} (poled), and the mode at 849 cmE^{\u22121} (unpoled) shifted towards 850 cmE^{\u22121} (poled) ((d)). The shift of the A1g mode to a higher wavenumber indicated that the TiO6 octahedron was under compressive strain. The decrease in FWHM indicated a greater tilt of the TiO6 octahedron, resulting in higher ferroelectric polarization. The modes at 89 cmE^{\u22121} and 114 cmE^{\u22121} were associated with the A-site ions in the pseudo-perovskite units. Meanwhile, the shift from 89 cmE^{\u22121} to 91 cmE^{\u22121} and from 114 cmE^{\u22121} to 118 cmE^{\u22121} indicated movement towards higher wavenumbers ((e)). After poling, the peak intensity at 89 cmE^{\u22121} decreased while the peak intensity at 114 cmE^{\u22121} increased. confirming that the displacement of Bi ions played a crucial role in ferroelectric polarization. For the BTO (\u22a5) ceramics, the modes before and after poling did not significantly change and the peak intensity was only slightly reduced ((f)). The BTO (\u2016) ceramics were easily polarized, establishing long-distance polar order caused by the electric field-induced domain switch, and resulting in better piezoelectric properties compared to the BTO (\u22a5) ceramics. In addition, the spontaneous polarization P s of BTO(\u2016) and the non-textured ceramics could be calculated using the Shimakawa model, based on atomic displacements : Ps= \u2211i mi\u2217\u25b3 xi\u2217 QieV, where m i represents site multiplicity, \u0394x i signifies each atomic displacement, Q i e is the ionic charge, V denotes the volume of the unit cell, and i is the index of each atom in the unit cell. As shown in (g) and (h), the P s of the BTO (\u2016) ceramics was approximately 30.4 \u03bcC/cmE^{2}, which was greater larger than that of the non-textured ceramics (17.3 \u03bcC/cmE^{2}). The increase in P s could be attributed to the compressive strain in the BTO (\u2016) ceramics, which was consistent with the PFM analysis results. The relationship between the piezoelectric constant d 33 and compressive strain could be summarized as a function of F 001, as shown in (i). The d 33 value increased with increasing compressive strain, indicating that lattice strain increased the piezoelectric properties in the textured ceramics. Finally, the XRD patterns of the ceramics were obtained in the range of 24 \xb0C\u2013600 \xb0C to verify the temperature stability of d 33 for the BTO (\u2016) ceramics. As shown in (a), no impure phase appeared with increasing temperature, and the (117) peak shifted to a lower angle as the temperature increased from 24 \xb0C to 600 \xb0C, as shown in (b), indicating that the phase structure of the ceramics remained stable in high-temperature environments and only led to lattice expansion. (c) shows the lattice constants as a function of temperature. The values of a, b, and c gradually increased, and the values of a and b converged near 600 \xb0C, which was close to T c.
+
+# TITLE
+Enhanced electrical properties in textured Bi<inf>4</inf>Ti<inf>3</inf>O<inf>12</inf> ceramics with negative strain
+
+# ABSTRACT
+In this work, we elucidated the reasons behind the superior electrical properties of Bi4Ti3O12 (BTO) textured ceramics compared to BTO non-textured ceramics from the perspective of lattice strain. The phase structure, domain structure, and electrical properties of BTO textured and non-textured ceramics were analyzed in detail. The calculated average lattice strain along the polarization axis of textured ceramics with optimized processing was −0.27 %, while that of non-textured ceramics was 0.24 %. Compared to non-textured ceramics, the remnant polarization P
+                     r of textured ceramics increased by 1.5 times, reaching 16 μC/cm2. In addition, the piezoelectric constant d
+                     33 was enhanced two times with a value of 19 pC/N. Notably, d
+                     33 increased with an increase in average compressive strain along the polarization axis, indicating the enhancement of piezoelectricity caused by compressive lattice strain in the textured ceramics. The variation in d
+                     33 was below 11.5 % in the heat-treatment temperature range of 25 °C–600 °C, demonstrating thermal stability in high-temperature service environments.
+
+# INTRODUCTION
+Bi4Ti3O12(BTO) is a typical bismuth-layered material belonging to the Aurivillius family with a ferroelectric Curie temperature T c of \u223c675 \xb0C and high spontaneous polarization P s value of \u223c50 \u03bcC/cmE^{2} in the a-b plane , making it suitable for high-temperature electronic sensors. However, the strains between neighbor grains block the excellent electric performance in such ferroelectric ceramic due to the anisotropic characteristic of crystal structure with c/a\u22486 ratio of lattice constants. As a result, the piezoelectric constant d 33 of BTO is typically less than 8 pC/N. Methods such as hot forging , hot pressing  and template grain growth (TGG)  have been employed to prepare textured ceramics, with the TGG method the most commonly used approach. As early as 1999, Messing et al.  used the TGG method to prepare mullite ceramics with an oriented grain structure. Li et al. prepared Pb(In1/2Nb1/2)O3-Pb(Sc1/2Nb1/2)O3-PbTiO3 textured ceramics using the TGG method and increased the d 33 value to 593 pC/N. Yan et al. obtained a high d 33 value of 1100 pC/N along the [001] direction and demonstrated the presence of rotational ferroelectricity in Pb(Mg1/3Nb2/3)O3-Pb(Zr,Ti)O3 textured ceramics prepared using the TGG method. In 2004, Satio et al. synthesized (K, Na)NbO3-based textured ceramics with high piezoelectric properties, achieving a significant 1.8-fold improvement in the piezoelectric coefficient d 33 (416 pC/N) compared to non-textured ceramics. Similarly, Na0.5Bi0.5TiO3\u2013BaTiO3 textured ceramics prepared using the TGG method demonstrated a 2-fold increase in the piezoelectric coefficient compared to non-textured ceramics. As indicated in the following equations, d33prop mainly includes d33imp an PA \u2202A \u2202\u03c3 two parts. d33prop= PA \u2202A \u2202\u03c3+ d33imp, d33imp= \u2202P \u2202\u03c3, where d33prop is the proper piezoelectric response (d33prop was measured in the experiment). P signifies polarization without stress in PA \u2202A \u2202\u03c3, where the change in stress only led to a change in cell area, and d33imp signifies the improper piezoelectric response, indicating the impact of stress/strain changes on polarization. Highly textured BTO ceramics with excellent piezoelectric and ferroelectric properties were prepared using a simple TGG method. The difference in lattice strain between the textured and non-textured ceramics was determined by X-ray diffraction (XRD).
+
+# CONCLUSION
+In this work, a novel strategy was proposed to elucidate the mechanism of enhancing the electrical properties of BTO textured ceramics. The lattice strain, lattice vibration, domain structure, and electrical properties of BTO textured and non-textured ceramics were evaluated. Compared to non-textured ceramics, the P r, \u03b5 r, and d 33 values of the BTO (\u2016) ceramic samples increase by 1.5-, 2.5-, and 2-fold, respectively. Notably, the d 33 exhibited strong stability below T c, demonstrating that the BTO textured ceramics could serve as a potential candidate for high-temperature piezoelectric sensor applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="```json
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Bi4Ti3O12-textured": 19,
+      "Bi4Ti3O12-non-textured": 9
+    },
+    "abbreviations": {
+      "BTO": "Bi4Ti3O12",
+      "TGG": "template grain growth"
+    },
+    "property_unit": "pC/N",
+    "family": "Aurivillius"
+  }
+}
+```"
+2025-07-10 21:24:17: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Samples with a surface perpendicular to the c-axis were labeled as BTO(\u22a5), while samples with a surface parallel to the c-axis were labeled as BTO(\u2016). The XRD patterns of the textured BTO(\u22a5) and BTO(\u2016) ceramics at different sintering temperatures are shown in , where a maximum F 001 value of 98 % was achieved in the BTO textured ceramics sintered at 950 \xb0C. (b) shows the XRD patterns of the non-textured, BTO(\u2016), and BTO(\u22a5) ceramics, indicating that no impure phase was observed in any of the samples. Compared to the non-textured ceramic, the BTO (\u2016) and BTO (\u22a5) ceramics exhibited significant anisotropy. As shown in (c), the lattice constants were calculated using PowderX diffraction analysis software from the XRD patterns of the BTO(\u2016) ceramics. The average lattice strain \u03b7 hkl at different sintering temperatures with different F 001 values was calculated by the following formula : \u03b7 hkl = (d hkl - d CIF,hkl )/d CIF,hkl , where d hkl is the d spacing of (hkl) plane along the a-, b- or c-axis of the BTO ceramics, and d CIF,hkl is the d spacing of the reference crystallographic information file (CIF) with lattice constants of a = 5.4475 \xc5, b = 5.4082 \xc5, and c = 32.8066 \xc5. The lattice strain of the (200) plain was calculated, corresponding to the polarization direction of the BTO ceramics along the a-axis direction. The lattice strain \u03b7 (200) of the non-textured ceramics is 0.24 %. For textured ceramics, the \u03b7 (200) value become negative as F 001 increases. When the F 001 reached 98 %, the \u03b7 (200) value was \u22120.27 %, demonstrating the compressive lattice strain in the textured ceramics. The scanning electron microscopy (SEM) images of the BTO(\u2016) ceramics and non-textured ceramics are depicted in (d)(f). The observed grain size of the BTO(\u2016) ceramics was 19.8 \u03bcm in length and 1.97 \u03bcm in width, and these values were larger than the grain size of 18.2 \u03bcm in length and 1.86 \u03bcm in width for the non-textured ceramics. As shown in (e)(g), piezoresponse force microscopy (PFM) was used to investigate the domain structure of the BTO (\u2016) and non-textured ceramics, according to the literature. The domain size had a length of 2 \u03bcm and width of 1.33 \u03bcm in the BTO (\u2016) ceramic, which was larger than the non-textured ceramic, with a length of 1.8 \u03bcm and width of 1.14 \u03bcm. The increase in domain size was mainly due to the large lattice strain in the BTO(\u2016) ceramics , which was calculated by: \u03b7 i = (\u03b3 i P i E^{ })/K, where \u03b3 and K denote the strain-polarization coefficient and elastic constant, respectively , with the strain proportional to the square of polarization when the polarization was small. Based on this relationship, the large lattice strain in the BTO(\u2016) ceramics resulted in a higher polarization of the BTO(\u2016) ceramics compared to the non-textured ceramics. The polarization, dielectric and piezoelectric properties of the BTO(\u2016) ceramics and non-textured ceramics are described in detail below. The electrical properties of the BTO(\u2016), BTO(\u22a5), and non-textured ceramics at room temperature were compared, as shown in. (a) presents the polarization vs electric field (P-E) loops at 90 kV/cm, indicating that the ferroelectric properties exhibited high anisotropy. In the BTO (\u22a5) ceramics, the ferroelectricity was very weak due to the nonpolar c-axis of the BTO material. In the BTO (\u2016) ceramics, the remnant polarization P r was 16 \u03bcC/cmE^{2}, which was significantly higher than that of the non-textured ceramics (11 \u03bcC/cmE^{2}). As shown in (b), the dielectric constant \u03b5 r of the textured ceramics also exhibited obvious anisotropy. The dielectric anomaly was observed around \u223c680 \xb0C, corresponding to the ferroelectric-paraelectric phase transition temperature (Curie temperature T c). The \u03b5 r of the BTO (\u2016) ceramics was significantly higher than that of the BTO (\u22a5), and the \u03b5 r of the non-textured ceramics was between the BTO(\u2016) and BTO(\u22a5) ceramics. (c) presents the dielectric loss tan\u03b4 of the BTO textured ceramics and non-textured ceramics at 1 MHz as a function of temperature. Notably, the tan\u03b4 of BTO(\u22a5) was significantly lower than that of the BTO(\u2016) and non-textured ceramics, which is mainly attributed to (Bi2O2)E^{2+} acting as an insulating layer to prevent charge jumping. The DC resistivity of the BTO textured ceramics and non-textured ceramics from 200 \xb0C to 700 \xb0C is shown in. As illustrated in (a) and (b), P r and \u03b5 r were higher for the textured BTO (\u2016) ceramics compared to the non-textured ceramics. According to d 33\u221dP r \u03b5 r , d 33 increased by increasing P r and \u03b5 r. Therefore, we obtained the piezoelectric constants d 33 for the BTO (\u2016) and non-textured ceramics at different annealing temperatures, as shown in (d). The d 33 value of 19 pC/N for the BTO (\u2016) ceramics was twice the value of the non-textured ceramics (9 pC/N), consistent with PFM analysis. Moreover, the d 33 of BTO (\u2016) decreased by only 11.5 % when the annealing temperature reached 650 \xb0C, far below that of the non-textured ceramics (55.5 %). The T c and d 33 values of the BTO(\u2016) ceramics were compared with the other high-temperature piezoelectric ceramics, as shown in (e). The d 33 values of the BTO(\u2016) ceramics were higher than the values of CaBi2Nb2O9-based , Bi3TiNbO9-based , and other Bi4Ti3O12-based ceramics reported in the literature. The Raman spectra of the poled and unpoled BTO (\u2016) ceramics were obtained to further understand the lattice strain in the textured ceramics, as shown in (a). The polarization field strength for poling was 40 kV/cm. (b) and (c) presents the fitted results of the Raman spectra for the BTO (\u2016) ceramics before and after poling. The Raman modes at 850 cmE^{\u22121} and 615 cmE^{\u22121} corresponded to the A1g modes associated with the rotation or vibration of the TiO6 octahedron. The mode at 612 cmE^{\u22121} (unpoled) shifted towards 615 cmE^{\u22121} (poled), and the mode at 849 cmE^{\u22121} (unpoled) shifted towards 850 cmE^{\u22121} (poled) ((d)). The shift of the A1g mode to a higher wavenumber indicated that the TiO6 octahedron was under compressive strain. The decrease in FWHM indicated a greater tilt of the TiO6 octahedron, resulting in higher ferroelectric polarization. The modes at 89 cmE^{\u22121} and 114 cmE^{\u22121} were associated with the A-site ions in the pseudo-perovskite units. Meanwhile, the shift from 89 cmE^{\u22121} to 91 cmE^{\u22121} and from 114 cmE^{\u22121} to 118 cmE^{\u22121} indicated movement towards higher wavenumbers ((e)). After poling, the peak intensity at 89 cmE^{\u22121} decreased while the peak intensity at 114 cmE^{\u22121} increased. confirming that the displacement of Bi ions played a crucial role in ferroelectric polarization. For the BTO (\u22a5) ceramics, the modes before and after poling did not significantly change and the peak intensity was only slightly reduced ((f)). The BTO (\u2016) ceramics were easily polarized, establishing long-distance polar order caused by the electric field-induced domain switch, and resulting in better piezoelectric properties compared to the BTO (\u22a5) ceramics. In addition, the spontaneous polarization P s of BTO(\u2016) and the non-textured ceramics could be calculated using the Shimakawa model, based on atomic displacements : Ps= \u2211i mi\u2217\u25b3 xi\u2217 QieV, where m i represents site multiplicity, \u0394x i signifies each atomic displacement, Q i e is the ionic charge, V denotes the volume of the unit cell, and i is the index of each atom in the unit cell. As shown in (g) and (h), the P s of the BTO (\u2016) ceramics was approximately 30.4 \u03bcC/cmE^{2}, which was greater larger than that of the non-textured ceramics (17.3 \u03bcC/cmE^{2}). The increase in P s could be attributed to the compressive strain in the BTO (\u2016) ceramics, which was consistent with the PFM analysis results. The relationship between the piezoelectric constant d 33 and compressive strain could be summarized as a function of F 001, as shown in (i). The d 33 value increased with increasing compressive strain, indicating that lattice strain increased the piezoelectric properties in the textured ceramics. Finally, the XRD patterns of the ceramics were obtained in the range of 24 \xb0C\u2013600 \xb0C to verify the temperature stability of d 33 for the BTO (\u2016) ceramics. As shown in (a), no impure phase appeared with increasing temperature, and the (117) peak shifted to a lower angle as the temperature increased from 24 \xb0C to 600 \xb0C, as shown in (b), indicating that the phase structure of the ceramics remained stable in high-temperature environments and only led to lattice expansion. (c) shows the lattice constants as a function of temperature. The values of a, b, and c gradually increased, and the values of a and b converged near 600 \xb0C, which was close to T c.
+
+# TITLE
+Enhanced electrical properties in textured Bi<inf>4</inf>Ti<inf>3</inf>O<inf>12</inf> ceramics with negative strain
+
+# ABSTRACT
+In this work, we elucidated the reasons behind the superior electrical properties of Bi4Ti3O12 (BTO) textured ceramics compared to BTO non-textured ceramics from the perspective of lattice strain. The phase structure, domain structure, and electrical properties of BTO textured and non-textured ceramics were analyzed in detail. The calculated average lattice strain along the polarization axis of textured ceramics with optimized processing was −0.27 %, while that of non-textured ceramics was 0.24 %. Compared to non-textured ceramics, the remnant polarization P
+                     r of textured ceramics increased by 1.5 times, reaching 16 μC/cm2. In addition, the piezoelectric constant d
+                     33 was enhanced two times with a value of 19 pC/N. Notably, d
+                     33 increased with an increase in average compressive strain along the polarization axis, indicating the enhancement of piezoelectricity caused by compressive lattice strain in the textured ceramics. The variation in d
+                     33 was below 11.5 % in the heat-treatment temperature range of 25 °C–600 °C, demonstrating thermal stability in high-temperature service environments.
+
+# INTRODUCTION
+Bi4Ti3O12(BTO) is a typical bismuth-layered material belonging to the Aurivillius family with a ferroelectric Curie temperature T c of \u223c675 \xb0C and high spontaneous polarization P s value of \u223c50 \u03bcC/cmE^{2} in the a-b plane , making it suitable for high-temperature electronic sensors. However, the strains between neighbor grains block the excellent electric performance in such ferroelectric ceramic due to the anisotropic characteristic of crystal structure with c/a\u22486 ratio of lattice constants. As a result, the piezoelectric constant d 33 of BTO is typically less than 8 pC/N. Methods such as hot forging , hot pressing  and template grain growth (TGG)  have been employed to prepare textured ceramics, with the TGG method the most commonly used approach. As early as 1999, Messing et al.  used the TGG method to prepare mullite ceramics with an oriented grain structure. Li et al. prepared Pb(In1/2Nb1/2)O3-Pb(Sc1/2Nb1/2)O3-PbTiO3 textured ceramics using the TGG method and increased the d 33 value to 593 pC/N. Yan et al. obtained a high d 33 value of 1100 pC/N along the [001] direction and demonstrated the presence of rotational ferroelectricity in Pb(Mg1/3Nb2/3)O3-Pb(Zr,Ti)O3 textured ceramics prepared using the TGG method. In 2004, Satio et al. synthesized (K, Na)NbO3-based textured ceramics with high piezoelectric properties, achieving a significant 1.8-fold improvement in the piezoelectric coefficient d 33 (416 pC/N) compared to non-textured ceramics. Similarly, Na0.5Bi0.5TiO3\u2013BaTiO3 textured ceramics prepared using the TGG method demonstrated a 2-fold increase in the piezoelectric coefficient compared to non-textured ceramics. As indicated in the following equations, d33prop mainly includes d33imp an PA \u2202A \u2202\u03c3 two parts. d33prop= PA \u2202A \u2202\u03c3+ d33imp, d33imp= \u2202P \u2202\u03c3, where d33prop is the proper piezoelectric response (d33prop was measured in the experiment). P signifies polarization without stress in PA \u2202A \u2202\u03c3, where the change in stress only led to a change in cell area, and d33imp signifies the improper piezoelectric response, indicating the impact of stress/strain changes on polarization. Highly textured BTO ceramics with excellent piezoelectric and ferroelectric properties were prepared using a simple TGG method. The difference in lattice strain between the textured and non-textured ceramics was determined by X-ray diffraction (XRD).
+
+# CONCLUSION
+In this work, a novel strategy was proposed to elucidate the mechanism of enhancing the electrical properties of BTO textured ceramics. The lattice strain, lattice vibration, domain structure, and electrical properties of BTO textured and non-textured ceramics were evaluated. Compared to non-textured ceramics, the P r, \u03b5 r, and d 33 values of the BTO (\u2016) ceramic samples increase by 1.5-, 2.5-, and 2-fold, respectively. Notably, the d 33 exhibited strong stability below T c, demonstrating that the BTO textured ceramics could serve as a potential candidate for high-temperature piezoelectric sensor applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 21:24:19: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Samples with a surface perpendicular to the c-axis were labeled as BTO(\u22a5), while samples with a surface parallel to the c-axis were labeled as BTO(\u2016). The XRD patterns of the textured BTO(\u22a5) and BTO(\u2016) ceramics at different sintering temperatures are shown in , where a maximum F 001 value of 98 % was achieved in the BTO textured ceramics sintered at 950 \xb0C. (b) shows the XRD patterns of the non-textured, BTO(\u2016), and BTO(\u22a5) ceramics, indicating that no impure phase was observed in any of the samples. Compared to the non-textured ceramic, the BTO (\u2016) and BTO (\u22a5) ceramics exhibited significant anisotropy. As shown in (c), the lattice constants were calculated using PowderX diffraction analysis software from the XRD patterns of the BTO(\u2016) ceramics. The average lattice strain \u03b7 hkl at different sintering temperatures with different F 001 values was calculated by the following formula : \u03b7 hkl = (d hkl - d CIF,hkl )/d CIF,hkl , where d hkl is the d spacing of (hkl) plane along the a-, b- or c-axis of the BTO ceramics, and d CIF,hkl is the d spacing of the reference crystallographic information file (CIF) with lattice constants of a = 5.4475 \xc5, b = 5.4082 \xc5, and c = 32.8066 \xc5. The lattice strain of the (200) plain was calculated, corresponding to the polarization direction of the BTO ceramics along the a-axis direction. The lattice strain \u03b7 (200) of the non-textured ceramics is 0.24 %. For textured ceramics, the \u03b7 (200) value become negative as F 001 increases. When the F 001 reached 98 %, the \u03b7 (200) value was \u22120.27 %, demonstrating the compressive lattice strain in the textured ceramics. The scanning electron microscopy (SEM) images of the BTO(\u2016) ceramics and non-textured ceramics are depicted in (d)(f). The observed grain size of the BTO(\u2016) ceramics was 19.8 \u03bcm in length and 1.97 \u03bcm in width, and these values were larger than the grain size of 18.2 \u03bcm in length and 1.86 \u03bcm in width for the non-textured ceramics. As shown in (e)(g), piezoresponse force microscopy (PFM) was used to investigate the domain structure of the BTO (\u2016) and non-textured ceramics, according to the literature. The domain size had a length of 2 \u03bcm and width of 1.33 \u03bcm in the BTO (\u2016) ceramic, which was larger than the non-textured ceramic, with a length of 1.8 \u03bcm and width of 1.14 \u03bcm. The increase in domain size was mainly due to the large lattice strain in the BTO(\u2016) ceramics , which was calculated by: \u03b7 i = (\u03b3 i P i E^{ })/K, where \u03b3 and K denote the strain-polarization coefficient and elastic constant, respectively , with the strain proportional to the square of polarization when the polarization was small. Based on this relationship, the large lattice strain in the BTO(\u2016) ceramics resulted in a higher polarization of the BTO(\u2016) ceramics compared to the non-textured ceramics. The polarization, dielectric and piezoelectric properties of the BTO(\u2016) ceramics and non-textured ceramics are described in detail below. The electrical properties of the BTO(\u2016), BTO(\u22a5), and non-textured ceramics at room temperature were compared, as shown in. (a) presents the polarization vs electric field (P-E) loops at 90 kV/cm, indicating that the ferroelectric properties exhibited high anisotropy. In the BTO (\u22a5) ceramics, the ferroelectricity was very weak due to the nonpolar c-axis of the BTO material. In the BTO (\u2016) ceramics, the remnant polarization P r was 16 \u03bcC/cmE^{2}, which was significantly higher than that of the non-textured ceramics (11 \u03bcC/cmE^{2}). As shown in (b), the dielectric constant \u03b5 r of the textured ceramics also exhibited obvious anisotropy. The dielectric anomaly was observed around \u223c680 \xb0C, corresponding to the ferroelectric-paraelectric phase transition temperature (Curie temperature T c). The \u03b5 r of the BTO (\u2016) ceramics was significantly higher than that of the BTO (\u22a5), and the \u03b5 r of the non-textured ceramics was between the BTO(\u2016) and BTO(\u22a5) ceramics. (c) presents the dielectric loss tan\u03b4 of the BTO textured ceramics and non-textured ceramics at 1 MHz as a function of temperature. Notably, the tan\u03b4 of BTO(\u22a5) was significantly lower than that of the BTO(\u2016) and non-textured ceramics, which is mainly attributed to (Bi2O2)E^{2+} acting as an insulating layer to prevent charge jumping. The DC resistivity of the BTO textured ceramics and non-textured ceramics from 200 \xb0C to 700 \xb0C is shown in. As illustrated in (a) and (b), P r and \u03b5 r were higher for the textured BTO (\u2016) ceramics compared to the non-textured ceramics. According to d 33\u221dP r \u03b5 r , d 33 increased by increasing P r and \u03b5 r. Therefore, we obtained the piezoelectric constants d 33 for the BTO (\u2016) and non-textured ceramics at different annealing temperatures, as shown in (d). The d 33 value of 19 pC/N for the BTO (\u2016) ceramics was twice the value of the non-textured ceramics (9 pC/N), consistent with PFM analysis. Moreover, the d 33 of BTO (\u2016) decreased by only 11.5 % when the annealing temperature reached 650 \xb0C, far below that of the non-textured ceramics (55.5 %). The T c and d 33 values of the BTO(\u2016) ceramics were compared with the other high-temperature piezoelectric ceramics, as shown in (e). The d 33 values of the BTO(\u2016) ceramics were higher than the values of CaBi2Nb2O9-based , Bi3TiNbO9-based , and other Bi4Ti3O12-based ceramics reported in the literature. The Raman spectra of the poled and unpoled BTO (\u2016) ceramics were obtained to further understand the lattice strain in the textured ceramics, as shown in (a). The polarization field strength for poling was 40 kV/cm. (b) and (c) presents the fitted results of the Raman spectra for the BTO (\u2016) ceramics before and after poling. The Raman modes at 850 cmE^{\u22121} and 615 cmE^{\u22121} corresponded to the A1g modes associated with the rotation or vibration of the TiO6 octahedron. The mode at 612 cmE^{\u22121} (unpoled) shifted towards 615 cmE^{\u22121} (poled), and the mode at 849 cmE^{\u22121} (unpoled) shifted towards 850 cmE^{\u22121} (poled) ((d)). The shift of the A1g mode to a higher wavenumber indicated that the TiO6 octahedron was under compressive strain. The decrease in FWHM indicated a greater tilt of the TiO6 octahedron, resulting in higher ferroelectric polarization. The modes at 89 cmE^{\u22121} and 114 cmE^{\u22121} were associated with the A-site ions in the pseudo-perovskite units. Meanwhile, the shift from 89 cmE^{\u22121} to 91 cmE^{\u22121} and from 114 cmE^{\u22121} to 118 cmE^{\u22121} indicated movement towards higher wavenumbers ((e)). After poling, the peak intensity at 89 cmE^{\u22121} decreased while the peak intensity at 114 cmE^{\u22121} increased. confirming that the displacement of Bi ions played a crucial role in ferroelectric polarization. For the BTO (\u22a5) ceramics, the modes before and after poling did not significantly change and the peak intensity was only slightly reduced ((f)). The BTO (\u2016) ceramics were easily polarized, establishing long-distance polar order caused by the electric field-induced domain switch, and resulting in better piezoelectric properties compared to the BTO (\u22a5) ceramics. In addition, the spontaneous polarization P s of BTO(\u2016) and the non-textured ceramics could be calculated using the Shimakawa model, based on atomic displacements : Ps= \u2211i mi\u2217\u25b3 xi\u2217 QieV, where m i represents site multiplicity, \u0394x i signifies each atomic displacement, Q i e is the ionic charge, V denotes the volume of the unit cell, and i is the index of each atom in the unit cell. As shown in (g) and (h), the P s of the BTO (\u2016) ceramics was approximately 30.4 \u03bcC/cmE^{2}, which was greater larger than that of the non-textured ceramics (17.3 \u03bcC/cmE^{2}). The increase in P s could be attributed to the compressive strain in the BTO (\u2016) ceramics, which was consistent with the PFM analysis results. The relationship between the piezoelectric constant d 33 and compressive strain could be summarized as a function of F 001, as shown in (i). The d 33 value increased with increasing compressive strain, indicating that lattice strain increased the piezoelectric properties in the textured ceramics. Finally, the XRD patterns of the ceramics were obtained in the range of 24 \xb0C\u2013600 \xb0C to verify the temperature stability of d 33 for the BTO (\u2016) ceramics. As shown in (a), no impure phase appeared with increasing temperature, and the (117) peak shifted to a lower angle as the temperature increased from 24 \xb0C to 600 \xb0C, as shown in (b), indicating that the phase structure of the ceramics remained stable in high-temperature environments and only led to lattice expansion. (c) shows the lattice constants as a function of temperature. The values of a, b, and c gradually increased, and the values of a and b converged near 600 \xb0C, which was close to T c.
+
+# TITLE
+Enhanced electrical properties in textured Bi<inf>4</inf>Ti<inf>3</inf>O<inf>12</inf> ceramics with negative strain
+
+# ABSTRACT
+In this work, we elucidated the reasons behind the superior electrical properties of Bi4Ti3O12 (BTO) textured ceramics compared to BTO non-textured ceramics from the perspective of lattice strain. The phase structure, domain structure, and electrical properties of BTO textured and non-textured ceramics were analyzed in detail. The calculated average lattice strain along the polarization axis of textured ceramics with optimized processing was −0.27 %, while that of non-textured ceramics was 0.24 %. Compared to non-textured ceramics, the remnant polarization P
+                     r of textured ceramics increased by 1.5 times, reaching 16 μC/cm2. In addition, the piezoelectric constant d
+                     33 was enhanced two times with a value of 19 pC/N. Notably, d
+                     33 increased with an increase in average compressive strain along the polarization axis, indicating the enhancement of piezoelectricity caused by compressive lattice strain in the textured ceramics. The variation in d
+                     33 was below 11.5 % in the heat-treatment temperature range of 25 °C–600 °C, demonstrating thermal stability in high-temperature service environments.
+
+# INTRODUCTION
+Bi4Ti3O12(BTO) is a typical bismuth-layered material belonging to the Aurivillius family with a ferroelectric Curie temperature T c of \u223c675 \xb0C and high spontaneous polarization P s value of \u223c50 \u03bcC/cmE^{2} in the a-b plane , making it suitable for high-temperature electronic sensors. However, the strains between neighbor grains block the excellent electric performance in such ferroelectric ceramic due to the anisotropic characteristic of crystal structure with c/a\u22486 ratio of lattice constants. As a result, the piezoelectric constant d 33 of BTO is typically less than 8 pC/N. Methods such as hot forging , hot pressing  and template grain growth (TGG)  have been employed to prepare textured ceramics, with the TGG method the most commonly used approach. As early as 1999, Messing et al.  used the TGG method to prepare mullite ceramics with an oriented grain structure. Li et al. prepared Pb(In1/2Nb1/2)O3-Pb(Sc1/2Nb1/2)O3-PbTiO3 textured ceramics using the TGG method and increased the d 33 value to 593 pC/N. Yan et al. obtained a high d 33 value of 1100 pC/N along the [001] direction and demonstrated the presence of rotational ferroelectricity in Pb(Mg1/3Nb2/3)O3-Pb(Zr,Ti)O3 textured ceramics prepared using the TGG method. In 2004, Satio et al. synthesized (K, Na)NbO3-based textured ceramics with high piezoelectric properties, achieving a significant 1.8-fold improvement in the piezoelectric coefficient d 33 (416 pC/N) compared to non-textured ceramics. Similarly, Na0.5Bi0.5TiO3\u2013BaTiO3 textured ceramics prepared using the TGG method demonstrated a 2-fold increase in the piezoelectric coefficient compared to non-textured ceramics. As indicated in the following equations, d33prop mainly includes d33imp an PA \u2202A \u2202\u03c3 two parts. d33prop= PA \u2202A \u2202\u03c3+ d33imp, d33imp= \u2202P \u2202\u03c3, where d33prop is the proper piezoelectric response (d33prop was measured in the experiment). P signifies polarization without stress in PA \u2202A \u2202\u03c3, where the change in stress only led to a change in cell area, and d33imp signifies the improper piezoelectric response, indicating the impact of stress/strain changes on polarization. Highly textured BTO ceramics with excellent piezoelectric and ferroelectric properties were prepared using a simple TGG method. The difference in lattice strain between the textured and non-textured ceramics was determined by X-ray diffraction (XRD).
+
+# CONCLUSION
+In this work, a novel strategy was proposed to elucidate the mechanism of enhancing the electrical properties of BTO textured ceramics. The lattice strain, lattice vibration, domain structure, and electrical properties of BTO textured and non-textured ceramics were evaluated. Compared to non-textured ceramics, the P r, \u03b5 r, and d 33 values of the BTO (\u2016) ceramic samples increase by 1.5-, 2.5-, and 2-fold, respectively. Notably, the d 33 exhibited strong stability below T c, demonstrating that the BTO textured ceramics could serve as a potential candidate for high-temperature piezoelectric sensor applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="```json
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Bi4Ti3O12-textured": 19,
+      "Bi4Ti3O12-non-textured": 9
+    },
+    "abbreviations": {
+      "BTO": "Bi4Ti3O12",
+      "TGG": "template grain growth"
+    },
+    "property_unit": "pC/N",
+    "family": "Aurivillius"
+  }
+}
+```"
+2025-07-16 19:41:18: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Samples with a surface perpendicular to the c-axis were labeled as BTO(\u22a5), while samples with a surface parallel to the c-axis were labeled as BTO(\u2016). The XRD patterns of the textured BTO(\u22a5) and BTO(\u2016) ceramics at different sintering temperatures are shown in , where a maximum F 001 value of 98 % was achieved in the BTO textured ceramics sintered at 950 \xb0C. (b) shows the XRD patterns of the non-textured, BTO(\u2016), and BTO(\u22a5) ceramics, indicating that no impure phase was observed in any of the samples. Compared to the non-textured ceramic, the BTO (\u2016) and BTO (\u22a5) ceramics exhibited significant anisotropy. As shown in (c), the lattice constants were calculated using PowderX diffraction analysis software from the XRD patterns of the BTO(\u2016) ceramics. The average lattice strain \u03b7 hkl at different sintering temperatures with different F 001 values was calculated by the following formula : \u03b7 hkl = (d hkl - d CIF,hkl )/d CIF,hkl , where d hkl is the d spacing of (hkl) plane along the a-, b- or c-axis of the BTO ceramics, and d CIF,hkl is the d spacing of the reference crystallographic information file (CIF) with lattice constants of a = 5.4475 \xc5, b = 5.4082 \xc5, and c = 32.8066 \xc5. The lattice strain of the (200) plain was calculated, corresponding to the polarization direction of the BTO ceramics along the a-axis direction. The lattice strain \u03b7 (200) of the non-textured ceramics is 0.24 %. For textured ceramics, the \u03b7 (200) value become negative as F 001 increases. When the F 001 reached 98 %, the \u03b7 (200) value was \u22120.27 %, demonstrating the compressive lattice strain in the textured ceramics. The scanning electron microscopy (SEM) images of the BTO(\u2016) ceramics and non-textured ceramics are depicted in (d)(f). The observed grain size of the BTO(\u2016) ceramics was 19.8 \u03bcm in length and 1.97 \u03bcm in width, and these values were larger than the grain size of 18.2 \u03bcm in length and 1.86 \u03bcm in width for the non-textured ceramics. As shown in (e)(g), piezoresponse force microscopy (PFM) was used to investigate the domain structure of the BTO (\u2016) and non-textured ceramics, according to the literature. The domain size had a length of 2 \u03bcm and width of 1.33 \u03bcm in the BTO (\u2016) ceramic, which was larger than the non-textured ceramic, with a length of 1.8 \u03bcm and width of 1.14 \u03bcm. The increase in domain size was mainly due to the large lattice strain in the BTO(\u2016) ceramics , which was calculated by: \u03b7 i = (\u03b3 i P i E^{ })/K, where \u03b3 and K denote the strain-polarization coefficient and elastic constant, respectively , with the strain proportional to the square of polarization when the polarization was small. Based on this relationship, the large lattice strain in the BTO(\u2016) ceramics resulted in a higher polarization of the BTO(\u2016) ceramics compared to the non-textured ceramics. The polarization, dielectric and piezoelectric properties of the BTO(\u2016) ceramics and non-textured ceramics are described in detail below. The electrical properties of the BTO(\u2016), BTO(\u22a5), and non-textured ceramics at room temperature were compared, as shown in. (a) presents the polarization vs electric field (P-E) loops at 90 kV/cm, indicating that the ferroelectric properties exhibited high anisotropy. In the BTO (\u22a5) ceramics, the ferroelectricity was very weak due to the nonpolar c-axis of the BTO material. In the BTO (\u2016) ceramics, the remnant polarization P r was 16 \u03bcC/cmE^{2}, which was significantly higher than that of the non-textured ceramics (11 \u03bcC/cmE^{2}). As shown in (b), the dielectric constant \u03b5 r of the textured ceramics also exhibited obvious anisotropy. The dielectric anomaly was observed around \u223c680 \xb0C, corresponding to the ferroelectric-paraelectric phase transition temperature (Curie temperature T c). The \u03b5 r of the BTO (\u2016) ceramics was significantly higher than that of the BTO (\u22a5), and the \u03b5 r of the non-textured ceramics was between the BTO(\u2016) and BTO(\u22a5) ceramics. (c) presents the dielectric loss tan\u03b4 of the BTO textured ceramics and non-textured ceramics at 1 MHz as a function of temperature. Notably, the tan\u03b4 of BTO(\u22a5) was significantly lower than that of the BTO(\u2016) and non-textured ceramics, which is mainly attributed to (Bi2O2)E^{2+} acting as an insulating layer to prevent charge jumping. The DC resistivity of the BTO textured ceramics and non-textured ceramics from 200 \xb0C to 700 \xb0C is shown in. As illustrated in (a) and (b), P r and \u03b5 r were higher for the textured BTO (\u2016) ceramics compared to the non-textured ceramics. According to d 33\u221dP r \u03b5 r , d 33 increased by increasing P r and \u03b5 r. Therefore, we obtained the piezoelectric constants d 33 for the BTO (\u2016) and non-textured ceramics at different annealing temperatures, as shown in (d). The d 33 value of 19 pC/N for the BTO (\u2016) ceramics was twice the value of the non-textured ceramics (9 pC/N), consistent with PFM analysis. Moreover, the d 33 of BTO (\u2016) decreased by only 11.5 % when the annealing temperature reached 650 \xb0C, far below that of the non-textured ceramics (55.5 %). The T c and d 33 values of the BTO(\u2016) ceramics were compared with the other high-temperature piezoelectric ceramics, as shown in (e). The d 33 values of the BTO(\u2016) ceramics were higher than the values of CaBi2Nb2O9-based , Bi3TiNbO9-based , and other Bi4Ti3O12-based ceramics reported in the literature. The Raman spectra of the poled and unpoled BTO (\u2016) ceramics were obtained to further understand the lattice strain in the textured ceramics, as shown in (a). The polarization field strength for poling was 40 kV/cm. (b) and (c) presents the fitted results of the Raman spectra for the BTO (\u2016) ceramics before and after poling. The Raman modes at 850 cmE^{\u22121} and 615 cmE^{\u22121} corresponded to the A1g modes associated with the rotation or vibration of the TiO6 octahedron. The mode at 612 cmE^{\u22121} (unpoled) shifted towards 615 cmE^{\u22121} (poled), and the mode at 849 cmE^{\u22121} (unpoled) shifted towards 850 cmE^{\u22121} (poled) ((d)). The shift of the A1g mode to a higher wavenumber indicated that the TiO6 octahedron was under compressive strain. The decrease in FWHM indicated a greater tilt of the TiO6 octahedron, resulting in higher ferroelectric polarization. The modes at 89 cmE^{\u22121} and 114 cmE^{\u22121} were associated with the A-site ions in the pseudo-perovskite units. Meanwhile, the shift from 89 cmE^{\u22121} to 91 cmE^{\u22121} and from 114 cmE^{\u22121} to 118 cmE^{\u22121} indicated movement towards higher wavenumbers ((e)). After poling, the peak intensity at 89 cmE^{\u22121} decreased while the peak intensity at 114 cmE^{\u22121} increased. confirming that the displacement of Bi ions played a crucial role in ferroelectric polarization. For the BTO (\u22a5) ceramics, the modes before and after poling did not significantly change and the peak intensity was only slightly reduced ((f)). The BTO (\u2016) ceramics were easily polarized, establishing long-distance polar order caused by the electric field-induced domain switch, and resulting in better piezoelectric properties compared to the BTO (\u22a5) ceramics. In addition, the spontaneous polarization P s of BTO(\u2016) and the non-textured ceramics could be calculated using the Shimakawa model, based on atomic displacements : Ps= \u2211i mi\u2217\u25b3 xi\u2217 QieV, where m i represents site multiplicity, \u0394x i signifies each atomic displacement, Q i e is the ionic charge, V denotes the volume of the unit cell, and i is the index of each atom in the unit cell. As shown in (g) and (h), the P s of the BTO (\u2016) ceramics was approximately 30.4 \u03bcC/cmE^{2}, which was greater larger than that of the non-textured ceramics (17.3 \u03bcC/cmE^{2}). The increase in P s could be attributed to the compressive strain in the BTO (\u2016) ceramics, which was consistent with the PFM analysis results. The relationship between the piezoelectric constant d 33 and compressive strain could be summarized as a function of F 001, as shown in (i). The d 33 value increased with increasing compressive strain, indicating that lattice strain increased the piezoelectric properties in the textured ceramics. Finally, the XRD patterns of the ceramics were obtained in the range of 24 \xb0C\u2013600 \xb0C to verify the temperature stability of d 33 for the BTO (\u2016) ceramics. As shown in (a), no impure phase appeared with increasing temperature, and the (117) peak shifted to a lower angle as the temperature increased from 24 \xb0C to 600 \xb0C, as shown in (b), indicating that the phase structure of the ceramics remained stable in high-temperature environments and only led to lattice expansion. (c) shows the lattice constants as a function of temperature. The values of a, b, and c gradually increased, and the values of a and b converged near 600 \xb0C, which was close to T c.
+
+# TITLE
+Enhanced electrical properties in textured Bi<inf>4</inf>Ti<inf>3</inf>O<inf>12</inf> ceramics with negative strain
+
+# ABSTRACT
+In this work, we elucidated the reasons behind the superior electrical properties of Bi4Ti3O12 (BTO) textured ceramics compared to BTO non-textured ceramics from the perspective of lattice strain. The phase structure, domain structure, and electrical properties of BTO textured and non-textured ceramics were analyzed in detail. The calculated average lattice strain along the polarization axis of textured ceramics with optimized processing was −0.27 %, while that of non-textured ceramics was 0.24 %. Compared to non-textured ceramics, the remnant polarization P
+                     r of textured ceramics increased by 1.5 times, reaching 16 μC/cm2. In addition, the piezoelectric constant d
+                     33 was enhanced two times with a value of 19 pC/N. Notably, d
+                     33 increased with an increase in average compressive strain along the polarization axis, indicating the enhancement of piezoelectricity caused by compressive lattice strain in the textured ceramics. The variation in d
+                     33 was below 11.5 % in the heat-treatment temperature range of 25 °C–600 °C, demonstrating thermal stability in high-temperature service environments.
+
+# INTRODUCTION
+Bi4Ti3O12(BTO) is a typical bismuth-layered material belonging to the Aurivillius family with a ferroelectric Curie temperature T c of \u223c675 \xb0C and high spontaneous polarization P s value of \u223c50 \u03bcC/cmE^{2} in the a-b plane , making it suitable for high-temperature electronic sensors. However, the strains between neighbor grains block the excellent electric performance in such ferroelectric ceramic due to the anisotropic characteristic of crystal structure with c/a\u22486 ratio of lattice constants. As a result, the piezoelectric constant d 33 of BTO is typically less than 8 pC/N. Methods such as hot forging , hot pressing  and template grain growth (TGG)  have been employed to prepare textured ceramics, with the TGG method the most commonly used approach. As early as 1999, Messing et al.  used the TGG method to prepare mullite ceramics with an oriented grain structure. Li et al. prepared Pb(In1/2Nb1/2)O3-Pb(Sc1/2Nb1/2)O3-PbTiO3 textured ceramics using the TGG method and increased the d 33 value to 593 pC/N. Yan et al. obtained a high d 33 value of 1100 pC/N along the [001] direction and demonstrated the presence of rotational ferroelectricity in Pb(Mg1/3Nb2/3)O3-Pb(Zr,Ti)O3 textured ceramics prepared using the TGG method. In 2004, Satio et al. synthesized (K, Na)NbO3-based textured ceramics with high piezoelectric properties, achieving a significant 1.8-fold improvement in the piezoelectric coefficient d 33 (416 pC/N) compared to non-textured ceramics. Similarly, Na0.5Bi0.5TiO3\u2013BaTiO3 textured ceramics prepared using the TGG method demonstrated a 2-fold increase in the piezoelectric coefficient compared to non-textured ceramics. As indicated in the following equations, d33prop mainly includes d33imp an PA \u2202A \u2202\u03c3 two parts. d33prop= PA \u2202A \u2202\u03c3+ d33imp, d33imp= \u2202P \u2202\u03c3, where d33prop is the proper piezoelectric response (d33prop was measured in the experiment). P signifies polarization without stress in PA \u2202A \u2202\u03c3, where the change in stress only led to a change in cell area, and d33imp signifies the improper piezoelectric response, indicating the impact of stress/strain changes on polarization. Highly textured BTO ceramics with excellent piezoelectric and ferroelectric properties were prepared using a simple TGG method. The difference in lattice strain between the textured and non-textured ceramics was determined by X-ray diffraction (XRD).
+
+# CONCLUSION
+In this work, a novel strategy was proposed to elucidate the mechanism of enhancing the electrical properties of BTO textured ceramics. The lattice strain, lattice vibration, domain structure, and electrical properties of BTO textured and non-textured ceramics were evaluated. Compared to non-textured ceramics, the P r, \u03b5 r, and d 33 values of the BTO (\u2016) ceramic samples increase by 1.5-, 2.5-, and 2-fold, respectively. Notably, the d 33 exhibited strong stability below T c, demonstrating that the BTO textured ceramics could serve as a potential candidate for high-temperature piezoelectric sensor applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-16 19:41:19: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Samples with a surface perpendicular to the c-axis were labeled as BTO(\u22a5), while samples with a surface parallel to the c-axis were labeled as BTO(\u2016). The XRD patterns of the textured BTO(\u22a5) and BTO(\u2016) ceramics at different sintering temperatures are shown in , where a maximum F 001 value of 98 % was achieved in the BTO textured ceramics sintered at 950 \xb0C. (b) shows the XRD patterns of the non-textured, BTO(\u2016), and BTO(\u22a5) ceramics, indicating that no impure phase was observed in any of the samples. Compared to the non-textured ceramic, the BTO (\u2016) and BTO (\u22a5) ceramics exhibited significant anisotropy. As shown in (c), the lattice constants were calculated using PowderX diffraction analysis software from the XRD patterns of the BTO(\u2016) ceramics. The average lattice strain \u03b7 hkl at different sintering temperatures with different F 001 values was calculated by the following formula : \u03b7 hkl = (d hkl - d CIF,hkl )/d CIF,hkl , where d hkl is the d spacing of (hkl) plane along the a-, b- or c-axis of the BTO ceramics, and d CIF,hkl is the d spacing of the reference crystallographic information file (CIF) with lattice constants of a = 5.4475 \xc5, b = 5.4082 \xc5, and c = 32.8066 \xc5. The lattice strain of the (200) plain was calculated, corresponding to the polarization direction of the BTO ceramics along the a-axis direction. The lattice strain \u03b7 (200) of the non-textured ceramics is 0.24 %. For textured ceramics, the \u03b7 (200) value become negative as F 001 increases. When the F 001 reached 98 %, the \u03b7 (200) value was \u22120.27 %, demonstrating the compressive lattice strain in the textured ceramics. The scanning electron microscopy (SEM) images of the BTO(\u2016) ceramics and non-textured ceramics are depicted in (d)(f). The observed grain size of the BTO(\u2016) ceramics was 19.8 \u03bcm in length and 1.97 \u03bcm in width, and these values were larger than the grain size of 18.2 \u03bcm in length and 1.86 \u03bcm in width for the non-textured ceramics. As shown in (e)(g), piezoresponse force microscopy (PFM) was used to investigate the domain structure of the BTO (\u2016) and non-textured ceramics, according to the literature. The domain size had a length of 2 \u03bcm and width of 1.33 \u03bcm in the BTO (\u2016) ceramic, which was larger than the non-textured ceramic, with a length of 1.8 \u03bcm and width of 1.14 \u03bcm. The increase in domain size was mainly due to the large lattice strain in the BTO(\u2016) ceramics , which was calculated by: \u03b7 i = (\u03b3 i P i E^{ })/K, where \u03b3 and K denote the strain-polarization coefficient and elastic constant, respectively , with the strain proportional to the square of polarization when the polarization was small. Based on this relationship, the large lattice strain in the BTO(\u2016) ceramics resulted in a higher polarization of the BTO(\u2016) ceramics compared to the non-textured ceramics. The polarization, dielectric and piezoelectric properties of the BTO(\u2016) ceramics and non-textured ceramics are described in detail below. The electrical properties of the BTO(\u2016), BTO(\u22a5), and non-textured ceramics at room temperature were compared, as shown in. (a) presents the polarization vs electric field (P-E) loops at 90 kV/cm, indicating that the ferroelectric properties exhibited high anisotropy. In the BTO (\u22a5) ceramics, the ferroelectricity was very weak due to the nonpolar c-axis of the BTO material. In the BTO (\u2016) ceramics, the remnant polarization P r was 16 \u03bcC/cmE^{2}, which was significantly higher than that of the non-textured ceramics (11 \u03bcC/cmE^{2}). As shown in (b), the dielectric constant \u03b5 r of the textured ceramics also exhibited obvious anisotropy. The dielectric anomaly was observed around \u223c680 \xb0C, corresponding to the ferroelectric-paraelectric phase transition temperature (Curie temperature T c). The \u03b5 r of the BTO (\u2016) ceramics was significantly higher than that of the BTO (\u22a5), and the \u03b5 r of the non-textured ceramics was between the BTO(\u2016) and BTO(\u22a5) ceramics. (c) presents the dielectric loss tan\u03b4 of the BTO textured ceramics and non-textured ceramics at 1 MHz as a function of temperature. Notably, the tan\u03b4 of BTO(\u22a5) was significantly lower than that of the BTO(\u2016) and non-textured ceramics, which is mainly attributed to (Bi2O2)E^{2+} acting as an insulating layer to prevent charge jumping. The DC resistivity of the BTO textured ceramics and non-textured ceramics from 200 \xb0C to 700 \xb0C is shown in. As illustrated in (a) and (b), P r and \u03b5 r were higher for the textured BTO (\u2016) ceramics compared to the non-textured ceramics. According to d 33\u221dP r \u03b5 r , d 33 increased by increasing P r and \u03b5 r. Therefore, we obtained the piezoelectric constants d 33 for the BTO (\u2016) and non-textured ceramics at different annealing temperatures, as shown in (d). The d 33 value of 19 pC/N for the BTO (\u2016) ceramics was twice the value of the non-textured ceramics (9 pC/N), consistent with PFM analysis. Moreover, the d 33 of BTO (\u2016) decreased by only 11.5 % when the annealing temperature reached 650 \xb0C, far below that of the non-textured ceramics (55.5 %). The T c and d 33 values of the BTO(\u2016) ceramics were compared with the other high-temperature piezoelectric ceramics, as shown in (e). The d 33 values of the BTO(\u2016) ceramics were higher than the values of CaBi2Nb2O9-based , Bi3TiNbO9-based , and other Bi4Ti3O12-based ceramics reported in the literature. The Raman spectra of the poled and unpoled BTO (\u2016) ceramics were obtained to further understand the lattice strain in the textured ceramics, as shown in (a). The polarization field strength for poling was 40 kV/cm. (b) and (c) presents the fitted results of the Raman spectra for the BTO (\u2016) ceramics before and after poling. The Raman modes at 850 cmE^{\u22121} and 615 cmE^{\u22121} corresponded to the A1g modes associated with the rotation or vibration of the TiO6 octahedron. The mode at 612 cmE^{\u22121} (unpoled) shifted towards 615 cmE^{\u22121} (poled), and the mode at 849 cmE^{\u22121} (unpoled) shifted towards 850 cmE^{\u22121} (poled) ((d)). The shift of the A1g mode to a higher wavenumber indicated that the TiO6 octahedron was under compressive strain. The decrease in FWHM indicated a greater tilt of the TiO6 octahedron, resulting in higher ferroelectric polarization. The modes at 89 cmE^{\u22121} and 114 cmE^{\u22121} were associated with the A-site ions in the pseudo-perovskite units. Meanwhile, the shift from 89 cmE^{\u22121} to 91 cmE^{\u22121} and from 114 cmE^{\u22121} to 118 cmE^{\u22121} indicated movement towards higher wavenumbers ((e)). After poling, the peak intensity at 89 cmE^{\u22121} decreased while the peak intensity at 114 cmE^{\u22121} increased. confirming that the displacement of Bi ions played a crucial role in ferroelectric polarization. For the BTO (\u22a5) ceramics, the modes before and after poling did not significantly change and the peak intensity was only slightly reduced ((f)). The BTO (\u2016) ceramics were easily polarized, establishing long-distance polar order caused by the electric field-induced domain switch, and resulting in better piezoelectric properties compared to the BTO (\u22a5) ceramics. In addition, the spontaneous polarization P s of BTO(\u2016) and the non-textured ceramics could be calculated using the Shimakawa model, based on atomic displacements : Ps= \u2211i mi\u2217\u25b3 xi\u2217 QieV, where m i represents site multiplicity, \u0394x i signifies each atomic displacement, Q i e is the ionic charge, V denotes the volume of the unit cell, and i is the index of each atom in the unit cell. As shown in (g) and (h), the P s of the BTO (\u2016) ceramics was approximately 30.4 \u03bcC/cmE^{2}, which was greater larger than that of the non-textured ceramics (17.3 \u03bcC/cmE^{2}). The increase in P s could be attributed to the compressive strain in the BTO (\u2016) ceramics, which was consistent with the PFM analysis results. The relationship between the piezoelectric constant d 33 and compressive strain could be summarized as a function of F 001, as shown in (i). The d 33 value increased with increasing compressive strain, indicating that lattice strain increased the piezoelectric properties in the textured ceramics. Finally, the XRD patterns of the ceramics were obtained in the range of 24 \xb0C\u2013600 \xb0C to verify the temperature stability of d 33 for the BTO (\u2016) ceramics. As shown in (a), no impure phase appeared with increasing temperature, and the (117) peak shifted to a lower angle as the temperature increased from 24 \xb0C to 600 \xb0C, as shown in (b), indicating that the phase structure of the ceramics remained stable in high-temperature environments and only led to lattice expansion. (c) shows the lattice constants as a function of temperature. The values of a, b, and c gradually increased, and the values of a and b converged near 600 \xb0C, which was close to T c.
+
+# TITLE
+Enhanced electrical properties in textured Bi<inf>4</inf>Ti<inf>3</inf>O<inf>12</inf> ceramics with negative strain
+
+# ABSTRACT
+In this work, we elucidated the reasons behind the superior electrical properties of Bi4Ti3O12 (BTO) textured ceramics compared to BTO non-textured ceramics from the perspective of lattice strain. The phase structure, domain structure, and electrical properties of BTO textured and non-textured ceramics were analyzed in detail. The calculated average lattice strain along the polarization axis of textured ceramics with optimized processing was −0.27 %, while that of non-textured ceramics was 0.24 %. Compared to non-textured ceramics, the remnant polarization P
+                     r of textured ceramics increased by 1.5 times, reaching 16 μC/cm2. In addition, the piezoelectric constant d
+                     33 was enhanced two times with a value of 19 pC/N. Notably, d
+                     33 increased with an increase in average compressive strain along the polarization axis, indicating the enhancement of piezoelectricity caused by compressive lattice strain in the textured ceramics. The variation in d
+                     33 was below 11.5 % in the heat-treatment temperature range of 25 °C–600 °C, demonstrating thermal stability in high-temperature service environments.
+
+# INTRODUCTION
+Bi4Ti3O12(BTO) is a typical bismuth-layered material belonging to the Aurivillius family with a ferroelectric Curie temperature T c of \u223c675 \xb0C and high spontaneous polarization P s value of \u223c50 \u03bcC/cmE^{2} in the a-b plane , making it suitable for high-temperature electronic sensors. However, the strains between neighbor grains block the excellent electric performance in such ferroelectric ceramic due to the anisotropic characteristic of crystal structure with c/a\u22486 ratio of lattice constants. As a result, the piezoelectric constant d 33 of BTO is typically less than 8 pC/N. Methods such as hot forging , hot pressing  and template grain growth (TGG)  have been employed to prepare textured ceramics, with the TGG method the most commonly used approach. As early as 1999, Messing et al.  used the TGG method to prepare mullite ceramics with an oriented grain structure. Li et al. prepared Pb(In1/2Nb1/2)O3-Pb(Sc1/2Nb1/2)O3-PbTiO3 textured ceramics using the TGG method and increased the d 33 value to 593 pC/N. Yan et al. obtained a high d 33 value of 1100 pC/N along the [001] direction and demonstrated the presence of rotational ferroelectricity in Pb(Mg1/3Nb2/3)O3-Pb(Zr,Ti)O3 textured ceramics prepared using the TGG method. In 2004, Satio et al. synthesized (K, Na)NbO3-based textured ceramics with high piezoelectric properties, achieving a significant 1.8-fold improvement in the piezoelectric coefficient d 33 (416 pC/N) compared to non-textured ceramics. Similarly, Na0.5Bi0.5TiO3\u2013BaTiO3 textured ceramics prepared using the TGG method demonstrated a 2-fold increase in the piezoelectric coefficient compared to non-textured ceramics. As indicated in the following equations, d33prop mainly includes d33imp an PA \u2202A \u2202\u03c3 two parts. d33prop= PA \u2202A \u2202\u03c3+ d33imp, d33imp= \u2202P \u2202\u03c3, where d33prop is the proper piezoelectric response (d33prop was measured in the experiment). P signifies polarization without stress in PA \u2202A \u2202\u03c3, where the change in stress only led to a change in cell area, and d33imp signifies the improper piezoelectric response, indicating the impact of stress/strain changes on polarization. Highly textured BTO ceramics with excellent piezoelectric and ferroelectric properties were prepared using a simple TGG method. The difference in lattice strain between the textured and non-textured ceramics was determined by X-ray diffraction (XRD).
+
+# CONCLUSION
+In this work, a novel strategy was proposed to elucidate the mechanism of enhancing the electrical properties of BTO textured ceramics. The lattice strain, lattice vibration, domain structure, and electrical properties of BTO textured and non-textured ceramics were evaluated. Compared to non-textured ceramics, the P r, \u03b5 r, and d 33 values of the BTO (\u2016) ceramic samples increase by 1.5-, 2.5-, and 2-fold, respectively. Notably, the d 33 exhibited strong stability below T c, demonstrating that the BTO textured ceramics could serve as a potential candidate for high-temperature piezoelectric sensor applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="```json
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Bi4Ti3O12-textured": 19,
+      "Bi4Ti3O12-non-textured": 9
+    },
+    "abbreviations": {
+      "BTO": "Bi4Ti3O12",
+      "TGG": "template grain growth"
+    },
+    "property_unit": "pC/N",
+    "family": "Aurivillius"
+  }
+}
+```"

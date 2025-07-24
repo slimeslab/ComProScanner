@@ -1,0 +1,192 @@
+2025-07-10 15:44:26: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The properties of 2.5\u2009mol% Sm/Pr co-doped 0.72PMN-28PT transparent ceramics.
+| Doping  content|  T  %  @900\u2009nm|  d   33   \uff08pC/N\uff09|  T   C   (\u2103)|  \u03b5   r   @1\u2009kHz|  E  c  (kV/cm)|  E   i |  P   r   (\u03bcC/cm E^{ } )|  k   t |  k   p |  k   33 |
+|---|---|---|---|---|---|---|---|---|---|---|
+|2.5\u2009%Sm,0.0\u2009%Pr|47|1532|82|12537|2.9|0.1|34.9|0.66|0.70|0.843|
+|2.0\u2009%Sm,0.5\u2009%Pr|52|1547|75|18177|2.55|0.3|32.2|0.61|0.65|0.8|
+|1.5\u2009%Sm,1.0\u2009%Pr|64.1|1318|71|19248|2.35|0.3|31.9|0.56|0.59|0.74|
+|1.0\u2009%Sm,1.5\u2009%Pr|61.8|1014|70|17435|2.35|0.5|31.5|0.5|0.52|0.67|
+|0.5\u2009%Sm,2.0\u2009%Pr|64.3|819|68|16218|2.35|0.7|30.4|0.43|0.45|0.59|
+
+# RESULTS AND DISCUSSION
+(a) shows the XRD patterns of 2.5 mol% Sm/Pr co-doped 72PMN-28PT ceramics. Except for the weak peak around 2\u03b8=29\xb0, all the main diffraction peaks can be indexed by the perovskite phase. (b) indicates that the enlarged (200) peak gradually shifted towards a lower degree under the higher doping Pr ions concentration. Both Sm and Pr ions have been found to substitute the PbE^{2+} in A sublattice and the lead vacancies (V Pb \u2032\u2032) are introduced to maintain charge neutrality , and the SmE^{3+} (0.98 \xc5) is further been proven the smallest lanthanide ion that can completely enter the A sublattice to replace PbE^{2+} (1.49 \xc5). Pr ion (1.19 \xc5) is larger than SmE^{3+}, then the lattice volume will be increased by more Pr ions entering into the A sublattice in the lattice compared to Sm-doped. Therefore, the (200) diffraction peak would move to the lower degrees according to the Bragg equation. Moreover, the (200) peak shows a slight splitting and asymmetrical at 0 and 0.5 mol% Pr doping, revealing the existence of tetragonal component in these compositions. The peak becomes single and symmetrical with the increased proportion of Pr ions, indicating the existence of a rhombohedral phase. exhibits the SEM images of Sm/Pr co-doped 0.72PMN-0.28PT ceramics. Meanwhile, the 1.5 mol% Sm/1.0 mol% Pr-PMN-PT ceramics show a distinct transgranular fracture, it is generally believed that transgranular fracture represents a tighter bonding between grains, reducing the light scattering and thus facilitating the transmittance. exhibits the optical transmittance of 2.5 Sm/Pr mol% co-doped 0.72PMN-0.28PT ceramics. The photographs of the ceramics with a thickness of about 0.5 mm are displayed in (a), and the words underneath them can be seen clearly. (b) shows the transmittance curves of the ceramics within the waveband of 300 nm to 900 nm, indicating that the transmittance of the ceramics is 47 %, 52 %, 64.1 %, 61.8 %, and 64.3 % (theoretical limit value\u223c71 %) at 900 nm respectively with the increasing of Pr. Moreover, ceramics below 400 nm are almost opaque due to the band gap of PMN-PT ceramics. The above results demonstrate the optical transmittance of 2.5 mol% Sm-doped 0.72PMN-0.28PT has been improved by co-doping of Sm and Pr ions, the doping of increased concentration of Pr ions leads to the increase of rhombohedral phase components, which are conducive to the improvement of transmittance. In addition, four Pr ions absorption peaks are observed at 450 nm, 472 nm, 488 nm, and 593 nm in the transmittance spectra, corresponding to the E^{3}H4-E^{3}P2, E^{3}P1, E^{3}P0, and E^{3}H4-E^{1}D2 energy level jumps of Pr ions. Eventually, the photographs of 1.5 mol%Sm, 1.0 mol%Pr co-doped 0.72PMN-0.28PT ceramic are shown in (c) and (d), and the transparency of ceramic enables a distinct view of both nearby and distant scenery through it. (a-e) exhibits the P-E loops of 2.5 mol% Sm/Pr co-doped 0.72PMN-0.28PT ceramics measured at various electric fields, and f shows the saturated P-E loops of ceramics measured under an electric field of 25 kV/cm. The generation of E i can be attributed to the substitution of PbE^{2+} at the A sublattice by nonequivalent Sm and Pr ions , as well as the volatility of PbE^{2+} during the sintering process, which leads to Pb vacancies with positive charge and results in the formation of defect dipoles and internal bias electric field finally. E i and coercive field (E c) can be calculated as follows:  The E i of the Sm/Pr co-doped 0.72PMN-0.28PT ceramics shows an upward trend with the increase of Pr, which is 0.1, 0.3, 0.3, 0.5, and 0.7 kV/cm respectively. (g, f) illustrates the trend of E c and P r with the increase of Pr ions among the 2.5 mol% total amount of doping. E c are 2.80, 2.55, 2.34, 2.30, and 2.29 kV/cm respectively, similar to the 0.72PMN-0.28PT ceramics from other work, and P r were all greater than 30 \u03bcC/cm\xb2, while the P r of Eu-PMN-PT is 31 \u03bcC/cmE^{2}. It can be seen that the E c and P r of ceramics show a moderate decreasing trend with the increased concentration of Pr, which indicates that the co-doping of Sm and Pr broke the long-range ordered ferroelectric domains in PMN-PT ceramics and degraded the ferroelectric property of them, resulting in the reduction of P r and E c. Furthermore, both the E c and P r show a decrease with the increasing proportion of Pr, which may be ascribed to a greater lattice distortion caused by Pr compared to Sm, which weakens the coupling strength between the ions among the BO6 octahedrons. (a-e) are the corresponding current density-electric-field (J-E) curves of P-E loops in (a-e), the peak values of all J-E curves decrease with the increase of the applied electric field, and the electric fields corresponding to the current density peaks on J-E curves were consistent with the coercive fields of P-E loops in (a-f), indicating that the two current density peaks were caused by the concentrated reversal of spontaneous polarization around E c. Due to the peak \u2780 is larger than peak \u2781 indicating that there is orientation polarization in the same direction as the reverse electric field making the polarization reversal much easier under the reverse electric field , resulting in the E c+ gradually larger than the negative coercive field E c-. (g) gives the values of forward and reverse peaks, \u2780 and \u2781, both present a downward trend with the increase of Pr ions concentration. Furthermore, peak \u2781 broadens gradually, indicating that the reversal of ferroelectric domains along the forward electric field fails to keep up with the change of the external electric field, and the polarization reversal is not concentrated.. displays the curves of temperature-dependent dielectric permittivity and dielectric loss of 2.5 mol% Sm/Pr co-doped 0.72PMN-0.28PT ceramics. The changing trends of dielectric permittivity \u03b5 r at 1 kHz, T m, and T d (temperatures of rhombohedral to tetragonal phase transition) with the increase of Pr doping content were illustrated in (c-e). The room temperature dielectric permittivity increases firstly with the Pr doping content increasing from 0 % to 1.0 mol% and then decreases subsequently. This phenomenon is probably because the 2.0 mol%Sm and 0.5 mol%Pr co-doping lead to a more effective Morphotropic Phase Boundarys (MPB) phase composition and relatively flat free energy, which are in favor of improving the dielectric and piezoelectric prosperities. PMN-PT in the MPB composition typically exhibits higher piezoelectric and dielectric properties because the polarization rotation is more easily achieved. There is another assumption that a small amount of SmE^{3+} entered the B sublattice, and the ferroelectric domains are pinned by the internal bias field, reducing the piezoelectric and dielectric properties of the ceramics. It indicates that more Pr ions entering into the A sublattice of the lattice to replace PbE^{2+} results in defective dipoles, breaking the long-range ordered ferroelectric domains into polar nano regions (PNR), and enhancing the dielectric relaxation behavior of ceramics. The diagrams of impedance and phase angle versus frequencies of the 2.5 mol% Sm/Pr co-doped 0.72PMN-0.28PT ceramics are displayed in (a-e). The planar electromechanical coupling factor k p, the thickness electromechanical coupling factor k t, and the longitudinal electromechanical coupling factor k 33 were calculated as the following equations, k p, k t, and k 33 are 0.66, 0.70, and 0.84 respectively when only 2.5 mol% SmE^{3+}doping, which is comparable to PMN-PT single crystals. (f) summarizes the variation tendency of k p, k t, and k 33 of transparent piezoelectric ceramics with increasing Pr content. Favorable piezoelectric and electromechanical characteristics of Sm/Pr co-doped 0.72PMN-0.28PT ceramics are advantageous for improving the efficiency of electromechanical conversion and detection sensitivity in piezoelectric transducers. Previous studies have shown that local structural heterogeneity contributes significantly to the piezoelectric properties of relaxor ferroelectrics, and among the rare earth elements, Sm has the greatest effect on the local structure. (a) shows the piezoelectric coefficients d 33 of the 2.5 mol% Sm/Pr co-doped 0.72PMN-0.28PT ceramics, which increase slightly and then decrease sharply with increasing Pr ions. It may be due to that more Pr ions entering into the A sublattice reduce the local structural heterogeneity caused by 2.5 % mol SmE^{3+} doping. The piezoelectric coefficient reaches the highest value in 2.0 mol% Sm and 0.5 mol% Pr co-doped 0.72PMN-0.28PT ceramics, which is 1547 pC/N, exceeds the single-element doped PMN-PT piezoelectric ceramics, such as Sm or Eu. 1.0 mol% Sm and 1.5 mol% Pr co-doping has the desirable comprehensive properties whose d 33 is 1318 pC/N and optical transmittance is 64.1 % at 900 nm. The insert in (a) is the test photographs of d 33. We performed a comprehensive performance comparison of the 2.5 mol% Sm/Pr co-doped PMN-PT transparent ceramics with other reported transparent piezoelectric ceramics, the transparent performance of Sm/Pr co-doped transparent piezoelectric ceramics is much superior to that of lead-free piezoelectric ceramics, and better than most of PMN-PT based ceramics.
+
+# TITLE
+Significantly enhanced piezoelectric properties in PMN-PT transparent ceramics by Sm/Pr co-doping
+
+# ABSTRACT
+In this study, Sm and Pr ions co-doped 0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 (PMN-PT) transparent piezoelectric ceramics were prepared, and the effects of Sm/Pr co-doping content on the ferroelectric, piezoelectric, dielectric, impedance properties of PMN-PT transparent ceramics were investigated. Finally, the prepared ceramics exhibit an optical transmittance of 64.1 % at 900 nm and an ultra-high piezoelectric coefficient d
+                     33 of 1310 pC/N. The performance indicates that Sm/Pr co-doped PMN-PT ceramic has a promising potential for developing multifunctional optical-acoustic-electric coupling devices.
+
+# INTRODUCTION
+Commonly used transparent piezoelectric materials like LiNbO3 (LN) and polyvinylidene fluoride (PVDF) have good optical transmittance (80 %-90 %). Unfortunately, their relatively moderate piezoelectric coefficients d 33 and electromechanical conversion factors k 33 (LiNbO3: d 33 < 40 pC/N, k 33 \u2248 47 %; PVDF: d 33 \u2248 20 pC/N, k 33 \u2248 16 %) which may limit the application requiring for high-sensitivity of devices, such as transmitting transducers and transparent actuators. Lead-free transparent ferroelectric ceramics like KNN-based show fairly decent optical transmittance of about 60 %, and a inferior piezoelectric performance compared to lead-based ceramics. The d 33 of these materials is usually lower than 200 pC/N, which could influence the electromechanical conversion efficiency during use. In recent years, Pb(Mg1/3Nb2/3)O3-PbTiO3(PMN-PT) single crystals with ultra-high piezoelectric coefficient and light transmittance (T) (d 33\u223c2100 pC/N, T\u223c70 % ; d 31\u223c1700 pC/N and T\u223c68 % ) have been prepared by AC poling, which encouraged the fabrication of transparent piezoelectric ceramics. Our group successfully prepared Eu-doped PMN-PT ceramic with d 33 of 1400 pC/N and T of 68 % at the near-infrared band, the comprehensive performance was comparable to that of the single crystal. Single rare earth element doping has been found effective in enhancing the piezoelectric properties and transparency of PMN-PT ceramics in different compositions. However, certain properties exhibit a trade-off relationship in PMN-PT ceramics, such as piezoelectric coefficient, mechanical quality factor Q m, and Curie temperature, which are difficult to improve simultaneously by single-element doping. Therefore, multiple elements doping could be a potential way to improve the overall performance of PMN-PT ceramics. For instance, PMN-PT ceramics co-doped with Sm and Mn have demonstrated a large d 33 and high Q m, which is expected to improve the efficiency of high-power sensors. Yu et al. prepared Sm, La co-doped 0.71PMN-0.29PT transparent piezoelectric ceramics by pressureless sintering, whose d 33 and optical transmittance are 1104 pC /N and 61 % at 632 nm, respectively. It is believed that SmE^{3+} is the smallest lanthanide ion that can enter the A sublattice of the oxygen octahedron and lead to a larger local structural heterogeneity, and has been proven to be one of the most effective way to improve the piezoelectric properties of PMN-PT. Qin et al. prepared transparent piezoelectric 0.75PMN-0.25PT ceramics by doping Pr ions whose transmittance is 68 % at 900 nm while the piezoelectric coefficient d 33 was relatively moderate. In this study, we prepared transparent 0.72PMN-0.28PT ceramics with ultra-high piezoelectric coefficient d 33 by Sm/Pr co-doping, and the effect of Sm, Pr doping concentration on their phase structure, optical transmittance, piezoelectric, ferroelectric, dielectric properties were discussed. Results show that the Sm/Pr co-doped PMN-PT ceramics can be a good candidate for the fabrication of multifunctional photoelectric devices.
+
+# CONCLUSION
+In summary, 2.5 mol% Sm/Pr co-doped PMN-PT ceramics with both high piezoelectric, high optical transmittance, and good photoluminescence were successfully fabricated by two-step sintering. When Pr doping content is 0 %, the ceramic has a large electromechanical coupling factor k t of 0. 63 and a high piezoelectric coefficient of 1532 pC/N, but lower transmittance. The optimal comprehensive performance is obtained in 1.5 mol% Sm and 1.0 mol% Pr doped 0.72PMN-0.28PT ceramics, which possesses the highest transmittance of 64.1 % at 900 nm, a large piezoelectric coefficient of 1310 pC/N. Results indicate that Sm/Pr co-doped 0.72PMN-0.28PT transparent ceramics show a promising prospect for multifunctional opto-electronic devices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 15:44:29: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The properties of 2.5\u2009mol% Sm/Pr co-doped 0.72PMN-28PT transparent ceramics.
+| Doping  content|  T  %  @900\u2009nm|  d   33   \uff08pC/N\uff09|  T   C   (\u2103)|  \u03b5   r   @1\u2009kHz|  E  c  (kV/cm)|  E   i |  P   r   (\u03bcC/cm E^{ } )|  k   t |  k   p |  k   33 |
+|---|---|---|---|---|---|---|---|---|---|---|
+|2.5\u2009%Sm,0.0\u2009%Pr|47|1532|82|12537|2.9|0.1|34.9|0.66|0.70|0.843|
+|2.0\u2009%Sm,0.5\u2009%Pr|52|1547|75|18177|2.55|0.3|32.2|0.61|0.65|0.8|
+|1.5\u2009%Sm,1.0\u2009%Pr|64.1|1318|71|19248|2.35|0.3|31.9|0.56|0.59|0.74|
+|1.0\u2009%Sm,1.5\u2009%Pr|61.8|1014|70|17435|2.35|0.5|31.5|0.5|0.52|0.67|
+|0.5\u2009%Sm,2.0\u2009%Pr|64.3|819|68|16218|2.35|0.7|30.4|0.43|0.45|0.59|
+
+# RESULTS AND DISCUSSION
+(a) shows the XRD patterns of 2.5 mol% Sm/Pr co-doped 72PMN-28PT ceramics. Except for the weak peak around 2\u03b8=29\xb0, all the main diffraction peaks can be indexed by the perovskite phase. (b) indicates that the enlarged (200) peak gradually shifted towards a lower degree under the higher doping Pr ions concentration. Both Sm and Pr ions have been found to substitute the PbE^{2+} in A sublattice and the lead vacancies (V Pb \u2032\u2032) are introduced to maintain charge neutrality , and the SmE^{3+} (0.98 \xc5) is further been proven the smallest lanthanide ion that can completely enter the A sublattice to replace PbE^{2+} (1.49 \xc5). Pr ion (1.19 \xc5) is larger than SmE^{3+}, then the lattice volume will be increased by more Pr ions entering into the A sublattice in the lattice compared to Sm-doped. Therefore, the (200) diffraction peak would move to the lower degrees according to the Bragg equation. Moreover, the (200) peak shows a slight splitting and asymmetrical at 0 and 0.5 mol% Pr doping, revealing the existence of tetragonal component in these compositions. The peak becomes single and symmetrical with the increased proportion of Pr ions, indicating the existence of a rhombohedral phase. exhibits the SEM images of Sm/Pr co-doped 0.72PMN-0.28PT ceramics. Meanwhile, the 1.5 mol% Sm/1.0 mol% Pr-PMN-PT ceramics show a distinct transgranular fracture, it is generally believed that transgranular fracture represents a tighter bonding between grains, reducing the light scattering and thus facilitating the transmittance. exhibits the optical transmittance of 2.5 Sm/Pr mol% co-doped 0.72PMN-0.28PT ceramics. The photographs of the ceramics with a thickness of about 0.5 mm are displayed in (a), and the words underneath them can be seen clearly. (b) shows the transmittance curves of the ceramics within the waveband of 300 nm to 900 nm, indicating that the transmittance of the ceramics is 47 %, 52 %, 64.1 %, 61.8 %, and 64.3 % (theoretical limit value\u223c71 %) at 900 nm respectively with the increasing of Pr. Moreover, ceramics below 400 nm are almost opaque due to the band gap of PMN-PT ceramics. The above results demonstrate the optical transmittance of 2.5 mol% Sm-doped 0.72PMN-0.28PT has been improved by co-doping of Sm and Pr ions, the doping of increased concentration of Pr ions leads to the increase of rhombohedral phase components, which are conducive to the improvement of transmittance. In addition, four Pr ions absorption peaks are observed at 450 nm, 472 nm, 488 nm, and 593 nm in the transmittance spectra, corresponding to the E^{3}H4-E^{3}P2, E^{3}P1, E^{3}P0, and E^{3}H4-E^{1}D2 energy level jumps of Pr ions. Eventually, the photographs of 1.5 mol%Sm, 1.0 mol%Pr co-doped 0.72PMN-0.28PT ceramic are shown in (c) and (d), and the transparency of ceramic enables a distinct view of both nearby and distant scenery through it. (a-e) exhibits the P-E loops of 2.5 mol% Sm/Pr co-doped 0.72PMN-0.28PT ceramics measured at various electric fields, and f shows the saturated P-E loops of ceramics measured under an electric field of 25 kV/cm. The generation of E i can be attributed to the substitution of PbE^{2+} at the A sublattice by nonequivalent Sm and Pr ions , as well as the volatility of PbE^{2+} during the sintering process, which leads to Pb vacancies with positive charge and results in the formation of defect dipoles and internal bias electric field finally. E i and coercive field (E c) can be calculated as follows:  The E i of the Sm/Pr co-doped 0.72PMN-0.28PT ceramics shows an upward trend with the increase of Pr, which is 0.1, 0.3, 0.3, 0.5, and 0.7 kV/cm respectively. (g, f) illustrates the trend of E c and P r with the increase of Pr ions among the 2.5 mol% total amount of doping. E c are 2.80, 2.55, 2.34, 2.30, and 2.29 kV/cm respectively, similar to the 0.72PMN-0.28PT ceramics from other work, and P r were all greater than 30 \u03bcC/cm\xb2, while the P r of Eu-PMN-PT is 31 \u03bcC/cmE^{2}. It can be seen that the E c and P r of ceramics show a moderate decreasing trend with the increased concentration of Pr, which indicates that the co-doping of Sm and Pr broke the long-range ordered ferroelectric domains in PMN-PT ceramics and degraded the ferroelectric property of them, resulting in the reduction of P r and E c. Furthermore, both the E c and P r show a decrease with the increasing proportion of Pr, which may be ascribed to a greater lattice distortion caused by Pr compared to Sm, which weakens the coupling strength between the ions among the BO6 octahedrons. (a-e) are the corresponding current density-electric-field (J-E) curves of P-E loops in (a-e), the peak values of all J-E curves decrease with the increase of the applied electric field, and the electric fields corresponding to the current density peaks on J-E curves were consistent with the coercive fields of P-E loops in (a-f), indicating that the two current density peaks were caused by the concentrated reversal of spontaneous polarization around E c. Due to the peak \u2780 is larger than peak \u2781 indicating that there is orientation polarization in the same direction as the reverse electric field making the polarization reversal much easier under the reverse electric field , resulting in the E c+ gradually larger than the negative coercive field E c-. (g) gives the values of forward and reverse peaks, \u2780 and \u2781, both present a downward trend with the increase of Pr ions concentration. Furthermore, peak \u2781 broadens gradually, indicating that the reversal of ferroelectric domains along the forward electric field fails to keep up with the change of the external electric field, and the polarization reversal is not concentrated.. displays the curves of temperature-dependent dielectric permittivity and dielectric loss of 2.5 mol% Sm/Pr co-doped 0.72PMN-0.28PT ceramics. The changing trends of dielectric permittivity \u03b5 r at 1 kHz, T m, and T d (temperatures of rhombohedral to tetragonal phase transition) with the increase of Pr doping content were illustrated in (c-e). The room temperature dielectric permittivity increases firstly with the Pr doping content increasing from 0 % to 1.0 mol% and then decreases subsequently. This phenomenon is probably because the 2.0 mol%Sm and 0.5 mol%Pr co-doping lead to a more effective Morphotropic Phase Boundarys (MPB) phase composition and relatively flat free energy, which are in favor of improving the dielectric and piezoelectric prosperities. PMN-PT in the MPB composition typically exhibits higher piezoelectric and dielectric properties because the polarization rotation is more easily achieved. There is another assumption that a small amount of SmE^{3+} entered the B sublattice, and the ferroelectric domains are pinned by the internal bias field, reducing the piezoelectric and dielectric properties of the ceramics. It indicates that more Pr ions entering into the A sublattice of the lattice to replace PbE^{2+} results in defective dipoles, breaking the long-range ordered ferroelectric domains into polar nano regions (PNR), and enhancing the dielectric relaxation behavior of ceramics. The diagrams of impedance and phase angle versus frequencies of the 2.5 mol% Sm/Pr co-doped 0.72PMN-0.28PT ceramics are displayed in (a-e). The planar electromechanical coupling factor k p, the thickness electromechanical coupling factor k t, and the longitudinal electromechanical coupling factor k 33 were calculated as the following equations, k p, k t, and k 33 are 0.66, 0.70, and 0.84 respectively when only 2.5 mol% SmE^{3+}doping, which is comparable to PMN-PT single crystals. (f) summarizes the variation tendency of k p, k t, and k 33 of transparent piezoelectric ceramics with increasing Pr content. Favorable piezoelectric and electromechanical characteristics of Sm/Pr co-doped 0.72PMN-0.28PT ceramics are advantageous for improving the efficiency of electromechanical conversion and detection sensitivity in piezoelectric transducers. Previous studies have shown that local structural heterogeneity contributes significantly to the piezoelectric properties of relaxor ferroelectrics, and among the rare earth elements, Sm has the greatest effect on the local structure. (a) shows the piezoelectric coefficients d 33 of the 2.5 mol% Sm/Pr co-doped 0.72PMN-0.28PT ceramics, which increase slightly and then decrease sharply with increasing Pr ions. It may be due to that more Pr ions entering into the A sublattice reduce the local structural heterogeneity caused by 2.5 % mol SmE^{3+} doping. The piezoelectric coefficient reaches the highest value in 2.0 mol% Sm and 0.5 mol% Pr co-doped 0.72PMN-0.28PT ceramics, which is 1547 pC/N, exceeds the single-element doped PMN-PT piezoelectric ceramics, such as Sm or Eu. 1.0 mol% Sm and 1.5 mol% Pr co-doping has the desirable comprehensive properties whose d 33 is 1318 pC/N and optical transmittance is 64.1 % at 900 nm. The insert in (a) is the test photographs of d 33. We performed a comprehensive performance comparison of the 2.5 mol% Sm/Pr co-doped PMN-PT transparent ceramics with other reported transparent piezoelectric ceramics, the transparent performance of Sm/Pr co-doped transparent piezoelectric ceramics is much superior to that of lead-free piezoelectric ceramics, and better than most of PMN-PT based ceramics.
+
+# TITLE
+Significantly enhanced piezoelectric properties in PMN-PT transparent ceramics by Sm/Pr co-doping
+
+# ABSTRACT
+In this study, Sm and Pr ions co-doped 0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 (PMN-PT) transparent piezoelectric ceramics were prepared, and the effects of Sm/Pr co-doping content on the ferroelectric, piezoelectric, dielectric, impedance properties of PMN-PT transparent ceramics were investigated. Finally, the prepared ceramics exhibit an optical transmittance of 64.1 % at 900 nm and an ultra-high piezoelectric coefficient d
+                     33 of 1310 pC/N. The performance indicates that Sm/Pr co-doped PMN-PT ceramic has a promising potential for developing multifunctional optical-acoustic-electric coupling devices.
+
+# INTRODUCTION
+Commonly used transparent piezoelectric materials like LiNbO3 (LN) and polyvinylidene fluoride (PVDF) have good optical transmittance (80 %-90 %). Unfortunately, their relatively moderate piezoelectric coefficients d 33 and electromechanical conversion factors k 33 (LiNbO3: d 33 < 40 pC/N, k 33 \u2248 47 %; PVDF: d 33 \u2248 20 pC/N, k 33 \u2248 16 %) which may limit the application requiring for high-sensitivity of devices, such as transmitting transducers and transparent actuators. Lead-free transparent ferroelectric ceramics like KNN-based show fairly decent optical transmittance of about 60 %, and a inferior piezoelectric performance compared to lead-based ceramics. The d 33 of these materials is usually lower than 200 pC/N, which could influence the electromechanical conversion efficiency during use. In recent years, Pb(Mg1/3Nb2/3)O3-PbTiO3(PMN-PT) single crystals with ultra-high piezoelectric coefficient and light transmittance (T) (d 33\u223c2100 pC/N, T\u223c70 % ; d 31\u223c1700 pC/N and T\u223c68 % ) have been prepared by AC poling, which encouraged the fabrication of transparent piezoelectric ceramics. Our group successfully prepared Eu-doped PMN-PT ceramic with d 33 of 1400 pC/N and T of 68 % at the near-infrared band, the comprehensive performance was comparable to that of the single crystal. Single rare earth element doping has been found effective in enhancing the piezoelectric properties and transparency of PMN-PT ceramics in different compositions. However, certain properties exhibit a trade-off relationship in PMN-PT ceramics, such as piezoelectric coefficient, mechanical quality factor Q m, and Curie temperature, which are difficult to improve simultaneously by single-element doping. Therefore, multiple elements doping could be a potential way to improve the overall performance of PMN-PT ceramics. For instance, PMN-PT ceramics co-doped with Sm and Mn have demonstrated a large d 33 and high Q m, which is expected to improve the efficiency of high-power sensors. Yu et al. prepared Sm, La co-doped 0.71PMN-0.29PT transparent piezoelectric ceramics by pressureless sintering, whose d 33 and optical transmittance are 1104 pC /N and 61 % at 632 nm, respectively. It is believed that SmE^{3+} is the smallest lanthanide ion that can enter the A sublattice of the oxygen octahedron and lead to a larger local structural heterogeneity, and has been proven to be one of the most effective way to improve the piezoelectric properties of PMN-PT. Qin et al. prepared transparent piezoelectric 0.75PMN-0.25PT ceramics by doping Pr ions whose transmittance is 68 % at 900 nm while the piezoelectric coefficient d 33 was relatively moderate. In this study, we prepared transparent 0.72PMN-0.28PT ceramics with ultra-high piezoelectric coefficient d 33 by Sm/Pr co-doping, and the effect of Sm, Pr doping concentration on their phase structure, optical transmittance, piezoelectric, ferroelectric, dielectric properties were discussed. Results show that the Sm/Pr co-doped PMN-PT ceramics can be a good candidate for the fabrication of multifunctional photoelectric devices.
+
+# CONCLUSION
+In summary, 2.5 mol% Sm/Pr co-doped PMN-PT ceramics with both high piezoelectric, high optical transmittance, and good photoluminescence were successfully fabricated by two-step sintering. When Pr doping content is 0 %, the ceramic has a large electromechanical coupling factor k t of 0. 63 and a high piezoelectric coefficient of 1532 pC/N, but lower transmittance. The optimal comprehensive performance is obtained in 1.5 mol% Sm and 1.0 mol% Pr doped 0.72PMN-0.28PT ceramics, which possesses the highest transmittance of 64.1 % at 900 nm, a large piezoelectric coefficient of 1310 pC/N. Results indicate that Sm/Pr co-doped 0.72PMN-0.28PT transparent ceramics show a promising prospect for multifunctional opto-electronic devices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="```json
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 2.5%Sm,0.0%Pr": 1532,
+      "0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 2.0%Sm,0.5%Pr": 1547,
+      "0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 1.5%Sm,1.0%Pr": 1318,
+      "0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 1.0%Sm,1.5%Pr": 1014,
+      "0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 0.5%Sm,2.0%Pr": 819,
+      "0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 1.5 mol% Sm, 1.0 mol% Pr": 1310
+    },
+    "abbreviations": {
+      "PMN-PT": "Pb(Mg1/3Nb2/3)O3-PbTiO3",
+      "LN": "LiNbO3",
+      "PVDF": "polyvinylidene fluoride"
+    },
+    "property_unit": "pC/N",
+    "family": "PMN-PT"
+  }
+}
+```"

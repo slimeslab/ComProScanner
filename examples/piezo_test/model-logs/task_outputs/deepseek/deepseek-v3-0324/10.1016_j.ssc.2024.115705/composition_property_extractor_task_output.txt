@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"CaBi2Nb2O9":5,"Ce-doped CaBi2Nb2O9":10.3,"La-doped CaBi2Nb2O9":21.8,"(Li, Ce)-doped CaBi2Nb2O9":18.5},"abbreviations":{"CBN":"CaBi2Nb2O9","BLSFs":"bismuth layer-structured ferroelectrics"},"property_unit":"pC/N","family":"Aurivillius ferroelectrics"}}

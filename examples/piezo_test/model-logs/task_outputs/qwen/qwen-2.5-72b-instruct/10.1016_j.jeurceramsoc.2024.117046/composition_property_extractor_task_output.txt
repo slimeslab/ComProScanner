@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PZT (0% porosity)":330.0,"PZT (7% porosity)":320.1,"PZT (13% porosity)":313.5},"abbreviations":{},"property_unit":"pC/N","family":"PZT"}}

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"CdS":2.24,"SnS2":3.11,"CdS@SnS2":3.11,"Reference Composite Sample":2.24},"property_unit":"pm/V","family":"CdS/SnS2 Heterojunction"}}

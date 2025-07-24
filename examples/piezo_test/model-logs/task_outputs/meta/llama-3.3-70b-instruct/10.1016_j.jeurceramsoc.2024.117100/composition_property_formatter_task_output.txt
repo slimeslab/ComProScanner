@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BaTi0.89Hf0.11O3":337,"Fe-doped BaTi0.89Hf0.11O3":337},"property_unit":"pC/N","family":"BaTiO3"}}

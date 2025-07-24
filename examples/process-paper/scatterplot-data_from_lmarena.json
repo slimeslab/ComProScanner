@@ -1,0 +1,712 @@
+[
+    {
+        "name": "GPT-4o",
+        "model_api_name": "chatgpt-4o-latest-20241120",
+        "input_token_price": "2.5",
+        "output_token_price": "10",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://openai.com/api/pricing/",
+        "model_source": "https://help.openai.com/en/articles/9624314-model-release-notes"
+    },
+    {
+        "name": "o1-preview",
+        "model_api_name": "o1-preview",
+        "input_token_price": "15",
+        "output_token_price": "60",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://openai.com/api/pricing/",
+        "model_source": "https://platform.openai.com/docs/models/o1"
+    },
+    {
+        "name": "o1-mini",
+        "model_api_name": "o1-mini",
+        "input_token_price": "1.1",
+        "output_token_price": "4.4",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://openai.com/api/pricing/",
+        "model_source": "https://platform.openai.com/docs/models/o1"
+    },
+    {
+        "name": "Gemini 1.5 Pro",
+        "model_api_name": "gemini-1.5-pro-002",
+        "input_token_price": "2.5",
+        "output_token_price": "10",
+        "organization": "Google",
+        "license": "Proprietary",
+        "price_source": "https://ai.google.dev/pricing#1_5pro",
+        "model_source": "https://aistudio.google.com/app/prompts/new_chat?instructions=lmsys&model=gemini-1.5-pro-002"
+    },
+    {
+        "name": "Yi-Lightning",
+        "model_api_name": "yi-lightning",
+        "input_token_price": "0.14",
+        "output_token_price": "0.14",
+        "organization": "01 AI",
+        "license": "Proprietary",
+        "price_source": "https://platform.lingyiwanwu.com/docs#%E6%A8%A1%E5%9E%8B",
+        "model_source": "https://platform.lingyiwanwu.com/docs#%E6%A8%A1%E5%9E%8B%E4%B8%8E%E8%AE%A1%E8%B4%B9"
+    },
+    {
+        "name": "Claude 3.5 Sonnet",
+        "model_api_name": "claude-3-5-sonnet-20241022",
+        "input_token_price": "3",
+        "output_token_price": "15",
+        "organization": "Anthropic",
+        "license": "Proprietary",
+        "price_source": "https://www.anthropic.com/pricing#anthropic-api",
+        "model_source": "https://www.anthropic.com/news/3-5-models-and-computer-use"
+    },
+    {
+        "name": "Athene-v2-Chat-72B",
+        "model_api_name": "athene-v2-chat",
+        "input_token_price": "0.9",
+        "output_token_price": "0.9",
+        "organization": "NexusFlow",
+        "license": "NexusFlow",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://huggingface.co/Nexusflow/Athene-V2-Chat"
+    },
+    {
+        "name": "GLM-4-Plus",
+        "model_api_name": "glm-4-plus-0111",
+        "input_token_price": "6.9",
+        "output_token_price": "6.9",
+        "organization": "Zhipu",
+        "license": "Proprietary",
+        "price_source": "https://open.bigmodel.cn/pricing",
+        "model_source": "https://bigmodel.cn/dev/howuse/glm-4"
+    },
+    {
+        "name": "GPT-4o mini",
+        "model_api_name": "gpt-4o-mini-2024-07-18",
+        "input_token_price": "0.15",
+        "output_token_price": "0.6",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://openai.com/api/pricing/",
+        "model_source": "https://openai.com/index/gpt-4o-mini-advancing-cost-efficient-intelligence/"
+    },
+    {
+        "name": "Gemini 1.5 Flash",
+        "model_api_name": "gemini-1.5-flash-002",
+        "input_token_price": "0.075",
+        "output_token_price": "0.30",
+        "organization": "Google",
+        "license": "Proprietary",
+        "price_source": "https://ai.google.dev/pricing#1_5flash",
+        "model_source": "https://aistudio.google.com/app/prompts/new_chat?instructions=lmsys&model=gemini-1.5-flash-002"
+    },
+    {
+        "name": "Llama 3.1 405B",
+        "model_api_name": "llama-3.1-405b-instruct-fp8",
+        "input_token_price": "3.5",
+        "output_token_price": "3.5",
+        "organization": "Meta",
+        "license": "Llama 3.1 Community",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://ai.meta.com/blog/meta-llama-3-1/"
+    },
+    {
+        "name": "Qwen2.5-Max",
+        "model_api_name": "qwen2.5-max",
+        "input_token_price": "1.6",
+        "output_token_price": "6.4",
+        "organization": "Alibaba",
+        "license": "Proprietary",
+        "price_source": "https://www.alibabacloud.com/help/en/model-studio/billing-for-model-studio?spm=a2c63.p38356.0.i1",
+        "model_source": "https://qwenlm.github.io/blog/qwen2.5-max/"
+    },
+    {
+        "name": "Qwen2.5-72B-Instruct",
+        "model_api_name": "qwen2.5-72b-instruct",
+        "input_token_price": "1.2",
+        "output_token_price": "1.2",
+        "organization": "Alibaba",
+        "license": "Qwen",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://qwenlm.github.io/blog/qwen2.5/"
+    },
+    {
+        "name": "Mistral-Large-2407",
+        "model_api_name": "mistral-large-2407",
+        "input_token_price": "2",
+        "output_token_price": "6",
+        "organization": "Mistral",
+        "license": "Mistral Research",
+        "price_source": "https://mistral.ai/technology/#pricing",
+        "model_source": "https://mistral.ai/news/mistral-large-2407/"
+    },
+    {
+        "name": "Llama-3.1-70B",
+        "model_api_name": "llama-3.1-70b-instruct",
+        "input_token_price": "0.88",
+        "output_token_price": "0.88",
+        "organization": "Meta",
+        "license": "Llama 3.1 Community",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://ai.meta.com/blog/meta-llama-3-1/"
+    },
+    {
+        "name": "Llama 3.3 70B",
+        "model_api_name": "llama-3.3-70b-instruct",
+        "input_token_price": "0.88",
+        "output_token_price": "0.88",
+        "organization": "Meta",
+        "license": "Llama 3.3 Community",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct"
+    },
+    {
+        "name": "Claude 3 Opus",
+        "model_api_name": "claude-3-opus-20240229",
+        "input_token_price": "15",
+        "output_token_price": "75",
+        "organization": "Anthropic",
+        "license": "Proprietary",
+        "price_source": "https://www.anthropic.com/pricing#anthropic-api",
+        "model_source": "https://www.anthropic.com/news/claude-3-family"
+    },
+    {
+        "name": "Claude 3.5 Haiku",
+        "model_api_name": "claude-3-5-haiku-20241022",
+        "input_token_price": "0.8",
+        "output_token_price": "4",
+        "organization": "Anthropic",
+        "license": "Propretary",
+        "price_source": "https://www.anthropic.com/pricing#anthropic-api",
+        "model_source": "https://www.anthropic.com/news/3-5-models-and-computer-use"
+    },
+    {
+        "name": "Qwen2.5-plus-1127",
+        "model_api_name": "qwen2.5-plus-1127",
+        "input_token_price": "0.4",
+        "output_token_price": "1.2",
+        "organization": "Alibaba",
+        "license": "Proprietary",
+        "price_source": "https://www.alibabacloud.com/help/en/model-studio/developer-reference/billing-for-tongyiqianwen",
+        "model_source": "https://help.aliyun.com/zh/model-studio/getting-started/models?spm=a2c4g.11186623.0.i7"
+    },
+    {
+        "name": "Command R+ (08-2024)",
+        "model_api_name": "command-r-plus-08-2024",
+        "input_token_price": "2.5",
+        "output_token_price": "10",
+        "organization": "Cohere",
+        "license": "CC-BY-NC-4.0",
+        "price_source": "https://cohere.com/pricing",
+        "model_source": "https://docs.cohere.com/docs/command-r-plus#model-details"
+    },
+    {
+        "name": "Qwen2.5-Coder-32B-Instruct",
+        "model_api_name": "qwen2.5-coder-32b-instruct",
+        "input_token_price": "0.8",
+        "output_token_price": "0.8",
+        "organization": "Alibaba",
+        "license": "Apache 2.0",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct"
+    },
+    {
+        "name": "Gemini 1.5 Flash-8B",
+        "model_api_name": "gemini-1.5-flash-8b-001",
+        "input_token_price": "0.075",
+        "output_token_price": "0.3",
+        "organization": "Google",
+        "license": "Proprietary",
+        "price_source": "https://ai.google.dev/pricing#1_5flash-8B",
+        "model_source": "https://aistudio.google.com/app/prompts/new_chat?instructions=lmsys&model=gemini-1.5-flash-8b"
+    },
+    {
+        "name": "Aya-Expanse-32B",
+        "model_api_name": "c4ai-aya-expanse-32b",
+        "input_token_price": "0.5",
+        "output_token_price": "1.5",
+        "organization": "Cohere",
+        "license": "CC-BY-NC-4.0",
+        "price_source": "https://cohere.com/pricing",
+        "model_source": "https://huggingface.co/CohereForAI/aya-expanse-32b"
+    },
+    {
+        "name": "Command R (08-2024)",
+        "model_api_name": "command-r-08-2024",
+        "input_token_price": "0.15",
+        "output_token_price": "0.6",
+        "organization": "Cohere",
+        "license": "CC-BY-NC-4.0",
+        "price_source": "https://cohere.com/pricing",
+        "model_source": "https://docs.cohere.com/docs/command-r-plus#model-details"
+    },
+    {
+        "name": "Ministral 8B",
+        "model_api_name": "ministral-8b-2410",
+        "input_token_price": "0.1",
+        "output_token_price": "0.1",
+        "organization": "Mistral",
+        "license": "MRL",
+        "price_source": "https://mistral.ai/technology/#pricing",
+        "model_source": "https://huggingface.co/mistralai/Ministral-8B-Instruct-2410"
+    },
+    {
+        "name": "Llama 3.1 8B",
+        "model_api_name": "llama-3.1-8b-instruct",
+        "input_token_price": "0.18",
+        "output_token_price": "0.18",
+        "organization": "Meta",
+        "license": "Llama 3.1 Community",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://ai.meta.com/blog/meta-llama-3-1/"
+    },
+    {
+        "name": "DeepSeek-V3",
+        "model_api_name": "deepseek-v3",
+        "input_token_price": "0.27",
+        "output_token_price": "1.10",
+        "organization": "DeepSeek",
+        "license": "DeepSeek",
+        "price_source": "https://api-docs.deepseek.com/quick_start/pricing",
+        "model_source": "https://huggingface.co/deepseek-ai/DeepSeek-V3"
+    },
+    {
+        "name": "DeepSeek-R1",
+        "model_api_name": "deepseek-r1",
+        "input_token_price": "0.55",
+        "output_token_price": "2.19",
+        "organization": "DeepSeek",
+        "license": "MIT",
+        "price_source": "https://api-docs.deepseek.com/quick_start/pricing",
+        "model_source": "https://api-docs.deepseek.com/news/news250120"
+    },
+    {
+        "name": "o1",
+        "model_api_name": "o1-2024-12-17",
+        "input_token_price": "15",
+        "output_token_price": "60",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://openai.com/api/pricing/",
+        "model_source": "https://openai.com/index/o1-and-new-tools-for-developers/"
+    },
+    {
+        "name": "Gemini 2.0 Flash",
+        "model_api_name": "gemini-2.0-flash-001",
+        "input_token_price": "0.1",
+        "output_token_price": "0.4",
+        "organization": "Google",
+        "license": "Proprietary",
+        "price_source": "https://ai.google.dev/pricing#2_0flash",
+        "model_source": "https://aistudio.google.com/app/prompts/new_chat?instructions=lmsys-1121&model=gemini-2.0-flash-001"
+    },
+    {
+        "name": "Gemini 2.0 Flash-Lite",
+        "model_api_name": "gemini-2.0-flash-lite-preview-02-05",
+        "input_token_price": "0.075",
+        "output_token_price": "0.3",
+        "organization": "Google",
+        "license": "Proprietary",
+        "price_source": "https://ai.google.dev/pricing#2_0flash_lite",
+        "model_source": "https://aistudio.google.com/prompts/new_chat?model=gemini-2.0-flash-lite-preview-02-05"
+    },
+    {
+        "name": "Gemma 2 9B",
+        "model_api_name": "gemma-2-9b-it",
+        "input_token_price": "0.3",
+        "output_token_price": "0.3",
+        "organization": "Google",
+        "license": "Gemma license",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://aistudio.google.com/app/prompts/new_chat?model=gemma-2-9b-it"
+    },
+    {
+        "name": "o3-mini",
+        "model_api_name": "o3-mini",
+        "input_token_price": "1.1",
+        "output_token_price": "4.4",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://openai.com/api/pricing/",
+        "model_source": "https://openai.com/index/openai-o3-mini/"
+    },
+    {
+        "name": "Nova Pro",
+        "model_api_name": "amazon-nova-pro-v1.0",
+        "input_token_price": "0.8",
+        "output_token_price": "3.2",
+        "organization": "Amazon",
+        "license": "Proprietary",
+        "price_source": "https://aws.amazon.com/bedrock/pricing/",
+        "model_source": "https://aws.amazon.com/ai/generative-ai/nova/"
+    },
+    {
+        "name": "Nova Lite",
+        "model_api_name": "amazon-nova-lite-v1.0",
+        "input_token_price": "0.06",
+        "output_token_price": "0.24",
+        "organization": "Amazon",
+        "license": "Proprietary",
+        "price_source": "https://aws.amazon.com/bedrock/pricing/",
+        "model_source": "https://aws.amazon.com/ai/generative-ai/nova/"
+    },
+    {
+        "name": "Nova Micro",
+        "model_api_name": "amazon-nova-micro-v1.0",
+        "input_token_price": "0.04",
+        "output_token_price": "0.14",
+        "organization": "Amazon",
+        "license": "Proprietary",
+        "price_source": "https://aws.amazon.com/bedrock/pricing/",
+        "model_source": "https://aws.amazon.com/ai/generative-ai/nova/"
+    },
+    {
+        "name": "Mistral-Small-24B-Instruct-2501",
+        "model_api_name": "mistral-small-24b-instruct-2501",
+        "input_token_price": "0.1",
+        "output_token_price": "0.3",
+        "organization": "Mistral",
+        "license": "Apache 2.0",
+        "price_source": "https://mistral.ai/en/products/la-plateforme#pricing",
+        "model_source": "https://huggingface.co/mistralai/Mistral-Small-24B-Instruct-2501"
+    },
+    {
+        "name": "Claude 3.7 Sonnet",
+        "model_api_name": "claude-3-7-sonnet-20250219",
+        "input_token_price": "3",
+        "output_token_price": "15",
+        "organization": "Anthropic",
+        "license": "Proprietary",
+        "price_source": "https://www.anthropic.com/news/claude-3-7-sonnet",
+        "model_source": "https://www.anthropic.com/news/claude-3-7-sonnet"
+    },
+    {
+        "name": "GPT-4.5-Preview",
+        "model_api_name": "gpt-4.5-preview-2025-02-27",
+        "input_token_price": "75",
+        "output_token_price": "150",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://openai.com/api/pricing/",
+        "model_source": "https://openai.com/index/introducing-gpt-4-5/"
+    },
+    {
+        "name": "Gemma-3 27B",
+        "model_api_name": "gemma-3-27b-it",
+        "input_token_price": "0.07",
+        "output_token_price": "0.07",
+        "organization": "Google",
+        "license": "Gemma",
+        "price_source": "https://artificialanalysis.ai/models/gemma-3-27b/providers#pricing",
+        "model_source": "http://aistudio.google.com/app/prompts/new_chat?model=gemma-3-27b-it"
+    },
+    {
+        "name": "Imagen-3.0-generate-002",
+        "model_api_name": "imagen-3.0-generate-002",
+        "input_token_price": "0.04",
+        "output_token_price": "0.04",
+        "organization": "Google",
+        "license": "Proprietary",
+        "price_source": "https://cloud.google.com/vertex-ai/generative-ai/pricing",
+        "model_source": "https://deepmind.google/technologies/imagen-3/"
+    },
+    {
+        "name": "Recraft V3",
+        "model_api_name": "recraft-v3",
+        "input_token_price": "0.04",
+        "output_token_price": "0.04",
+        "organization": "Google",
+        "license": "Proprietary",
+        "price_source": "https://fal.ai/models/fal-ai/recraft-v3",
+        "model_source": "https://www.recraft.ai/blog/recraft-introduces-a-revolutionary-ai-model-that-thinks-in-design-language"
+    },
+    {
+        "name": "Luma Photon",
+        "model_api_name": "photon",
+        "input_token_price": "0.03",
+        "output_token_price": "0.03",
+        "organization": "Luma AI",
+        "license": "Proprietary",
+        "price_source": "https://replicate.com/pricing",
+        "model_source": "https://replicate.com/luma/photon"
+    },
+    {
+        "name": "Ideogram 2.0",
+        "model_api_name": "ideogram-v2",
+        "input_token_price": "0.08",
+        "output_token_price": "0.08",
+        "organization": "Ideogram",
+        "license": "Proprietary",
+        "price_source": "https://replicate.com/pricing",
+        "model_source": "https://replicate.com/ideogram-ai/ideogram-v2"
+    },
+    {
+        "name": "FLUX1.1 [pro]",
+        "model_api_name": "flux-1.1-pro",
+        "input_token_price": "0.04",
+        "output_token_price": "0.04",
+        "organization": "Black Forest Labs",
+        "license": "Proprietary",
+        "price_source": "https://replicate.com/pricing",
+        "model_source": "https://replicate.com/black-forest-labs/flux-1.1-pro"
+    },
+    {
+        "name": "DALL·E 3",
+        "model_api_name": "dall-e-3",
+        "input_token_price": "0.04",
+        "output_token_price": "0.04",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://platform.openai.com/docs/pricing",
+        "model_source": "https://platform.openai.com/docs/models#dall-e"
+    },
+    {
+        "name": "FLUX.1 [dev] (fp8)",
+        "model_api_name": "flux-1-dev-fp8",
+        "input_token_price": "0.014",
+        "output_token_price": "0.014",
+        "organization": "Black Forest Labs",
+        "license": "Open",
+        "price_source": "https://fireworks.ai/blog/flux-launch",
+        "model_source": "https://fireworks.ai/models/fireworks/flux-1-dev-fp8"
+    },
+    {
+        "name": "Stable Diffusion 3.5 Large",
+        "model_api_name": "stable-diffusion-v35-large",
+        "input_token_price": "0.065",
+        "output_token_price": "0.065",
+        "organization": "Stability AI",
+        "license": "Open",
+        "price_source": "https://fal.ai/models/fal-ai/stable-diffusion-v35-large",
+        "model_source": "https://fal.ai/models/fal-ai/stable-diffusion-v35-large"
+    },
+    {
+        "name": "Step-1o-Vision-32k",
+        "model_api_name": "step-1o-vision-32k-highres",
+        "input_token_price": "2.07",
+        "output_token_price": "9.67",
+        "organization": "StepFun",
+        "license": "Proprietary",
+        "price_source": "https://www.omniverse.com.im/discover/model/step-1o-vision-32k?hl=en-US",
+        "model_source": "https://platform.stepfun.com/docs/llm/vision"
+    },
+    {
+        "name": "Pixtral-Large-2411",
+        "model_api_name": "pixtral-large-2411",
+        "input_token_price": "2",
+        "output_token_price": "6",
+        "organization": "Mistral",
+        "license": "MRL",
+        "price_source": "https://mistral.ai/products/la-plateforme#pricing",
+        "model_source": "https://huggingface.co/mistralai/Pixtral-Large-Instruct-2411"
+    },
+    {
+        "name": "Qwen-VL-Max-1119",
+        "model_api_name": "qwen-vl-max-1119",
+        "input_token_price": "0.8",
+        "output_token_price": "3.2",
+        "organization": "Alibaba",
+        "license": "Proprietary",
+        "price_source": "https://www.alibabacloud.com/help/en/model-studio/getting-started/models",
+        "model_source": "https://help.aliyun.com/zh/model-studio/user-guide/vision/?spm=a2c4g.11186623.0.0.33d259a8vPlZoe#f1cbd5b8a8k5w"
+    },
+    {
+        "name": "Step-1V-32K",
+        "model_api_name": "step-1v-32k",
+        "input_token_price": "2.07",
+        "output_token_price": "9.67",
+        "organization": "StepFun",
+        "license": "Proprietary",
+        "price_source": "https://chat.problembo.com/discover/model/step-1v-32k?hl=en-US",
+        "model_source": "https://platform.stepfun.com/docs/llm/vision"
+    },
+    {
+        "name": "Qwen2.5-VL-72B",
+        "model_api_name": "qwen2.5-vl-72b-instruct",
+        "input_token_price": "1.2",
+        "output_token_price": "1.2",
+        "organization": "Alibaba",
+        "license": "Qwen",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://huggingface.co/Qwen/Qwen2.5-VL-72B-Instruct"
+    },
+    {
+        "name": "Qwen2-VL-72B",
+        "model_api_name": "qwen2-vl-72b",
+        "input_token_price": "1.2",
+        "output_token_price": "1.2",
+        "organization": "Alibaba",
+        "license": "Qwen",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://qwenlm.github.io/zh/blog/qwen2-vl/"
+    },
+    {
+        "name": "Molmo-72B-0924",
+        "model_api_name": "molmo-72b-0924",
+        "input_token_price": "1.2",
+        "output_token_price": "1.2",
+        "organization": "AI2",
+        "license": "Apache 2.0",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://huggingface.co/allenai/Molmo-72B-0924"
+    },
+    {
+        "name": "Pixtral-12B-2409",
+        "model_api_name": "pixtral-12b-2409",
+        "input_token_price": "2",
+        "output_token_price": "6",
+        "organization": "Mistral",
+        "license": "Apache 2.0",
+        "price_source": "https://mistral.ai/products/la-plateforme#pricing",
+        "model_source": "https://mistral.ai/news/pixtral-12b/"
+    },
+    {
+        "name": "Llama-3.2-90B-Vision",
+        "model_api_name": "llama-3.2-vision-90b-instruct",
+        "input_token_price": "1.2",
+        "output_token_price": "1.2",
+        "organization": "Meta",
+        "license": "Llama 3.2",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://ai.meta.com/blog/llama-3-2-connect-2024-vision-edge-mobile-devices/"
+    },
+    {
+        "name": "Hunyuan-Standard-Vision",
+        "model_api_name": "hunyuan-standard-vision-2024-12-31",
+        "input_token_price": "0.62",
+        "output_token_price": "0.62",
+        "organization": "Tencent",
+        "license": "Proprietary",
+        "price_source": "https://aimhub.nanjiren.online/pricing",
+        "model_source": "https://cloud.tencent.com/document/product/1729/104753"
+    },
+    {
+        "name": "Qwen2-VL-7B",
+        "model_api_name": "qwen2-vl-7b-instruct",
+        "input_token_price": "0.2",
+        "output_token_price": "0.2",
+        "organization": "Alibaba",
+        "license": "Apache 2.0",
+        "price_source": "https://docs.hyperbolic.xyz/docs/hyperbolic-ai-inference-pricing",
+        "model_source": "https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct"
+    },
+    {
+        "name": "Yi-Vision",
+        "model_api_name": "yi-vision",
+        "input_token_price": "0.19",
+        "output_token_price": "0.19",
+        "organization": "01 AI",
+        "license": "Proprietary",
+        "price_source": "https://platform.01.ai/docs#models-and-pricing",
+        "model_source": "https://platform.01.ai/docs#models-and-pricing"
+    },
+    {
+        "name": "Llama-3.2-11B-Vision",
+        "model_api_name": "llama-3.2-vision-11b-instruct",
+        "input_token_price": "0.18",
+        "output_token_price": "0.18",
+        "organization": "Meta",
+        "license": "Llama 3.2",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://ai.meta.com/blog/llama-3-2-connect-2024-vision-edge-mobile-devices/"
+    },
+    {
+        "name": "Molmo-7B-D-0924",
+        "model_api_name": "molmo-7b-d-0924",
+        "input_token_price": "0.2",
+        "output_token_price": "0.2",
+        "organization": "AI2",
+        "license": "Apache 2.0",
+        "price_source": "https://docs.hyperbolic.xyz/docs/hyperbolic-ai-inference-pricing",
+        "model_source": "https://huggingface.co/allenai/Molmo-7B-D-0924"
+    },
+    {
+        "name": "Phi-3.5-vision",
+        "model_api_name": "phi-3.5-vision-instruct",
+        "input_token_price": "0.13",
+        "output_token_price": "0.52",
+        "organization": "Microsoft",
+        "license": "MIT",
+        "price_source": "https://azure.microsoft.com/en-us/pricing/details/phi-3/",
+        "model_source": "https://huggingface.co/microsoft/Phi-3.5-vision-instruct"
+    },
+    {
+        "name": "Gemini-2.5-Pro-Preview",
+        "model_api_name": "gemini-2.5-pro-exp-03-25",
+        "input_token_price": "1.25",
+        "output_token_price": "10",
+        "organization": "Google",
+        "license": "Proprietary",
+        "price_source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-pro-preview",
+        "model_source": "https://aistudio.google.com/?model=gemini-2.5-pro-preview-05-06"
+    },
+    {
+        "name": "Gemini-2.5-Flash-Preview",
+        "model_api_name": "gemini-2.5-flash-preview-05-20",
+        "input_token_price": "0.15",
+        "output_token_price": "0.60",
+        "organization": "Google",
+        "license": "Proprietary",
+        "price_source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-flash",
+        "model_source": "https://aistudio.google.com/?model=gemini-2.5-flash-preview-05-20"
+    },
+    {
+        "name": "Llama-4-Maverick",
+        "model_api_name": "llama-4-maverick-03-26-experimental",
+        "input_token_price": "0.27",
+        "output_token_price": "0.85",
+        "organization": "Meta",
+        "license": "Llama",
+        "price_source": "https://www.together.ai/pricing",
+        "model_source": "https://ai.meta.com/blog/llama-4-multimodal-intelligence/"
+    },
+    {
+        "name": "GPT-4.1",
+        "model_api_name": "gpt-4.1-2025-04-14",
+        "input_token_price": "2.0",
+        "output_token_price": "8.0",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://openai.com/api/pricing/",
+        "model_source": "https://openai.com/index/gpt-4-1/"
+    },
+    {
+        "name": "GPT-4.1 Mini",
+        "model_api_name": "gpt-4.1-mini-2025-04-14",
+        "input_token_price": "0.40",
+        "output_token_price": "1.60",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://openai.com/api/pricing/",
+        "model_source": "https://openai.com/index/gpt-4-1/"
+    },
+    {
+        "name": "GPT-4.1 Nano",
+        "model_api_name": "gpt-4.1-nano-2025-04-14",
+        "input_token_price": "0.10",
+        "output_token_price": "0.40",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://openai.com/api/pricing/",
+        "model_source": "https://openai.com/index/gpt-4-1/"
+    },
+    {
+        "name": "o3",
+        "model_api_name": "o3-2025-04-16",
+        "input_token_price": "10.00",
+        "output_token_price": "40.00",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://openai.com/api/pricing/",
+        "model_source": "https://platform.openai.com/docs/models/o3"
+    },
+    {
+        "name": "o4-mini",
+        "model_api_name": "o4-mini-2025-04-16",
+        "input_token_price": "1.10",
+        "output_token_price": "4.40",
+        "organization": "OpenAI",
+        "license": "Proprietary",
+        "price_source": "https://openai.com/api/pricing/",
+        "model_source": "https://openai.com/index/openai-o4-mini/"
+    }
+]

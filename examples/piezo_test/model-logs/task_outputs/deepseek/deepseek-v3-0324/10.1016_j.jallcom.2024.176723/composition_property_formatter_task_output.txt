@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"AlN (S1: 400 W, 20:40 Ar:N2)":5.0,"AlN (S2: 400 W, 40:20 Ar:N2)":4.5,"AlN (S3: 400 W, 40:40 Ar:N2)":4.5},"property_unit":"pC/N","family":"AlN"}}

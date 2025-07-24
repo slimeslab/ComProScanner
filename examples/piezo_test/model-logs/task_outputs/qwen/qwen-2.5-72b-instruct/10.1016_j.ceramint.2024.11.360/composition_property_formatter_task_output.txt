@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi4Ti3O12":4.25,"Bi3.75La0.25Ti3O12":7.75,"Bi3.25La0.75Ti3O12":11.57,"Bi3La1Ti3O12":11.57},"property_unit":"pm/V","family":"Bi4Ti3O12"}}

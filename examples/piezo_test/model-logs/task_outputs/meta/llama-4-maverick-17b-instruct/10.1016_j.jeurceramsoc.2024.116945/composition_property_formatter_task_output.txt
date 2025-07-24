@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.3956BiScO3-0.0344Bi(Zn0.5Ti0.5)O3-0.57PbTiO3":372,"0.3864BiScO3-0.0336Bi(Zn0.5Ti0.5)O3-0.58PbTiO3":480,"0.3864BiScO3-0.0336Bi(Zn0.5Ti0.5)O3-0.585PbTiO3":585,"0.3772BiScO3-0.0328Bi(Zn0.5Ti0.5)O3-0.59PbTiO3":546,"0.368BiScO3-0.032Bi(Zn0.5Ti0.5)O3-0.6PbTiO3":406},"property_unit":"pC/N","family":"BiScO3-PbTiO3"}}

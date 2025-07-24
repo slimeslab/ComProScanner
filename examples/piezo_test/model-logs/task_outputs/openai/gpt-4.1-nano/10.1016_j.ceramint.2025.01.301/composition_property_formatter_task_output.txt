@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi4Ti3O12":19,"Bi4Ti3O12 (BTO)":19,"Bi4Ti3O12 (BTO) with negative strain":19,"Bi4Ti3O12 (BTO) with variable composition":19,"(1- x)Bi4Ti3O12 - (x)Bi4Ti3O12 where x=0, 0.1, 0.2, 0.3":19},"property_unit":"pC/N","family":"Bi4Ti3O12"}}

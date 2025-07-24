@@ -1,0 +1,1 @@
+{"synthesis_extracted_data":{"method":"traditional solid-state reaction","precursors":["0.7BiFeO3-0.3BaTiO3","(Bi0.5Na0.5)TiO3","Bi2O3"],"steps":[],"characterization_techniques":["XRD","Rietveld-refined XRD","Raman spectroscopy","XPS","SEM","PFM"]}}

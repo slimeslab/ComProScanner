@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.02Nd: BS-0.64PT":550,"0.02Nd: BS-0.62PT":465,"0.02Nd: BS-0.63PT":476,"0.02Nd: BS-0.65PT":430},"abbreviations":{},"property_unit":"pC/N","family":"BS-PT"}}

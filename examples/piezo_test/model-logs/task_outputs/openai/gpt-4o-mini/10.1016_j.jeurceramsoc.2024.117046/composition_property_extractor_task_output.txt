@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"KICET-PZT8":313.5},"abbreviations":{},"property_unit":"pC/N","family":"PZT"}}

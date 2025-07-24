@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.74Pb(Mg1/3Nb2/3)O3-0.26PbTiO3":1780},"abbreviations":{"PMN-0.26PT":"0.74Pb(Mg1/3Nb2/3)O3-0.26PbTiO3","PMNT":"(1-x)Pb(Mg1/3Nb2/3)O3-xPbTiO3","PZT":"PbZr1-xTixO3"},"property_unit":"pC/N","family":"Pb(Mg1/3Nb2/3)O3-PbTiO3"}}

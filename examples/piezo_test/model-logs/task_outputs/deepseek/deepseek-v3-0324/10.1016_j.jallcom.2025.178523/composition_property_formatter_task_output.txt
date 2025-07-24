@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(1-0.12)(Na0.5Bi0.5)TiO3 - 0.12Ba(Ti0.98Zr0.02)O3":175,"Ba(Ti0.98Zr0.02)O3":350},"property_unit":"pC/N","family":"NBT-BZT"}}

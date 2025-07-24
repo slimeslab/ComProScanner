@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"CaBi4Ti4O15":7,"Ca1-(0.10)(Na0.5Pr0.25Ce0.25)(0.10)Bi4Ti4O15 + 0.2":22.3},"property_unit":"pC/N","family":"BLSFs"}}

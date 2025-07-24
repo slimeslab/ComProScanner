@@ -1,0 +1,195 @@
+2025-07-13 20:42:00: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Refinement results of the BCZT-0.8\u2009%La-xTm ceramics.
+| x| R wp| a| c|
+|---|---|---|---|
+|0|6.9|3.9940|4.014|
+|0.7\u2009%|7.1|3.9946|4.018|
+|2\u2009%|7.7|3.9961|4.017|
+
+Table 2. The maximum relative permittivity of BCZT-0.8\u2009%La-0.7\u2009%Tm ceramic at varying frequencies.
+|Frequency (Hz)|100|1k|10k|100k|1\u2009M|
+|---|---|---|---|---|---|
+|\u0511 max|13853.8|11143.2|9941.6|9170.6|8575.9|
+
+# RESULTS AND DISCUSSION
+(a) and (c) display the XRD patterns of BCZT-0.8 %La-xTm precursor and ceramic powders, respectively, at 2\u03b8 = 10\xb0\u201380\xb0. The results indicated that the LaE^{3+} and TmE^{3+} ions were completely diffused into the lattice of the ceramics. At the same time, the precursor and ceramic powders showed strong and sharp XRD peaks, which proved that the ceramics had good crystalline structure. The trends shown in (b) and (d) for the characteristic peak (44\xb0\u201346\xb0) shifting to lower angles could be elucidated through the ionic radius. TmE^{3+} ions will occupy the B site of the ABO3 structure due to their small ionic radius (r = 0.869 \xc5). The ionic radii of TiE^{4+} and ZrE^{4+} (B site of ABO3) ions were 0.68 and 0.80 \xc5. Therefore, the characteristic peak shifts to lower angles due to the lattice contraction when TmE^{3+} ions replaced the site of TiE^{4+} and ZrE^{4+} ions. The relationship between diffraction angle and interplanar crystal spacing is shown by Bragg\u2019s law.  where d is the interplanar crystal spacing, \u03b8 is the diffraction angle, and \u03bb is a length of wave. Meanwhile, the 1:2 split of the characteristic peak is shown in (b) and (d). According to the PDF card (PDF # 79\u20132265), this schismatic characteristic peak occurs in ceramics when the ceramics possess a tetragonal (T) phase. To further study the influence on lattice parameters when TmE^{3+} ions enter the lattice, the XRD patterns (x = 0, 0.7 %, and 2 %) were refined using the GASA \u2161 program. The diminutive difference plot indicates that the refined data match well with the XRD patterns. Moreover, the confidence factor (R wp) ranging from 6.9 % to 7.7 % in , demonstrating the high reliability of the refined data. In addition, the refinement results likewise confirmed that the ceramics showed a T phase, which was consistent with the analysis of XRD patterns. The XPS results and corresponding fitting data for O1s for BCZT-0.8 %La-xTm ceramics with various x contents (x = 0, 0.3 %, 0.7 %, and 2 %) are showed in. The three peaks of the XPS spectrum from 527 to 533 eV consisted of the oxygen lattice (cation oxygen bonds), oxygen vacancy and absorbed H2O, successively. And the ratio of oxygen vacancies (OVacancy/OLattice) is exhibited in (e). The main reason for this was TmE^{3+} ions replaced TiE^{4+} and ZrE^{4+} ions, which led to a difference in the valence ( ). On the other hand, a large number of V O-Tm\u2032Ti/Zr dipole defects are produced when the oxygen vacancy concentrations are high. These dipole defects would accumulate near grain boundaries and domain walls, which affected the electrical properties of the ceramics through inhibiting grain growth, domain motion, and the switch of domain walls.  reveals the SEM images of the polished surfaces of BCZT-0.8 %La-xTm ceramics. And their grain size appeared to increase initially and then decrease when x changed from 0 % to 2 %. In addition, the lattice distortion inhibited the grain boundary migration when TmE^{3+} ions occupied the B sites, which was also an important reason for the reduction in grain size. (a) shows the temperature-dependent relative permittivity and dielectric loss of BCZT-0.8 %La-xTm ceramics with different x contents at a frequency of 10 kHz. In addition, the maximum permittivity of ceramics decreased gradually with an increment of frequencies ( ), which was attributed to the synergistic effects of diverse polarization mechanisms. shows the temperature dependence of inverse permittivity (10E^{4}/\u0511 r) of BCZT-0.8 %La-xTm ceramics at a frequency of 10 kHz, the temperature deviation and the relationship of ln (T - T m) assessed with ln (1/\u0511 r - 1/\u0511 m) of BCZT-0.8 %La-xTm ceramics with various x contents. The Curie-Weiss law and modified Curie-Weiss law are shown in. where C expresses the Curie-Weiss constant, T cw represents the Curie-Weiss temperature, \u0394T m corresponds to the temperature deviation of Curie-Weiss law (dielectric diffusion degree), T B is the temperature which the dielectric constant begins to obey Curie-Weiss law, T m is the temperature corresponding to the dielectric constant, C\u2032 is the modified Curie-Weiss parameter, and \u03b3 corresponds to the constant of diffuseness via the relationship of ln (T - T m) assessed with ln (1/\u0511 r - 1/\u0511 m). When the value of \u03b3 is 1, the samples show a normal ferroelectricity. With the incremental \u03b3 value at 2, the samples transform to a relaxor ferroelectricity. Slightly reduced \u0394T m and \u03b3 values were found when x contents changed from 0 % to 0.1 %. With the x contents continuing to rise, the \u03b3 values increased gradually to 1.4685 from 1.1950, and the \u0394T m showed an increasing trend. This phenomenon was attributed to the increased disorder and volatility of the local composition. illustrates the P-E loops for BCZT-0.8 %La-xTm ceramics. The remnant polarisation (P r) and coercive field (Ec) initially increased gradually with the increase of x contents, and the maximum P r was equal to 28.9 \u03bcC/cmE^{2} when x was 0.7 %. This outcome was attributed to the domains easily switched in a large grain size , and the distortion of oxygen octahedron when TmE^{3+} ions entered crystal structure. This result could promote the generation of V O-Tm\u2032Ti/Zr dipole defects, thus pinning the ferroelectric domains and causing increase carrier migration, which led to the P r for ceramic reduction. The results were consistent with the conclusion obtained via XPS spectrum analysis. The thinned P-E loops and decreased Ec with large x contents could be attributed to the presence of polar nanoregions (PNRs) and the disruption of ferroelectric long-range ordering. The piezoelectric constant (d 33) and mechanical quality factor (Q m) of BCZT-0.8 %La-xTm ceramics are shown in. The d 33 increased first and then decreased with the increment of x contents. Furthermore, the d 33 reached peak value when x contents were equal to 1 %. The distortion of the ceramics\u2019 oxygen octahedron structure was also a reason for the optimization of d 33. The Q m of samples appeared to have an opposite trend to the variation tendency of d 33 values, and the maximum Q m value was shown when x was equal to 2 %. Meanwhile, the d 33 displayed a decreasing trend when x contents increased from 1 % to 2 %. The phenomenon was due to the incremental concentrations of oxygen vacancy pinning the domains and domain walls, which led to the increase of Q m and the decrease of d 33. This finding was basically consistent with the results of XPS spectrum analysis.
+
+# TITLE
+Influence of oxygen vacancies and electrical properties in Ba<inf>0.92</inf>Ca<inf>0.08</inf>Zr<inf>0.05</inf>Ti<inf>0.95</inf>O<inf>3</inf> ceramics through the co-doping of La<sup>3 +</sup> and Tm<sup>3+</sup> ions
+
+# ABSTRACT
+Barium calcium zirconate titanate (BCZT)-based piezoelectric ceramics, which are modified with rare earth elements, are one of the candidates for replacing lead-based piezoelectric ceramics. In this study, the BCZT-0.8 %La-xTm ceramics were prepared using the sol-gel method. The effects of varying Tm3+ ions contents on the dielectric, ferroelectric, and piezoelectric properties of ceramics were investigated and the influence mechanism was discussed. Results showed that La3+ and Tm3+ ions co-doping can affect the motion of domains and domain walls by adjusting oxygen vacancy concentrations and microstructure, which is the main reason for the various electrical properties of ceramics. Especially when the Tm3+ ions content is 2 %, many oxygen vacancies would generate, which is due to Tm3+ ions replace to B-site cations. When Tm3+ ions content was 0.7 %, the ceramics showed excellent dielectric constant (ԑ
+                     r = 9941.6), remnant polarisation (P
+                     r = 28.93 μC/cm), and piezoelectric constant (d
+                     33 = 181 pC/N). The results have some reference value for enhancing the electrical properties of BCZT piezoelectric ceramics using elements co-doping.
+
+# INTRODUCTION
+Barium calcium zirconate titanate (BCZT)-based lead-free piezoelectric ceramics are regarded as one of the most promising candidate materials , because they could enhance electrical properties by constructing the morphotropic phase boundaries and polymorphic phase transitions. Nonetheless, despite the relatively outstanding performance of BCZT ceramics, some defects still exist. To enhance the performance of BCZT ceramics, researchers have focused on the doped elements method. In recent years, BCZT piezoelectric ceramics have obtained high Curie temperature, low dielectric loss, high remnant polarisation and high piezoelectric constant by doping different elements to regulate the internal microstructure, defects and multiphase coexistence of ceramics. For example, Kumari et al. prepared BiE^{3+} ions doped Ba0.98\u20133x/2Bi x Ca0.02Zr0.02Ti0.976Cu0.008O3 lead-free ceramics using the solid-state method. In their work, the grain size decreased significantly from 16.14 to 2.11 \u03bcm with increased BiE^{3+} ions contents. When BiE^{3+} ions content was 0.02, the ceramics had high Curie temperature (159 \xb0C), high dielectric constant (\u03b5 r = 3146), and low dielectric loss (tan \u03b4 = 0.019), meanwhile, the temperature stability of electrical properties for the ceramics was improved. Li et al. prepared Ba0.85Ca0.15Zr0.1(Ti1\u2212x Ni x )0.9O3 (BCZT-xNi) (x = 0, 0.01, 0.02, 0.04) ceramics using the sol-gel method. When x = 0.01, the ceramics had a high dielectric constant (\u03b5 r = 4473) and good frequency stability. Meanwhile, a low dielectric loss (tan \u03b4 = 0.004) at 100 Hz was detected in their work. Liu et al. prepared Li-doped (Ba0.85Ca0.15)(Zr0.1Ti0.9)O3 ceramics. The best results in this work showed that the \u03b5 r = 3814, tan \u03b4 = 0.01, d 33 = 420 pC/N, and k p = 47 %. Zheng et al. prepared Ba0.85Ca0.15Zr0.1(Ti1-x Mn x )0.9O3 (x = 0, 2 %, 4 %, and 8 %) ceramics using the sol-gel method. When x = 4 %, the ceramics exhibited a high dielectric constant (\u03b5 r = 3021 at 100 Hz) and a low dielectric loss (tan \u03b4 = 0.0569 at 10E^{2} Hz). Ramovatar et al. fabricated Ba0.98Ca0.02Zr0.02Ti0.98O3-xPr piezoelectric ceramics via a solid-state method. When PrE^{3+} ions content was 0.04, the ceramics possessed a large remnant polarisation (2P r, \u223c 13 \xb5C/cmE^{2}) and low coercive field (Ec, \u223c 22 V/cm) with the co-existed tetragonal and orthorhombic phases. The results indicated that the dielectric, ferroelectric, and piezoelectric properties of BCZT ceramics were significantly improved by various ion dopants.
+
+# CONCLUSION
+BCZT-0.8 %La-xTm co-doped ceramics were prepared using the sol-gel method in this study. The results indicated that the LaE^{3+} and TmE^{3+} ions could bring about high dielectric, ferroelectric, and piezoelectric properties for ceramics by adjusting the oxygen vacancy concentrations. Doping the LaE^{3+} and TmE^{3+} ions in the ceramics would also achieve a dense microstructure for the ceramics, thus improving the electrical properties of the samples. And, an appropriate amount of TmE^{3+} ions dopant could increase the grain size of ceramics. At the same time, the disorder and volatility of the local composition increased along with the rise of TmE^{3+} ions contents, which led to the diffuse phase transitions of ceramics. When TmE^{3+} ions content was 0.7 %, the ceramics showed the excellent dielectric constant (9941.6), maximum remnant polarization (28.9 \u03bcC/cm), and piezoelectric constant (181 pC/N). And meaningful T C and Q m of the ceramic was 93 \xb0C and 127.9, respectively. In summary, co-doping with rare earth ions can bring about excellent electrical properties for BCZT-based ceramics, making them a potential lead-free piezoelectric candidate.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-13 20:42:14: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Refinement results of the BCZT-0.8\u2009%La-xTm ceramics.
+| x| R wp| a| c|
+|---|---|---|---|
+|0|6.9|3.9940|4.014|
+|0.7\u2009%|7.1|3.9946|4.018|
+|2\u2009%|7.7|3.9961|4.017|
+
+Table 2. The maximum relative permittivity of BCZT-0.8\u2009%La-0.7\u2009%Tm ceramic at varying frequencies.
+|Frequency (Hz)|100|1k|10k|100k|1\u2009M|
+|---|---|---|---|---|---|
+|\u0511 max|13853.8|11143.2|9941.6|9170.6|8575.9|
+
+# RESULTS AND DISCUSSION
+(a) and (c) display the XRD patterns of BCZT-0.8 %La-xTm precursor and ceramic powders, respectively, at 2\u03b8 = 10\xb0\u201380\xb0. The results indicated that the LaE^{3+} and TmE^{3+} ions were completely diffused into the lattice of the ceramics. At the same time, the precursor and ceramic powders showed strong and sharp XRD peaks, which proved that the ceramics had good crystalline structure. The trends shown in (b) and (d) for the characteristic peak (44\xb0\u201346\xb0) shifting to lower angles could be elucidated through the ionic radius. TmE^{3+} ions will occupy the B site of the ABO3 structure due to their small ionic radius (r = 0.869 \xc5). The ionic radii of TiE^{4+} and ZrE^{4+} (B site of ABO3) ions were 0.68 and 0.80 \xc5. Therefore, the characteristic peak shifts to lower angles due to the lattice contraction when TmE^{3+} ions replaced the site of TiE^{4+} and ZrE^{4+} ions. The relationship between diffraction angle and interplanar crystal spacing is shown by Bragg\u2019s law.  where d is the interplanar crystal spacing, \u03b8 is the diffraction angle, and \u03bb is a length of wave. Meanwhile, the 1:2 split of the characteristic peak is shown in (b) and (d). According to the PDF card (PDF # 79\u20132265), this schismatic characteristic peak occurs in ceramics when the ceramics possess a tetragonal (T) phase. To further study the influence on lattice parameters when TmE^{3+} ions enter the lattice, the XRD patterns (x = 0, 0.7 %, and 2 %) were refined using the GASA \u2161 program. The diminutive difference plot indicates that the refined data match well with the XRD patterns. Moreover, the confidence factor (R wp) ranging from 6.9 % to 7.7 % in , demonstrating the high reliability of the refined data. In addition, the refinement results likewise confirmed that the ceramics showed a T phase, which was consistent with the analysis of XRD patterns. The XPS results and corresponding fitting data for O1s for BCZT-0.8 %La-xTm ceramics with various x contents (x = 0, 0.3 %, 0.7 %, and 2 %) are showed in. The three peaks of the XPS spectrum from 527 to 533 eV consisted of the oxygen lattice (cation oxygen bonds), oxygen vacancy and absorbed H2O, successively. And the ratio of oxygen vacancies (OVacancy/OLattice) is exhibited in (e). The main reason for this was TmE^{3+} ions replaced TiE^{4+} and ZrE^{4+} ions, which led to a difference in the valence ( ). On the other hand, a large number of V O-Tm\u2032Ti/Zr dipole defects are produced when the oxygen vacancy concentrations are high. These dipole defects would accumulate near grain boundaries and domain walls, which affected the electrical properties of the ceramics through inhibiting grain growth, domain motion, and the switch of domain walls.  reveals the SEM images of the polished surfaces of BCZT-0.8 %La-xTm ceramics. And their grain size appeared to increase initially and then decrease when x changed from 0 % to 2 %. In addition, the lattice distortion inhibited the grain boundary migration when TmE^{3+} ions occupied the B sites, which was also an important reason for the reduction in grain size. (a) shows the temperature-dependent relative permittivity and dielectric loss of BCZT-0.8 %La-xTm ceramics with different x contents at a frequency of 10 kHz. In addition, the maximum permittivity of ceramics decreased gradually with an increment of frequencies ( ), which was attributed to the synergistic effects of diverse polarization mechanisms. shows the temperature dependence of inverse permittivity (10E^{4}/\u0511 r) of BCZT-0.8 %La-xTm ceramics at a frequency of 10 kHz, the temperature deviation and the relationship of ln (T - T m) assessed with ln (1/\u0511 r - 1/\u0511 m) of BCZT-0.8 %La-xTm ceramics with various x contents. The Curie-Weiss law and modified Curie-Weiss law are shown in. where C expresses the Curie-Weiss constant, T cw represents the Curie-Weiss temperature, \u0394T m corresponds to the temperature deviation of Curie-Weiss law (dielectric diffusion degree), T B is the temperature which the dielectric constant begins to obey Curie-Weiss law, T m is the temperature corresponding to the dielectric constant, C\u2032 is the modified Curie-Weiss parameter, and \u03b3 corresponds to the constant of diffuseness via the relationship of ln (T - T m) assessed with ln (1/\u0511 r - 1/\u0511 m). When the value of \u03b3 is 1, the samples show a normal ferroelectricity. With the incremental \u03b3 value at 2, the samples transform to a relaxor ferroelectricity. Slightly reduced \u0394T m and \u03b3 values were found when x contents changed from 0 % to 0.1 %. With the x contents continuing to rise, the \u03b3 values increased gradually to 1.4685 from 1.1950, and the \u0394T m showed an increasing trend. This phenomenon was attributed to the increased disorder and volatility of the local composition. illustrates the P-E loops for BCZT-0.8 %La-xTm ceramics. The remnant polarisation (P r) and coercive field (Ec) initially increased gradually with the increase of x contents, and the maximum P r was equal to 28.9 \u03bcC/cmE^{2} when x was 0.7 %. This outcome was attributed to the domains easily switched in a large grain size , and the distortion of oxygen octahedron when TmE^{3+} ions entered crystal structure. This result could promote the generation of V O-Tm\u2032Ti/Zr dipole defects, thus pinning the ferroelectric domains and causing increase carrier migration, which led to the P r for ceramic reduction. The results were consistent with the conclusion obtained via XPS spectrum analysis. The thinned P-E loops and decreased Ec with large x contents could be attributed to the presence of polar nanoregions (PNRs) and the disruption of ferroelectric long-range ordering. The piezoelectric constant (d 33) and mechanical quality factor (Q m) of BCZT-0.8 %La-xTm ceramics are shown in. The d 33 increased first and then decreased with the increment of x contents. Furthermore, the d 33 reached peak value when x contents were equal to 1 %. The distortion of the ceramics\u2019 oxygen octahedron structure was also a reason for the optimization of d 33. The Q m of samples appeared to have an opposite trend to the variation tendency of d 33 values, and the maximum Q m value was shown when x was equal to 2 %. Meanwhile, the d 33 displayed a decreasing trend when x contents increased from 1 % to 2 %. The phenomenon was due to the incremental concentrations of oxygen vacancy pinning the domains and domain walls, which led to the increase of Q m and the decrease of d 33. This finding was basically consistent with the results of XPS spectrum analysis.
+
+# TITLE
+Influence of oxygen vacancies and electrical properties in Ba<inf>0.92</inf>Ca<inf>0.08</inf>Zr<inf>0.05</inf>Ti<inf>0.95</inf>O<inf>3</inf> ceramics through the co-doping of La<sup>3 +</sup> and Tm<sup>3+</sup> ions
+
+# ABSTRACT
+Barium calcium zirconate titanate (BCZT)-based piezoelectric ceramics, which are modified with rare earth elements, are one of the candidates for replacing lead-based piezoelectric ceramics. In this study, the BCZT-0.8 %La-xTm ceramics were prepared using the sol-gel method. The effects of varying Tm3+ ions contents on the dielectric, ferroelectric, and piezoelectric properties of ceramics were investigated and the influence mechanism was discussed. Results showed that La3+ and Tm3+ ions co-doping can affect the motion of domains and domain walls by adjusting oxygen vacancy concentrations and microstructure, which is the main reason for the various electrical properties of ceramics. Especially when the Tm3+ ions content is 2 %, many oxygen vacancies would generate, which is due to Tm3+ ions replace to B-site cations. When Tm3+ ions content was 0.7 %, the ceramics showed excellent dielectric constant (ԑ
+                     r = 9941.6), remnant polarisation (P
+                     r = 28.93 μC/cm), and piezoelectric constant (d
+                     33 = 181 pC/N). The results have some reference value for enhancing the electrical properties of BCZT piezoelectric ceramics using elements co-doping.
+
+# INTRODUCTION
+Barium calcium zirconate titanate (BCZT)-based lead-free piezoelectric ceramics are regarded as one of the most promising candidate materials , because they could enhance electrical properties by constructing the morphotropic phase boundaries and polymorphic phase transitions. Nonetheless, despite the relatively outstanding performance of BCZT ceramics, some defects still exist. To enhance the performance of BCZT ceramics, researchers have focused on the doped elements method. In recent years, BCZT piezoelectric ceramics have obtained high Curie temperature, low dielectric loss, high remnant polarisation and high piezoelectric constant by doping different elements to regulate the internal microstructure, defects and multiphase coexistence of ceramics. For example, Kumari et al. prepared BiE^{3+} ions doped Ba0.98\u20133x/2Bi x Ca0.02Zr0.02Ti0.976Cu0.008O3 lead-free ceramics using the solid-state method. In their work, the grain size decreased significantly from 16.14 to 2.11 \u03bcm with increased BiE^{3+} ions contents. When BiE^{3+} ions content was 0.02, the ceramics had high Curie temperature (159 \xb0C), high dielectric constant (\u03b5 r = 3146), and low dielectric loss (tan \u03b4 = 0.019), meanwhile, the temperature stability of electrical properties for the ceramics was improved. Li et al. prepared Ba0.85Ca0.15Zr0.1(Ti1\u2212x Ni x )0.9O3 (BCZT-xNi) (x = 0, 0.01, 0.02, 0.04) ceramics using the sol-gel method. When x = 0.01, the ceramics had a high dielectric constant (\u03b5 r = 4473) and good frequency stability. Meanwhile, a low dielectric loss (tan \u03b4 = 0.004) at 100 Hz was detected in their work. Liu et al. prepared Li-doped (Ba0.85Ca0.15)(Zr0.1Ti0.9)O3 ceramics. The best results in this work showed that the \u03b5 r = 3814, tan \u03b4 = 0.01, d 33 = 420 pC/N, and k p = 47 %. Zheng et al. prepared Ba0.85Ca0.15Zr0.1(Ti1-x Mn x )0.9O3 (x = 0, 2 %, 4 %, and 8 %) ceramics using the sol-gel method. When x = 4 %, the ceramics exhibited a high dielectric constant (\u03b5 r = 3021 at 100 Hz) and a low dielectric loss (tan \u03b4 = 0.0569 at 10E^{2} Hz). Ramovatar et al. fabricated Ba0.98Ca0.02Zr0.02Ti0.98O3-xPr piezoelectric ceramics via a solid-state method. When PrE^{3+} ions content was 0.04, the ceramics possessed a large remnant polarisation (2P r, \u223c 13 \xb5C/cmE^{2}) and low coercive field (Ec, \u223c 22 V/cm) with the co-existed tetragonal and orthorhombic phases. The results indicated that the dielectric, ferroelectric, and piezoelectric properties of BCZT ceramics were significantly improved by various ion dopants.
+
+# CONCLUSION
+BCZT-0.8 %La-xTm co-doped ceramics were prepared using the sol-gel method in this study. The results indicated that the LaE^{3+} and TmE^{3+} ions could bring about high dielectric, ferroelectric, and piezoelectric properties for ceramics by adjusting the oxygen vacancy concentrations. Doping the LaE^{3+} and TmE^{3+} ions in the ceramics would also achieve a dense microstructure for the ceramics, thus improving the electrical properties of the samples. And, an appropriate amount of TmE^{3+} ions dopant could increase the grain size of ceramics. At the same time, the disorder and volatility of the local composition increased along with the rise of TmE^{3+} ions contents, which led to the diffuse phase transitions of ceramics. When TmE^{3+} ions content was 0.7 %, the ceramics showed the excellent dielectric constant (9941.6), maximum remnant polarization (28.9 \u03bcC/cm), and piezoelectric constant (181 pC/N). And meaningful T C and Q m of the ceramic was 93 \xb0C and 127.9, respectively. In summary, co-doping with rare earth ions can bring about excellent electrical properties for BCZT-based ceramics, making them a potential lead-free piezoelectric candidate.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Ba0.92Ca0.08Zr0.05Ti0.95O3 + 0.8%La + 0%Tm": null,
+      "Ba0.92Ca0.08Zr0.05Ti0.95O3 + 0.8%La + 0.7%Tm": 181,
+      "Ba0.92Ca0.08Zr0.05Ti0.95O3 + 0.8%La + 2%Tm": null
+    },
+    "abbreviations": {
+      "BCZT": "Barium calcium zirconate titanate"
+    },
+    "property_unit": "pC/N",
+    "family": "BCZT"
+  }
+}"

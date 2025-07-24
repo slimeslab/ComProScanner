@@ -1,0 +1,192 @@
+2025-07-13 22:24:36: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The d33 values of 0\u20133 and 1\u20133 BZT-PC composites at 50\xa0vol% BZT with 0\u20137\xa0vol% epoxy resin.
+|Epoxy resin (vol%)|Mean d33 (pC/N)|1-3 composite (this work)|0-3 composite [33]|
+|---|---|---|---|
+|0|79|16.5|
+|3|81|14.4|
+|5|82|13.3|
+|7|83|12.6|
+
+# RESULTS AND DISCUSSION
+The acoustic impedance of 1\u20133 BZT-cement composites using BZT content from 40 to 60 % and epoxy resin from 0 to 7% is shown in. A higher Zc value of the composites can be observed in composites with higher BZT volume. This is because the Zc value of BZT (25.7 \xd7 10E^{6} kg/m\xb7sE^{2}) is higher than other phases in the composite (Zc of hydrated cement \u223c5.3 \xd7 10E^{6} kg/m\xb7sE^{2} , Zc of epoxy resin = 2.99 \xd7 10E^{6} kg/m\xb7sE^{2}). The effect of epoxy resin on the acoustic impedance of 1\u20133 BZT -cement composites show that Zc value can be seen to be lower when epoxy resin content was increased for all BZT composites. For example, the composites with 40 vol% BZT and epoxy resin content up to 7 %, although reduces from \u223c10.7 \xd7 10E^{6} kg/m\xb7sE^{2} to \u223c9.4 \xd7 10E^{6} kg/m\xb7sE^{2}, the acoustic impedance still matches with that of concrete (Zc \u223c 9 \xd7 10E^{6} kg/m\xb7sE^{2} to 11.26 \xd7 10E^{6} kg/m\xb7sE^{2} ). For 50 vol% BZT composites with no epoxy resin, Zc value (\u223c11.7 \xd7 10E^{6} kg/m\xb7sE^{2}) is marginally higher than the acoustic impedance upper limit of concrete. However, the composites with 3 vol% to 7 vol% epoxy resins are found to be within the acoustic range. For 60 vol% BZT composites, 0\u20135% vol% epoxy resin are found to be outside the range but with 7 vol% epoxy resin in the composite, Zc value is in a range of acoustic impedance of concrete. Therefore, the benefit is seen when increasing epoxy resin content in the composites with 50 vol% and 60 vol% BZT where the use of epoxy resin would lead to a decrease in acoustic impedance so that the acoustic impedance becomes closer to the acoustic impedance of concrete when higher than 40 % BZT volume is used. Microstructure investigation was carried out using a scanning electron microscope (SEM) images and energy dispersive X-ray spectrum (EDX) on the matrix in the composites are shown in. (a) shows the microstructure of Portland cement paste with no epoxy resin where calcium silicate hydrate (CSH) can be seen. Ca, Si, C, Al, and O elements were detected as the main elements of hydration products from cement by the EDX spectrum. (b) shows the SEM micrograph of cement and epoxy resin matrix where the EDX spectrum (point 1) identifies the epoxy resin, where detected elements are nitrogen and carbon. In spectrum 2, elements detected are Ca, Si, C, Al, O and N elements, which illustrates the combination phases between the epoxy resin and hydration products of hydrated cement. Moreover, the interfaces of the composites are shown in using an optical microscope and using SEM. The optical microscopy clearly shows good binding in a larger scale dimension for all composites with epoxy resin (3%\u20137%) and without epoxy resin (0 %). For SEM, the images of the 1\u20133 BZT cement-based composite for both composites with 0 vol% and 7 vol% epoxy resins, the BZT ceramic can be seen to be continuously connected in one dimension. The interfacial zone can also be clearly observed between cement matrix paste (dark area) and BZT phase (bright area). For comparison, EDX spectrum from the cement matrix phase of the composite with epoxy resin shows nitrogen element while in sample without epoxy resin, nitrogen element was not detected, thus corresponds to the EDX spectrum of PC paste with w/c = 0.35. shows the porosity measurement results of the composites. The porosity can be seen to be highest in the composites with BZT vol. content of 40 % where the porosity values are in the range of 8.5\u20139%. This is higher than the porosity range of 7\u20138% for 60 % BZT composites. This is because of the higher cement/epoxy matrix content which is more porous than the BZT ceramic. Moreover, the effect of epoxy resin can also be seen, where it is found that for all BZT composites, the porosity is shown to reduce with increasing epoxy resin. In the 1\u20133 connectivity composite, it is believed that the use of epoxy resin was found to fill the pores of the cement matrix thus lead to a lower porosity value. show the dielectric constant and dielectric loss respectively. The \u03b533 value can be seen to increase but tan\u03b4 value is seen to decrease with increasing BZT content at the same epoxy resin content. At 7 vol% epoxy resin, the \u03b533 value of composites with BZT content from 40 vol% to 60 vol% increased from 464.79 to 636.04, showing an increase of 37 %. While the tan\u03b4 value decreased from 0.07 to 0.04 and the tan\u03b4 value was lowest for composites with 60 vol % BZT/7 vol% epoxy resin. Moreover, for all BZT content in the composites, the \u03b533 and tan\u03b4 values can be seen to decrease with increasing epoxy resin content. At 50 vol% BZT content, the \u03b533 value of composites with epoxy resin vol. Content from 0 to 7 % decreased from 622.16 to 521.10 and tan\u03b4 decreased from 0.08 to 0.05. This is because the dielectric constant of BZT (\u03b5r = 1563) is higher than hydrated cement (\u03b5r = 100) and epoxy resin (\u03b5r = 6). The much lower tan\u03b4 = 0.03  of epoxy resin in which using epoxy resin replacing the cement phase lead to a direct decrease in the overall dielectric loss of the composite since cement is a porous inorganic material and has many weak conducting ions. shows the effect of epoxy resin content on the d33 value of 1\u20133 BZT-cement composites. As the BZT content increases, the d33 value of composite showed a corresponding increase, primarily due to the higher amount of the piezoelectric phase within the composite. Specifically, when epoxy resin content was 7 vol%, the d33 value demonstrated a notable increase from 76.2 pC/N to 93 pC/N as the BZT content rose from 40 vol% to 60 vol%. Furthermore, the highest d33 value (93 pC/N), was observed when the composite consisted of 60 % BZT and 7 vol% epoxy resin, while d33 of pure BZT is 235 pC/N. In the composite with varying BZT content, the d33 value increased as the epoxy resin content was increased, as shown in. For instance, at 50 vol% BZT, the mean d33 values increased from 79 pC/N to 83 pC/N ( ) as the epoxy resin vol. Increased from 0 % to 7 %. This finding agrees with the results reported by Xu et al.  on the 1\u20133 PZT cement-polymer composites. It is noted that the d33 values of 1\u20133 BZT cement composites with epoxy resin is noticeably higher and the trend observed is different to that of 0\u20133 BZT cement composites with epoxy resin , where the d33 value of 0-3 connectivity composites decreased with increasing epoxy resin content. The ceramic sample of the 1\u20133 piezoelectric cement-based composite is poled prior to the fabrication (Poling sample is pure BZT ceramic). The use of epoxy resin in the composite reduces the presence of pores within cement and at the interface between cement and BZT, which likely to improve transmitting force to the BZT phase, when apply oscillating force during the d33 measurement and results in improve d33 value. This is due to that porosity of the 1\u20133 composites decreased with increasing epoxy resin content as shown in. While for the 0\u20133 composite, the poling of sample is slightly more difficult with epoxy addition in the 0\u20133 composite as the whole composite was poled together. The d33 values decreased when increasing epoxy resin due to that the epoxy resin acts as an insulator phase that may block or surround the piezoelectric particles as it was added in its resin form, which may result in a more resistivity electric field flow to BZT particles and unsaturated polarization. The effect of varying epoxy resin content on g33 value of 1\u20133 BZT-cement-based composite is shown in. An increase in BZT content led to a decrease in the g33 value. At 7 vol% epoxy resin, g33 value decreased from 18.5 \xd7 10E^{\u22123} V m/N to 16.5 \xd7 10E^{\u22123} V m/N when the BZT content ranged from 40 vol% to 60 vol%. This decrease is primarily attributed to the fact that the increase in the \u03b533 value of the 1\u20133 composite is more than the increase in the d33 value. For example, at 7 vol% epoxy resin, the increasing rate \u03b533 was 37 % when varying BZT from 40 to 60 vol%, while the increasing rate of d33 value was less at 22 %. Even though, d33 value of the composite with 40 vol% BZT and 5 vol% epoxy resin (75 pC/N) is lower than that of BZT ceramic (240 pC/N), the g33 value of the composite (17.0 \xd7 10E^{\u22123} V m/N) is equal to BZT ceramic (17.0 \xd7 10E^{\u22123} V m/N). The result indicates that an increase in epoxy resin content leads to a rise in the g33 value for all composites using 40 % BZT to 60 % BZT. At 50 vol% BZT, the g33 value of the composite with epoxy resin ranging from 0 vol% to 7 vol%, increased from 14.4 \xd7 10E^{\u22123} V m/N to 18.1 \xd7 10E^{\u22123} V m/N. This result aligns with the results reported by Xu et al.  for 1\u20133 PZT cement-polymer composite.
+
+# TITLE
+Effect of epoxy resin addition on the acoustic impedance, microstructure, dielectric and piezoelectric properties of 1–3 connectivity lead-free barium zirconate titanate ceramic cement-based composites
+
+# ABSTRACT
+In this work, 1–3 connectivity barium zirconate titanate ceramic cement-based composites were fabricated using Portland cement and epoxy resin as the matrix. Barium zirconate titanate (BZT) of 40–60 % by volume was used while epoxy was used with cement at 0–7% by volume. It was found that epoxy resin can be used in combination with BZT to achieve a suitable acoustic impedance value (9–11 × 106 kg/m·s2) matching that of concrete for structural health monitoring application. Thus, when epoxy resin was used at 7 %, BZT volume can be increased to 60 % where the highest d33 value of 93 pC/N was found and remain within the acoustic matching range. In addition, when epoxy resin was increased, both piezoelectric charge coefficient (d33) and piezoelectric voltage coefficient (g33) were also found to increase.
+
+# INTRODUCTION
+However, due to the mismatching to concrete, piezoelectric ceramic-cement composites have been developed  to match concrete for structural health monitoring (SHM) application to inspect and detect structural changes (e.g., stress, strain) and damage of infrastructures in real-time. Lead-free barium titanate-based ceramics such as barium titanate (BaTiO3, BT) ceramic and barium zirconate titanate (BaZrxTi1-xO3, BZT) ceramic have also been used. BZT ceramic is a modified BT ceramic where substituting Ti by Zr of 0.05 was found to have improved piezoelectric properties. A variety of connectivity patterns such as 0\u20133 and 1\u20133 may be used to produce the piezoelectric ceramic cement-based (PCC) composites. Normally the 1\u20133 in the composite defines the connectivity of each phase where the first digit number represents connectivity of the active phase such as piezoelectric ceramic and the second digit number represents connectivity of passive phase which is cement matrix in this case. Therefore, 1\u20133 composite in this investigation has BZT ceramic phase as self-connected in one dimension and the PC matrix phase as self-connected in three dimensions. Although, the advantage of 0\u20133 composite is easier fabrication than 1\u20133 composite but these composites are more difficult to pole due to the non-connectivity of the dispersed phase. To overcome this problem, a polymer third phase such as polyvinylidene fluoride (PVDF)  and epoxy resin  may be added in these 0\u20133 composites. The optimum of acoustic impedance (Zc) and piezoelectric voltage coefficient g33 can be observed at 5 vol% PVDF  and 3 vol% epoxy resin  with same 50 vol% BZT. Nonetheless, the 1\u20133 composites have also been investigated  since the piezoelectric phase in the 1\u20133 composites is parallel with the electric field polarization thus the ceramic is poled first without poling problem as in 0\u20133 connectivity, resulting to piezoelectric properties being enhanced. The highest d33 value of 1\u20133 BZT-PC composite reported by Potong et al.  is 133 pC/N at 70 vol% BZT which is 5 times higher than 0\u20133 BZT-PC composite (d33 = 27 pC/N) at same BZT content. In this work, composites of 1\u20133 connectivity of barium zirconate titanate ceramic with cement and epoxy resin were fabricated. BZT of 40\u201360 % by volume and epoxy of 0\u20137% by volume were used.
+
+# CONCLUSION
+When epoxy resin was increased, both piezoelectric charge coefficient (d33) and piezoelectric voltage coefficient (g33) were also found to increase. The effect of epoxy resin on 1\u20133 BZT composites are also shown to reduce the acoustic impedance, and suitable percentage can be designed for ideal acoustic impedance matching with concrete achieving values within the range of 9\u201311 \xd7 10E^{6} kg/m\xb7sE^{2} for structural health monitoring purposes. The matching was found in composites with 40 vol% BZT (0\u20137% epoxy resin), 50 % vol. BZT (3\u20137% epoxy resin) and 60 vol% BZT (7 % Epoxy resin). Thus, when epoxy resin was used at 7 %, BZT volume can be increased to 60 % where the highest d33 value of 93 pC/N was found and remain within the acoustic matching range. The d33 values of 1\u20133 connectivity composite with epoxy are much higher than those of previously reported values of 0\u20133 composites with epoxy resin.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-13 22:24:52: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The d33 values of 0\u20133 and 1\u20133 BZT-PC composites at 50\xa0vol% BZT with 0\u20137\xa0vol% epoxy resin.
+|Epoxy resin (vol%)|Mean d33 (pC/N)|1-3 composite (this work)|0-3 composite [33]|
+|---|---|---|---|
+|0|79|16.5|
+|3|81|14.4|
+|5|82|13.3|
+|7|83|12.6|
+
+# RESULTS AND DISCUSSION
+The acoustic impedance of 1\u20133 BZT-cement composites using BZT content from 40 to 60 % and epoxy resin from 0 to 7% is shown in. A higher Zc value of the composites can be observed in composites with higher BZT volume. This is because the Zc value of BZT (25.7 \xd7 10E^{6} kg/m\xb7sE^{2}) is higher than other phases in the composite (Zc of hydrated cement \u223c5.3 \xd7 10E^{6} kg/m\xb7sE^{2} , Zc of epoxy resin = 2.99 \xd7 10E^{6} kg/m\xb7sE^{2}). The effect of epoxy resin on the acoustic impedance of 1\u20133 BZT -cement composites show that Zc value can be seen to be lower when epoxy resin content was increased for all BZT composites. For example, the composites with 40 vol% BZT and epoxy resin content up to 7 %, although reduces from \u223c10.7 \xd7 10E^{6} kg/m\xb7sE^{2} to \u223c9.4 \xd7 10E^{6} kg/m\xb7sE^{2}, the acoustic impedance still matches with that of concrete (Zc \u223c 9 \xd7 10E^{6} kg/m\xb7sE^{2} to 11.26 \xd7 10E^{6} kg/m\xb7sE^{2} ). For 50 vol% BZT composites with no epoxy resin, Zc value (\u223c11.7 \xd7 10E^{6} kg/m\xb7sE^{2}) is marginally higher than the acoustic impedance upper limit of concrete. However, the composites with 3 vol% to 7 vol% epoxy resins are found to be within the acoustic range. For 60 vol% BZT composites, 0\u20135% vol% epoxy resin are found to be outside the range but with 7 vol% epoxy resin in the composite, Zc value is in a range of acoustic impedance of concrete. Therefore, the benefit is seen when increasing epoxy resin content in the composites with 50 vol% and 60 vol% BZT where the use of epoxy resin would lead to a decrease in acoustic impedance so that the acoustic impedance becomes closer to the acoustic impedance of concrete when higher than 40 % BZT volume is used. Microstructure investigation was carried out using a scanning electron microscope (SEM) images and energy dispersive X-ray spectrum (EDX) on the matrix in the composites are shown in. (a) shows the microstructure of Portland cement paste with no epoxy resin where calcium silicate hydrate (CSH) can be seen. Ca, Si, C, Al, and O elements were detected as the main elements of hydration products from cement by the EDX spectrum. (b) shows the SEM micrograph of cement and epoxy resin matrix where the EDX spectrum (point 1) identifies the epoxy resin, where detected elements are nitrogen and carbon. In spectrum 2, elements detected are Ca, Si, C, Al, O and N elements, which illustrates the combination phases between the epoxy resin and hydration products of hydrated cement. Moreover, the interfaces of the composites are shown in using an optical microscope and using SEM. The optical microscopy clearly shows good binding in a larger scale dimension for all composites with epoxy resin (3%\u20137%) and without epoxy resin (0 %). For SEM, the images of the 1\u20133 BZT cement-based composite for both composites with 0 vol% and 7 vol% epoxy resins, the BZT ceramic can be seen to be continuously connected in one dimension. The interfacial zone can also be clearly observed between cement matrix paste (dark area) and BZT phase (bright area). For comparison, EDX spectrum from the cement matrix phase of the composite with epoxy resin shows nitrogen element while in sample without epoxy resin, nitrogen element was not detected, thus corresponds to the EDX spectrum of PC paste with w/c = 0.35. shows the porosity measurement results of the composites. The porosity can be seen to be highest in the composites with BZT vol. content of 40 % where the porosity values are in the range of 8.5\u20139%. This is higher than the porosity range of 7\u20138% for 60 % BZT composites. This is because of the higher cement/epoxy matrix content which is more porous than the BZT ceramic. Moreover, the effect of epoxy resin can also be seen, where it is found that for all BZT composites, the porosity is shown to reduce with increasing epoxy resin. In the 1\u20133 connectivity composite, it is believed that the use of epoxy resin was found to fill the pores of the cement matrix thus lead to a lower porosity value. show the dielectric constant and dielectric loss respectively. The \u03b533 value can be seen to increase but tan\u03b4 value is seen to decrease with increasing BZT content at the same epoxy resin content. At 7 vol% epoxy resin, the \u03b533 value of composites with BZT content from 40 vol% to 60 vol% increased from 464.79 to 636.04, showing an increase of 37 %. While the tan\u03b4 value decreased from 0.07 to 0.04 and the tan\u03b4 value was lowest for composites with 60 vol % BZT/7 vol% epoxy resin. Moreover, for all BZT content in the composites, the \u03b533 and tan\u03b4 values can be seen to decrease with increasing epoxy resin content. At 50 vol% BZT content, the \u03b533 value of composites with epoxy resin vol. Content from 0 to 7 % decreased from 622.16 to 521.10 and tan\u03b4 decreased from 0.08 to 0.05. This is because the dielectric constant of BZT (\u03b5r = 1563) is higher than hydrated cement (\u03b5r = 100) and epoxy resin (\u03b5r = 6). The much lower tan\u03b4 = 0.03  of epoxy resin in which using epoxy resin replacing the cement phase lead to a direct decrease in the overall dielectric loss of the composite since cement is a porous inorganic material and has many weak conducting ions. shows the effect of epoxy resin content on the d33 value of 1\u20133 BZT-cement composites. As the BZT content increases, the d33 value of composite showed a corresponding increase, primarily due to the higher amount of the piezoelectric phase within the composite. Specifically, when epoxy resin content was 7 vol%, the d33 value demonstrated a notable increase from 76.2 pC/N to 93 pC/N as the BZT content rose from 40 vol% to 60 vol%. Furthermore, the highest d33 value (93 pC/N), was observed when the composite consisted of 60 % BZT and 7 vol% epoxy resin, while d33 of pure BZT is 235 pC/N. In the composite with varying BZT content, the d33 value increased as the epoxy resin content was increased, as shown in. For instance, at 50 vol% BZT, the mean d33 values increased from 79 pC/N to 83 pC/N ( ) as the epoxy resin vol. Increased from 0 % to 7 %. This finding agrees with the results reported by Xu et al.  on the 1\u20133 PZT cement-polymer composites. It is noted that the d33 values of 1\u20133 BZT cement composites with epoxy resin is noticeably higher and the trend observed is different to that of 0\u20133 BZT cement composites with epoxy resin , where the d33 value of 0-3 connectivity composites decreased with increasing epoxy resin content. The ceramic sample of the 1\u20133 piezoelectric cement-based composite is poled prior to the fabrication (Poling sample is pure BZT ceramic). The use of epoxy resin in the composite reduces the presence of pores within cement and at the interface between cement and BZT, which likely to improve transmitting force to the BZT phase, when apply oscillating force during the d33 measurement and results in improve d33 value. This is due to that porosity of the 1\u20133 composites decreased with increasing epoxy resin content as shown in. While for the 0\u20133 composite, the poling of sample is slightly more difficult with epoxy addition in the 0\u20133 composite as the whole composite was poled together. The d33 values decreased when increasing epoxy resin due to that the epoxy resin acts as an insulator phase that may block or surround the piezoelectric particles as it was added in its resin form, which may result in a more resistivity electric field flow to BZT particles and unsaturated polarization. The effect of varying epoxy resin content on g33 value of 1\u20133 BZT-cement-based composite is shown in. An increase in BZT content led to a decrease in the g33 value. At 7 vol% epoxy resin, g33 value decreased from 18.5 \xd7 10E^{\u22123} V m/N to 16.5 \xd7 10E^{\u22123} V m/N when the BZT content ranged from 40 vol% to 60 vol%. This decrease is primarily attributed to the fact that the increase in the \u03b533 value of the 1\u20133 composite is more than the increase in the d33 value. For example, at 7 vol% epoxy resin, the increasing rate \u03b533 was 37 % when varying BZT from 40 to 60 vol%, while the increasing rate of d33 value was less at 22 %. Even though, d33 value of the composite with 40 vol% BZT and 5 vol% epoxy resin (75 pC/N) is lower than that of BZT ceramic (240 pC/N), the g33 value of the composite (17.0 \xd7 10E^{\u22123} V m/N) is equal to BZT ceramic (17.0 \xd7 10E^{\u22123} V m/N). The result indicates that an increase in epoxy resin content leads to a rise in the g33 value for all composites using 40 % BZT to 60 % BZT. At 50 vol% BZT, the g33 value of the composite with epoxy resin ranging from 0 vol% to 7 vol%, increased from 14.4 \xd7 10E^{\u22123} V m/N to 18.1 \xd7 10E^{\u22123} V m/N. This result aligns with the results reported by Xu et al.  for 1\u20133 PZT cement-polymer composite.
+
+# TITLE
+Effect of epoxy resin addition on the acoustic impedance, microstructure, dielectric and piezoelectric properties of 1–3 connectivity lead-free barium zirconate titanate ceramic cement-based composites
+
+# ABSTRACT
+In this work, 1–3 connectivity barium zirconate titanate ceramic cement-based composites were fabricated using Portland cement and epoxy resin as the matrix. Barium zirconate titanate (BZT) of 40–60 % by volume was used while epoxy was used with cement at 0–7% by volume. It was found that epoxy resin can be used in combination with BZT to achieve a suitable acoustic impedance value (9–11 × 106 kg/m·s2) matching that of concrete for structural health monitoring application. Thus, when epoxy resin was used at 7 %, BZT volume can be increased to 60 % where the highest d33 value of 93 pC/N was found and remain within the acoustic matching range. In addition, when epoxy resin was increased, both piezoelectric charge coefficient (d33) and piezoelectric voltage coefficient (g33) were also found to increase.
+
+# INTRODUCTION
+However, due to the mismatching to concrete, piezoelectric ceramic-cement composites have been developed  to match concrete for structural health monitoring (SHM) application to inspect and detect structural changes (e.g., stress, strain) and damage of infrastructures in real-time. Lead-free barium titanate-based ceramics such as barium titanate (BaTiO3, BT) ceramic and barium zirconate titanate (BaZrxTi1-xO3, BZT) ceramic have also been used. BZT ceramic is a modified BT ceramic where substituting Ti by Zr of 0.05 was found to have improved piezoelectric properties. A variety of connectivity patterns such as 0\u20133 and 1\u20133 may be used to produce the piezoelectric ceramic cement-based (PCC) composites. Normally the 1\u20133 in the composite defines the connectivity of each phase where the first digit number represents connectivity of the active phase such as piezoelectric ceramic and the second digit number represents connectivity of passive phase which is cement matrix in this case. Therefore, 1\u20133 composite in this investigation has BZT ceramic phase as self-connected in one dimension and the PC matrix phase as self-connected in three dimensions. Although, the advantage of 0\u20133 composite is easier fabrication than 1\u20133 composite but these composites are more difficult to pole due to the non-connectivity of the dispersed phase. To overcome this problem, a polymer third phase such as polyvinylidene fluoride (PVDF)  and epoxy resin  may be added in these 0\u20133 composites. The optimum of acoustic impedance (Zc) and piezoelectric voltage coefficient g33 can be observed at 5 vol% PVDF  and 3 vol% epoxy resin  with same 50 vol% BZT. Nonetheless, the 1\u20133 composites have also been investigated  since the piezoelectric phase in the 1\u20133 composites is parallel with the electric field polarization thus the ceramic is poled first without poling problem as in 0\u20133 connectivity, resulting to piezoelectric properties being enhanced. The highest d33 value of 1\u20133 BZT-PC composite reported by Potong et al.  is 133 pC/N at 70 vol% BZT which is 5 times higher than 0\u20133 BZT-PC composite (d33 = 27 pC/N) at same BZT content. In this work, composites of 1\u20133 connectivity of barium zirconate titanate ceramic with cement and epoxy resin were fabricated. BZT of 40\u201360 % by volume and epoxy of 0\u20137% by volume were used.
+
+# CONCLUSION
+When epoxy resin was increased, both piezoelectric charge coefficient (d33) and piezoelectric voltage coefficient (g33) were also found to increase. The effect of epoxy resin on 1\u20133 BZT composites are also shown to reduce the acoustic impedance, and suitable percentage can be designed for ideal acoustic impedance matching with concrete achieving values within the range of 9\u201311 \xd7 10E^{6} kg/m\xb7sE^{2} for structural health monitoring purposes. The matching was found in composites with 40 vol% BZT (0\u20137% epoxy resin), 50 % vol. BZT (3\u20137% epoxy resin) and 60 vol% BZT (7 % Epoxy resin). Thus, when epoxy resin was used at 7 %, BZT volume can be increased to 60 % where the highest d33 value of 93 pC/N was found and remain within the acoustic matching range. The d33 values of 1\u20133 connectivity composite with epoxy are much higher than those of previously reported values of 0\u20133 composites with epoxy resin.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "1-3 BZT-cement composite with 40 vol% BZT and 0 vol% epoxy resin": 76.2,
+      "1-3 BZT-cement composite with 40 vol% BZT and 5 vol% epoxy resin": 75,
+      "1-3 BZT-cement composite with 40 vol% BZT and 7 vol% epoxy resin": 76.2,
+      "1-3 BZT-cement composite with 50 vol% BZT and 0 vol% epoxy resin": 79,
+      "1-3 BZT-cement composite with 50 vol% BZT and 3 vol% epoxy resin": 81,
+      "1-3 BZT-cement composite with 50 vol% BZT and 5 vol% epoxy resin": 82,
+      "1-3 BZT-cement composite with 50 vol% BZT and 7 vol% epoxy resin": 83,
+      "1-3 BZT-cement composite with 60 vol% BZT and 7 vol% epoxy resin": 93,
+      "Pure BZT": 235
+    },
+    "abbreviations": {
+      "BZT": "BaZrxTi1-xO3",
+      "BT": "BaTiO3",
+      "PC": "Portland cement",
+      "PCC": "piezoelectric ceramic cement-based",
+      "PVDF": "polyvinylidene fluoride",
+      "SHM": "structural health monitoring"
+    },
+    "property_unit": "pC/N",
+    "family": "BaTiO3"
+  }
+}"

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"aluminum nitride27.8":-0.32,"F-aluminum nitride27.8":182,"H/F-aluminum nitride27.8":-31.6,"gallium nitride27.8":0.43,"F-gallium nitride27.8":16.7,"H/F-gallium nitride27.8":-2.76},"property_unit":"pm/V","family":"nitridane"}}

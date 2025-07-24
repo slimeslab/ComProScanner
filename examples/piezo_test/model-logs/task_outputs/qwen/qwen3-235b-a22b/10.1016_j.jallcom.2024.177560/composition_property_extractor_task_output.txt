@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PT–PZ–BLZT–5LN":585},"abbreviations":{"PT":"PbTiO3","PZ":"PbZrO3","BLZT":"(Bi0.3La0.7)(Zn0.5Ti0.5)O3","LN":"La2O3+Nb2O5"},"property_unit":"pC/N","family":"PZT"}}

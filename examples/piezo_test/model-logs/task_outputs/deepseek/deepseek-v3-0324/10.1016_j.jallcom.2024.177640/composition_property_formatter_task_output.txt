@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 2.5%Sm,0.0%Pr":1532,"0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 2.0%Sm,0.5%Pr":1547,"0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 1.5%Sm,1.0%Pr":1318,"0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 1.0%Sm,1.5%Pr":1014,"0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 0.5%Sm,2.0%Pr":819},"property_unit":"pC/N","family":"PMN-PT"}}

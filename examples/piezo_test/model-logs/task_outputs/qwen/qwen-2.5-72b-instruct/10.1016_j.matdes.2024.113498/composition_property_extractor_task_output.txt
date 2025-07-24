@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.5(0.94Bi0.5Na0.5TiO3-0.06BaTiO3)-0.5BiFe0.8Mn0.2O3":27.6},"abbreviations":{},"property_unit":"pC/N","family":"BNT-6BT-5BFO2M"}}

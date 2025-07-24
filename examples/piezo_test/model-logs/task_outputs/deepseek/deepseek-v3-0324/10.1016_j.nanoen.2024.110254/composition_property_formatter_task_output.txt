@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Ba0.85Ca0.15Zr0.1Ti0.9O3":596,"Ba0.85Ca0.15Zr0.1Ti0.9O3 (dense)":467},"property_unit":"pC/N","family":"BaTiO3"}}

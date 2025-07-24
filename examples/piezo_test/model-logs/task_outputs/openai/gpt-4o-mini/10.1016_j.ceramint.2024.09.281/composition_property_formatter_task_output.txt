@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Pb(Yb0.5Nb0.5)O3–Pb(Hf1−xTix)O3–0.6Ta2O5":560,"Pb(Yb0.5Nb0.5)O3–Pb(Hf1−xTix)O3–0Ta2O5":448},"property_unit":"pC/N","family":"PZT"}}

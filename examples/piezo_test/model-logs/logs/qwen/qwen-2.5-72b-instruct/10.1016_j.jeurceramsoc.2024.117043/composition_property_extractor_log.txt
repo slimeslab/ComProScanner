@@ -1,0 +1,199 @@
+2025-07-11 14:00:27: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. d33, Td, and Tmax of BNT-BT single crystals, oriented ceramics, and randomly oriented ceramics.
+|Method|Form|Orientation|Composition|Crystal system|d33 (pC/N)|Td (\u02daC)|Tmax (\u02daC)|Ref|
+|---|---|---|---|---|---|---|---|---|
+|SSCG|Single crystal|110|0.85BNT\u22120.15BT*|T|118|218|256|This study|
+||Oriented ceramics|110|0.85BNT\u22120.15BT|T|103|||[23]|
+||Oriented Ceramics|100|0.85BNT\u22120.15BT|T|122|||[22]|
+||Randomly oriented ceramics||0.85BNT\u22120.15BT|T|88|||[22]|
+||Randomly oriented ceramics||0.85BNT\u22120.15BT|T|75|212|250|[31]|
+||Randomly oriented ceramics||0.85BNT\u22120.15BT|T|105|||[10]|
+|TSSG|Single crystal|100|0.94BNT\u22120.06BT|MPB|360|120||[16]|
+||Randomly oriented ceramics||0.94BNT\u22120.06BT|MPB|120|110|265|[7]|
+||Randomly oriented ceramics||0.94BNT\u22120.06BT|MPB|155|105|288|[8]|
+|SSCG|Single crystal|100|0.95BNT\u22120.05BT|R|207|145|280|[20]|
+|TSSG|Single crystal|100|0.95BNT\u22120.05BT|R|420|135||[19]|
+|TSSG|Single crystal|100|0.95BNT\u22120.05BT|R|280|130||[15]|
+|TSSG|Single crystal|111|0.95BNT\u22120.05BT|R|90|130||[15]|
+||Randomly oriented ceramics||0.95BNT\u22120.05BT|R|112|||[10]|
+
+# RESULTS AND DISCUSSION
+shows the photograph of 0.85BNT-0.15BT + x wt%MnO2 sintered compacts. A single crystal grown to the center of the face of each sintered compact could be seen at x = 0 \u2013 0.1. The size of the single crystal visible on the face was about 1.3 mm\xd72.4 mm, 1.8 mm\xd72.2 mm, and 2.3 mm\xd73.0 mm at x = 0, 0.05, and 0.1, respectively. The color of the compact was beige at x = 0 and it became darker with increasing x. This was due to the black color of the MnO2 powder. (a) shows the XRD patterns of the faces of the 0.85BNT-0.15BT + x wt%MnO2 sintered compacts shown in. At x = 0 \u2013 0.1, the strong diffraction peaks from (101), (110), (202), and (220) planes were observed, indicating that the 0.85BNT-0.15BT + x wt%MnO2 single crystals grew with the orientation of the (110) SrTiO3 seed crystal. In contrast, the XRD patterns at x = 0.3 and 0.5 were those of randomly oriented polycrystalline ceramics. A clear peak shift with increasing x was not observed, probably because the addition of MnO2 was small. (b) shows the XRD patterns of the 0.85BNT-0.15BT + x wt%MnO2 single crystal faces which were originally attached to the seed crystals. Only the {110}c diffraction peaks were observed for the samples, which was similar to the diffraction patterns in (a). (c) shows the pole figure of {100}c orientation for the 0.85BNT-0.15BT + 0.1 wt%MnO2 single crystal. Two diffraction spots were observed at \u03b1 \u223c 45\u02da, and they were symmetrical with respect to the center. This confirms that {100}c planes appeared when the {110}c planes were tilted by about 45\u02da, and the x = 0.1 sample was a single crystal. (b) and (c) suggest that the x = 0 and 0.05 samples were also single crystals. shows the optical microscopy images of the cross-sections of the 0.85BNT-0.15BT + x wt%MnO2 sintered compacts. As mentioned earlier, the single crystals were preferentially grown to one of the faces of the sintered compacts at x = 0 \u2013 0.1. The lengths of the crystals grown from the seed crystal to the surface were 430, 420, and 420 \xb5m at x = 0, 0.05, and 0.1, respectively. The areas near the top left corners of the seed crystals shown in were observed by SEM, as shown in. At x =0.3 and 0.5, the crystal growth lengths were measured to be 160 and 50 \xb5m, respectively. The dense single crystals could be seen at x = 0 \u2013 0.1. To understand the effect of the MnO2 content on the crystal growth length, the polycrystalline parts of the sintered compacts were observed by SEM, as shown in. The grain sizes were measured to be 4.7 \xb1 1.7 \xb5m, 4.6 \xb1 1.6 \xb5m, and 4.9 \xb1 1.8 \xb5m at x = 0, 0.05, and 0.1, respectively, and thus the grain sizes were similar. At x = 0.3 and 0.5, the grain sizes were increased to 7.2 \xb1 2.5 \xb5m and 12 \xb1 4 \xb5m, respectively. The increase in the grain size with increasing MnO2 content was previously reported for 0.94BNT-0.06BT ceramics. It is considered that the increase in the grain size at x = 0.3 and 0.5 inhibited the single crystal growth, because the driving force of the grain growth of a grain in ceramics is inversely proportional to the grain size of the surrounding grains. This result made us assume that the grains in front of the smaller single crystal grown from the (110) face of the seed crystal in the compact were larger than those near the larger single crystal which reached to the surface of the compact at x = 0 \u2013 0.1. Thus, the reason for the preferential crystal growth is not understood at present. summarizes the crystal growth length and the grain size of the 0.85BNT-0.15BT + x wt%MnO2 sintered compacts as a function of x. At x = 0 \u2013 0.1, the grown crystals reached the surfaces of the sintered compacts and the crystal growth was attributed to small grains of about 5 \xb5m. At x = 0.3 and 0.5, the grain size increased, and this decreased the crystal growth length. shows the SEM image and EDS elemental mapping of the cross-sections of the 0.85BNT-0.15BT + x wt%MnO2 sintered compacts near a seed crystal \u2013 grown single crystal interface and a grown single crystal \u2013 polycrystalline part interface at x = 0 \u2013 0.1. For the seed crystals and the grown single crystals, the Bi and Na ions of the grown single crystals did not diffuse into the seed crystals (shown for x = 0 only), and the Sr ions of the seed crystals did not diffuse into the grown single crystals. For the grown single crystals and the polycrystalline parts, the intensity of the concentration of each element was uniform, except for pores in the polycrystalline parts, which suggested that the compositions of the grown single crystals and the polycrystalline parts were the same, except for needle-like grains especially found in the grown single crystal at x = 0 and 0.1. Such needle-like grains were also reported for BNT-SrTiO3 and BNT-(Sr,Ca)TiO3 single crystals fabricated by an SSCG method , and they were reportedly formed during a thermal etching process for SEM observation. In this study, no secondary phase was found in the XRD patterns of the single crystals ((b)) which were used for the following electric measurements and were not thermally etched. Therefore, the needle-like grains in the study could also be formed during the thermal etching process. shows the temperature dependence of the dielectric properties of the 0.85BNT-0.15BT + x wt%MnO2 single crystals at x = 0 \u2013 0.1. At 25 \u02daC, the dielectric constants measured at 1 kHz were 490, 460, and 410, and tan\u03b4 was 0.02, 0.02, and 0.01 at x =0, 0.05, and 0.1, respectively. The dielectric constants rapidly increased at 219, 220, and 218 \u02daC at x = 0, 0.05, and 0.1, respectively. Tmax was 256, 261, and 254 \u02daC at x = 0, 0.05, and 0.1, respectively. The Td and Tmax were consistent with those of 0.85BNT-0.15BT ceramics , they were not strongly dependent of x. (a) and (b) show the P-E loop and the S-E curve of the 0.85BNT-0.15BT + x wt%MnO2 single crystal at x = 0.1. The remanent polarization and the coercive field were 36 \xb5C/cmE^{2} and 29 kV/cm, respectively. (c) shows the unipolar S-E curve of the poled 0.85BNT-0.15BT + 0.1 wt%MnO2 single crystal. The converse piezoelectric effect d33* calculated from the slope was 108 pm/V. The direct piezoelectric effect d33 measured by the d33 meter was 118 pC/N. Note that typical ferroelectric responses could not be measured at x = 0 and 0.05 due to a breakdown during the measurements of P-E loops and S-E curves. In 0.85BNT-0.15BT, Bi may volatile during the sintering due to a high vapor pressure and this is accompanied by the removal of oxygen, which is expressed as  Here, the Kr\xf6ger-Vink notation was used. The holes may decrease the resistivity of the ceramics at x = 0, and cause the breakdown. For the MnO2 added samples, Mn may trap holes due to its several stable oxidation states. It is considered that the content of MnO2 was not enough to trap the holes at x = 0.05. The piezoelectric property at x = 0.1 was compared with that of other BNT-BT ceramics and single crystals, as shown in. The d33 value measured in this study was larger than that of the <110>c-oriented and randomly oriented 0.85BNT-0.15BT ceramics but smaller than that of the <001>c-oriented ceramics. An example of the rotator is BaTiO3 at room temperature and that of the extender is PbTiO3. 0.85BNT-0.15BT has a phase transition of about 220 \u02daC which is far from room temperature and the composition is far from a phase boundary composition of 0.94BNT-0.06BT. Besides, larger d33 was measured in the polar <001>c direction. Thus, 0.85BNT-0.15BT is considered to be an extender. One of the characteristics of the extender is a weak anisotropy; that is, the difference in the d33 values in <001>c and <110>c directions was small. In contrast, at rhombohedral 0.95BNT-0.05BT and phase boundary 0.94BNT-0.06BT, the d33 values of the <100>c-oriented single crystals were about 3 times larger than those of a <111>c-oriented single crystal and randomly oriented ceramics. Therefore, a decrease in domain size in 0.85BNT-0.15BT could increase d33, and only the single crystals oriented along to non-polar directions such as <110>c and <111>c could decrease domain size. Such poling treatments would increase the piezoelectric properties of <110>c-oriented MnO2 added 0.85BNT-0.15BT single crystals.
+
+# TITLE
+Effect of MnO<inf>2</inf> content on the growth and electric properties of &lt;110&gt;<inf>c</inf>-oriented 0.85(Bi<inf>0.5</inf>Na<inf>0.5</inf>)TiO<inf>3</inf>-0.15BaTiO<inf>3</inf> single crystals fabricated by solid-state crystal growth method
+
+# ABSTRACT
+<110>c-oriented 0.85(Bi0.5Na0.5)TiO3-0.15BaTiO3 + x wt%MnO2 (x = 0 – 0.5) single crystals were fabricated by a solid-state crystal growth method, and the effect of the MnO2 content on crystal growth and electric properties were investigated. Single crystals with a size of about 2 mm×3 mm×0.4 mm were obtained at x = 0 – 0.1. The temperature dependence of the dielectric properties of the single crystals at x = 0 – 0.1 revealed depolarization temperatures of 218 – 220 ˚C and the temperatures of the maximum dielectric constant of 254 – 261 ˚C. At x = 0.1, a ferroelectric polarization – electric field loop and a strain – electric field curve were observed, and the piezoelectric constant d33 was 118 pC/N. The d33 value was larger than to that of reported <110>c-oriented ceramics but smaller than <001>c-oriented ceramics, which suggested that 0.85(Bi0.5Na0.5)TiO3-0.15BaTiO3 was an extender ferroelectric material.
+
+# INTRODUCTION
+However, their piezoelectric properties are often smaller than those of commercially utilized Pb(Zr,Ti)O3-based materials. It is known that Pb-based piezoelectric materials such as Pb(Mg1/3Nb2/3)O3-PbTiO3 and Pb(Zn1/3Nb2/3)O3-PbTiO3 show large piezoelectric properties in the form of single crystals by making use of their crystal anisotropy and a fine domain structure. Therefore, the growth of a single crystal and the introduction of fine domains could provide large piezoelectric properties in lead-free piezoelectric materials. (Bi0.5Na0.5)TiO3-BaTiO3 (BNT-BT) is one of the lead-free piezoelectric materials. The rhombohedral \u2013 tetragonal phase boundary compositions of 0.94BNT-0.06BT and 0.93BNT-0.07BT are frequently studied due to maximized piezoelectric properties (e.g. piezoelectric constant d33 \u223c 125\u2013176 pC/N for polycrystalline ceramics). However, a low depolarization temperature Td of about 100 \u02daC is a drawback. In contrast, the tetragonal composition of 0.85BNT-0.15BT has a higher Td of about 220 \u02daC, although it has modest piezoelectric properties (e.g. d33 \u223c 100 pC/N for polycrystalline ceramics). Thus, the fabrication of a 0.85BNT-0.15BT single crystal could provide the foundation of an increase in the piezoelectric properties with keeping the high depolarization temperature. BNT-BT single crystals have been fabricated by a Bridgeman method , a flux method , a top-seeded solution growth method , and a solid-state crystal growth (SSCG) method. However, their compositions are those close to the rhombohedral \u2013 tetragonal phase boundary, and the fabrication of a tetragonal 0.85BNT-0.15BT single crystal has not been reported yet. Among the fabrication methods, the SSCG method can provide a uniform distribution of elements in a single crystal and can suppress the volatilization of high-vapor-pressure bismuth oxide, which results in an increase in leakage current and/or the decrease of piezoelectric properties, because the method uses a conventional sintering process without melting. In the SSCG method, a powder compact containing a seed crystal inside is sintered, and during the sintering, exaggerated grain growth occurs from the seed crystal, which converts polycrystalline ceramics to a single crystal. An appropriate seed crystal is necessary for crystal growth in the SSCG method. Previously, a 0.95BNT-0.05BT single crystal was fabricated using a SrTiO3 seed crystal. At rhombohedral 0.95BNT-0.05BT, the d33 value in a polar <111>c direction was 90 pC/N, while that in an off-polar <001>c direction was 280 pC/N, showing about 3 times larger d33 in the off-polar direction. At a tetragonal 0.85BNT-0.15BT, although the piezoelectric properties of a single crystal were not reported, those of grain-oriented 0.85BNT-0.15BT ceramics were reported; the d33 value of polar <001>c-oriented ceramics with the degree of an orientation of 69 % was 122 pC/N , while that of off-polar <110>c-oriented ceramics with the degree of an orientation of 84 % was 103 pC/N , showing a higher d33 in the polar direction but the difference was small. In this study, <110>c-oriented MnO2-added 0.85BNT-0.15BT single crystals were fabricated by an SSCG method. MnO2 was added to decrease leakage current and pole samples at a high electric field to measure the piezoelectric properties. The various contents of MnO2 were added to the raw powder of 0.85BNT-0.15BT, and the effect on the crystal growth and electric properties of 0.85BNT-0.15BT single crystals was investigated.
+
+# CONCLUSION
+The <110>c-oriented 0.85BNT-0.15BT + x wt%MnO2 single crystals were fabricated by the SSCG method, and the effect of MnO2 addition on the growth and electric properties was studied. At x = 0, 0.05, and 0.1, the single crystals were grown to the surface of the sintered compacts. On the other hand, the single crystals were not grown to the surface at x = 0.3 and 0.5. The decreased crystal growth lengths at x = 0.3 and 0.5 were attributed to the increased grain sizes of the polycrystalline parts of the samples. The depolarization temperatures of the single crystals at x = 0 \u2013 0.1 were 218 \u2013 220 and the temperatures of the maximum dielectric constant were 254 \u2013 261 \u02daC, and they were not strongly dependent on x. The ferroelectric P-E and S-E responses were confirmed at x = 0.1, and the direct and converse piezoelectric effects: d33 and d33* were 118 pC/N and 108 pm/V, respectively. The direct effect d33 was larger than the reported d33 value of off-polar <110>c-oriented 0.85BNT-0.15BT ceramics but smaller than that of polar <001>c-oriented 0.85BNT-0.15BT ceramics. This indicates 0.85BNT-0.15BT is an extender ferroelectric material. The poling treatments would increase the <110>c-oriented MnO2-added 0.85BNT-0.15BT single crystals.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-11 14:00:34: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. d33, Td, and Tmax of BNT-BT single crystals, oriented ceramics, and randomly oriented ceramics.
+|Method|Form|Orientation|Composition|Crystal system|d33 (pC/N)|Td (\u02daC)|Tmax (\u02daC)|Ref|
+|---|---|---|---|---|---|---|---|---|
+|SSCG|Single crystal|110|0.85BNT\u22120.15BT*|T|118|218|256|This study|
+||Oriented ceramics|110|0.85BNT\u22120.15BT|T|103|||[23]|
+||Oriented Ceramics|100|0.85BNT\u22120.15BT|T|122|||[22]|
+||Randomly oriented ceramics||0.85BNT\u22120.15BT|T|88|||[22]|
+||Randomly oriented ceramics||0.85BNT\u22120.15BT|T|75|212|250|[31]|
+||Randomly oriented ceramics||0.85BNT\u22120.15BT|T|105|||[10]|
+|TSSG|Single crystal|100|0.94BNT\u22120.06BT|MPB|360|120||[16]|
+||Randomly oriented ceramics||0.94BNT\u22120.06BT|MPB|120|110|265|[7]|
+||Randomly oriented ceramics||0.94BNT\u22120.06BT|MPB|155|105|288|[8]|
+|SSCG|Single crystal|100|0.95BNT\u22120.05BT|R|207|145|280|[20]|
+|TSSG|Single crystal|100|0.95BNT\u22120.05BT|R|420|135||[19]|
+|TSSG|Single crystal|100|0.95BNT\u22120.05BT|R|280|130||[15]|
+|TSSG|Single crystal|111|0.95BNT\u22120.05BT|R|90|130||[15]|
+||Randomly oriented ceramics||0.95BNT\u22120.05BT|R|112|||[10]|
+
+# RESULTS AND DISCUSSION
+shows the photograph of 0.85BNT-0.15BT + x wt%MnO2 sintered compacts. A single crystal grown to the center of the face of each sintered compact could be seen at x = 0 \u2013 0.1. The size of the single crystal visible on the face was about 1.3 mm\xd72.4 mm, 1.8 mm\xd72.2 mm, and 2.3 mm\xd73.0 mm at x = 0, 0.05, and 0.1, respectively. The color of the compact was beige at x = 0 and it became darker with increasing x. This was due to the black color of the MnO2 powder. (a) shows the XRD patterns of the faces of the 0.85BNT-0.15BT + x wt%MnO2 sintered compacts shown in. At x = 0 \u2013 0.1, the strong diffraction peaks from (101), (110), (202), and (220) planes were observed, indicating that the 0.85BNT-0.15BT + x wt%MnO2 single crystals grew with the orientation of the (110) SrTiO3 seed crystal. In contrast, the XRD patterns at x = 0.3 and 0.5 were those of randomly oriented polycrystalline ceramics. A clear peak shift with increasing x was not observed, probably because the addition of MnO2 was small. (b) shows the XRD patterns of the 0.85BNT-0.15BT + x wt%MnO2 single crystal faces which were originally attached to the seed crystals. Only the {110}c diffraction peaks were observed for the samples, which was similar to the diffraction patterns in (a). (c) shows the pole figure of {100}c orientation for the 0.85BNT-0.15BT + 0.1 wt%MnO2 single crystal. Two diffraction spots were observed at \u03b1 \u223c 45\u02da, and they were symmetrical with respect to the center. This confirms that {100}c planes appeared when the {110}c planes were tilted by about 45\u02da, and the x = 0.1 sample was a single crystal. (b) and (c) suggest that the x = 0 and 0.05 samples were also single crystals. shows the optical microscopy images of the cross-sections of the 0.85BNT-0.15BT + x wt%MnO2 sintered compacts. As mentioned earlier, the single crystals were preferentially grown to one of the faces of the sintered compacts at x = 0 \u2013 0.1. The lengths of the crystals grown from the seed crystal to the surface were 430, 420, and 420 \xb5m at x = 0, 0.05, and 0.1, respectively. The areas near the top left corners of the seed crystals shown in were observed by SEM, as shown in. At x =0.3 and 0.5, the crystal growth lengths were measured to be 160 and 50 \xb5m, respectively. The dense single crystals could be seen at x = 0 \u2013 0.1. To understand the effect of the MnO2 content on the crystal growth length, the polycrystalline parts of the sintered compacts were observed by SEM, as shown in. The grain sizes were measured to be 4.7 \xb1 1.7 \xb5m, 4.6 \xb1 1.6 \xb5m, and 4.9 \xb1 1.8 \xb5m at x = 0, 0.05, and 0.1, respectively, and thus the grain sizes were similar. At x = 0.3 and 0.5, the grain sizes were increased to 7.2 \xb1 2.5 \xb5m and 12 \xb1 4 \xb5m, respectively. The increase in the grain size with increasing MnO2 content was previously reported for 0.94BNT-0.06BT ceramics. It is considered that the increase in the grain size at x = 0.3 and 0.5 inhibited the single crystal growth, because the driving force of the grain growth of a grain in ceramics is inversely proportional to the grain size of the surrounding grains. This result made us assume that the grains in front of the smaller single crystal grown from the (110) face of the seed crystal in the compact were larger than those near the larger single crystal which reached to the surface of the compact at x = 0 \u2013 0.1. Thus, the reason for the preferential crystal growth is not understood at present. summarizes the crystal growth length and the grain size of the 0.85BNT-0.15BT + x wt%MnO2 sintered compacts as a function of x. At x = 0 \u2013 0.1, the grown crystals reached the surfaces of the sintered compacts and the crystal growth was attributed to small grains of about 5 \xb5m. At x = 0.3 and 0.5, the grain size increased, and this decreased the crystal growth length. shows the SEM image and EDS elemental mapping of the cross-sections of the 0.85BNT-0.15BT + x wt%MnO2 sintered compacts near a seed crystal \u2013 grown single crystal interface and a grown single crystal \u2013 polycrystalline part interface at x = 0 \u2013 0.1. For the seed crystals and the grown single crystals, the Bi and Na ions of the grown single crystals did not diffuse into the seed crystals (shown for x = 0 only), and the Sr ions of the seed crystals did not diffuse into the grown single crystals. For the grown single crystals and the polycrystalline parts, the intensity of the concentration of each element was uniform, except for pores in the polycrystalline parts, which suggested that the compositions of the grown single crystals and the polycrystalline parts were the same, except for needle-like grains especially found in the grown single crystal at x = 0 and 0.1. Such needle-like grains were also reported for BNT-SrTiO3 and BNT-(Sr,Ca)TiO3 single crystals fabricated by an SSCG method , and they were reportedly formed during a thermal etching process for SEM observation. In this study, no secondary phase was found in the XRD patterns of the single crystals ((b)) which were used for the following electric measurements and were not thermally etched. Therefore, the needle-like grains in the study could also be formed during the thermal etching process. shows the temperature dependence of the dielectric properties of the 0.85BNT-0.15BT + x wt%MnO2 single crystals at x = 0 \u2013 0.1. At 25 \u02daC, the dielectric constants measured at 1 kHz were 490, 460, and 410, and tan\u03b4 was 0.02, 0.02, and 0.01 at x =0, 0.05, and 0.1, respectively. The dielectric constants rapidly increased at 219, 220, and 218 \u02daC at x = 0, 0.05, and 0.1, respectively. Tmax was 256, 261, and 254 \u02daC at x = 0, 0.05, and 0.1, respectively. The Td and Tmax were consistent with those of 0.85BNT-0.15BT ceramics , they were not strongly dependent of x. (a) and (b) show the P-E loop and the S-E curve of the 0.85BNT-0.15BT + x wt%MnO2 single crystal at x = 0.1. The remanent polarization and the coercive field were 36 \xb5C/cmE^{2} and 29 kV/cm, respectively. (c) shows the unipolar S-E curve of the poled 0.85BNT-0.15BT + 0.1 wt%MnO2 single crystal. The converse piezoelectric effect d33* calculated from the slope was 108 pm/V. The direct piezoelectric effect d33 measured by the d33 meter was 118 pC/N. Note that typical ferroelectric responses could not be measured at x = 0 and 0.05 due to a breakdown during the measurements of P-E loops and S-E curves. In 0.85BNT-0.15BT, Bi may volatile during the sintering due to a high vapor pressure and this is accompanied by the removal of oxygen, which is expressed as  Here, the Kr\xf6ger-Vink notation was used. The holes may decrease the resistivity of the ceramics at x = 0, and cause the breakdown. For the MnO2 added samples, Mn may trap holes due to its several stable oxidation states. It is considered that the content of MnO2 was not enough to trap the holes at x = 0.05. The piezoelectric property at x = 0.1 was compared with that of other BNT-BT ceramics and single crystals, as shown in. The d33 value measured in this study was larger than that of the <110>c-oriented and randomly oriented 0.85BNT-0.15BT ceramics but smaller than that of the <001>c-oriented ceramics. An example of the rotator is BaTiO3 at room temperature and that of the extender is PbTiO3. 0.85BNT-0.15BT has a phase transition of about 220 \u02daC which is far from room temperature and the composition is far from a phase boundary composition of 0.94BNT-0.06BT. Besides, larger d33 was measured in the polar <001>c direction. Thus, 0.85BNT-0.15BT is considered to be an extender. One of the characteristics of the extender is a weak anisotropy; that is, the difference in the d33 values in <001>c and <110>c directions was small. In contrast, at rhombohedral 0.95BNT-0.05BT and phase boundary 0.94BNT-0.06BT, the d33 values of the <100>c-oriented single crystals were about 3 times larger than those of a <111>c-oriented single crystal and randomly oriented ceramics. Therefore, a decrease in domain size in 0.85BNT-0.15BT could increase d33, and only the single crystals oriented along to non-polar directions such as <110>c and <111>c could decrease domain size. Such poling treatments would increase the piezoelectric properties of <110>c-oriented MnO2 added 0.85BNT-0.15BT single crystals.
+
+# TITLE
+Effect of MnO<inf>2</inf> content on the growth and electric properties of &lt;110&gt;<inf>c</inf>-oriented 0.85(Bi<inf>0.5</inf>Na<inf>0.5</inf>)TiO<inf>3</inf>-0.15BaTiO<inf>3</inf> single crystals fabricated by solid-state crystal growth method
+
+# ABSTRACT
+<110>c-oriented 0.85(Bi0.5Na0.5)TiO3-0.15BaTiO3 + x wt%MnO2 (x = 0 – 0.5) single crystals were fabricated by a solid-state crystal growth method, and the effect of the MnO2 content on crystal growth and electric properties were investigated. Single crystals with a size of about 2 mm×3 mm×0.4 mm were obtained at x = 0 – 0.1. The temperature dependence of the dielectric properties of the single crystals at x = 0 – 0.1 revealed depolarization temperatures of 218 – 220 ˚C and the temperatures of the maximum dielectric constant of 254 – 261 ˚C. At x = 0.1, a ferroelectric polarization – electric field loop and a strain – electric field curve were observed, and the piezoelectric constant d33 was 118 pC/N. The d33 value was larger than to that of reported <110>c-oriented ceramics but smaller than <001>c-oriented ceramics, which suggested that 0.85(Bi0.5Na0.5)TiO3-0.15BaTiO3 was an extender ferroelectric material.
+
+# INTRODUCTION
+However, their piezoelectric properties are often smaller than those of commercially utilized Pb(Zr,Ti)O3-based materials. It is known that Pb-based piezoelectric materials such as Pb(Mg1/3Nb2/3)O3-PbTiO3 and Pb(Zn1/3Nb2/3)O3-PbTiO3 show large piezoelectric properties in the form of single crystals by making use of their crystal anisotropy and a fine domain structure. Therefore, the growth of a single crystal and the introduction of fine domains could provide large piezoelectric properties in lead-free piezoelectric materials. (Bi0.5Na0.5)TiO3-BaTiO3 (BNT-BT) is one of the lead-free piezoelectric materials. The rhombohedral \u2013 tetragonal phase boundary compositions of 0.94BNT-0.06BT and 0.93BNT-0.07BT are frequently studied due to maximized piezoelectric properties (e.g. piezoelectric constant d33 \u223c 125\u2013176 pC/N for polycrystalline ceramics). However, a low depolarization temperature Td of about 100 \u02daC is a drawback. In contrast, the tetragonal composition of 0.85BNT-0.15BT has a higher Td of about 220 \u02daC, although it has modest piezoelectric properties (e.g. d33 \u223c 100 pC/N for polycrystalline ceramics). Thus, the fabrication of a 0.85BNT-0.15BT single crystal could provide the foundation of an increase in the piezoelectric properties with keeping the high depolarization temperature. BNT-BT single crystals have been fabricated by a Bridgeman method , a flux method , a top-seeded solution growth method , and a solid-state crystal growth (SSCG) method. However, their compositions are those close to the rhombohedral \u2013 tetragonal phase boundary, and the fabrication of a tetragonal 0.85BNT-0.15BT single crystal has not been reported yet. Among the fabrication methods, the SSCG method can provide a uniform distribution of elements in a single crystal and can suppress the volatilization of high-vapor-pressure bismuth oxide, which results in an increase in leakage current and/or the decrease of piezoelectric properties, because the method uses a conventional sintering process without melting. In the SSCG method, a powder compact containing a seed crystal inside is sintered, and during the sintering, exaggerated grain growth occurs from the seed crystal, which converts polycrystalline ceramics to a single crystal. An appropriate seed crystal is necessary for crystal growth in the SSCG method. Previously, a 0.95BNT-0.05BT single crystal was fabricated using a SrTiO3 seed crystal. At rhombohedral 0.95BNT-0.05BT, the d33 value in a polar <111>c direction was 90 pC/N, while that in an off-polar <001>c direction was 280 pC/N, showing about 3 times larger d33 in the off-polar direction. At a tetragonal 0.85BNT-0.15BT, although the piezoelectric properties of a single crystal were not reported, those of grain-oriented 0.85BNT-0.15BT ceramics were reported; the d33 value of polar <001>c-oriented ceramics with the degree of an orientation of 69 % was 122 pC/N , while that of off-polar <110>c-oriented ceramics with the degree of an orientation of 84 % was 103 pC/N , showing a higher d33 in the polar direction but the difference was small. In this study, <110>c-oriented MnO2-added 0.85BNT-0.15BT single crystals were fabricated by an SSCG method. MnO2 was added to decrease leakage current and pole samples at a high electric field to measure the piezoelectric properties. The various contents of MnO2 were added to the raw powder of 0.85BNT-0.15BT, and the effect on the crystal growth and electric properties of 0.85BNT-0.15BT single crystals was investigated.
+
+# CONCLUSION
+The <110>c-oriented 0.85BNT-0.15BT + x wt%MnO2 single crystals were fabricated by the SSCG method, and the effect of MnO2 addition on the growth and electric properties was studied. At x = 0, 0.05, and 0.1, the single crystals were grown to the surface of the sintered compacts. On the other hand, the single crystals were not grown to the surface at x = 0.3 and 0.5. The decreased crystal growth lengths at x = 0.3 and 0.5 were attributed to the increased grain sizes of the polycrystalline parts of the samples. The depolarization temperatures of the single crystals at x = 0 \u2013 0.1 were 218 \u2013 220 and the temperatures of the maximum dielectric constant were 254 \u2013 261 \u02daC, and they were not strongly dependent on x. The ferroelectric P-E and S-E responses were confirmed at x = 0.1, and the direct and converse piezoelectric effects: d33 and d33* were 118 pC/N and 108 pm/V, respectively. The direct effect d33 was larger than the reported d33 value of off-polar <110>c-oriented 0.85BNT-0.15BT ceramics but smaller than that of polar <001>c-oriented 0.85BNT-0.15BT ceramics. This indicates 0.85BNT-0.15BT is an extender ferroelectric material. The poling treatments would increase the <110>c-oriented MnO2-added 0.85BNT-0.15BT single crystals.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "0.85(Bi0.5Na0.5)TiO3-0.15BaTiO3 + 0 wt%MnO2": 118,
+      "0.85(Bi0.5Na0.5)TiO3-0.15BaTiO3 + 0.05 wt%MnO2": 118,
+      "0.85(Bi0.5Na0.5)TiO3-0.15BaTiO3 + 0.1 wt%MnO2": 118
+    },
+    "abbreviations": {},
+    "property_unit": "pC/N",
+    "family": "BNT-BT"
+  }
+}"

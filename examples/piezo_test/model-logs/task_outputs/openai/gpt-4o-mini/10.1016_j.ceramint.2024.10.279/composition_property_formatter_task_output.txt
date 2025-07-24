@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(K,Na)NbO3-(0.04-0)CaZrO3-(Bi0.5Ag0.5)ZrO3":447,"(K,Na)NbO3-(0.04-0.03)CaZrO3-(Bi0.5Ag0.5)ZrO3":511},"property_unit":"pC/N","family":"KNN-based ceramics"}}

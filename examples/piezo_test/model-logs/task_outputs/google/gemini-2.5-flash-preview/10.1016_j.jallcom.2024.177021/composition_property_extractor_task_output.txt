@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi3Ti(1.5-x)NbxW0.5O9 where x=0.00":7.5,"Bi3Ti(1.5-x)NbxW0.5O9 where x=0.01":10.25,"Bi3Ti(1.5-x)NbxW0.5O9 where x=0.02":13,"Bi3Ti(1.5-x)NbxW0.5O9 where x=0.04":10.25,"Bi3Ti(1.5-x)NbxW0.5O9 where x=0.06":7.5},"abbreviations":{"BTW":"Bi3Ti1.5W0.5O9"},"property_unit":"pC/N","family":"Bi3Ti1.5W0.5O9"}}

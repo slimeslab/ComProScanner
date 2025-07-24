@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BaTiO3":190,"BNNT":null,"B\\u2082Ba\\u2086TiO\\u2086":null,"Ti\\u2084N\\u2083B\\u2082":null},"abbreviations":{},"property_unit":"pC/N","family":"Perovskites"}}

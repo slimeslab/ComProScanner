@@ -1,0 +1,335 @@
+2025-07-11 09:44:17: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Nd3+ modified and unmodified PBN ceramics.
+|Value of x|Value of y|Composition|Notation|
+|---|---|---|---|
+|x\xa0=\xa00.35|y\xa0=\xa00.00|Pb0.65 Ba0.35Nb2O6|PBN-1|
+|x\xa0=\xa00.35|y\xa0=\xa00.02|Pb0.62 Ba0.35 Nd0.02Nb2O6|PBNN-2|
+|x\xa0=\xa00.35|y\xa0=\xa00.04|Pb0.59 Ba0.35 Nd0.04Nb2O6|PBNN-3|
+|x\xa0=\xa00.35|y\xa0=\xa00.06|Pb0.56 Ba0.35 Nd0.06Nb2O6|PBNN-4|
+
+Table 2. Atomic and weight percentages of Nd3+ modified and unmodified PBN ceramics.
+|Element|PBN1|PBNN2|PBNN3|PBNN4|At. %|Wt. %|At. %|Wt. %|At. %|Wt. %|At. %|Wt. %|
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|Pb|7.22|28.99|6.90|27.85|6.57|26.70|6.24|25.53|
+|Ba|3.89|10.35|3.89|10.42|3.90|10.50|3.90|10.57|
+|Nd|---|---|0.22|0.63|0.45|1.26|0.67|1.90|
+|Nb|22.22|40.00|22.25|40.29|22.27|40.58|22.30|40.88|
+|O|66.74|20.81|66.74|20.81|66.82|20.96|66.89|21.12|
+
+# RESULTS AND DISCUSSION
+The XRD patterns of the PBN and NdE^{3+} modified PBN ceramic compositions at room temperature show the single-phase tetragonal structure for all samples as shown in. The lattice constants of PBN with a = 12.505 \xc5 and c = 3.984 \xc5 well matched with reported values. The lattice parameter a (\xc5) decreases with NdE^{3+} concentration in PBN ceramic compositions. The XRD peaks match well with the JCPDS file no. C34-375. Substitution of NdE^{3+} does not affect the symmetry but affects the lattice parameters as shown in. The decrease in lattice parameters with increasing Nd concentration is due to the smaller ionic radius of Nd\xb3\u207a (0.983 \xc5) compared to the larger ions (PbE^{2}\u207a and BaE^{2}\u207a) it replaces in the PBN structure. As Nd\xb3\u207a ions substitute these larger ions, the unit cell contracts, causing a reduction in lattice parameters. The maximum value (12.505 \xc5) in PBN-1 reflects the structure before significant Nd\xb3\u207a incorporation, as shown in (a). The Rietveld's refinement pattern for the XRD data of the synthesized nanostructures for x = 0.00 is presented in. The Rietveld refinement profile of the XRD data demonstrates a good fit between the experimental data (dots) and the calculated profile (solid line). The consistent peak alignment across the different samples, along with the refined fit, confirms the phase stability of the PBN ceramics. When compared with the literature, these results are consistent with typical PBN-based ceramics, where doping with rare-earth ions such as Nd\xb3\u207a can slightly influence lattice parameters without significantly disrupting the crystalline structure. The average crystallite sizes of Pb\u2081\u208b\u2093\u208b\u2083y/\u2082Ba\u2093Re\u1d67\xb3\u207aNb\u2082O\u2086 ceramics (PBN) with Nd\xb3\u207a doping (x = 0.35, y = 0.00\u20130.06) are 22.7 nm, 22.6 nm, 23.2 and 25.11 nm respectively (listed in ), showing a gradual increase with higher Nd\xb3\u207a substitution as shown in. Comparable literature on Nd\xb3\u207a doped PBN ceramics also shows crystallite sizes typically between 20 and 30 nm, confirming that the observed growth is consistent with the behavior of Nd\xb3\u207a as a dopant enhancing grain size at higher doping levels. Yuhan  et al. reported a decrease in cell volume with neodymium-doped in Strontium Sodium Barium Niobate (SSBN) Ceramics. Cell volume in NdE^{3+} doped Lead Barium Niobate ceramic materials is found to be low in comparison to unmodified Lead Barium Niobate. Hence the contraction in cell volume is been found and it is not by the ionic radii of NdE^{3+} rare earth ions. A similar decrease in cell volume is reported by the earlier authors in rare earth ion substituted in BSN  and BSNN  ceramics. The experimental densities are found in the range of 5.78\u20135.90 g/cmE^{3} as presented in. The densities of the samples decrease with the increase of NdE^{3+} concentration in PBN. The decrease in density percentage with increasing Nd\xb3\u207a concentration from 0.00 to 0.06, can be attributed to the lower atomic mass of Nd\xb3\u207a compared to the ions it replaces (PbE^{2}\u207a and BaE^{2}\u207a). As Nd\xb3\u207a ions substitute these heavier ions, the overall mass of the unit cell decreases, leading to a reduction in the material's theoretical density. Additionally, Nd\xb3\u207a substitution may introduce lattice distortions or vacancies, further lowering the packing efficiency and contributing to the reduced density percentage. The axial ratio increases in PBN ceramics with an increase in the concentration of the NdE^{3+} dopants. The axial ratios are found to be between 1.007 and 1.009. A small axial ratio indicates that the NbO\u2086 octahedra in the TB structure experiences little distortion, maintaining a near-ideal octahedral geometry. The distortion of NbO\u2086 units affects the local electric field and piezoelectric properties. The maximum value of the lattice parameter obtained in PBN-1 is 12.505 \xc5. The highest density observed in PBN-1 composition is 5.90 g/cmE^{3}. It is evident from that with an increase of NdE^{3+} composition from 0.00 to 0.06 the density percentage decreased. Relative density is calculated as the ratio of the experimental density (\u03c1ex) to the theoretical density (\u03c1th), expressed as a percentage. As shown in the data, the relative densities of the Nd\xb3\u207a modified and unmodified PBN ceramics range from 95.0 % to 96.0 %, indicating high densification across all compositions. SEM images of unmodified PBN and NdE^{3+} modified PBN compositions and associated histograms showing the distribution of nanoparticles are shown in (a)\u2013(d). The standard deviations of the grain sizes are 0.77321, 1.57002, 0.498693, and 0.458734 respectively. Also, the grain size increased with the increase of NdE^{3+} doped in PBN ceramics. The graph of grain size with an increase of NdE^{3+} concentration is shown in. From the figure, it is clear that the maximum density and grain size were observed in the PBN-1 composition. The porosity value for PBN-1 is 0.04 and the maximum porosity achieved in PBNN-3 is 0.055. Porosity increases with NdE^{3+} content at which Pb content is decreasing on the other side as shown in (b). The atomic and weight percentages of NdE^{3+} modified and unmodified PBN ceramics are presented in. For each composition, the EDS peak positions include these characteristic X-ray peaks at different energy levels. For PBN1, Lead (Pb) has two peaks at L\u03b1: \u223c10.55 keV and M\u03b1: \u223c2.34 keV; Barium (Ba) has two peaks at L\u03b1: \u223c4.47 keV and M\u03b1: \u223c0.72 keV, Niobium (Nb) has two peaks at L\u03b1: \u223c2.16 keV and K\u03b1: \u223c16.6 keV and Oxygen (O) has a single peak at K\u03b1: \u223c0.525 keV. for PBNN2, the peaks are same as above with additional two peaks of Neodymium (Nd) at L\u03b1: \u223c5.23 keV and M\u03b1: \u223c0.98 keV. for PBNN3, it has peaks similar to the second composition but with slightly higher Nd peak intensity. For PBNN4, the Nd peaks will be more pronounced at 5.23 keV and 0.98 keV. The pattern shows that these energies are approximate and can shift slightly depending on the calibration of your EDS system. This study explores the impact of neodymium (NdE^{3+}) doping on the piezoelectric properties of PBN ceramics. The XRD patterns presented in the paper show that pure and NdE^{3+}-modified PBN ceramics exhibit a single-phase tetragonal structure, consistent with prior studies. The decrease in lattice parameter 'a' with increasing NdE^{3+} concentration aligns with findings by Rao et al., who reported similar trends in Strontium Sodium Barium Niobate (SSBN) ceramics. This decrease is attributed to the substitution of NdE^{3+} ions, which causes a contraction in cell volume, a phenomenon also observed in rare earth ion-substituted Barium Sodium Niobate (BSN) and Barium Strontium Sodium Niobate (BSNN) ceramics. There is a decrease in density with increased NdE^{3+} concentration, which falls within the range of 5.78\u20135.90 g/cm\xb3. This observation is in line with earlier studies that noted density variations in doped PBN ceramics. The dielectric properties of NdE^{3+}-doped PBN ceramics show a broad dielectric peak, with the phase transition temperature (TC) remaining consistent with reported values. The maximum piezoelectric coefficient (d33) increases with NdE^{3+} concentration, achieving a peak value of 236 pC/N for PBNN-4. SEM images indicate that NdE^{3+} doping affects the grain size and porosity of PBN ceramics. The maximum grain size and density were observed in the undoped PBN composition, while NdE^{3+} doping led to a reduction in grain size and an increase in porosity. Like, the structural consistency shown by maintaining a tetragonal structure with NdE^{3+} doping is consistent with earlier work on rare-earth-doped niobate ceramics. Similarly, the improvement in piezoelectric properties with NdE^{3+} concentration echoes results from studies on other doped piezoelectric materials. So, this paper effectively builds on existing literature by demonstrating that NdE^{3+} doping can enhance the piezoelectric properties of PBN ceramics, making them suitable for advanced device applications. This work provides valuable insights into the material properties and potential applications of NdE^{3+}-doped PBN, contributing to the broader understanding of ferroelectric and piezoelectric materials. In brief, this study describes the structural, microstructural, and piezoelectric properties of PBN (probably Pb(Nb, Zr)O3 or a similar lead-based perovskite material) and NdE^{3+} modified PBN ceramics. The piezoelectric charge coefficients d11 and d33 indicate that these materials can be used in devices that rely on piezoelectricity, such as sensors, actuators, and transducers. The increase in d11 and d33 with NdE^{3+} concentration suggests enhanced piezoelectric performance. b. The transition temperature (TC) values (350 \xb0C for undoped PBN and decreasing with NdE^{3+} doping) suggest that these materials can operate at elevated temperatures. The high piezoelectric coefficients and mechanical stability indicate potential use in precision actuators, which require accurate motion control and are used in applications like adaptive optics, nano-positioning systems, and microelectromechanical systems (MEMS). The piezoelectric charge coefficients d11 and d33 indicate that these materials can be used in devices that rely on piezoelectricity, such as sensors, actuators, and transducers. The increase in d11 and d33 with NdE^{3+} concentration suggests enhanced piezoelectric performance. The transition temperature (TC) values (350 \xb0C for undoped PBN and decreasing with NdE^{3+} doping) suggest that these materials can operate at elevated temperatures. The high piezoelectric coefficients and mechanical stability indicate potential use in precision actuators, which require accurate motion control and are used in applications like adaptive optics, nano-positioning systems, and microelectromechanical systems (MEMS).
+
+# TITLE
+Influence of Nd<sup>3+</sup> ion on piezoelectric studies in lead barium niobate ferroelectric ceramics for device applications
+
+# ABSTRACT
+Pb₁₋ₓ₋₃y/₂BaₓReᵧ³⁺Nb₂O₆ (PBN) ceramics, where x = 0.35 and y = 0.00, 0.02, 0.04, 0.06, and Re³⁺ = Nd³⁺, were successfully synthesized using the solid-state reaction method. X-ray diffraction (XRD) analysis confirmed the formation of a pure, single-phase tetragonal structure in both undoped and Nd³⁺-modified PBN ceramics. Rietveld refinement demonstrated a strong correlation between experimental and calculated profiles, with crystallite sizes ranging from 22.6 to 25.11 nm, indicating a gradual increase in size with increasing Nd³⁺ substitution. Grain size analysis showed values between 1.09 μm and 3.95 μm, with the microstructure becoming more refined as Nd³⁺ content increased. The maximum density of 5.95 g/cm³ was achieved at y = 0.06, reflecting optimal densification from Nd³⁺ modification. Dielectric studies revealed that the phase transition temperature (Tc) followed a consistent trend, with the undoped PBN-1 showing a Tc of 350 °C, and Nd³⁺-modified compositions exhibiting lower transition temperatures of 330 °C, 315 °C, and 283 °C as Nd³⁺ content increased. The dielectric constant (Kp) reached a peak value of 0.39 at the Curie temperature and broadened with increasing Nd³⁺ content, indicating enhanced temperature stability. Furthermore, the piezoelectric coefficient (d₃₃) improved significantly with Nd³⁺ doping, reaching a maximum of 178 pC/N for y = 0.06, signifying enhanced piezoelectric performance. These results demonstrate that Nd³⁺-modified PBN ceramics are promising candidates for high-performance piezoelectric applications, particularly in environments demanding high-temperature stability and superior piezoelectric properties.
+
+# INTRODUCTION
+Notable ferroelectric materials such as Lead Titanate (PbTiO3) , Lead Zirconate (PbZrO3) , and Lead Meta Niobate (PbNb2O6)  were discovered in the early 1950s. Among them, PbNb2O6 was confirmed as a ferroelectric material by Goodman and Roth , and its structural and electrical properties were further examined by Francombe and Lewis. Recent research has shifted toward enhancing the dielectric and piezoelectric properties of niobate-based ceramics, with significant studies on compounds like Strontium Barium Niobate (SBN) by Deshpande , which demonstrated a broad maximum dielectric property between 65 \xb0C and 95 \xb0C. Lead Barium Niobate (PBN), composed of Lead Niobate and Barium Niobate, has attracted attention due to its morphotropic phase boundary (MPB) and the ability to accommodate ionic substitutions in its tungsten bronze (TB)-type structure, making it versatile for piezoelectric and dielectric applications. WE^{6+} doping in PBN has shown potential for improving piezoelectric properties, as evidenced by a piezoelectric coefficient of 108 pC/N in WE^{6+}-doped compositions. However, the effect of rare earth ion (NdE^{3+}) doping in Lead Barium Niobate ceramics remains underexplored. Previous studies have only briefly examined how such doping influences material properties, leaving a significant gap in understanding the full potential of NdE^{3+} doped PBN ceramics. However, lead-based ceramics such as Pb1-x-3y/2Ba\u2093Rey\xb3\u207aNb\u2082O\u2086 still offer exceptional piezoelectric and dielectric properties, particularly in high-temperature applications, where lead-free alternatives often fall short. Lead-based materials, including PBN ceramics, are preferred in certain high-performance applications due to their higher Curie temperatures and superior piezoelectric responses. Moreover, Nd\xb3\u207a-modified lead-based systems, like those studied here, have been shown to enhance functional properties, contributing to their continued relevance. Thus, while acknowledging the advancements in lead-free ceramics, the use of lead-based PBN ceramics in our study is justified by their superior performance in specific high-temperature and piezoelectric applications, further optimized by Nd\xb3\u207a doping. The primary objective of this study is to present a systematic investigation of the effect of NdE^{3+} doping on the piezoelectric and dielectric properties of PBN ceramics. The novelty lies in the exploration of NdE^{3+} ion concentration (y = 0.00, 0.02, 0.04, 0.06) and its impact on key material parameters such as grain size, density, dielectric constant, phase transition temperature (TC), and piezoelectric coefficient (d33). The study demonstrates that NdE^{3+} doping enhances the piezoelectric and dielectric performance of PBN ceramics, particularly in high-temperature applications, where material stability is crucial. This work provides new insights into tailoring PBN ceramics for advanced device applications requiring high-temperature stability and improved piezoelectric properties. However, the investigation is limited to a narrow range of NdE^{3+} concentrations, which, although sufficient to observe trends, may not fully explore the upper or lower bounds of the dopant's effects. Additionally, while the study provides a comprehensive understanding of material properties, further work is needed to assess the long-term stability and performance of NdE^{3+}-doped PBN ceramics in real-world applications, particularly in high-temperature or high-stress environments. Future studies could also explore how NdE^{3+} doping interacts with other dopants or synthesis techniques to further optimize the material's properties and offer new opportunities for developing materials with enhanced piezoelectric and dielectric properties for advanced technological applications. Lead Barium Niobate (Pb\u2081\u208b\u2093Ba\u2093Nb\u2082O\u2086) ceramics can be synthesized using various methods, like sol-gel , co-precipitation , hydrothermal , molten salt , microwave-assisted , etc., but the most common and efficient approach is the solid-state reaction method. In this study, The PBN ceramics with NdE^{3+} doping were synthesized using the conventional solid-state reaction method. The structural characterization was carried out using X-ray diffraction (XRD) to confirm the formation of the single-phase tetragonal structure. Scanning electron microscopy (SEM) was used to analyze the grain morphology and size distribution, while dielectric and piezoelectric properties were measured to evaluate the functional performance of the NdE^{3+} modified PBN ceramics.
+
+# CONCLUSION
+Pb\u2081\u208b\u2093\u208b\u2083y/\u2082Ba\u2093Re\u1d67\xb3\u207aNb\u2082O\u2086 ceramics (for x = 0.35 and y = 0.00, 0.02, 0.04, 0.06, and Re\xb3\u207a = Nd\xb3\u207a) were successfully synthesized using the solid-state reaction method. The XRD patterns confirmed a single-phase tetragonal structure for undoped PBN (a = 12.505 \xc5, c = 3.984 \xc5) and Nd\xb3\u207a-modified PBN ceramics. The average crystallite size increased gradually with Nd\xb3\u207a substitution, measured as 22.7 nm, 22.6 nm, 23.2 nm, and 25.11 nm for increasing doping levels. SEM images revealed dense, spherical grains with slight morphological deviations as the Nd\xb3\u207a concentration increased. The Curie temperature (Tc) decreased from 350 \xb0C for undoped PBN to 330 \xb0C, 315 \xb0C, and 283 \xb0C with increasing Nd\xb3\u207a content. Regarding piezoelectric properties, the electromechanical coupling factors (k\u209c and k\u209a) increased with Nd\xb3\u207a concentration: k\u209c rose from 0.43 to 0.47, while k\u209a increased from 0.35 to 0.38. However, these values remained slightly lower than those of pure PBN. The piezoelectric charge coefficients d\u2081\u2081 and d\u2083\u2083 also increased with Nd\xb3\u207a content, rising from 125 to 140 pC/N for d\u2081\u2081 and from 170 to 190 pC/N for d\u2083\u2083. Similarly, the mechanical quality factor (Q\u2098) improved from 78 to 90. These findings indicate that Nd\xb3\u207a doping significantly enhances the piezoelectric performance, making Nd\xb3\u207a-modified PBN ceramics promising candidates for high-performance piezoelectric applications, particularly in environments requiring high-temperature stability and improved piezoelectric properties.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-11 09:44:40: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Nd3+ modified and unmodified PBN ceramics.
+|Value of x|Value of y|Composition|Notation|
+|---|---|---|---|
+|x\xa0=\xa00.35|y\xa0=\xa00.00|Pb0.65 Ba0.35Nb2O6|PBN-1|
+|x\xa0=\xa00.35|y\xa0=\xa00.02|Pb0.62 Ba0.35 Nd0.02Nb2O6|PBNN-2|
+|x\xa0=\xa00.35|y\xa0=\xa00.04|Pb0.59 Ba0.35 Nd0.04Nb2O6|PBNN-3|
+|x\xa0=\xa00.35|y\xa0=\xa00.06|Pb0.56 Ba0.35 Nd0.06Nb2O6|PBNN-4|
+
+Table 2. Atomic and weight percentages of Nd3+ modified and unmodified PBN ceramics.
+|Element|PBN1|PBNN2|PBNN3|PBNN4|At. %|Wt. %|At. %|Wt. %|At. %|Wt. %|At. %|Wt. %|
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|Pb|7.22|28.99|6.90|27.85|6.57|26.70|6.24|25.53|
+|Ba|3.89|10.35|3.89|10.42|3.90|10.50|3.90|10.57|
+|Nd|---|---|0.22|0.63|0.45|1.26|0.67|1.90|
+|Nb|22.22|40.00|22.25|40.29|22.27|40.58|22.30|40.88|
+|O|66.74|20.81|66.74|20.81|66.82|20.96|66.89|21.12|
+
+# RESULTS AND DISCUSSION
+The XRD patterns of the PBN and NdE^{3+} modified PBN ceramic compositions at room temperature show the single-phase tetragonal structure for all samples as shown in. The lattice constants of PBN with a = 12.505 \xc5 and c = 3.984 \xc5 well matched with reported values. The lattice parameter a (\xc5) decreases with NdE^{3+} concentration in PBN ceramic compositions. The XRD peaks match well with the JCPDS file no. C34-375. Substitution of NdE^{3+} does not affect the symmetry but affects the lattice parameters as shown in. The decrease in lattice parameters with increasing Nd concentration is due to the smaller ionic radius of Nd\xb3\u207a (0.983 \xc5) compared to the larger ions (PbE^{2}\u207a and BaE^{2}\u207a) it replaces in the PBN structure. As Nd\xb3\u207a ions substitute these larger ions, the unit cell contracts, causing a reduction in lattice parameters. The maximum value (12.505 \xc5) in PBN-1 reflects the structure before significant Nd\xb3\u207a incorporation, as shown in (a). The Rietveld's refinement pattern for the XRD data of the synthesized nanostructures for x = 0.00 is presented in. The Rietveld refinement profile of the XRD data demonstrates a good fit between the experimental data (dots) and the calculated profile (solid line). The consistent peak alignment across the different samples, along with the refined fit, confirms the phase stability of the PBN ceramics. When compared with the literature, these results are consistent with typical PBN-based ceramics, where doping with rare-earth ions such as Nd\xb3\u207a can slightly influence lattice parameters without significantly disrupting the crystalline structure. The average crystallite sizes of Pb\u2081\u208b\u2093\u208b\u2083y/\u2082Ba\u2093Re\u1d67\xb3\u207aNb\u2082O\u2086 ceramics (PBN) with Nd\xb3\u207a doping (x = 0.35, y = 0.00\u20130.06) are 22.7 nm, 22.6 nm, 23.2 and 25.11 nm respectively (listed in ), showing a gradual increase with higher Nd\xb3\u207a substitution as shown in. Comparable literature on Nd\xb3\u207a doped PBN ceramics also shows crystallite sizes typically between 20 and 30 nm, confirming that the observed growth is consistent with the behavior of Nd\xb3\u207a as a dopant enhancing grain size at higher doping levels. Yuhan  et al. reported a decrease in cell volume with neodymium-doped in Strontium Sodium Barium Niobate (SSBN) Ceramics. Cell volume in NdE^{3+} doped Lead Barium Niobate ceramic materials is found to be low in comparison to unmodified Lead Barium Niobate. Hence the contraction in cell volume is been found and it is not by the ionic radii of NdE^{3+} rare earth ions. A similar decrease in cell volume is reported by the earlier authors in rare earth ion substituted in BSN  and BSNN  ceramics. The experimental densities are found in the range of 5.78\u20135.90 g/cmE^{3} as presented in. The densities of the samples decrease with the increase of NdE^{3+} concentration in PBN. The decrease in density percentage with increasing Nd\xb3\u207a concentration from 0.00 to 0.06, can be attributed to the lower atomic mass of Nd\xb3\u207a compared to the ions it replaces (PbE^{2}\u207a and BaE^{2}\u207a). As Nd\xb3\u207a ions substitute these heavier ions, the overall mass of the unit cell decreases, leading to a reduction in the material's theoretical density. Additionally, Nd\xb3\u207a substitution may introduce lattice distortions or vacancies, further lowering the packing efficiency and contributing to the reduced density percentage. The axial ratio increases in PBN ceramics with an increase in the concentration of the NdE^{3+} dopants. The axial ratios are found to be between 1.007 and 1.009. A small axial ratio indicates that the NbO\u2086 octahedra in the TB structure experiences little distortion, maintaining a near-ideal octahedral geometry. The distortion of NbO\u2086 units affects the local electric field and piezoelectric properties. The maximum value of the lattice parameter obtained in PBN-1 is 12.505 \xc5. The highest density observed in PBN-1 composition is 5.90 g/cmE^{3}. It is evident from that with an increase of NdE^{3+} composition from 0.00 to 0.06 the density percentage decreased. Relative density is calculated as the ratio of the experimental density (\u03c1ex) to the theoretical density (\u03c1th), expressed as a percentage. As shown in the data, the relative densities of the Nd\xb3\u207a modified and unmodified PBN ceramics range from 95.0 % to 96.0 %, indicating high densification across all compositions. SEM images of unmodified PBN and NdE^{3+} modified PBN compositions and associated histograms showing the distribution of nanoparticles are shown in (a)\u2013(d). The standard deviations of the grain sizes are 0.77321, 1.57002, 0.498693, and 0.458734 respectively. Also, the grain size increased with the increase of NdE^{3+} doped in PBN ceramics. The graph of grain size with an increase of NdE^{3+} concentration is shown in. From the figure, it is clear that the maximum density and grain size were observed in the PBN-1 composition. The porosity value for PBN-1 is 0.04 and the maximum porosity achieved in PBNN-3 is 0.055. Porosity increases with NdE^{3+} content at which Pb content is decreasing on the other side as shown in (b). The atomic and weight percentages of NdE^{3+} modified and unmodified PBN ceramics are presented in. For each composition, the EDS peak positions include these characteristic X-ray peaks at different energy levels. For PBN1, Lead (Pb) has two peaks at L\u03b1: \u223c10.55 keV and M\u03b1: \u223c2.34 keV; Barium (Ba) has two peaks at L\u03b1: \u223c4.47 keV and M\u03b1: \u223c0.72 keV, Niobium (Nb) has two peaks at L\u03b1: \u223c2.16 keV and K\u03b1: \u223c16.6 keV and Oxygen (O) has a single peak at K\u03b1: \u223c0.525 keV. for PBNN2, the peaks are same as above with additional two peaks of Neodymium (Nd) at L\u03b1: \u223c5.23 keV and M\u03b1: \u223c0.98 keV. for PBNN3, it has peaks similar to the second composition but with slightly higher Nd peak intensity. For PBNN4, the Nd peaks will be more pronounced at 5.23 keV and 0.98 keV. The pattern shows that these energies are approximate and can shift slightly depending on the calibration of your EDS system. This study explores the impact of neodymium (NdE^{3+}) doping on the piezoelectric properties of PBN ceramics. The XRD patterns presented in the paper show that pure and NdE^{3+}-modified PBN ceramics exhibit a single-phase tetragonal structure, consistent with prior studies. The decrease in lattice parameter 'a' with increasing NdE^{3+} concentration aligns with findings by Rao et al., who reported similar trends in Strontium Sodium Barium Niobate (SSBN) ceramics. This decrease is attributed to the substitution of NdE^{3+} ions, which causes a contraction in cell volume, a phenomenon also observed in rare earth ion-substituted Barium Sodium Niobate (BSN) and Barium Strontium Sodium Niobate (BSNN) ceramics. There is a decrease in density with increased NdE^{3+} concentration, which falls within the range of 5.78\u20135.90 g/cm\xb3. This observation is in line with earlier studies that noted density variations in doped PBN ceramics. The dielectric properties of NdE^{3+}-doped PBN ceramics show a broad dielectric peak, with the phase transition temperature (TC) remaining consistent with reported values. The maximum piezoelectric coefficient (d33) increases with NdE^{3+} concentration, achieving a peak value of 236 pC/N for PBNN-4. SEM images indicate that NdE^{3+} doping affects the grain size and porosity of PBN ceramics. The maximum grain size and density were observed in the undoped PBN composition, while NdE^{3+} doping led to a reduction in grain size and an increase in porosity. Like, the structural consistency shown by maintaining a tetragonal structure with NdE^{3+} doping is consistent with earlier work on rare-earth-doped niobate ceramics. Similarly, the improvement in piezoelectric properties with NdE^{3+} concentration echoes results from studies on other doped piezoelectric materials. So, this paper effectively builds on existing literature by demonstrating that NdE^{3+} doping can enhance the piezoelectric properties of PBN ceramics, making them suitable for advanced device applications. This work provides valuable insights into the material properties and potential applications of NdE^{3+}-doped PBN, contributing to the broader understanding of ferroelectric and piezoelectric materials. In brief, this study describes the structural, microstructural, and piezoelectric properties of PBN (probably Pb(Nb, Zr)O3 or a similar lead-based perovskite material) and NdE^{3+} modified PBN ceramics. The piezoelectric charge coefficients d11 and d33 indicate that these materials can be used in devices that rely on piezoelectricity, such as sensors, actuators, and transducers. The increase in d11 and d33 with NdE^{3+} concentration suggests enhanced piezoelectric performance. b. The transition temperature (TC) values (350 \xb0C for undoped PBN and decreasing with NdE^{3+} doping) suggest that these materials can operate at elevated temperatures. The high piezoelectric coefficients and mechanical stability indicate potential use in precision actuators, which require accurate motion control and are used in applications like adaptive optics, nano-positioning systems, and microelectromechanical systems (MEMS). The piezoelectric charge coefficients d11 and d33 indicate that these materials can be used in devices that rely on piezoelectricity, such as sensors, actuators, and transducers. The increase in d11 and d33 with NdE^{3+} concentration suggests enhanced piezoelectric performance. The transition temperature (TC) values (350 \xb0C for undoped PBN and decreasing with NdE^{3+} doping) suggest that these materials can operate at elevated temperatures. The high piezoelectric coefficients and mechanical stability indicate potential use in precision actuators, which require accurate motion control and are used in applications like adaptive optics, nano-positioning systems, and microelectromechanical systems (MEMS).
+
+# TITLE
+Influence of Nd<sup>3+</sup> ion on piezoelectric studies in lead barium niobate ferroelectric ceramics for device applications
+
+# ABSTRACT
+Pb₁₋ₓ₋₃y/₂BaₓReᵧ³⁺Nb₂O₆ (PBN) ceramics, where x = 0.35 and y = 0.00, 0.02, 0.04, 0.06, and Re³⁺ = Nd³⁺, were successfully synthesized using the solid-state reaction method. X-ray diffraction (XRD) analysis confirmed the formation of a pure, single-phase tetragonal structure in both undoped and Nd³⁺-modified PBN ceramics. Rietveld refinement demonstrated a strong correlation between experimental and calculated profiles, with crystallite sizes ranging from 22.6 to 25.11 nm, indicating a gradual increase in size with increasing Nd³⁺ substitution. Grain size analysis showed values between 1.09 μm and 3.95 μm, with the microstructure becoming more refined as Nd³⁺ content increased. The maximum density of 5.95 g/cm³ was achieved at y = 0.06, reflecting optimal densification from Nd³⁺ modification. Dielectric studies revealed that the phase transition temperature (Tc) followed a consistent trend, with the undoped PBN-1 showing a Tc of 350 °C, and Nd³⁺-modified compositions exhibiting lower transition temperatures of 330 °C, 315 °C, and 283 °C as Nd³⁺ content increased. The dielectric constant (Kp) reached a peak value of 0.39 at the Curie temperature and broadened with increasing Nd³⁺ content, indicating enhanced temperature stability. Furthermore, the piezoelectric coefficient (d₃₃) improved significantly with Nd³⁺ doping, reaching a maximum of 178 pC/N for y = 0.06, signifying enhanced piezoelectric performance. These results demonstrate that Nd³⁺-modified PBN ceramics are promising candidates for high-performance piezoelectric applications, particularly in environments demanding high-temperature stability and superior piezoelectric properties.
+
+# INTRODUCTION
+Notable ferroelectric materials such as Lead Titanate (PbTiO3) , Lead Zirconate (PbZrO3) , and Lead Meta Niobate (PbNb2O6)  were discovered in the early 1950s. Among them, PbNb2O6 was confirmed as a ferroelectric material by Goodman and Roth , and its structural and electrical properties were further examined by Francombe and Lewis. Recent research has shifted toward enhancing the dielectric and piezoelectric properties of niobate-based ceramics, with significant studies on compounds like Strontium Barium Niobate (SBN) by Deshpande , which demonstrated a broad maximum dielectric property between 65 \xb0C and 95 \xb0C. Lead Barium Niobate (PBN), composed of Lead Niobate and Barium Niobate, has attracted attention due to its morphotropic phase boundary (MPB) and the ability to accommodate ionic substitutions in its tungsten bronze (TB)-type structure, making it versatile for piezoelectric and dielectric applications. WE^{6+} doping in PBN has shown potential for improving piezoelectric properties, as evidenced by a piezoelectric coefficient of 108 pC/N in WE^{6+}-doped compositions. However, the effect of rare earth ion (NdE^{3+}) doping in Lead Barium Niobate ceramics remains underexplored. Previous studies have only briefly examined how such doping influences material properties, leaving a significant gap in understanding the full potential of NdE^{3+} doped PBN ceramics. However, lead-based ceramics such as Pb1-x-3y/2Ba\u2093Rey\xb3\u207aNb\u2082O\u2086 still offer exceptional piezoelectric and dielectric properties, particularly in high-temperature applications, where lead-free alternatives often fall short. Lead-based materials, including PBN ceramics, are preferred in certain high-performance applications due to their higher Curie temperatures and superior piezoelectric responses. Moreover, Nd\xb3\u207a-modified lead-based systems, like those studied here, have been shown to enhance functional properties, contributing to their continued relevance. Thus, while acknowledging the advancements in lead-free ceramics, the use of lead-based PBN ceramics in our study is justified by their superior performance in specific high-temperature and piezoelectric applications, further optimized by Nd\xb3\u207a doping. The primary objective of this study is to present a systematic investigation of the effect of NdE^{3+} doping on the piezoelectric and dielectric properties of PBN ceramics. The novelty lies in the exploration of NdE^{3+} ion concentration (y = 0.00, 0.02, 0.04, 0.06) and its impact on key material parameters such as grain size, density, dielectric constant, phase transition temperature (TC), and piezoelectric coefficient (d33). The study demonstrates that NdE^{3+} doping enhances the piezoelectric and dielectric performance of PBN ceramics, particularly in high-temperature applications, where material stability is crucial. This work provides new insights into tailoring PBN ceramics for advanced device applications requiring high-temperature stability and improved piezoelectric properties. However, the investigation is limited to a narrow range of NdE^{3+} concentrations, which, although sufficient to observe trends, may not fully explore the upper or lower bounds of the dopant's effects. Additionally, while the study provides a comprehensive understanding of material properties, further work is needed to assess the long-term stability and performance of NdE^{3+}-doped PBN ceramics in real-world applications, particularly in high-temperature or high-stress environments. Future studies could also explore how NdE^{3+} doping interacts with other dopants or synthesis techniques to further optimize the material's properties and offer new opportunities for developing materials with enhanced piezoelectric and dielectric properties for advanced technological applications. Lead Barium Niobate (Pb\u2081\u208b\u2093Ba\u2093Nb\u2082O\u2086) ceramics can be synthesized using various methods, like sol-gel , co-precipitation , hydrothermal , molten salt , microwave-assisted , etc., but the most common and efficient approach is the solid-state reaction method. In this study, The PBN ceramics with NdE^{3+} doping were synthesized using the conventional solid-state reaction method. The structural characterization was carried out using X-ray diffraction (XRD) to confirm the formation of the single-phase tetragonal structure. Scanning electron microscopy (SEM) was used to analyze the grain morphology and size distribution, while dielectric and piezoelectric properties were measured to evaluate the functional performance of the NdE^{3+} modified PBN ceramics.
+
+# CONCLUSION
+Pb\u2081\u208b\u2093\u208b\u2083y/\u2082Ba\u2093Re\u1d67\xb3\u207aNb\u2082O\u2086 ceramics (for x = 0.35 and y = 0.00, 0.02, 0.04, 0.06, and Re\xb3\u207a = Nd\xb3\u207a) were successfully synthesized using the solid-state reaction method. The XRD patterns confirmed a single-phase tetragonal structure for undoped PBN (a = 12.505 \xc5, c = 3.984 \xc5) and Nd\xb3\u207a-modified PBN ceramics. The average crystallite size increased gradually with Nd\xb3\u207a substitution, measured as 22.7 nm, 22.6 nm, 23.2 nm, and 25.11 nm for increasing doping levels. SEM images revealed dense, spherical grains with slight morphological deviations as the Nd\xb3\u207a concentration increased. The Curie temperature (Tc) decreased from 350 \xb0C for undoped PBN to 330 \xb0C, 315 \xb0C, and 283 \xb0C with increasing Nd\xb3\u207a content. Regarding piezoelectric properties, the electromechanical coupling factors (k\u209c and k\u209a) increased with Nd\xb3\u207a concentration: k\u209c rose from 0.43 to 0.47, while k\u209a increased from 0.35 to 0.38. However, these values remained slightly lower than those of pure PBN. The piezoelectric charge coefficients d\u2081\u2081 and d\u2083\u2083 also increased with Nd\xb3\u207a content, rising from 125 to 140 pC/N for d\u2081\u2081 and from 170 to 190 pC/N for d\u2083\u2083. Similarly, the mechanical quality factor (Q\u2098) improved from 78 to 90. These findings indicate that Nd\xb3\u207a doping significantly enhances the piezoelectric performance, making Nd\xb3\u207a-modified PBN ceramics promising candidates for high-performance piezoelectric applications, particularly in environments requiring high-temperature stability and improved piezoelectric properties.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="I need to extract the material compositions, their corresponding d33 values, the unit for d33, and the material family from the provided text. I will also look for any abbreviations and include them.
+
+Here's my plan:
+1.  **Identify Compositions and their d33 values**: I will scan the "RESULTS AND DISCUSSION" and "ABSTRACT" and "CONCLUSION" sections for mentions of "piezoelectric coefficient (d33)" and the associated compositions and values. I will also refer to Table 1 for the exact chemical formulas and notations.
+2.  **Handle Variables**: The abstract mentions `Pb₁₋ₓ₋₃y/₂BaₓReᵧ³⁺Nb₂O₆` where x = 0.35 and y = 0.00, 0.02, 0.04, 0.06, and Re³⁺ = Nd³⁺. I will substitute these values to get the specific compositions.
+    *   For y = 0.00, x = 0.35: Pb(1-0.35-3*0/2)Ba(0.35)Nd(0)Nb2O6 = Pb0.65Ba0.35Nb2O6
+    *   For y = 0.02, x = 0.35: Pb(1-0.35-3*0.02/2)Ba(0.35)Nd(0.02)Nb2O6 = Pb(1-0.35-0.03)Ba0.35Nd0.02Nb2O6 = Pb0.62Ba0.35Nd0.02Nb2O6
+    *   For y = 0.04, x = 0.35: Pb(1-0.35-3*0.04/2)Ba(0.35)Nd(0.04)Nb2O6 = Pb(1-0.35-0.06)Ba0.35Nd0.04Nb2O6 = Pb0.59Ba0.35Nd0.04Nb2O6
+    *   For y = 0.06, x = 0.35: Pb(1-0.35-3*0.06/2)Ba(0.35)Nd(0.06)Nb2O6 = Pb(1-0.35-0.09)Ba0.35Nd0.06Nb2O6 = Pb0.56Ba0.35Nd0.06Nb2O6
+    These compositions match exactly with Table 1.
+3.  **Extract d33 values**:
+    *   From "RESULTS AND DISCUSSION": "The maximum piezoelectric coefficient (d33) increases with NdE^{3+} concentration, achieving a peak value of 236 pC/N for PBNN-4."
+    *   From "ABSTRACT": "Furthermore, the piezoelectric coefficient (d₃₃) improved significantly with Nd³⁺ doping, reaching a maximum of 178 pC/N for y = 0.06, signifying enhanced piezoelectric performance."
+    *   From "CONCLUSION": "The piezoelectric charge coefficients d₁₁ and d₃₃ also increased with Nd³⁺ content, rising from 170 to 190 pC/N for d₃₃."
+    There are conflicting d33 values for PBNN-4 (y=0.06). The "RESULTS AND DISCUSSION" states 236 pC/N, the "ABSTRACT" states 178 pC/N, and the "CONCLUSION" states it rises from 170 to 190 pC/N. I will prioritize the most specific and highest value mentioned in the "RESULTS AND DISCUSSION" as it explicitly states "achieving a peak value of 236 pC/N for PBNN-4". However, the conclusion also gives a range for d33 for all compositions. Let's re-evaluate.
+
+    The conclusion states: "The piezoelectric charge coefficients d₁₁ and d₃₃ also increased with Nd³⁺ content, rising from 170 to 190 pC/N for d₃₃." This implies a range for the entire series.
+    The abstract states: "reaching a maximum of 178 pC/N for y = 0.06".
+    The results and discussion states: "achieving a peak value of 236 pC/N for PBNN-4".
+
+    Given the discrepancy, I will use the values that are explicitly linked to specific compositions if available, or the range if only a range is given.
+    The abstract gives a specific value for y=0.06 (PBNN-4) as 178 pC/N.
+    The results and discussion gives a specific value for PBNN-4 as 236 pC/N.
+    The conclusion gives a range for d33 from 170 to 190 pC/N for the entire series.
+
+    Let's re-read carefully.
+    "The maximum piezoelectric coefficient (d33) increases with NdE^{3+} concentration, achieving a peak value of 236 pC/N for PBNN-4." (Results and Discussion)
+    "Furthermore, the piezoelectric coefficient (d₃₃) improved significantly with Nd³⁺ doping, reaching a maximum of 178 pC/N for y = 0.06, signifying enhanced piezoelectric performance." (Abstract)
+    "The piezoelectric charge coefficients d₁₁ and d₃₃ also increased with Nd³⁺ content, rising from 170 to 190 pC/N for d₃₃." (Conclusion)
+
+    There is a clear contradiction. The abstract and conclusion provide values that are consistent with each other (178 pC/N for y=0.06, and a range up to 190 pC/N). The 236 pC/N in the results section seems to be an outlier or a typo. I will prioritize the values from the abstract and conclusion as they seem more consistent.
+
+    From the conclusion: "The piezoelectric charge coefficients d₃₃ also increased with Nd³⁺ content, rising from 170 to 190 pC/N for d₃₃." This implies that the undoped PBN (y=0.00) has d33 = 170 pC/N, and the highest doped (y=0.06) has d33 = 190 pC/N. This is a more complete set of values for the series.
+
+    Let's use the values from the conclusion:
+    *   PBN-1 (y=0.00): d33 = 170 pC/N (implied as the starting point of the increase)
+    *   PBNN-4 (y=0.06): d33 = 190 pC/N (implied as the ending point of the increase)
+
+    What about PBNN-2 (y=0.02) and PBNN-3 (y=0.04)? The text only states "increased with Nd³⁺ content, rising from 170 to 190 pC/N". It doesn't give specific intermediate values. The abstract only gives the maximum for y=0.06 as 178 pC/N. This is still a conflict.
+
+    Let's re-read the abstract for d33: "Furthermore, the piezoelectric coefficient (d₃₃) improved significantly with Nd³⁺ doping, reaching a maximum of 178 pC/N for y = 0.06, signifying enhanced piezoelectric performance." This is a specific value for the highest doping.
+
+    Let's re-read the conclusion for d33: "The piezoelectric charge coefficients d₁₁ and d₃₃ also increased with Nd³⁺ content, rising from 170 to 190 pC/N for d₃₃." This implies a range for the entire series. If it "rose from 170", it suggests the initial value (y=0.00) is 170. If it "rose to 190", it suggests the final value (y=0.06) is 190.
+
+    Given the direct statement in the abstract "reaching a maximum of 178 pC/N for y = 0.06", I will use this value for PBNN-4.
+    For PBN-1 (y=0.00), the conclusion states "rising from 170 pC/N", so I will use 170 pC/N for PBN-1.
+    For PBNN-2 (y=0.02) and PBNN-3 (y=0.04), no specific d33 values are given. I will mark them as null or not include them if no value is explicitly stated. The prompt says "corresponding d33 values", so if not explicitly stated, I should not infer.
+
+    Let's check again for any other d33 values.
+    "The maximum piezoelectric coefficient (d33) increases with NdE^{3+} concentration, achieving a peak value of 236 pC/N for PBNN-4." This is the most direct statement for PBNN-4. I will use this one, as it's a "peak value" and explicitly linked to PBNN-4. The abstract and conclusion might be summarizing or providing a general trend. The "RESULTS AND DISCUSSION" section usually contains the detailed findings.
+
+    So, for PBNN-4 (Pb0.56Ba0.35Nd0.06Nb2O6), d33 = 236 pC/N.
+    For PBN-1 (Pb0.65Ba0.35Nb2O6), the conclusion states "rising from 170 pC/N for d₃₃". So, d33 = 170 pC/N.
+    For PBNN-2 and PBNN-3, no specific d33 values are given.
+
+    Let's re-evaluate the prompt: "Extract the material compositions, corresponding d33 values". If a value is not explicitly given for a composition, it should not be included.
+
+    So, I have:
+    *   Pb0.65Ba0.35Nb2O6 (PBN-1): 170 pC/N
+    *   Pb0.56Ba0.35Nd0.06Nb2O6 (PBNN-4): 236 pC/N
+
+4.  **Identify Unit**: The unit is "pC/N".
+5.  **Identify Family**: The materials are "Lead Barium Niobate" ceramics, often abbreviated as PBN. The general formula is Pb(1-x-3y/2)Ba(x)Re(y)3+Nb2O6. So, "Lead Barium Niobate" or "PBN" is a good family name. Given the context, "PBN" seems appropriate as it's used throughout the paper.
+6.  **Identify Abbreviations**:
+    *   PBN: Pb₁₋ₓ₋₃y/₂BaₓReᵧ³⁺Nb₂O₆ (general formula) or Pb0.65Ba0.35Nb2O6 (for y=0.00)
+    *   PBN-1: Pb0.65Ba0.35Nb2O6
+    *   PBNN-2: Pb0.62Ba0.35Nd0.02Nb2O6
+    *   PBNN-3: Pb0.59Ba0.35Nd0.04Nb2O6
+    *   PBNN-4: Pb0.56Ba0.35Nd0.06Nb2O6
+
+    The prompt states: "If, any abbreviation is present with the composition, create another key with the abbreviation (It must be in all CAPITAL letter) and full composition".
+    PBN is used as a general abbreviation for the family. PBN-1, PBNN-2, PBNN-3, PBNN-4 are specific notations for compositions. I should include these.
+
+    Let's refine the compositions based on the general formula and the specific values from Table 1.
+    The general formula is `Pb₁₋ₓ₋₃y/₂BaₓReᵧ³⁺Nb₂O₆` where x = 0.35 and Re³⁺ = Nd³⁺.
+    So, `Pb(1-0.35-3y/2)Ba(0.35)Nd(y)Nb₂O₆`.
+
+    *   For y = 0.00: Pb(1-0.35-0)Ba(0.35)Nd(0)Nb₂O₆ = Pb0.65Ba0.35Nb2O6
+    *   For y = 0.02: Pb(1-0.35-0.03)Ba(0.35)Nd(0.02)Nb₂O₆ = Pb0.62Ba0.35Nd0.02Nb2O6
+    *   For y = 0.04: Pb(1-0.35-0.06)Ba(0.35)Nd(0.04)Nb₂O₆ = Pb0.59Ba0.35Nd0.04Nb2O6
+    *   For y = 0.06: Pb(1-0.35-0.09)Ba(0.35)Nd(0.06)Nb₂O₆ = Pb0.56Ba0.35Nd0.06Nb2O6
+
+    These match the compositions in Table 1.
+
+    Now, let's re-check the d33 values.
+    "The piezoelectric charge coefficients d₃₃ also increased with Nd³⁺ content, rising from 170 to 190 pC/N for d₃₃." (Conclusion)
+    This implies:
+    Pb0.65Ba0.35Nb2O6 (y=0.00) has d33 = 170 pC/N.
+    Pb0.56Ba0.35Nd0.06Nb2O6 (y=0.06) has d33 = 190 pC/N.
+
+    "The maximum piezoelectric coefficient (d33) increases with NdE^{3+} concentration, achieving a peak value of 236 pC/N for PBNN-4." (Results and Discussion)
+    This is a direct statement for PBNN-4 (y=0.06). This contradicts the 190 pC/N from the conclusion and 178 pC/N from the abstract. When there are conflicting values, I should prioritize the most specific and direct statement from the results section. So, I will use 236 pC/N for PBNN-4.
+
+    So, the compositions with explicit d33 values are:
+    *   Pb0.65Ba0.35Nb2O6: 170 (from conclusion, as the starting point of the increase)
+    *   Pb0.56Ba0.35Nd0.06Nb2O6: 236 (from results and discussion, as the peak value for PBNN-4)
+
+    The prompt states: "If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values." This is not about different environments, but conflicting values. I should choose the most reliable one. The "RESULTS AND DISCUSSION" section typically presents the primary findings.
+
+    Let's consider the phrasing "rising from 170 to 190 pC/N". This implies a range for the *entire* set of compositions. It doesn't explicitly state that the *first* composition is 170 and the *last* is 190. It's a general trend.
+    However, the abstract states "reaching a maximum of 178 pC/N for y = 0.06".
+    And the results section states "achieving a peak value of 236 pC/N for PBNN-4".
+
+    This is a significant discrepancy. I will stick to the most direct and highest value mentioned for the specific composition PBNN-4 from the "RESULTS AND DISCUSSION" section, as it explicitly states "peak value". For the undoped PBN-1, the "rising from 170" in the conclusion is the only specific number given for the lower end of the range.
+
+    So, the compositions and their d33 values are:
+    *   Pb0.65Ba0.35Nb2O6: 170
+    *   Pb0.56Ba0.35Nd0.06Nb2O6: 236
+
+    The unit is pC/N.
+    The family is "PBN" or "Lead Barium Niobate". "PBN" is used as the family name in the abstract.
+
+    Abbreviations:
+    PBN: Pb₁₋ₓ₋₃y/₂BaₓReᵧ³⁺Nb₂O₆ (general formula from abstract)
+    PBN-1: Pb0.65Ba0.35Nb2O6
+    PBNN-2: Pb0.62Ba0.35Nd0.02Nb2O6
+    PBNN-3: Pb0.59Ba0.35Nd0.04Nb2O6
+    PBNN-4: Pb0.56Ba0.35Nd0.06Nb2O6
+
+    I need to ensure the chemical formulas are correctly formatted with subscripts.
+    Pb₁₋ₓ₋₃y/₂BaₓReᵧ³⁺Nb₂O₆ should be written as Pb(1-x-3y/2)Ba(x)Re(y)3+Nb2O6.
+    Since x=0.35 and Re=Nd, the general formula for the family is Pb(1-0.35-3y/2)Ba(0.35)Nd(y)Nb2O6.
+    The specific compositions are already correctly formatted in Table 1.
+
+    Final check on the output format.
+    `"compositions": { "full chemical formula with proper fractions mentioned": d33 value, ... }`
+    `"abbreviations": { "ABBREVIATION": "full composition", ... }`
+    `"property_unit": "unit of d33 measurement"`
+    `"family": "material family name"`
+
+    The general formula for PBN is given as Pb₁₋ₓ₋₃y/₂BaₓReᵧ³⁺Nb₂O₆ in the abstract.
+    The family name can be "PBN" as it's used as the general term.
+
+    Let's construct the JSON.{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Pb0.65Ba0.35Nb2O6": 170,
+      "Pb0.56Ba0.35Nd0.06Nb2O6": 236
+    },
+    "abbreviations": {
+      "PBN": "Pb(1-x-3y/2)Ba(x)Re(y)3+Nb2O6",
+      "PBN-1": "Pb0.65Ba0.35Nb2O6",
+      "PBNN-2": "Pb0.62Ba0.35Nd0.02Nb2O6",
+      "PBNN-3": "Pb0.59Ba0.35Nd0.04Nb2O6",
+      "PBNN-4": "Pb0.56Ba0.35Nd0.06Nb2O6"
+    },
+    "property_unit": "pC/N",
+    "family": "PBN"
+  }
+}"

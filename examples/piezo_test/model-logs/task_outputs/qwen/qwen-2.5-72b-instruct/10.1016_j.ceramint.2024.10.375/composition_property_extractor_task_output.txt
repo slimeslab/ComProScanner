@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"(1-0.29)Bi1.02FeO3-0.29BaTiO3":null,"(1-0.3)Bi1.02FeO3-0.3BaTiO3":null,"(1-0.31)Bi1.02FeO3-0.31BaTiO3":191,"(1-0.32)Bi1.02FeO3-0.32BaTiO3":null},"abbreviations":{"BF-xBT":"(1-x)Bi1.02FeO3-xBaTiO3"},"property_unit":"pC/N","family":"BiFeO3-BaTiO3"}}

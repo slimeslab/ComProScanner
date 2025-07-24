@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"CBN":6.0,"CBN-1Tm":8.8,"CBN-2Tm":11.4,"CBN-3Tm":12.4,"CBN-4Tm":10.8,"CBN-5Tm":9.4,"CBN-2Tm-SPS[//]":25.2,"CBN-3Tm-SPS[//]":23.5,"CBN-5Tm-SPS[//]":18.0,"CBN-2Tm-CS":11.4,"CBN-3Tm-CS":12.4,"CBN-5Tm-CS":9.4},"abbreviations":{"CBN":"CaBi2Nb2O9","Tm":"Thulium"},"property_unit":"pC/N","family":"BLSFs"}}

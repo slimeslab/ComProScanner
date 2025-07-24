@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.01Ta-Sm-PZT":530,"0.00Ta-Sm-PZT":513},"abbreviations":{"PZT":"Pb(Zr,Ti)O3","Sm":"Samarium","Ta":"Tantalum"},"property_unit":"pC/N","family":"PZT"}}

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.12Pb(Ni1/3Ta2/3)O3-0.41PbZrO3-0.47PbTiO3 + 2% MnO2":310,"0.12Pb(Ni1/3Ta2/3)O3-0.42PbZrO3-0.46PbTiO3 + 2% MnO2":368,"0.12Pb(Ni1/3Ta2/3)O3-0.43PbZrO3-0.45PbTiO3 + 2% MnO2":400,"0.12Pb(Ni1/3Ta2/3)O3-0.44PbZrO3-0.44PbTiO3 + 2% MnO2":238},"property_unit":"pC/N","family":"PZT-based"}}

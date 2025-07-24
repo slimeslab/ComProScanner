@@ -1,0 +1,1 @@
+{"synthesis_extracted_data":{"method":"Solid state reaction","precursors":[],"steps":["Powder compaction into bulk (15 mm x 2 mm x 2 mm)","Poling along the thickness direction"],"characterization_techniques":["DMA","SEM","EDS","TEM","HRTEM","Electric universal testing machine"]}}

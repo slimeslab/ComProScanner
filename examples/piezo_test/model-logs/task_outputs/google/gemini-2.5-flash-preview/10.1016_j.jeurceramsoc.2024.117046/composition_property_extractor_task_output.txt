@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PZT-polymer composite (Porosity 0%)":330.0,"PZT-polymer composite (Porosity 7%)":320.1,"PZT-polymer composite (Porosity 13%)":313.5},"abbreviations":{"PZT":"Lead Zirconate Titanate"},"property_unit":"pC/N","family":"PZT-polymer composite"}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"(1-x)Na0.5Bi0.5TiO3 - xBa(Ti0.98Zr0.02)O3 where x=0.12":175},"abbreviations":{},"property_unit":"pC/N","family":"NBT-BZT"}}

@@ -1,0 +1,242 @@
+2025-07-11 11:31:50: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The formation energies of the Ce/Bi and Ce/Ca models.
+|Models|Formation Energy (eV)|
+|---|---|
+|Ce/Bi|\u22126.438|
+|Ce/Ca|\u22120.677|
+
+Table 2. Lattice parameters of intrinsic CBN and the Ce/Bi model.
+|Structures|Space group|Method| a (\xc5)| b (\xc5)| c (\xc5)|Volume (\xc5E^{3})|
+|---|---|---|---|---|---|---|
+|CBN|A21 am|PBEsol|5.530|5.460|24.934|752.944|
+|Exp [26,42]|5.480|5.436|24.870|740.776|
+|Ce/Bi|A21 am|PBEsol|5.525|5.460|24.891|750.963|
+
+Table 3. The bond length and the NbO6 octahedron distortion of intrinsic CBN and the Ce/Bi model.
+|Bond length (\xc5)|CBN|Ce/Bi|
+|---|---|---|
+|Bi-O2|2.490|2.561|
+|Ce-O2|\u2013|2.479|
+|Nb-O1|2.105|2.155|
+|Nb-O2|1.896|1.875|
+|Nb-O3|1.916|1.923|
+|2.161|2.146|
+|Nb-O4|2.092|2.081|
+|1.935|1.946|
+|Distortion|0.004|0.005|
+
+Table 4. The spontaneous polarization of intrinsic CBN and the Ce/Bi model.
+|Structures|Spontaneous polarization (P  s )|
+|---|---|
+|CBN|28.67\xa0\u03bcC/cmE^{2} (28.70\xa0\u03bcC/cmE^{2}) [8]|
+|Ce/Bi|39.80\xa0\u03bcC/cmE^{2} [19,26,46]|
+
+Table 5. The Bader charge values of intrinsic CBN and the Ce/Bi model.
+|Atoms|CBN|Ce/Bi|
+|---|---|---|
+|O2|\u22121.125|\u22121.137|
+|O5|\u22121.153|\u22121.192|
+|Nb|2.624|2.613|
+|Bi|1.877|1.843|
+|Ce|\u2013|2.179|
+
+# RESULTS AND DISCUSSION
+Where E form1 and E form2 are the formation energies of the Ce/Bi and Ce/Ca models. The E(Ca4Bi7CeNb8O36), E(Ca3CeBi8Nb8O36) and E(Ca4Bi8Nb8O36) denote the total energies of optimized unit cell of the Ce-doped in the bismuth oxide (Bi2O2)E^{2+} layers model, the Ce-doped in the perovskite-like blocks (CaNb2O7)E^{2-} model, and intrinsic CBN, respectively. The value of chemical potentials of bismuth, calcium, and cerium are \u03bc Bi, \u03bc Ca, and \u03bc Ce, respectively. The calculated formation energies for the two types of Ce-doped CBN, the Ce/Bi and Ce/Ca models, are listed in. It is found that the formation energy of the Ce doping in the Bi site of the bismuth oxide (Bi2O2)E^{2+} layer model is much lower than that the Ce doping in the Ca site of the perovskite-like block (CaNb2O7)E^{2-} model, this imply that the Ce substituting the Bi site is much easier than the Ce substituting the Ca site. Since the Ce/Bi model is much more stable than the Ce/Ca model, only the intrinsic CBN and the former model are optimized, and the lattice parameters and cell volume of intrinsic CBN and the Ce/Bi model are listed in with the experimental results. It is found that the lattice parameters a and c of the Ce/Bi model are less than that of intrinsic CBN, due to the Ce doping, and the unit cell volume contract. The average bond length of intrinsic CBN and the Ce/Bi model are calculated, and listed in. It is noted that the bond length of the Nb-O2 significantly decreased due to the Ce doping, which results in the lattice distortion of the NbO6 octahedron. And the lattice distortions, defined as the square variance of bond length, is calculated using Eq. : Where Z is the coordination number, R is the individual bond length, and R\u203e is the average bond length. It is found that the NbO6 octahedron distortion is obviously enhanced by the Ce-doping in the Bi site of the bismuth oxide (Bi2O2)E^{2+} layer. It seems that there is a long-range effect of the Ce doping, that is the Ce doping in the Bi site of the bismuth oxide (Bi2O2)E^{2+} layer result in the NbO6 octahedron distortion of the perovskite-like block (CaNb2O7)E^{2-}. The bismuth oxide (Bi2O2)E^{2+} layers and the perovskite-like blocks (CaNb2O7)E^{2-} are connected by O2 atom, so the bond length of Bi-O2, Ce-O2 and Nb-O2 is important to the NbO6 octahedron distortion. From and it is found Ce-O2 bond is shorter than corresponding Bi-O2 bond, so the connection force between the bismuth oxide (Bi2O2)E^{2+} layers and the perovskite-like blocks (CaNb2O7)E^{2-} is changed due to the Ce-doping in the Bi site. It seems that the NbO6 octahedron distortion is enhanced by the changing of the connection force. For intrinsic CBN and the Ce/Bi model, the spontaneous polarization (P s ) is calculated using the PBEsol functional within the Berry phase formalism and listed in. For the geometrical structure mentioned in above paragraph, the NbO6 octahedron distortion is enhanced by the Ce substituting the Bi site of the bismuth oxide (Bi2O2)E^{2+} layer. It is well known that the spontaneous polarization origin from the NbO6 octahedron distortion caused by the ferroelectric phase transformation. It is easy to understand that the Ce doping the Bi site of the bismuth oxide (Bi2O2)E^{2+} layer is enhanced the spontaneous polarization. In order to investigate the P s enhanced mechanism from the electronic structure, the partial density of states (PDOS) are calculated for the paraelectric phase (PE phase), the ferroelectric phase (FE phase) and the Ce-doped ferroelectric phase, and shown in. Comparing the PE and FE phases shown in (a) and (c), it is found that the spontaneous polarization (P s) of the FE phase origin from the enhancement of the orbital hybridization between O2 p x , p y and Nb d yz. From , (b) and (d), it is also noted that the spontaneous polarization of the FE phase come from enhancing orbital hybridization between O2 p-electrons, O5 p-electrons, and Bi s-electrons, p-electrons. Comparing the PDOS of the FE phase and Ce-doping the FE phase, in the range from \u22120.2 eV to 0.0 eV, the orbital hybridization between O2 p-electrons (p x , p y ) and Nb d yz is enhanced by the Ce doping. The enhancement of the orbital hybridization occurs between O2, O5 p-electrons and Bi p z -electrons in the range from \u22120.2 eV to 0.0 eV. To understand the underlying physics of ferroelectricity enhancement at the electronic level, the electron energy band structures of intrinsic CBN and the Ce/Bi model are calculated, and shown in. Through the analysis of the PDOS of intrinsic CBN and the Ce/Bi model, it is found that the top of the valence bands mainly come from the O p, Nb d and Bi s electrons, while the bottom of the conduction bands come from the Nb d and Bi p electrons. The difference of the band gap of intrinsic CBN and the Ce/Bi model results from the enhancement of the orbital hybridizations in the two layers due to the Ce doping, so that the spontaneous polarization (P s) is enhanced. Secondly, it is found that the band structure of intrinsic CBN has a direct band gap characteristic, while the Ce/Bi model has an indirect band gap characteristic. Finally, the band gap of intrinsic CBN (2.602 eV) is in good agreement with previous calculations , while the Ce/Bi model is 2.375 eV. Experimentally, the electrical conductivity of the Ce doping CBN is larger than of intrinsic material , the underlying mechanism can be explained by comparing the two band structures. By comparing the Bader charge values of all atoms of intrinsic CBN and the Ce/Bi model, it is found that the charge values of atoms listed in become less after the Ce doping, that is the negative charge ions, such as O2 and O5 atoms, get more electrons, and the positive charge ions, such as Nb and Bi atoms, loss less electrons due to the Ce doping. The other atoms except for O2, O5, Nb, and Bi atoms are no significant the charge values changed. Comparing the charge value of Bi atom of intrinsic CBN and the Ce/Bi model, it is found that the charge values of Ce atom is much more than that of Bi atom, that implies more electrons are introduced by the Ce doping. The extra electrons are transferred to the atoms of O2, O5, Nb and Bi, then the charge values become less. At the same time, the orbital hybridization of the bond lengths of O2-Nb, O5-Bi, and O2-Bi are enhanced by the extra electrons transferring. The enhancement of the orbital hybridization has been found in the PDOS analysis, is just the reason of the enhancement of the P s. To intuitively observe the distribution of electrons and the orbital hybridization of the doped system of the Ce/Bi model, the electron localization function (ELF) analysis of [010] surface of the Ce/Bi model are calculated, as shown in along with the ELF of intrinsic CBN. Comparing (a) and (b), it is noted that the electronic orbital hybridization of the bond length O2-Bi is enhanced in the Ce/Bi model, and the covalence of O2 atom and Bi atom in the Ce/Bi model is enhanced compared with that of intrinsic CBN. The ELF results confirm the PDOS calculations, and the enhancement of the electronic orbital hybridization is caused by the introducing extra electrons from the Ce doping.
+
+# TITLE
+Ferroelectricity enhanced by cerium modified CaBi<inf>2</inf>Nb<inf>2</inf>O<inf>9</inf>-based Aurivillius ferroelectrics
+
+# ABSTRACT
+The first-principles calculations are employed to investigate the Ce doping effects on the ferroelectricity of the Aurivillius-structured CaBi2Nb2O9 (CBN). The NbO6 octahedron distortion of the Ce/Bi model is increased due to the long-range effect of the Ce doping. By analyzing the partial density of states (PDOS), the Bader charge and the electron localization function (ELF), it is found that the extra electrons are introduced by the Ce doping, and transferred to the atoms of O2, O5, Nb and Bi. Thus, the electronic orbital hybridizations of O2-Nb, O5-Bi, and O2-Bi are enhanced by the extra electrons, and the enhancement of the orbital hybridization is the main reason of the enhancement of the spontaneous polarization (P
+                     s) comparing with intrinsic CBN. These findings could be used as a theoretical reference for future researches on the bismuth layer-structured ferroelectrics (BLSFs).
+
+# INTRODUCTION
+With the development of the automotive, energy, and aerospace industries, etc, more and more attentions are focused on the bismuth layer-structured CaBi2Nb2O9 (CBN) based ferroelectrics application in high-temperature environments, due to their high Curie temperature (T c, usually above 600 \xb0C\u2013900 \xb0C), low aging rate, and excellent thermal stability. The bismuth layer-structured ferroelectrics (BLSFs) have the general formula (Bi2O2)E^{2+} (A m-1 B m O3m+1)E^{2-}, which are composed of the perovskite-like blocks (A m-1 B m O3m+1)E^{2-} sandwiched by the bismuth oxide (Bi2O2)E^{2+} layers along the c-axis. The material of CBN has high dielectric anisotropy, ultrahigh thermal-depoling temperature (\u223c800 \xb0C), and highest ferroelectric Curie temperature (T c \u223c 943 \xb0C). It also has undesirable properties, such as a low ferroelectric polarization (P r ) \u223c 2 \u03bcC/cmE^{2} and a low piezoelectric constant (d 33) \u223c 5 pC/N (180 kV/cm), respectively, which results from the poor spontaneous ferroelectric polarization along the a-b plane and high coercive field (E c ). In addition, CBN has a relatively low resistivity, which stems from the high oxygen vacancy concentration caused by the volatilization of Bi2O3 and the decreasing valence state of Bi element during the sintering process. It is reported that texture engineering offers an efficient approach for improving the electrical properties of CBN by introducing crystallographic anisotropy. Textured CBN not only requires a complex process, high cost, and strict condition control but is also characterized by a low resistivity because the charge transport mainly occurs in the a-b plane. Therefore, chemical modification, especially rare-earth ions doping, is a strategy with the most frequently and effectively for simultaneously improving the electrical properties and resistivity of CBN and provides the opportunity to achieve large-scale manufacturing. The unique structure and the adjustable occupancy of A-site, B-site, and A-B site cations in the interlayers have provided extensive compositional flexibility, which then offers the possibility of achieving the required properties of CBN. Previous investigations were primarily focused on the perovskite-like blocks (A m-1 B m O3m+1)E^{2-} to enhance the ferroelectricity and piezoelectricity. The A-site modification by cation substitution would result in more distinctly distortion, such as the pseudo-tetragonal distortion and NbO6 octahedron tilting than the B-site modification, and thus leads to the enhancement in piezoelectric and ferroelectric properties. In particular, the rare-earth elements have become effective dopants due to their strong electronic charges and large ionic radius, and is often doped in CBN to improve electrical properties. It is found that CeE^{3+}, LaE^{3+}, and (LiE^{+}, CeE^{3+}) substitutions at the Ca-site could improve the spontaneous polarization and result in the high d 33 values (10.3 pC/N , 21.8 pC/N , 13 pC/N  and 18.5 pC/N ). Additionally, the ferroelectric polarization could be enhanced by the displacement of Bi ion in the bismuth oxide (Bi2O2)E^{2+} layers via different crystallographic environment. Such observations clearly suggest that the bismuth oxide (Bi2O2)E^{2+} layers play a critical role in determining the piezoelectric and electrical properties. So far, tailoring the bismuth oxide (Bi2O2)E^{2+} layers by chemical doping to improve both piezoelectric constant and electrical properties is rarely reported and still challenging. In recent years, it has been established that substituting lanthanide cation (GdE^{3+}) for the Bi-site for the nominal formula SrBi2-xGdxNb2O9 reduces oxygen vacancy concentration, improve the ferroelectric and piezoelectric characteristics. By comparing the ionic radii of Ce atom and Bi atom, it is found that the radius of Ce atom (1.34 \xc5, 12 CN) is smaller than that of Bi atom (1.30 \xc5, 12 CN). It is also very likely to be doped into the bismuth oxide (Bi2O2)E^{2+} layers, which can greatly solve the problem of Bi element volatilization during the experiment. Rare-earth elements doping has been shown to be an effective strategy for modifying electrical properties of the BLSFs materials. However, the mechanism of the enhancement of the piezoelectric properties by rare-earth doping has rarely been reported, and the microscopic origin of the piezoelectricity and ferroelectricity of the BLSFs materials are still ambiguous. In this work, the first-principle calculations are employed to investigate the structural and electrical properties of Ce-doped CBN to reveal the intrinsic origin of electrical properties of Ce-doped CBN.
+
+# CONCLUSION
+The first-principles calculations are employed to investigate effects of Ce atom doped in intrinsic CBN. The calculated the spontaneous polarization (P s ) of the Ce doping CBN is more than that of intrinsic CBN, our calculations are in good agreement with experiments. From the geometrical effect, the NbO6 octahedron distortion of the Ce/Bi model is enhanced, and the P s of the Ce/Bi model is became more than that of intrinsic CBN. By the PDOS analysis, the Bader charge analysis and the ELF analysis, it is found that extra electrons are introduced in the Ce/Bi model due to the Ce doping, and are transferred to the atoms of O2, O5, Nb, and Bi.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-11 11:31:53: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The formation energies of the Ce/Bi and Ce/Ca models.
+|Models|Formation Energy (eV)|
+|---|---|
+|Ce/Bi|\u22126.438|
+|Ce/Ca|\u22120.677|
+
+Table 2. Lattice parameters of intrinsic CBN and the Ce/Bi model.
+|Structures|Space group|Method| a (\xc5)| b (\xc5)| c (\xc5)|Volume (\xc5E^{3})|
+|---|---|---|---|---|---|---|
+|CBN|A21 am|PBEsol|5.530|5.460|24.934|752.944|
+|Exp [26,42]|5.480|5.436|24.870|740.776|
+|Ce/Bi|A21 am|PBEsol|5.525|5.460|24.891|750.963|
+
+Table 3. The bond length and the NbO6 octahedron distortion of intrinsic CBN and the Ce/Bi model.
+|Bond length (\xc5)|CBN|Ce/Bi|
+|---|---|---|
+|Bi-O2|2.490|2.561|
+|Ce-O2|\u2013|2.479|
+|Nb-O1|2.105|2.155|
+|Nb-O2|1.896|1.875|
+|Nb-O3|1.916|1.923|
+|2.161|2.146|
+|Nb-O4|2.092|2.081|
+|1.935|1.946|
+|Distortion|0.004|0.005|
+
+Table 4. The spontaneous polarization of intrinsic CBN and the Ce/Bi model.
+|Structures|Spontaneous polarization (P  s )|
+|---|---|
+|CBN|28.67\xa0\u03bcC/cmE^{2} (28.70\xa0\u03bcC/cmE^{2}) [8]|
+|Ce/Bi|39.80\xa0\u03bcC/cmE^{2} [19,26,46]|
+
+Table 5. The Bader charge values of intrinsic CBN and the Ce/Bi model.
+|Atoms|CBN|Ce/Bi|
+|---|---|---|
+|O2|\u22121.125|\u22121.137|
+|O5|\u22121.153|\u22121.192|
+|Nb|2.624|2.613|
+|Bi|1.877|1.843|
+|Ce|\u2013|2.179|
+
+# RESULTS AND DISCUSSION
+Where E form1 and E form2 are the formation energies of the Ce/Bi and Ce/Ca models. The E(Ca4Bi7CeNb8O36), E(Ca3CeBi8Nb8O36) and E(Ca4Bi8Nb8O36) denote the total energies of optimized unit cell of the Ce-doped in the bismuth oxide (Bi2O2)E^{2+} layers model, the Ce-doped in the perovskite-like blocks (CaNb2O7)E^{2-} model, and intrinsic CBN, respectively. The value of chemical potentials of bismuth, calcium, and cerium are \u03bc Bi, \u03bc Ca, and \u03bc Ce, respectively. The calculated formation energies for the two types of Ce-doped CBN, the Ce/Bi and Ce/Ca models, are listed in. It is found that the formation energy of the Ce doping in the Bi site of the bismuth oxide (Bi2O2)E^{2+} layer model is much lower than that the Ce doping in the Ca site of the perovskite-like block (CaNb2O7)E^{2-} model, this imply that the Ce substituting the Bi site is much easier than the Ce substituting the Ca site. Since the Ce/Bi model is much more stable than the Ce/Ca model, only the intrinsic CBN and the former model are optimized, and the lattice parameters and cell volume of intrinsic CBN and the Ce/Bi model are listed in with the experimental results. It is found that the lattice parameters a and c of the Ce/Bi model are less than that of intrinsic CBN, due to the Ce doping, and the unit cell volume contract. The average bond length of intrinsic CBN and the Ce/Bi model are calculated, and listed in. It is noted that the bond length of the Nb-O2 significantly decreased due to the Ce doping, which results in the lattice distortion of the NbO6 octahedron. And the lattice distortions, defined as the square variance of bond length, is calculated using Eq. : Where Z is the coordination number, R is the individual bond length, and R\u203e is the average bond length. It is found that the NbO6 octahedron distortion is obviously enhanced by the Ce-doping in the Bi site of the bismuth oxide (Bi2O2)E^{2+} layer. It seems that there is a long-range effect of the Ce doping, that is the Ce doping in the Bi site of the bismuth oxide (Bi2O2)E^{2+} layer result in the NbO6 octahedron distortion of the perovskite-like block (CaNb2O7)E^{2-}. The bismuth oxide (Bi2O2)E^{2+} layers and the perovskite-like blocks (CaNb2O7)E^{2-} are connected by O2 atom, so the bond length of Bi-O2, Ce-O2 and Nb-O2 is important to the NbO6 octahedron distortion. From and it is found Ce-O2 bond is shorter than corresponding Bi-O2 bond, so the connection force between the bismuth oxide (Bi2O2)E^{2+} layers and the perovskite-like blocks (CaNb2O7)E^{2-} is changed due to the Ce-doping in the Bi site. It seems that the NbO6 octahedron distortion is enhanced by the changing of the connection force. For intrinsic CBN and the Ce/Bi model, the spontaneous polarization (P s ) is calculated using the PBEsol functional within the Berry phase formalism and listed in. For the geometrical structure mentioned in above paragraph, the NbO6 octahedron distortion is enhanced by the Ce substituting the Bi site of the bismuth oxide (Bi2O2)E^{2+} layer. It is well known that the spontaneous polarization origin from the NbO6 octahedron distortion caused by the ferroelectric phase transformation. It is easy to understand that the Ce doping the Bi site of the bismuth oxide (Bi2O2)E^{2+} layer is enhanced the spontaneous polarization. In order to investigate the P s enhanced mechanism from the electronic structure, the partial density of states (PDOS) are calculated for the paraelectric phase (PE phase), the ferroelectric phase (FE phase) and the Ce-doped ferroelectric phase, and shown in. Comparing the PE and FE phases shown in (a) and (c), it is found that the spontaneous polarization (P s) of the FE phase origin from the enhancement of the orbital hybridization between O2 p x , p y and Nb d yz. From , (b) and (d), it is also noted that the spontaneous polarization of the FE phase come from enhancing orbital hybridization between O2 p-electrons, O5 p-electrons, and Bi s-electrons, p-electrons. Comparing the PDOS of the FE phase and Ce-doping the FE phase, in the range from \u22120.2 eV to 0.0 eV, the orbital hybridization between O2 p-electrons (p x , p y ) and Nb d yz is enhanced by the Ce doping. The enhancement of the orbital hybridization occurs between O2, O5 p-electrons and Bi p z -electrons in the range from \u22120.2 eV to 0.0 eV. To understand the underlying physics of ferroelectricity enhancement at the electronic level, the electron energy band structures of intrinsic CBN and the Ce/Bi model are calculated, and shown in. Through the analysis of the PDOS of intrinsic CBN and the Ce/Bi model, it is found that the top of the valence bands mainly come from the O p, Nb d and Bi s electrons, while the bottom of the conduction bands come from the Nb d and Bi p electrons. The difference of the band gap of intrinsic CBN and the Ce/Bi model results from the enhancement of the orbital hybridizations in the two layers due to the Ce doping, so that the spontaneous polarization (P s) is enhanced. Secondly, it is found that the band structure of intrinsic CBN has a direct band gap characteristic, while the Ce/Bi model has an indirect band gap characteristic. Finally, the band gap of intrinsic CBN (2.602 eV) is in good agreement with previous calculations , while the Ce/Bi model is 2.375 eV. Experimentally, the electrical conductivity of the Ce doping CBN is larger than of intrinsic material , the underlying mechanism can be explained by comparing the two band structures. By comparing the Bader charge values of all atoms of intrinsic CBN and the Ce/Bi model, it is found that the charge values of atoms listed in become less after the Ce doping, that is the negative charge ions, such as O2 and O5 atoms, get more electrons, and the positive charge ions, such as Nb and Bi atoms, loss less electrons due to the Ce doping. The other atoms except for O2, O5, Nb, and Bi atoms are no significant the charge values changed. Comparing the charge value of Bi atom of intrinsic CBN and the Ce/Bi model, it is found that the charge values of Ce atom is much more than that of Bi atom, that implies more electrons are introduced by the Ce doping. The extra electrons are transferred to the atoms of O2, O5, Nb and Bi, then the charge values become less. At the same time, the orbital hybridization of the bond lengths of O2-Nb, O5-Bi, and O2-Bi are enhanced by the extra electrons transferring. The enhancement of the orbital hybridization has been found in the PDOS analysis, is just the reason of the enhancement of the P s. To intuitively observe the distribution of electrons and the orbital hybridization of the doped system of the Ce/Bi model, the electron localization function (ELF) analysis of [010] surface of the Ce/Bi model are calculated, as shown in along with the ELF of intrinsic CBN. Comparing (a) and (b), it is noted that the electronic orbital hybridization of the bond length O2-Bi is enhanced in the Ce/Bi model, and the covalence of O2 atom and Bi atom in the Ce/Bi model is enhanced compared with that of intrinsic CBN. The ELF results confirm the PDOS calculations, and the enhancement of the electronic orbital hybridization is caused by the introducing extra electrons from the Ce doping.
+
+# TITLE
+Ferroelectricity enhanced by cerium modified CaBi<inf>2</inf>Nb<inf>2</inf>O<inf>9</inf>-based Aurivillius ferroelectrics
+
+# ABSTRACT
+The first-principles calculations are employed to investigate the Ce doping effects on the ferroelectricity of the Aurivillius-structured CaBi2Nb2O9 (CBN). The NbO6 octahedron distortion of the Ce/Bi model is increased due to the long-range effect of the Ce doping. By analyzing the partial density of states (PDOS), the Bader charge and the electron localization function (ELF), it is found that the extra electrons are introduced by the Ce doping, and transferred to the atoms of O2, O5, Nb and Bi. Thus, the electronic orbital hybridizations of O2-Nb, O5-Bi, and O2-Bi are enhanced by the extra electrons, and the enhancement of the orbital hybridization is the main reason of the enhancement of the spontaneous polarization (P
+                     s) comparing with intrinsic CBN. These findings could be used as a theoretical reference for future researches on the bismuth layer-structured ferroelectrics (BLSFs).
+
+# INTRODUCTION
+With the development of the automotive, energy, and aerospace industries, etc, more and more attentions are focused on the bismuth layer-structured CaBi2Nb2O9 (CBN) based ferroelectrics application in high-temperature environments, due to their high Curie temperature (T c, usually above 600 \xb0C\u2013900 \xb0C), low aging rate, and excellent thermal stability. The bismuth layer-structured ferroelectrics (BLSFs) have the general formula (Bi2O2)E^{2+} (A m-1 B m O3m+1)E^{2-}, which are composed of the perovskite-like blocks (A m-1 B m O3m+1)E^{2-} sandwiched by the bismuth oxide (Bi2O2)E^{2+} layers along the c-axis. The material of CBN has high dielectric anisotropy, ultrahigh thermal-depoling temperature (\u223c800 \xb0C), and highest ferroelectric Curie temperature (T c \u223c 943 \xb0C). It also has undesirable properties, such as a low ferroelectric polarization (P r ) \u223c 2 \u03bcC/cmE^{2} and a low piezoelectric constant (d 33) \u223c 5 pC/N (180 kV/cm), respectively, which results from the poor spontaneous ferroelectric polarization along the a-b plane and high coercive field (E c ). In addition, CBN has a relatively low resistivity, which stems from the high oxygen vacancy concentration caused by the volatilization of Bi2O3 and the decreasing valence state of Bi element during the sintering process. It is reported that texture engineering offers an efficient approach for improving the electrical properties of CBN by introducing crystallographic anisotropy. Textured CBN not only requires a complex process, high cost, and strict condition control but is also characterized by a low resistivity because the charge transport mainly occurs in the a-b plane. Therefore, chemical modification, especially rare-earth ions doping, is a strategy with the most frequently and effectively for simultaneously improving the electrical properties and resistivity of CBN and provides the opportunity to achieve large-scale manufacturing. The unique structure and the adjustable occupancy of A-site, B-site, and A-B site cations in the interlayers have provided extensive compositional flexibility, which then offers the possibility of achieving the required properties of CBN. Previous investigations were primarily focused on the perovskite-like blocks (A m-1 B m O3m+1)E^{2-} to enhance the ferroelectricity and piezoelectricity. The A-site modification by cation substitution would result in more distinctly distortion, such as the pseudo-tetragonal distortion and NbO6 octahedron tilting than the B-site modification, and thus leads to the enhancement in piezoelectric and ferroelectric properties. In particular, the rare-earth elements have become effective dopants due to their strong electronic charges and large ionic radius, and is often doped in CBN to improve electrical properties. It is found that CeE^{3+}, LaE^{3+}, and (LiE^{+}, CeE^{3+}) substitutions at the Ca-site could improve the spontaneous polarization and result in the high d 33 values (10.3 pC/N , 21.8 pC/N , 13 pC/N  and 18.5 pC/N ). Additionally, the ferroelectric polarization could be enhanced by the displacement of Bi ion in the bismuth oxide (Bi2O2)E^{2+} layers via different crystallographic environment. Such observations clearly suggest that the bismuth oxide (Bi2O2)E^{2+} layers play a critical role in determining the piezoelectric and electrical properties. So far, tailoring the bismuth oxide (Bi2O2)E^{2+} layers by chemical doping to improve both piezoelectric constant and electrical properties is rarely reported and still challenging. In recent years, it has been established that substituting lanthanide cation (GdE^{3+}) for the Bi-site for the nominal formula SrBi2-xGdxNb2O9 reduces oxygen vacancy concentration, improve the ferroelectric and piezoelectric characteristics. By comparing the ionic radii of Ce atom and Bi atom, it is found that the radius of Ce atom (1.34 \xc5, 12 CN) is smaller than that of Bi atom (1.30 \xc5, 12 CN). It is also very likely to be doped into the bismuth oxide (Bi2O2)E^{2+} layers, which can greatly solve the problem of Bi element volatilization during the experiment. Rare-earth elements doping has been shown to be an effective strategy for modifying electrical properties of the BLSFs materials. However, the mechanism of the enhancement of the piezoelectric properties by rare-earth doping has rarely been reported, and the microscopic origin of the piezoelectricity and ferroelectricity of the BLSFs materials are still ambiguous. In this work, the first-principle calculations are employed to investigate the structural and electrical properties of Ce-doped CBN to reveal the intrinsic origin of electrical properties of Ce-doped CBN.
+
+# CONCLUSION
+The first-principles calculations are employed to investigate effects of Ce atom doped in intrinsic CBN. The calculated the spontaneous polarization (P s ) of the Ce doping CBN is more than that of intrinsic CBN, our calculations are in good agreement with experiments. From the geometrical effect, the NbO6 octahedron distortion of the Ce/Bi model is enhanced, and the P s of the Ce/Bi model is became more than that of intrinsic CBN. By the PDOS analysis, the Bader charge analysis and the ELF analysis, it is found that extra electrons are introduced in the Ce/Bi model due to the Ce doping, and are transferred to the atoms of O2, O5, Nb, and Bi.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "compositions": {
+    "CaBi2Nb2O9": 5
+  },
+  "property_unit": "pC/N",
+  "family": "CBN"
+}"

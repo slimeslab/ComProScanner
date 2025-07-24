@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Eu1.90Dy0.10Ge2O7":0.66,"Eu1.90La0.10Ge2O7":0.36,"Eu1.90Ho0.10Ge2O7":0.62},"abbreviations":{"EU":"Eu","Dy":"Dy2O3","La":"La2O3","Ho":"Ho2O3"},"property_unit":"pC/N","family":"Eu2Ge2O7"}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"(Pb0.94Sr0.06(Mg1/3Nb2/3)0.2(Zr0.388Ti0.412)O3)":708},"abbreviations":{},"property_unit":"pC/N","family":"Pb(Zr,Ti)O3"}}

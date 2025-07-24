@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.3PbTiO3–0.65PbZrO3–0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3–(x) wt% (La2O3+Nb2O5)":585,"(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords).":null},"abbreviations":{"LaE":"La2O3","NbE":"Nb2O5"},"property_unit":"pC/N","family":"Pb(Zr, Ti)O3"}}

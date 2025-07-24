@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi4Ti3O12":4.25,"(Bi4-xLa(x)Ti3O12) where x=0.25":null,"(Bi4-xLa(x)Ti3O12) where x=0.75":null,"(Bi4-xLa(x)Ti3O12) where x=1":11.57,"Bi3La1Ti3O12":11.57},"abbreviations":{},"property_unit":"pm/V","family":"Bi4Ti3O12"}}

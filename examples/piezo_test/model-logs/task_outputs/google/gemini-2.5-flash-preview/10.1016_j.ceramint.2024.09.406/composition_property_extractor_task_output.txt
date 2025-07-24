@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"CaBi4Ti4O15":7.2,"CaBi4Ti4O15-Nb/Mn where x=0.04":21.4,"CaBi4Ti4O15-Nb/Mn where x=0.08":24.8,"CaBi4Ti4O15-Nb/Mn where x=0.12":26.8,"CaBi4Ti4O15-Nb/Mn where x=0.20":24.7},"abbreviations":{"CBTNM":"Nb/Mn co-doped CaBi4Ti4O15","CBT":"CaBi4Ti4O15"},"property_unit":"pC/N","family":"CaBi4Ti4O15"}}

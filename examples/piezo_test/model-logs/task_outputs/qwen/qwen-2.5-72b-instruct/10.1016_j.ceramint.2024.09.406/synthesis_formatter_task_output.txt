@@ -1,0 +1,1 @@
+{"synthesis_formatted_data":{"method":"Solid-state reaction","precursors":["CaCO3","Bi2O3","TiO2","Nb2O5","MnO2"],"steps":["The powder was compacted into a bulk of dimensions of 15 mm × 2 mm × 2 mm.","The specimens were poled along the thickness direction."],"characterization_techniques":["SEM","EDS","TEM","HRTEM","DMA","Compression test"]}}

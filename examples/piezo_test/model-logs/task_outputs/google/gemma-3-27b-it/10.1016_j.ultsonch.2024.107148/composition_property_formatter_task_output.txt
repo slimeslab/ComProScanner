@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Lead Zirconate Titanate-8":218},"property_unit":"eE^{-12}C/N","family":"PZT"}}

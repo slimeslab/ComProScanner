@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"PbTiO3":0.3,"PbZrO3":0.65,"(Bi0.3La0.7)(Zn0.5Ti0.5)O3":0.05,"(La2O3+Nb2O5)":5},"property_unit":"wt%","family":"Perovskite"}}

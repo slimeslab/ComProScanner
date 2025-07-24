@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Ba0.92Ca0.08Zr0.05Ti0.95O3-0La":42,"Ba0.92Ca0.08Zr0.05Ti0.95O3-0.004La":42,"Ba0.92Ca0.08Zr0.05Ti0.95O3-0.008La":35,"Ba0.92Ca0.08Zr0.05Ti0.95O3-0.012La":45,"Ba0.92Ca0.08Zr0.05Ti0.95O3-0.016La":58,"Ba0.92Ca0.08Zr0.05Ti0.95O3-0.020La":44,"Ba0.92Ca0.08Zr0.05Ti0.95O3-0.024La":41},"property_unit":"pC/N","family":"BaTiO3"}}

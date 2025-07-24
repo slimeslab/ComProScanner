@@ -1,0 +1,460 @@
+2025-07-10 14:20:15: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Comparison of morphological features: density and grain size, and pyrochlore phase fraction, for PSZT-PSMI-PSZS ceramics with different Sm contents.
+|Sample|Grain size (\u03bcm)|Density (g/cmE^{3})|Pyrochlore phase fraction (%)|
+|---|---|---|---|
+|x\xa0=\xa00.00|4.355|7.77|0.21|
+|x\xa0=\xa00.02|4.561|7.74|2.12|
+|x\xa0=\xa00.04|3.430|7.67|6.91|
+|x\xa0=\xa00.06|2.718|7.49|9.70|
+|x\xa0=\xa00.08|3.111|7.51|10.67|
+
+Table 2. The piezoelectric properties for PSZT-PSMI-PSZS with various Sm2O3 contents measured at room temperature.
+|Sample|d33 (pC/N)|\u0394f (KHz)|kp (%)|k31 (%)|
+|---|---|---|---|---|
+|x\xa0=\xa00.00|213|8.28|43|25|
+|x\xa0=\xa00.02|310|15.05|60|35|
+|x\xa0=\xa00.04|135|6.17|27|16|
+|x\xa0=\xa00.06|130|3.94|22|12|
+|x\xa0=\xa00.08|84|3.20|19|11|
+
+Table 3. Comparison of Pr (\u03bcC/cmE^{2}), Ps (\u03bcC/cmE^{2}), Ec (KV/cm), Smax (%) and d\u221733 (pm/V) for PSZT-PSMI-PSZS ceramics with different Sm contents at 40\xa0kV/cm.
+|Sample|Pr (\u03bcC/cmE^{2})|Ps (\u03bcC/cmE^{2})|Ec (KV/cm)|Smax (%)|d\u221733(pm/V)|
+|---|---|---|---|---|---|
+|x\xa0=\xa00.00|14.68|22.11|13.33|0.15|377.78|
+|x\xa0=\xa00.02|17.71|22.75|10.16|0.17|427.57|
+|x\xa0=\xa00.04|9.90|15.06|10.57|0.14|352.51|
+|x\xa0=\xa00.06|6.74|11.16|10.36|0.11|282.64|
+|x\xa0=\xa00.08|4.23|7.64|10.54|0.03|82.56|
+
+# RESULTS AND DISCUSSION
+Energy-dispersive X-ray spectroscopy (EDX) is a widely employed tool for examining the chemical composition of ceramics. This observation is confirmed by the phase diagrams analysed by X-ray and by the SEM image reported in our previous work. Fourier Transform Infrared (FT-IR) spectroscopy was employed to analyse the molecular structure and chemical composition of the synthesized compounds. It provides crucial insights into the functional groups and bonding environment within the PSZT-PSMI-PSZS matrix, particularly before and after the calcination process. (a\u2013c) shows the FT-IR spectra of the PSZT-PSMI-PSZS samples before calcination at room temperature, calcined at 900 \xb0C and after sintering at 1150 \xb0C, respectively. We can observe the appearance of bands around 1400 cm\u207bE^{1}, which can be associated to the presence of carbonates , potentially due to the influence of the atmosphere contamination or other external sources on the samples. Additionally, the bands around 500 cm\u207bE^{1} are observed in both spectra, which may be attributed to the vibrations of the B\u2013O\u2013B bond in the BO\u2086 mode of the perovskite structure. However, the band observed at \u223c400 cmE^{\u22121} may be attributed to metal-oxygen vibrations, a characteristic of the perovskite structure. Furthermore, comparing the different FT-IR spectra, it is notable that the bands at 500 cm\u207bE^{1} are more intense in the spectrum of the calcined compositions ((b)). This observation confirms the formation of the perovskite phase of PZT after calcination. Compared to pure PZT-PMI-PZS, the doped samples exhibited a slight shift in the vibrational bands. This shift is attributed to the difference in atomic masses between the substituting ions (M (Sm) = 150.36 g/mol) and the host ion (M (Pb) = 207.2 g/mol), which changed the mass of the system. shows the d33 piezoelectric coefficient vs. Sm content measured at room temperature for PSZT-PSMI-PSZS ceramics. As can be seen, the highest d33 value is observed for x = 0.02 (d33 = 310 pC/N). This can be attributed to good morphological features such as high density and highest grain size for the sample x = 0.02 ( ). Additionally, the Morphotropic Phase Boundary MPB effect results in an increased polarization orientation due to the coexistence of rhombohedral and tetragonal phases in this composition. However, a drastic decrease in d33 was observed with increasing samarium concentration, attributable to a progressive deviation of the structure from MPB, leading to a transition from R to T structure, as demonstrated by X-ray diffraction analysis reported in our previous work , thus resulting in a decrease in polarization and piezoelectric performance. Furthermore, with an increase in samarium concentration (x > 0.02), the pyrochlore phase increased, leading to a deterioration of the structure and a decrease in density. In order to evaluate the behavior of PSZT-PSMI-PSZS ceramics and their efficiency in electromechanical energy conversion, the electromechanical coefficients are investigated using the measurement of resonance and anti-resonance frequencies (Fr and Fa) from impedance measurements as a function of frequency. (a\u2013b) depicts the impedance resonance spectra Log Z as a function of frequency as well as the phase measurement (\u03b8) at room temperature. The Fr and Fa were evaluated over a frequency range from 160 to 240 kHz, as illustrated in (c) for the sample x = 0.02. As the Sm concentration increased, a decrease in Z values and a reduction in the separation between the Fr and Fa were observed, along with a decrease in \u03b8 values. It is noteworthy that the phase angle \u03b8 exceeded 80\xb0 only at the samarium concentration with x = 0.02, suggesting that this ceramic was fully polarized, thereby facilitating easy domain wall movement and high piezoelectric performance. Furthermore, this composition showed better resonance \u0394F at room temperature, suggesting that this composition possesses a lower mechanical quality factor Qm and higher values of electromechanical coupling factors kp and k31. displays the variation of kp and k31 with the Sm content at room temperature. We note that the highest electromechanical properties were observed for the compound x = 0.02, which is consistent with the results of the d33 coefficient. However, as the samarium concentration increases, a decrease in resonance (\u0394f) as well as in the kp and k31 coefficients is observed, indicating a reduction in the material's electromechanical conversion efficiency. The piezoelectric parameters for PSZT-PSMI-PSZS ceramics are summarized in. depicts the d33 and kp coefficients of 0.02Sm-PZT-PMI-PZS compound and other rare-earth and samarium-doped piezoelectric ceramics[] at room temperature. Based on the comparison with prior analysis, it is evident that the 0.02Sm-PZT-PMI-PZS compound exhibits excellent piezoelectric features. The high piezoelectric coefficient and electromechanical coupling constant affirms that the doping of Sm into PZT-PMI-PZS matrix improves its piezoelectric characteristics. Specifically, the PSZT-PSMI-PSZS material, as developed in our study, belongs to the soft type of piezoelectric materials. This classification is due to the incorporation of SmE^{3+} as a dopant, which is well-known in the literature to act as a donor ion that contributes to the "soft" characteristics of the material. Soft piezoelectric ceramics are typically characterized by higher piezoelectric coefficients (d33) and lower mechanical quality factors (Qm) compared to hard types. In our material, the SmE^{3+} dopant, which is introduced at the A-site, creates lead vacancies to maintain electroneutrality. According to the literature , such donor dopants, including SmE^{3+}, facilitate domain wall motion by creating A-site vacancies, leading to improved ferroelectric and dielectric properties characteristic of soft PZT ceramics. To investigate the ferroelectric nature of the studied PSZT-PSMI-PSZS ceramics, hysteresis loop measurements were performed as a function of the applied voltage at room temperature and at 10 Hz ( (a\u2013e)). It is observed that the P(E) curves of the PSZT-PSMI-PSZS ceramics exhibit a typically shape and adequate saturation, indicating ferroelectric characteristics. To analyse the impact of samarium on the ferroelectric properties of PZT-PMI-PZS ceramics, a comparison of the hysteresis loops of the studied ceramics at room temperature under a maximum electric field of 40 kV/cm is presented in (f). The ferroelectric parameters such as remanent polarization (Pr), saturation polarization (Ps), and coercive electric field (Ec) are listed in E hysteresis loop of the 2 % Sm doping was clearly much better saturated compared to the others and also had a more square-like hysteresis loop indicative of a dominantly 180\xb0 domain switching associated with the tetragonal symmetry of the crystal, whereas the other doping ratios have more slanted hysteresis loops that probably arises from their secondary phase content. The maximum polarization and remanent polarization reach their peak with a low coercive field when the doping concentration is 2 %, which is consistent with the piezoelectric results obtained. Previous studies have shown that the equilibrium domain width depends on grain size and decreases for grain sizes below 10 \u03bcm, remaining constant for grain sizes above 10 \u03bcm. In our study, the minimum value of Pr is observed at a concentration of x \u2265 0.06, corresponding to a minimum grain size. To validate our findings, we compared the polarization values of our composition (0.02 Sm-PZT-PMI-PZS) with those from similar studies. The Pr value of 17.71 \u03bcC/cmE^{2} achieved in our work is significantly higher than the 7.58 \u03bcC/cmE^{2} reported by S.R. Shannigrahi et al.  and the 4.64 \u03bcC/cmE^{2} reported by R. However, the Ec value is lower than that of Sm-PZT. The 0.02Sm-PZT-PMI-PZS sample exhibits excellent overall properties, benefiting from its unique characteristics, which confer significant potential for high-power device applications. illustrates the bipolar strain-electric field (S-E) curves of PSZT-PSMI-PSZS ceramics with different Sm concentrations, measured at 40 kV/cm and at 10 Hz. From the unipolar S-E curves, the inverse piezoelectric coefficient (d\u221733) can be calculated by the following equation :  The calculated values of the d\u221733 under external electric field at 40 kV/cm are illustrated in with varying concentrations of Sm. The maximum unipolar strain Smax and the inverse piezoelectric and the inverse piezoelectric coefficients d\u221733 are summarized in. The maximum values of Smax and d\u221733 are observed at samarium concentrations below 0.02, reaching a peak of 0.17 % and 427.57 p.m./V, respectively, at x = 0.02. They indicate that the ceramic with a 2 % concentration possesses excellent electrical properties. This is attributed to the higher extrinsic contributions to the converse piezoelectric coefficient through increased domain wall mobility, good morphological characteristics, high density, and large grain size, as well as the coexistence of rhombohedral and tetragonal phases near the morphotropic phase boundary (MPB) region at this concentration (x = 0.02).
+
+# TITLE
+High-performance PSZT-PSMI-PSZS ceramics: Piezoelectric and ferroelectric insights for advanced applications
+
+# ABSTRACT
+A solid-state reaction method was used to prepare the perovskite Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 (where x = 0, 0.02, 0.04, 0.06, and 0.08) ceramics, abbreviated PSZT-PSMI-PSZS. Energy-dispersive X-ray spectroscopy (EDX) and Fourier-transform infrared (FT-IR) spectroscopy were employed to verify the elemental composition and molecular structure, respectively. Piezoelectric properties were evaluated, revealing the highest piezoelectric coefficient (d33 = 310 pC/N) at x = 0.02, attributed to optimal morphological features and the morphotropic phase boundary effect. This sample also demonstrated the highest electromechanical coupling factors (kp = 60 %, k31 = 35 %) and the largest impedance resonance frequency difference (Δf = 15.05 kHz). Ferroelectric testing indicated excellent ferroelectric characteristics, with the maximum remanent polarization (Pr = 17.71 μC/cm2) and saturation polarization (Ps = 22.75 μC/cm2) observed at x = 0.02, along with the lowest coercive field (Ec = 10.16 kV/cm). Additionally, this composition exhibited the highest unipolar strain (Smax = 0.17 %) and the inverse piezoelectric coefficient (d∗33 = 427.57 p.m./V). This comprehensive analysis emphasizes the potential of Sm-doped PZT-PMI-PZS ceramics for advanced piezoelectric and ferroelectric applications, particularly at a doping concentration of x = 0.02, where the materials exhibited excellent electrical and mechanical properties.
+
+# INTRODUCTION
+Furthermore, these materials are commonly used in microelectromechanical systems (MEMS). Among these materials, the Pb(Zr,Ti)O3 (PZT) ceramic with a perovskite ABO3 structure is particularly notable due to its capability to switch between rhombohedral and tetragonal phases, endowing it with exceptional electrical properties. Shi et al.'s findings, the piezoelectric enhancement mechanism of PZT primarily stems from an increase in the tetragonal phase of the PZT crystal. Introducing dopants at a 1.5 mol % (LiE^{+}, SmE^{3+}) ratio in tetragonal PZT enhances the maximum polarization density, residual polarization density, and relative coercive field. Another study demonstrated that ceramic doped with 0.10 mol % Yb2O3 exhibited the highest tetragonal phase content and a maximum d33 of 623 pC/N. Conversely, improved electrical properties were achieved for the non-MPB composition, rhombohedral Pb(Zr0.54Ti0.46)O3, through samarium doping. This resulted in a high piezoelectric coefficient d33 of 590 pC/N, high electromechanical coupling factors kp of 57.1 %, and a large piezoelectric strain S of 0.31 % (d33\u2217 = 632 pC/N), with a promising Curie temperature of 335 \xb0C. It is noteworthy that PZT-based ceramics, being Pb-dependent perovskites, are susceptible to local structural changes induced by rare earth dopants (Sm) at the A site. In our previous study , we investigated the effect of adding Sm2O3 on the phase structure, microstructure, and dielectric properties of PZT-PMI-PZS ceramics. Our research yielded significant and consistent results, particularly in the Sm concentration range of x \u2264 0.02, where promising dielectric and microstructural features were observed. The values of the dielectric constant were high and consistent, reaching 8578 and 8574 for x = 0.00 and x = 0.02, respectively, with the highest Curie temperature (Tc) of 303 \xb0C. Building on the promising results from the previous study, the current research aims to further investigate the piezoelectric and ferroelectric properties of PSZT-PSMI-PSZS ceramics. The focus will be on analyzing how the Sm2O3 content affects the electrical properties of these ceramics, enhancing the understanding of their potential applications in electrical devices. By integrating these findings, we aim to provide new insights into improving the properties of PZT ceramics to achieve better performance in advanced industrial applications. Therefore, in this work, 2 mol% - 8 mol% Sm2O3 were added into Pb[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 denoted as PSZT-PSMI-PSZS. At 2 mol% we achieved exceptional piezoelectric properties (d33 = 310 pC/N, kp = 60 % and k31 = 35 %) and largest impedance resonance frequency difference (\u0394f = 15.05 KHz). It also demonstrated the highest values for remanent polarization (Pr = 17.71 \u03bcC/cmE^{2}), saturation polarization (Ps = 22.75 \u03bcC/cmE^{2}), unipolar strain (Smax = 0.17 %), and the inverse piezoelectric constant (d\u221733 = 427.57 p.m./V). The optimal concentration of Sm doping underscores the potential of PZT-PMI-PZS ceramics for advanced, high-performance applications.
+
+# CONCLUSION
+This study successfully synthesized Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 (x = 0, 0.02, 0.04, 0.06, and 0.08) ceramics using a conventional solid-state reaction method. EDX and FT-IR analyses confirmed the perovskite structure and elemental composition. Sm doping significantly enhanced the piezoelectric and ferroelectric properties, with optimal performance at x = 0.02. This composition showed the highest piezoelectric coefficient (d33 = 310 pC/N), electromechanical coupling factors (kp = 60 %, k31 = 35 %), and largest impedance resonance frequency difference (\u0394f = 15.05 KHz). It also exhibited maximum remanent polarization (Pr = 17.71 \u03bcC/cmE^{2}), saturation polarization (Ps = 22.75 \u03bcC/cmE^{2}), unipolar strain (Smax = 0.17 %), and the inverse piezoelectric constant (d\u221733 = 427.57 p.m./V). The optimal Sm doping concentration highlights the potential of PZT-PMI-PZS ceramics for high-performance applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 14:21:18: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Comparison of morphological features: density and grain size, and pyrochlore phase fraction, for PSZT-PSMI-PSZS ceramics with different Sm contents.
+|Sample|Grain size (\u03bcm)|Density (g/cmE^{3})|Pyrochlore phase fraction (%)|
+|---|---|---|---|
+|x\xa0=\xa00.00|4.355|7.77|0.21|
+|x\xa0=\xa00.02|4.561|7.74|2.12|
+|x\xa0=\xa00.04|3.430|7.67|6.91|
+|x\xa0=\xa00.06|2.718|7.49|9.70|
+|x\xa0=\xa00.08|3.111|7.51|10.67|
+
+Table 2. The piezoelectric properties for PSZT-PSMI-PSZS with various Sm2O3 contents measured at room temperature.
+|Sample|d33 (pC/N)|\u0394f (KHz)|kp (%)|k31 (%)|
+|---|---|---|---|---|
+|x\xa0=\xa00.00|213|8.28|43|25|
+|x\xa0=\xa00.02|310|15.05|60|35|
+|x\xa0=\xa00.04|135|6.17|27|16|
+|x\xa0=\xa00.06|130|3.94|22|12|
+|x\xa0=\xa00.08|84|3.20|19|11|
+
+Table 3. Comparison of Pr (\u03bcC/cmE^{2}), Ps (\u03bcC/cmE^{2}), Ec (KV/cm), Smax (%) and d\u221733 (pm/V) for PSZT-PSMI-PSZS ceramics with different Sm contents at 40\xa0kV/cm.
+|Sample|Pr (\u03bcC/cmE^{2})|Ps (\u03bcC/cmE^{2})|Ec (KV/cm)|Smax (%)|d\u221733(pm/V)|
+|---|---|---|---|---|---|
+|x\xa0=\xa00.00|14.68|22.11|13.33|0.15|377.78|
+|x\xa0=\xa00.02|17.71|22.75|10.16|0.17|427.57|
+|x\xa0=\xa00.04|9.90|15.06|10.57|0.14|352.51|
+|x\xa0=\xa00.06|6.74|11.16|10.36|0.11|282.64|
+|x\xa0=\xa00.08|4.23|7.64|10.54|0.03|82.56|
+
+# RESULTS AND DISCUSSION
+Energy-dispersive X-ray spectroscopy (EDX) is a widely employed tool for examining the chemical composition of ceramics. This observation is confirmed by the phase diagrams analysed by X-ray and by the SEM image reported in our previous work. Fourier Transform Infrared (FT-IR) spectroscopy was employed to analyse the molecular structure and chemical composition of the synthesized compounds. It provides crucial insights into the functional groups and bonding environment within the PSZT-PSMI-PSZS matrix, particularly before and after the calcination process. (a\u2013c) shows the FT-IR spectra of the PSZT-PSMI-PSZS samples before calcination at room temperature, calcined at 900 \xb0C and after sintering at 1150 \xb0C, respectively. We can observe the appearance of bands around 1400 cm\u207bE^{1}, which can be associated to the presence of carbonates , potentially due to the influence of the atmosphere contamination or other external sources on the samples. Additionally, the bands around 500 cm\u207bE^{1} are observed in both spectra, which may be attributed to the vibrations of the B\u2013O\u2013B bond in the BO\u2086 mode of the perovskite structure. However, the band observed at \u223c400 cmE^{\u22121} may be attributed to metal-oxygen vibrations, a characteristic of the perovskite structure. Furthermore, comparing the different FT-IR spectra, it is notable that the bands at 500 cm\u207bE^{1} are more intense in the spectrum of the calcined compositions ((b)). This observation confirms the formation of the perovskite phase of PZT after calcination. Compared to pure PZT-PMI-PZS, the doped samples exhibited a slight shift in the vibrational bands. This shift is attributed to the difference in atomic masses between the substituting ions (M (Sm) = 150.36 g/mol) and the host ion (M (Pb) = 207.2 g/mol), which changed the mass of the system. shows the d33 piezoelectric coefficient vs. Sm content measured at room temperature for PSZT-PSMI-PSZS ceramics. As can be seen, the highest d33 value is observed for x = 0.02 (d33 = 310 pC/N). This can be attributed to good morphological features such as high density and highest grain size for the sample x = 0.02 ( ). Additionally, the Morphotropic Phase Boundary MPB effect results in an increased polarization orientation due to the coexistence of rhombohedral and tetragonal phases in this composition. However, a drastic decrease in d33 was observed with increasing samarium concentration, attributable to a progressive deviation of the structure from MPB, leading to a transition from R to T structure, as demonstrated by X-ray diffraction analysis reported in our previous work , thus resulting in a decrease in polarization and piezoelectric performance. Furthermore, with an increase in samarium concentration (x > 0.02), the pyrochlore phase increased, leading to a deterioration of the structure and a decrease in density. In order to evaluate the behavior of PSZT-PSMI-PSZS ceramics and their efficiency in electromechanical energy conversion, the electromechanical coefficients are investigated using the measurement of resonance and anti-resonance frequencies (Fr and Fa) from impedance measurements as a function of frequency. (a\u2013b) depicts the impedance resonance spectra Log Z as a function of frequency as well as the phase measurement (\u03b8) at room temperature. The Fr and Fa were evaluated over a frequency range from 160 to 240 kHz, as illustrated in (c) for the sample x = 0.02. As the Sm concentration increased, a decrease in Z values and a reduction in the separation between the Fr and Fa were observed, along with a decrease in \u03b8 values. It is noteworthy that the phase angle \u03b8 exceeded 80\xb0 only at the samarium concentration with x = 0.02, suggesting that this ceramic was fully polarized, thereby facilitating easy domain wall movement and high piezoelectric performance. Furthermore, this composition showed better resonance \u0394F at room temperature, suggesting that this composition possesses a lower mechanical quality factor Qm and higher values of electromechanical coupling factors kp and k31. displays the variation of kp and k31 with the Sm content at room temperature. We note that the highest electromechanical properties were observed for the compound x = 0.02, which is consistent with the results of the d33 coefficient. However, as the samarium concentration increases, a decrease in resonance (\u0394f) as well as in the kp and k31 coefficients is observed, indicating a reduction in the material's electromechanical conversion efficiency. The piezoelectric parameters for PSZT-PSMI-PSZS ceramics are summarized in. depicts the d33 and kp coefficients of 0.02Sm-PZT-PMI-PZS compound and other rare-earth and samarium-doped piezoelectric ceramics[] at room temperature. Based on the comparison with prior analysis, it is evident that the 0.02Sm-PZT-PMI-PZS compound exhibits excellent piezoelectric features. The high piezoelectric coefficient and electromechanical coupling constant affirms that the doping of Sm into PZT-PMI-PZS matrix improves its piezoelectric characteristics. Specifically, the PSZT-PSMI-PSZS material, as developed in our study, belongs to the soft type of piezoelectric materials. This classification is due to the incorporation of SmE^{3+} as a dopant, which is well-known in the literature to act as a donor ion that contributes to the "soft" characteristics of the material. Soft piezoelectric ceramics are typically characterized by higher piezoelectric coefficients (d33) and lower mechanical quality factors (Qm) compared to hard types. In our material, the SmE^{3+} dopant, which is introduced at the A-site, creates lead vacancies to maintain electroneutrality. According to the literature , such donor dopants, including SmE^{3+}, facilitate domain wall motion by creating A-site vacancies, leading to improved ferroelectric and dielectric properties characteristic of soft PZT ceramics. To investigate the ferroelectric nature of the studied PSZT-PSMI-PSZS ceramics, hysteresis loop measurements were performed as a function of the applied voltage at room temperature and at 10 Hz ( (a\u2013e)). It is observed that the P(E) curves of the PSZT-PSMI-PSZS ceramics exhibit a typically shape and adequate saturation, indicating ferroelectric characteristics. To analyse the impact of samarium on the ferroelectric properties of PZT-PMI-PZS ceramics, a comparison of the hysteresis loops of the studied ceramics at room temperature under a maximum electric field of 40 kV/cm is presented in (f). The ferroelectric parameters such as remanent polarization (Pr), saturation polarization (Ps), and coercive electric field (Ec) are listed in E hysteresis loop of the 2 % Sm doping was clearly much better saturated compared to the others and also had a more square-like hysteresis loop indicative of a dominantly 180\xb0 domain switching associated with the tetragonal symmetry of the crystal, whereas the other doping ratios have more slanted hysteresis loops that probably arises from their secondary phase content. The maximum polarization and remanent polarization reach their peak with a low coercive field when the doping concentration is 2 %, which is consistent with the piezoelectric results obtained. Previous studies have shown that the equilibrium domain width depends on grain size and decreases for grain sizes below 10 \u03bcm, remaining constant for grain sizes above 10 \u03bcm. In our study, the minimum value of Pr is observed at a concentration of x \u2265 0.06, corresponding to a minimum grain size. To validate our findings, we compared the polarization values of our composition (0.02 Sm-PZT-PMI-PZS) with those from similar studies. The Pr value of 17.71 \u03bcC/cmE^{2} achieved in our work is significantly higher than the 7.58 \u03bcC/cmE^{2} reported by S.R. Shannigrahi et al.  and the 4.64 \u03bcC/cmE^{2} reported by R. However, the Ec value is lower than that of Sm-PZT. The 0.02Sm-PZT-PMI-PZS sample exhibits excellent overall properties, benefiting from its unique characteristics, which confer significant potential for high-power device applications. illustrates the bipolar strain-electric field (S-E) curves of PSZT-PSMI-PSZS ceramics with different Sm concentrations, measured at 40 kV/cm and at 10 Hz. From the unipolar S-E curves, the inverse piezoelectric coefficient (d\u221733) can be calculated by the following equation :  The calculated values of the d\u221733 under external electric field at 40 kV/cm are illustrated in with varying concentrations of Sm. The maximum unipolar strain Smax and the inverse piezoelectric and the inverse piezoelectric coefficients d\u221733 are summarized in. The maximum values of Smax and d\u221733 are observed at samarium concentrations below 0.02, reaching a peak of 0.17 % and 427.57 p.m./V, respectively, at x = 0.02. They indicate that the ceramic with a 2 % concentration possesses excellent electrical properties. This is attributed to the higher extrinsic contributions to the converse piezoelectric coefficient through increased domain wall mobility, good morphological characteristics, high density, and large grain size, as well as the coexistence of rhombohedral and tetragonal phases near the morphotropic phase boundary (MPB) region at this concentration (x = 0.02).
+
+# TITLE
+High-performance PSZT-PSMI-PSZS ceramics: Piezoelectric and ferroelectric insights for advanced applications
+
+# ABSTRACT
+A solid-state reaction method was used to prepare the perovskite Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 (where x = 0, 0.02, 0.04, 0.06, and 0.08) ceramics, abbreviated PSZT-PSMI-PSZS. Energy-dispersive X-ray spectroscopy (EDX) and Fourier-transform infrared (FT-IR) spectroscopy were employed to verify the elemental composition and molecular structure, respectively. Piezoelectric properties were evaluated, revealing the highest piezoelectric coefficient (d33 = 310 pC/N) at x = 0.02, attributed to optimal morphological features and the morphotropic phase boundary effect. This sample also demonstrated the highest electromechanical coupling factors (kp = 60 %, k31 = 35 %) and the largest impedance resonance frequency difference (Δf = 15.05 kHz). Ferroelectric testing indicated excellent ferroelectric characteristics, with the maximum remanent polarization (Pr = 17.71 μC/cm2) and saturation polarization (Ps = 22.75 μC/cm2) observed at x = 0.02, along with the lowest coercive field (Ec = 10.16 kV/cm). Additionally, this composition exhibited the highest unipolar strain (Smax = 0.17 %) and the inverse piezoelectric coefficient (d∗33 = 427.57 p.m./V). This comprehensive analysis emphasizes the potential of Sm-doped PZT-PMI-PZS ceramics for advanced piezoelectric and ferroelectric applications, particularly at a doping concentration of x = 0.02, where the materials exhibited excellent electrical and mechanical properties.
+
+# INTRODUCTION
+Furthermore, these materials are commonly used in microelectromechanical systems (MEMS). Among these materials, the Pb(Zr,Ti)O3 (PZT) ceramic with a perovskite ABO3 structure is particularly notable due to its capability to switch between rhombohedral and tetragonal phases, endowing it with exceptional electrical properties. Shi et al.'s findings, the piezoelectric enhancement mechanism of PZT primarily stems from an increase in the tetragonal phase of the PZT crystal. Introducing dopants at a 1.5 mol % (LiE^{+}, SmE^{3+}) ratio in tetragonal PZT enhances the maximum polarization density, residual polarization density, and relative coercive field. Another study demonstrated that ceramic doped with 0.10 mol % Yb2O3 exhibited the highest tetragonal phase content and a maximum d33 of 623 pC/N. Conversely, improved electrical properties were achieved for the non-MPB composition, rhombohedral Pb(Zr0.54Ti0.46)O3, through samarium doping. This resulted in a high piezoelectric coefficient d33 of 590 pC/N, high electromechanical coupling factors kp of 57.1 %, and a large piezoelectric strain S of 0.31 % (d33\u2217 = 632 pC/N), with a promising Curie temperature of 335 \xb0C. It is noteworthy that PZT-based ceramics, being Pb-dependent perovskites, are susceptible to local structural changes induced by rare earth dopants (Sm) at the A site. In our previous study , we investigated the effect of adding Sm2O3 on the phase structure, microstructure, and dielectric properties of PZT-PMI-PZS ceramics. Our research yielded significant and consistent results, particularly in the Sm concentration range of x \u2264 0.02, where promising dielectric and microstructural features were observed. The values of the dielectric constant were high and consistent, reaching 8578 and 8574 for x = 0.00 and x = 0.02, respectively, with the highest Curie temperature (Tc) of 303 \xb0C. Building on the promising results from the previous study, the current research aims to further investigate the piezoelectric and ferroelectric properties of PSZT-PSMI-PSZS ceramics. The focus will be on analyzing how the Sm2O3 content affects the electrical properties of these ceramics, enhancing the understanding of their potential applications in electrical devices. By integrating these findings, we aim to provide new insights into improving the properties of PZT ceramics to achieve better performance in advanced industrial applications. Therefore, in this work, 2 mol% - 8 mol% Sm2O3 were added into Pb[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 denoted as PSZT-PSMI-PSZS. At 2 mol% we achieved exceptional piezoelectric properties (d33 = 310 pC/N, kp = 60 % and k31 = 35 %) and largest impedance resonance frequency difference (\u0394f = 15.05 KHz). It also demonstrated the highest values for remanent polarization (Pr = 17.71 \u03bcC/cmE^{2}), saturation polarization (Ps = 22.75 \u03bcC/cmE^{2}), unipolar strain (Smax = 0.17 %), and the inverse piezoelectric constant (d\u221733 = 427.57 p.m./V). The optimal concentration of Sm doping underscores the potential of PZT-PMI-PZS ceramics for advanced, high-performance applications.
+
+# CONCLUSION
+This study successfully synthesized Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 (x = 0, 0.02, 0.04, 0.06, and 0.08) ceramics using a conventional solid-state reaction method. EDX and FT-IR analyses confirmed the perovskite structure and elemental composition. Sm doping significantly enhanced the piezoelectric and ferroelectric properties, with optimal performance at x = 0.02. This composition showed the highest piezoelectric coefficient (d33 = 310 pC/N), electromechanical coupling factors (kp = 60 %, k31 = 35 %), and largest impedance resonance frequency difference (\u0394f = 15.05 KHz). It also exhibited maximum remanent polarization (Pr = 17.71 \u03bcC/cmE^{2}), saturation polarization (Ps = 22.75 \u03bcC/cmE^{2}), unipolar strain (Smax = 0.17 %), and the inverse piezoelectric constant (d\u221733 = 427.57 p.m./V). The optimal Sm doping concentration highlights the potential of PZT-PMI-PZS ceramics for high-performance applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="```json
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.00": 213,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.02": 310,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.04": 135,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.06": 130,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.08": 84,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.00": 377.78,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.02": 427.57,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.04": 352.51,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.06": 282.64,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.08": 82.56
+    },
+    "abbreviations": {
+      "PSZT": "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3",
+      "PSMI": "Unknown",
+      "PSZS": "Unknown"
+    },
+    "property_unit": "pC/N",
+    "family": "PZT"
+  }
+}
+```"
+2025-07-17 16:13:39: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Comparison of morphological features: density and grain size, and pyrochlore phase fraction, for PSZT-PSMI-PSZS ceramics with different Sm contents.
+|Sample|Grain size (\u03bcm)|Density (g/cmE^{3})|Pyrochlore phase fraction (%)|
+|---|---|---|---|
+|x\xa0=\xa00.00|4.355|7.77|0.21|
+|x\xa0=\xa00.02|4.561|7.74|2.12|
+|x\xa0=\xa00.04|3.430|7.67|6.91|
+|x\xa0=\xa00.06|2.718|7.49|9.70|
+|x\xa0=\xa00.08|3.111|7.51|10.67|
+
+Table 2. The piezoelectric properties for PSZT-PSMI-PSZS with various Sm2O3 contents measured at room temperature.
+|Sample|d33 (pC/N)|\u0394f (KHz)|kp (%)|k31 (%)|
+|---|---|---|---|---|
+|x\xa0=\xa00.00|213|8.28|43|25|
+|x\xa0=\xa00.02|310|15.05|60|35|
+|x\xa0=\xa00.04|135|6.17|27|16|
+|x\xa0=\xa00.06|130|3.94|22|12|
+|x\xa0=\xa00.08|84|3.20|19|11|
+
+Table 3. Comparison of Pr (\u03bcC/cmE^{2}), Ps (\u03bcC/cmE^{2}), Ec (KV/cm), Smax (%) and d\u221733 (pm/V) for PSZT-PSMI-PSZS ceramics with different Sm contents at 40\xa0kV/cm.
+|Sample|Pr (\u03bcC/cmE^{2})|Ps (\u03bcC/cmE^{2})|Ec (KV/cm)|Smax (%)|d\u221733(pm/V)|
+|---|---|---|---|---|---|
+|x\xa0=\xa00.00|14.68|22.11|13.33|0.15|377.78|
+|x\xa0=\xa00.02|17.71|22.75|10.16|0.17|427.57|
+|x\xa0=\xa00.04|9.90|15.06|10.57|0.14|352.51|
+|x\xa0=\xa00.06|6.74|11.16|10.36|0.11|282.64|
+|x\xa0=\xa00.08|4.23|7.64|10.54|0.03|82.56|
+
+# RESULTS AND DISCUSSION
+Energy-dispersive X-ray spectroscopy (EDX) is a widely employed tool for examining the chemical composition of ceramics. This observation is confirmed by the phase diagrams analysed by X-ray and by the SEM image reported in our previous work. Fourier Transform Infrared (FT-IR) spectroscopy was employed to analyse the molecular structure and chemical composition of the synthesized compounds. It provides crucial insights into the functional groups and bonding environment within the PSZT-PSMI-PSZS matrix, particularly before and after the calcination process. (a\u2013c) shows the FT-IR spectra of the PSZT-PSMI-PSZS samples before calcination at room temperature, calcined at 900 \xb0C and after sintering at 1150 \xb0C, respectively. We can observe the appearance of bands around 1400 cm\u207bE^{1}, which can be associated to the presence of carbonates , potentially due to the influence of the atmosphere contamination or other external sources on the samples. Additionally, the bands around 500 cm\u207bE^{1} are observed in both spectra, which may be attributed to the vibrations of the B\u2013O\u2013B bond in the BO\u2086 mode of the perovskite structure. However, the band observed at \u223c400 cmE^{\u22121} may be attributed to metal-oxygen vibrations, a characteristic of the perovskite structure. Furthermore, comparing the different FT-IR spectra, it is notable that the bands at 500 cm\u207bE^{1} are more intense in the spectrum of the calcined compositions ((b)). This observation confirms the formation of the perovskite phase of PZT after calcination. Compared to pure PZT-PMI-PZS, the doped samples exhibited a slight shift in the vibrational bands. This shift is attributed to the difference in atomic masses between the substituting ions (M (Sm) = 150.36 g/mol) and the host ion (M (Pb) = 207.2 g/mol), which changed the mass of the system. shows the d33 piezoelectric coefficient vs. Sm content measured at room temperature for PSZT-PSMI-PSZS ceramics. As can be seen, the highest d33 value is observed for x = 0.02 (d33 = 310 pC/N). This can be attributed to good morphological features such as high density and highest grain size for the sample x = 0.02 ( ). Additionally, the Morphotropic Phase Boundary MPB effect results in an increased polarization orientation due to the coexistence of rhombohedral and tetragonal phases in this composition. However, a drastic decrease in d33 was observed with increasing samarium concentration, attributable to a progressive deviation of the structure from MPB, leading to a transition from R to T structure, as demonstrated by X-ray diffraction analysis reported in our previous work , thus resulting in a decrease in polarization and piezoelectric performance. Furthermore, with an increase in samarium concentration (x > 0.02), the pyrochlore phase increased, leading to a deterioration of the structure and a decrease in density. In order to evaluate the behavior of PSZT-PSMI-PSZS ceramics and their efficiency in electromechanical energy conversion, the electromechanical coefficients are investigated using the measurement of resonance and anti-resonance frequencies (Fr and Fa) from impedance measurements as a function of frequency. (a\u2013b) depicts the impedance resonance spectra Log Z as a function of frequency as well as the phase measurement (\u03b8) at room temperature. The Fr and Fa were evaluated over a frequency range from 160 to 240 kHz, as illustrated in (c) for the sample x = 0.02. As the Sm concentration increased, a decrease in Z values and a reduction in the separation between the Fr and Fa were observed, along with a decrease in \u03b8 values. It is noteworthy that the phase angle \u03b8 exceeded 80\xb0 only at the samarium concentration with x = 0.02, suggesting that this ceramic was fully polarized, thereby facilitating easy domain wall movement and high piezoelectric performance. Furthermore, this composition showed better resonance \u0394F at room temperature, suggesting that this composition possesses a lower mechanical quality factor Qm and higher values of electromechanical coupling factors kp and k31. displays the variation of kp and k31 with the Sm content at room temperature. We note that the highest electromechanical properties were observed for the compound x = 0.02, which is consistent with the results of the d33 coefficient. However, as the samarium concentration increases, a decrease in resonance (\u0394f) as well as in the kp and k31 coefficients is observed, indicating a reduction in the material's electromechanical conversion efficiency. The piezoelectric parameters for PSZT-PSMI-PSZS ceramics are summarized in. depicts the d33 and kp coefficients of 0.02Sm-PZT-PMI-PZS compound and other rare-earth and samarium-doped piezoelectric ceramics[] at room temperature. Based on the comparison with prior analysis, it is evident that the 0.02Sm-PZT-PMI-PZS compound exhibits excellent piezoelectric features. The high piezoelectric coefficient and electromechanical coupling constant affirms that the doping of Sm into PZT-PMI-PZS matrix improves its piezoelectric characteristics. Specifically, the PSZT-PSMI-PSZS material, as developed in our study, belongs to the soft type of piezoelectric materials. This classification is due to the incorporation of SmE^{3+} as a dopant, which is well-known in the literature to act as a donor ion that contributes to the "soft" characteristics of the material. Soft piezoelectric ceramics are typically characterized by higher piezoelectric coefficients (d33) and lower mechanical quality factors (Qm) compared to hard types. In our material, the SmE^{3+} dopant, which is introduced at the A-site, creates lead vacancies to maintain electroneutrality. According to the literature , such donor dopants, including SmE^{3+}, facilitate domain wall motion by creating A-site vacancies, leading to improved ferroelectric and dielectric properties characteristic of soft PZT ceramics. To investigate the ferroelectric nature of the studied PSZT-PSMI-PSZS ceramics, hysteresis loop measurements were performed as a function of the applied voltage at room temperature and at 10 Hz ( (a\u2013e)). It is observed that the P(E) curves of the PSZT-PSMI-PSZS ceramics exhibit a typically shape and adequate saturation, indicating ferroelectric characteristics. To analyse the impact of samarium on the ferroelectric properties of PZT-PMI-PZS ceramics, a comparison of the hysteresis loops of the studied ceramics at room temperature under a maximum electric field of 40 kV/cm is presented in (f). The ferroelectric parameters such as remanent polarization (Pr), saturation polarization (Ps), and coercive electric field (Ec) are listed in E hysteresis loop of the 2 % Sm doping was clearly much better saturated compared to the others and also had a more square-like hysteresis loop indicative of a dominantly 180\xb0 domain switching associated with the tetragonal symmetry of the crystal, whereas the other doping ratios have more slanted hysteresis loops that probably arises from their secondary phase content. The maximum polarization and remanent polarization reach their peak with a low coercive field when the doping concentration is 2 %, which is consistent with the piezoelectric results obtained. Previous studies have shown that the equilibrium domain width depends on grain size and decreases for grain sizes below 10 \u03bcm, remaining constant for grain sizes above 10 \u03bcm. In our study, the minimum value of Pr is observed at a concentration of x \u2265 0.06, corresponding to a minimum grain size. To validate our findings, we compared the polarization values of our composition (0.02 Sm-PZT-PMI-PZS) with those from similar studies. The Pr value of 17.71 \u03bcC/cmE^{2} achieved in our work is significantly higher than the 7.58 \u03bcC/cmE^{2} reported by S.R. Shannigrahi et al.  and the 4.64 \u03bcC/cmE^{2} reported by R. However, the Ec value is lower than that of Sm-PZT. The 0.02Sm-PZT-PMI-PZS sample exhibits excellent overall properties, benefiting from its unique characteristics, which confer significant potential for high-power device applications. illustrates the bipolar strain-electric field (S-E) curves of PSZT-PSMI-PSZS ceramics with different Sm concentrations, measured at 40 kV/cm and at 10 Hz. From the unipolar S-E curves, the inverse piezoelectric coefficient (d\u221733) can be calculated by the following equation :  The calculated values of the d\u221733 under external electric field at 40 kV/cm are illustrated in with varying concentrations of Sm. The maximum unipolar strain Smax and the inverse piezoelectric and the inverse piezoelectric coefficients d\u221733 are summarized in. The maximum values of Smax and d\u221733 are observed at samarium concentrations below 0.02, reaching a peak of 0.17 % and 427.57 p.m./V, respectively, at x = 0.02. They indicate that the ceramic with a 2 % concentration possesses excellent electrical properties. This is attributed to the higher extrinsic contributions to the converse piezoelectric coefficient through increased domain wall mobility, good morphological characteristics, high density, and large grain size, as well as the coexistence of rhombohedral and tetragonal phases near the morphotropic phase boundary (MPB) region at this concentration (x = 0.02).
+
+# TITLE
+High-performance PSZT-PSMI-PSZS ceramics: Piezoelectric and ferroelectric insights for advanced applications
+
+# ABSTRACT
+A solid-state reaction method was used to prepare the perovskite Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 (where x = 0, 0.02, 0.04, 0.06, and 0.08) ceramics, abbreviated PSZT-PSMI-PSZS. Energy-dispersive X-ray spectroscopy (EDX) and Fourier-transform infrared (FT-IR) spectroscopy were employed to verify the elemental composition and molecular structure, respectively. Piezoelectric properties were evaluated, revealing the highest piezoelectric coefficient (d33 = 310 pC/N) at x = 0.02, attributed to optimal morphological features and the morphotropic phase boundary effect. This sample also demonstrated the highest electromechanical coupling factors (kp = 60 %, k31 = 35 %) and the largest impedance resonance frequency difference (Δf = 15.05 kHz). Ferroelectric testing indicated excellent ferroelectric characteristics, with the maximum remanent polarization (Pr = 17.71 μC/cm2) and saturation polarization (Ps = 22.75 μC/cm2) observed at x = 0.02, along with the lowest coercive field (Ec = 10.16 kV/cm). Additionally, this composition exhibited the highest unipolar strain (Smax = 0.17 %) and the inverse piezoelectric coefficient (d∗33 = 427.57 p.m./V). This comprehensive analysis emphasizes the potential of Sm-doped PZT-PMI-PZS ceramics for advanced piezoelectric and ferroelectric applications, particularly at a doping concentration of x = 0.02, where the materials exhibited excellent electrical and mechanical properties.
+
+# INTRODUCTION
+Furthermore, these materials are commonly used in microelectromechanical systems (MEMS). Among these materials, the Pb(Zr,Ti)O3 (PZT) ceramic with a perovskite ABO3 structure is particularly notable due to its capability to switch between rhombohedral and tetragonal phases, endowing it with exceptional electrical properties. Shi et al.'s findings, the piezoelectric enhancement mechanism of PZT primarily stems from an increase in the tetragonal phase of the PZT crystal. Introducing dopants at a 1.5 mol % (LiE^{+}, SmE^{3+}) ratio in tetragonal PZT enhances the maximum polarization density, residual polarization density, and relative coercive field. Another study demonstrated that ceramic doped with 0.10 mol % Yb2O3 exhibited the highest tetragonal phase content and a maximum d33 of 623 pC/N. Conversely, improved electrical properties were achieved for the non-MPB composition, rhombohedral Pb(Zr0.54Ti0.46)O3, through samarium doping. This resulted in a high piezoelectric coefficient d33 of 590 pC/N, high electromechanical coupling factors kp of 57.1 %, and a large piezoelectric strain S of 0.31 % (d33\u2217 = 632 pC/N), with a promising Curie temperature of 335 \xb0C. It is noteworthy that PZT-based ceramics, being Pb-dependent perovskites, are susceptible to local structural changes induced by rare earth dopants (Sm) at the A site. In our previous study , we investigated the effect of adding Sm2O3 on the phase structure, microstructure, and dielectric properties of PZT-PMI-PZS ceramics. Our research yielded significant and consistent results, particularly in the Sm concentration range of x \u2264 0.02, where promising dielectric and microstructural features were observed. The values of the dielectric constant were high and consistent, reaching 8578 and 8574 for x = 0.00 and x = 0.02, respectively, with the highest Curie temperature (Tc) of 303 \xb0C. Building on the promising results from the previous study, the current research aims to further investigate the piezoelectric and ferroelectric properties of PSZT-PSMI-PSZS ceramics. The focus will be on analyzing how the Sm2O3 content affects the electrical properties of these ceramics, enhancing the understanding of their potential applications in electrical devices. By integrating these findings, we aim to provide new insights into improving the properties of PZT ceramics to achieve better performance in advanced industrial applications. Therefore, in this work, 2 mol% - 8 mol% Sm2O3 were added into Pb[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 denoted as PSZT-PSMI-PSZS. At 2 mol% we achieved exceptional piezoelectric properties (d33 = 310 pC/N, kp = 60 % and k31 = 35 %) and largest impedance resonance frequency difference (\u0394f = 15.05 KHz). It also demonstrated the highest values for remanent polarization (Pr = 17.71 \u03bcC/cmE^{2}), saturation polarization (Ps = 22.75 \u03bcC/cmE^{2}), unipolar strain (Smax = 0.17 %), and the inverse piezoelectric constant (d\u221733 = 427.57 p.m./V). The optimal concentration of Sm doping underscores the potential of PZT-PMI-PZS ceramics for advanced, high-performance applications.
+
+# CONCLUSION
+This study successfully synthesized Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 (x = 0, 0.02, 0.04, 0.06, and 0.08) ceramics using a conventional solid-state reaction method. EDX and FT-IR analyses confirmed the perovskite structure and elemental composition. Sm doping significantly enhanced the piezoelectric and ferroelectric properties, with optimal performance at x = 0.02. This composition showed the highest piezoelectric coefficient (d33 = 310 pC/N), electromechanical coupling factors (kp = 60 %, k31 = 35 %), and largest impedance resonance frequency difference (\u0394f = 15.05 KHz). It also exhibited maximum remanent polarization (Pr = 17.71 \u03bcC/cmE^{2}), saturation polarization (Ps = 22.75 \u03bcC/cmE^{2}), unipolar strain (Smax = 0.17 %), and the inverse piezoelectric constant (d\u221733 = 427.57 p.m./V). The optimal Sm doping concentration highlights the potential of PZT-PMI-PZS ceramics for high-performance applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-17 16:14:10: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Comparison of morphological features: density and grain size, and pyrochlore phase fraction, for PSZT-PSMI-PSZS ceramics with different Sm contents.
+|Sample|Grain size (\u03bcm)|Density (g/cmE^{3})|Pyrochlore phase fraction (%)|
+|---|---|---|---|
+|x\xa0=\xa00.00|4.355|7.77|0.21|
+|x\xa0=\xa00.02|4.561|7.74|2.12|
+|x\xa0=\xa00.04|3.430|7.67|6.91|
+|x\xa0=\xa00.06|2.718|7.49|9.70|
+|x\xa0=\xa00.08|3.111|7.51|10.67|
+
+Table 2. The piezoelectric properties for PSZT-PSMI-PSZS with various Sm2O3 contents measured at room temperature.
+|Sample|d33 (pC/N)|\u0394f (KHz)|kp (%)|k31 (%)|
+|---|---|---|---|---|
+|x\xa0=\xa00.00|213|8.28|43|25|
+|x\xa0=\xa00.02|310|15.05|60|35|
+|x\xa0=\xa00.04|135|6.17|27|16|
+|x\xa0=\xa00.06|130|3.94|22|12|
+|x\xa0=\xa00.08|84|3.20|19|11|
+
+Table 3. Comparison of Pr (\u03bcC/cmE^{2}), Ps (\u03bcC/cmE^{2}), Ec (KV/cm), Smax (%) and d\u221733 (pm/V) for PSZT-PSMI-PSZS ceramics with different Sm contents at 40\xa0kV/cm.
+|Sample|Pr (\u03bcC/cmE^{2})|Ps (\u03bcC/cmE^{2})|Ec (KV/cm)|Smax (%)|d\u221733(pm/V)|
+|---|---|---|---|---|---|
+|x\xa0=\xa00.00|14.68|22.11|13.33|0.15|377.78|
+|x\xa0=\xa00.02|17.71|22.75|10.16|0.17|427.57|
+|x\xa0=\xa00.04|9.90|15.06|10.57|0.14|352.51|
+|x\xa0=\xa00.06|6.74|11.16|10.36|0.11|282.64|
+|x\xa0=\xa00.08|4.23|7.64|10.54|0.03|82.56|
+
+# RESULTS AND DISCUSSION
+Energy-dispersive X-ray spectroscopy (EDX) is a widely employed tool for examining the chemical composition of ceramics. This observation is confirmed by the phase diagrams analysed by X-ray and by the SEM image reported in our previous work. Fourier Transform Infrared (FT-IR) spectroscopy was employed to analyse the molecular structure and chemical composition of the synthesized compounds. It provides crucial insights into the functional groups and bonding environment within the PSZT-PSMI-PSZS matrix, particularly before and after the calcination process. (a\u2013c) shows the FT-IR spectra of the PSZT-PSMI-PSZS samples before calcination at room temperature, calcined at 900 \xb0C and after sintering at 1150 \xb0C, respectively. We can observe the appearance of bands around 1400 cm\u207bE^{1}, which can be associated to the presence of carbonates , potentially due to the influence of the atmosphere contamination or other external sources on the samples. Additionally, the bands around 500 cm\u207bE^{1} are observed in both spectra, which may be attributed to the vibrations of the B\u2013O\u2013B bond in the BO\u2086 mode of the perovskite structure. However, the band observed at \u223c400 cmE^{\u22121} may be attributed to metal-oxygen vibrations, a characteristic of the perovskite structure. Furthermore, comparing the different FT-IR spectra, it is notable that the bands at 500 cm\u207bE^{1} are more intense in the spectrum of the calcined compositions ((b)). This observation confirms the formation of the perovskite phase of PZT after calcination. Compared to pure PZT-PMI-PZS, the doped samples exhibited a slight shift in the vibrational bands. This shift is attributed to the difference in atomic masses between the substituting ions (M (Sm) = 150.36 g/mol) and the host ion (M (Pb) = 207.2 g/mol), which changed the mass of the system. shows the d33 piezoelectric coefficient vs. Sm content measured at room temperature for PSZT-PSMI-PSZS ceramics. As can be seen, the highest d33 value is observed for x = 0.02 (d33 = 310 pC/N). This can be attributed to good morphological features such as high density and highest grain size for the sample x = 0.02 ( ). Additionally, the Morphotropic Phase Boundary MPB effect results in an increased polarization orientation due to the coexistence of rhombohedral and tetragonal phases in this composition. However, a drastic decrease in d33 was observed with increasing samarium concentration, attributable to a progressive deviation of the structure from MPB, leading to a transition from R to T structure, as demonstrated by X-ray diffraction analysis reported in our previous work , thus resulting in a decrease in polarization and piezoelectric performance. Furthermore, with an increase in samarium concentration (x > 0.02), the pyrochlore phase increased, leading to a deterioration of the structure and a decrease in density. In order to evaluate the behavior of PSZT-PSMI-PSZS ceramics and their efficiency in electromechanical energy conversion, the electromechanical coefficients are investigated using the measurement of resonance and anti-resonance frequencies (Fr and Fa) from impedance measurements as a function of frequency. (a\u2013b) depicts the impedance resonance spectra Log Z as a function of frequency as well as the phase measurement (\u03b8) at room temperature. The Fr and Fa were evaluated over a frequency range from 160 to 240 kHz, as illustrated in (c) for the sample x = 0.02. As the Sm concentration increased, a decrease in Z values and a reduction in the separation between the Fr and Fa were observed, along with a decrease in \u03b8 values. It is noteworthy that the phase angle \u03b8 exceeded 80\xb0 only at the samarium concentration with x = 0.02, suggesting that this ceramic was fully polarized, thereby facilitating easy domain wall movement and high piezoelectric performance. Furthermore, this composition showed better resonance \u0394F at room temperature, suggesting that this composition possesses a lower mechanical quality factor Qm and higher values of electromechanical coupling factors kp and k31. displays the variation of kp and k31 with the Sm content at room temperature. We note that the highest electromechanical properties were observed for the compound x = 0.02, which is consistent with the results of the d33 coefficient. However, as the samarium concentration increases, a decrease in resonance (\u0394f) as well as in the kp and k31 coefficients is observed, indicating a reduction in the material's electromechanical conversion efficiency. The piezoelectric parameters for PSZT-PSMI-PSZS ceramics are summarized in. depicts the d33 and kp coefficients of 0.02Sm-PZT-PMI-PZS compound and other rare-earth and samarium-doped piezoelectric ceramics[] at room temperature. Based on the comparison with prior analysis, it is evident that the 0.02Sm-PZT-PMI-PZS compound exhibits excellent piezoelectric features. The high piezoelectric coefficient and electromechanical coupling constant affirms that the doping of Sm into PZT-PMI-PZS matrix improves its piezoelectric characteristics. Specifically, the PSZT-PSMI-PSZS material, as developed in our study, belongs to the soft type of piezoelectric materials. This classification is due to the incorporation of SmE^{3+} as a dopant, which is well-known in the literature to act as a donor ion that contributes to the "soft" characteristics of the material. Soft piezoelectric ceramics are typically characterized by higher piezoelectric coefficients (d33) and lower mechanical quality factors (Qm) compared to hard types. In our material, the SmE^{3+} dopant, which is introduced at the A-site, creates lead vacancies to maintain electroneutrality. According to the literature , such donor dopants, including SmE^{3+}, facilitate domain wall motion by creating A-site vacancies, leading to improved ferroelectric and dielectric properties characteristic of soft PZT ceramics. To investigate the ferroelectric nature of the studied PSZT-PSMI-PSZS ceramics, hysteresis loop measurements were performed as a function of the applied voltage at room temperature and at 10 Hz ( (a\u2013e)). It is observed that the P(E) curves of the PSZT-PSMI-PSZS ceramics exhibit a typically shape and adequate saturation, indicating ferroelectric characteristics. To analyse the impact of samarium on the ferroelectric properties of PZT-PMI-PZS ceramics, a comparison of the hysteresis loops of the studied ceramics at room temperature under a maximum electric field of 40 kV/cm is presented in (f). The ferroelectric parameters such as remanent polarization (Pr), saturation polarization (Ps), and coercive electric field (Ec) are listed in E hysteresis loop of the 2 % Sm doping was clearly much better saturated compared to the others and also had a more square-like hysteresis loop indicative of a dominantly 180\xb0 domain switching associated with the tetragonal symmetry of the crystal, whereas the other doping ratios have more slanted hysteresis loops that probably arises from their secondary phase content. The maximum polarization and remanent polarization reach their peak with a low coercive field when the doping concentration is 2 %, which is consistent with the piezoelectric results obtained. Previous studies have shown that the equilibrium domain width depends on grain size and decreases for grain sizes below 10 \u03bcm, remaining constant for grain sizes above 10 \u03bcm. In our study, the minimum value of Pr is observed at a concentration of x \u2265 0.06, corresponding to a minimum grain size. To validate our findings, we compared the polarization values of our composition (0.02 Sm-PZT-PMI-PZS) with those from similar studies. The Pr value of 17.71 \u03bcC/cmE^{2} achieved in our work is significantly higher than the 7.58 \u03bcC/cmE^{2} reported by S.R. Shannigrahi et al.  and the 4.64 \u03bcC/cmE^{2} reported by R. However, the Ec value is lower than that of Sm-PZT. The 0.02Sm-PZT-PMI-PZS sample exhibits excellent overall properties, benefiting from its unique characteristics, which confer significant potential for high-power device applications. illustrates the bipolar strain-electric field (S-E) curves of PSZT-PSMI-PSZS ceramics with different Sm concentrations, measured at 40 kV/cm and at 10 Hz. From the unipolar S-E curves, the inverse piezoelectric coefficient (d\u221733) can be calculated by the following equation :  The calculated values of the d\u221733 under external electric field at 40 kV/cm are illustrated in with varying concentrations of Sm. The maximum unipolar strain Smax and the inverse piezoelectric and the inverse piezoelectric coefficients d\u221733 are summarized in. The maximum values of Smax and d\u221733 are observed at samarium concentrations below 0.02, reaching a peak of 0.17 % and 427.57 p.m./V, respectively, at x = 0.02. They indicate that the ceramic with a 2 % concentration possesses excellent electrical properties. This is attributed to the higher extrinsic contributions to the converse piezoelectric coefficient through increased domain wall mobility, good morphological characteristics, high density, and large grain size, as well as the coexistence of rhombohedral and tetragonal phases near the morphotropic phase boundary (MPB) region at this concentration (x = 0.02).
+
+# TITLE
+High-performance PSZT-PSMI-PSZS ceramics: Piezoelectric and ferroelectric insights for advanced applications
+
+# ABSTRACT
+A solid-state reaction method was used to prepare the perovskite Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 (where x = 0, 0.02, 0.04, 0.06, and 0.08) ceramics, abbreviated PSZT-PSMI-PSZS. Energy-dispersive X-ray spectroscopy (EDX) and Fourier-transform infrared (FT-IR) spectroscopy were employed to verify the elemental composition and molecular structure, respectively. Piezoelectric properties were evaluated, revealing the highest piezoelectric coefficient (d33 = 310 pC/N) at x = 0.02, attributed to optimal morphological features and the morphotropic phase boundary effect. This sample also demonstrated the highest electromechanical coupling factors (kp = 60 %, k31 = 35 %) and the largest impedance resonance frequency difference (Δf = 15.05 kHz). Ferroelectric testing indicated excellent ferroelectric characteristics, with the maximum remanent polarization (Pr = 17.71 μC/cm2) and saturation polarization (Ps = 22.75 μC/cm2) observed at x = 0.02, along with the lowest coercive field (Ec = 10.16 kV/cm). Additionally, this composition exhibited the highest unipolar strain (Smax = 0.17 %) and the inverse piezoelectric coefficient (d∗33 = 427.57 p.m./V). This comprehensive analysis emphasizes the potential of Sm-doped PZT-PMI-PZS ceramics for advanced piezoelectric and ferroelectric applications, particularly at a doping concentration of x = 0.02, where the materials exhibited excellent electrical and mechanical properties.
+
+# INTRODUCTION
+Furthermore, these materials are commonly used in microelectromechanical systems (MEMS). Among these materials, the Pb(Zr,Ti)O3 (PZT) ceramic with a perovskite ABO3 structure is particularly notable due to its capability to switch between rhombohedral and tetragonal phases, endowing it with exceptional electrical properties. Shi et al.'s findings, the piezoelectric enhancement mechanism of PZT primarily stems from an increase in the tetragonal phase of the PZT crystal. Introducing dopants at a 1.5 mol % (LiE^{+}, SmE^{3+}) ratio in tetragonal PZT enhances the maximum polarization density, residual polarization density, and relative coercive field. Another study demonstrated that ceramic doped with 0.10 mol % Yb2O3 exhibited the highest tetragonal phase content and a maximum d33 of 623 pC/N. Conversely, improved electrical properties were achieved for the non-MPB composition, rhombohedral Pb(Zr0.54Ti0.46)O3, through samarium doping. This resulted in a high piezoelectric coefficient d33 of 590 pC/N, high electromechanical coupling factors kp of 57.1 %, and a large piezoelectric strain S of 0.31 % (d33\u2217 = 632 pC/N), with a promising Curie temperature of 335 \xb0C. It is noteworthy that PZT-based ceramics, being Pb-dependent perovskites, are susceptible to local structural changes induced by rare earth dopants (Sm) at the A site. In our previous study , we investigated the effect of adding Sm2O3 on the phase structure, microstructure, and dielectric properties of PZT-PMI-PZS ceramics. Our research yielded significant and consistent results, particularly in the Sm concentration range of x \u2264 0.02, where promising dielectric and microstructural features were observed. The values of the dielectric constant were high and consistent, reaching 8578 and 8574 for x = 0.00 and x = 0.02, respectively, with the highest Curie temperature (Tc) of 303 \xb0C. Building on the promising results from the previous study, the current research aims to further investigate the piezoelectric and ferroelectric properties of PSZT-PSMI-PSZS ceramics. The focus will be on analyzing how the Sm2O3 content affects the electrical properties of these ceramics, enhancing the understanding of their potential applications in electrical devices. By integrating these findings, we aim to provide new insights into improving the properties of PZT ceramics to achieve better performance in advanced industrial applications. Therefore, in this work, 2 mol% - 8 mol% Sm2O3 were added into Pb[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 denoted as PSZT-PSMI-PSZS. At 2 mol% we achieved exceptional piezoelectric properties (d33 = 310 pC/N, kp = 60 % and k31 = 35 %) and largest impedance resonance frequency difference (\u0394f = 15.05 KHz). It also demonstrated the highest values for remanent polarization (Pr = 17.71 \u03bcC/cmE^{2}), saturation polarization (Ps = 22.75 \u03bcC/cmE^{2}), unipolar strain (Smax = 0.17 %), and the inverse piezoelectric constant (d\u221733 = 427.57 p.m./V). The optimal concentration of Sm doping underscores the potential of PZT-PMI-PZS ceramics for advanced, high-performance applications.
+
+# CONCLUSION
+This study successfully synthesized Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 (x = 0, 0.02, 0.04, 0.06, and 0.08) ceramics using a conventional solid-state reaction method. EDX and FT-IR analyses confirmed the perovskite structure and elemental composition. Sm doping significantly enhanced the piezoelectric and ferroelectric properties, with optimal performance at x = 0.02. This composition showed the highest piezoelectric coefficient (d33 = 310 pC/N), electromechanical coupling factors (kp = 60 %, k31 = 35 %), and largest impedance resonance frequency difference (\u0394f = 15.05 KHz). It also exhibited maximum remanent polarization (Pr = 17.71 \u03bcC/cmE^{2}), saturation polarization (Ps = 22.75 \u03bcC/cmE^{2}), unipolar strain (Smax = 0.17 %), and the inverse piezoelectric constant (d\u221733 = 427.57 p.m./V). The optimal Sm doping concentration highlights the potential of PZT-PMI-PZS ceramics for high-performance applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="```json
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.00": 213,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.02": 310,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.04": 135,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.06": 130,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.08": 84,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.00": 377.78,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.02": 427.57,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.04": 352.51,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.06": 282.64,
+      "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3 where x=0.08": 82.56
+    },
+    "abbreviations": {
+      "PSZT": "Pb(1-x)Smx[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3",
+      "PSMI": "(Mo1/3In2/3)",
+      "PSZS": "(Zn1/3Sb2/3)"
+    },
+    "property_unit": "pC/N",
+    "family": "PZT"
+  }
+}
+```"

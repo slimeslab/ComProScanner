@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Undoped":137,"1B-doped":171,"1B-1Mn co-doped":150},"abbreviations":{"1B":"1 mol % B3+ doped","1B-1Mn":"1 mol% B3+ - 1 mol% Mn3+ co-doped"},"property_unit":"pC/N","family":"BNT-6BT"}}

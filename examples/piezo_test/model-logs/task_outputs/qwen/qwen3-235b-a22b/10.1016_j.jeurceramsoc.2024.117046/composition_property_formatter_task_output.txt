@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"KICET-Lead Zirconate Titanate8 (porosity 0%)":330.0,"KICET-Lead Zirconate Titanate8 (porosity 7%)":320.1,"KICET-Lead Zirconate Titanate8 (porosity 13%)":313.5},"property_unit":"pC/N","family":"Lead Zirconate Titanate"}}

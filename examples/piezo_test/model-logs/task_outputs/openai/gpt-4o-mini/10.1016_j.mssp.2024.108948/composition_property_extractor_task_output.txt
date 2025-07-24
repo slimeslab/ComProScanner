@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.67BF-0.33BT-0.02BZT-0.01BA":801,"0.67BF-0.33BT-0.02BZT-0.03BA":509},"abbreviations":{"BF":"BiFeO3","BT":"BaTiO3","BZT":"Bi(Zn0.5Ti0.5)O3","BA":"BiAlO3"},"property_unit":"pC/N","family":"BF-BT"}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.93(Bi0.5Na0.5)TiO3-0.06BaTiO3-0.01(K0.5Na0.5)NbO3":264,"0.93(Bi0.5Na0.5)TiO3-0.06BaTiO3-0.01(K0.5Na0.5)NbO3 at 65 °C":295},"abbreviations":{},"property_unit":"pC/N","family":"BNT-BT-KNN"}}

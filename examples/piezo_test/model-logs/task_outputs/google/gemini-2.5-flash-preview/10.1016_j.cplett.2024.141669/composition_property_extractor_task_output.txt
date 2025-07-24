@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"TeO2-alpha":-0.00699,"TeO2-beta":0.00021},"abbreviations":{},"property_unit":"pm/V","family":"TeO2"}}

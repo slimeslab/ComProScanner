@@ -1,0 +1,196 @@
+2025-07-08 14:57:02: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Rietveld refinement parameters of BF-xBT ceramics.
+|Composition|Phases|a (\xc5)|\u03b1 (\xb0)|Fraction (%)|\u03c7E^{2}|
+|---|---|---|---|---|---|
+|0.29|R|3.9899|89.79|90.5|2.69|
+|C|4.0092|90|9.5|
+|0.3|R|3.9929|89.79|84.6|2.82|
+|C|3.9848|90|15.4|
+|0.31|R|3.9952|89.83|82.4|2.97|
+|C|3.9873|90|17.6|
+|0.32|R|4.0072|89.85|75.2|2.50|
+|C|3.9911|90|24.8|
+
+# RESULTS AND DISCUSSION
+(a) shows the XRD patterns for of BF-xBT ceramics. The vertical bars represent the standard diffraction peaks of rhombohedral phase (R) (R3c ICSD code 417,311) and cubic phase (C) (Pm 3\u203e m ICSD code 28,848), respectively. In the locally magnified XRD patterns as shown in (b), the (111) around 39\xb0 and (200) around 45\xb0 peaks are typically used to identify R phase structure. A splitting (111) peak with a single (200) peak suggests a predominance of R phase. Peaks splits of (111) around 39\xb0 were observed for x = 0.29\u20130.31 and spilt of (111) peak becomes nearly indistinguishable for x = 0.32. the symmetry of (111) peak increased and the crystal structure approached C phase with increasing BT content. However, the obvious ferroelectric and piezoelectric properties for these compositions indicated that a fully symmetrical cubic phase was unreasonable, hence a mixture of R and pseudo-cubic (PC) phases should be responsible for these compositions. To reveal the actual crystal structures, Rietveld refinement analyses were performed for all compositions by using GSAS \u2161 as shown in , lattice parameters, phase ratios, and goodness-of-fit values \u03c7E^{2} are listed in. From the refinement results, it is evident that MPB containing R and PC phases exists in all researched compositions, the lattice parameter \u03b1 of R phase and phase fractions of C phase increases gradually with increasing x, which indicates the rhombohedral distortion decreased and the crystal structure transformed into cubic like phase. Regarding piezoelectric ceramics, high d 33 can be obtained owing to the typical MPB and the changes in crystal structure observed in this study was consistent with those of previously reported. To detect the grain morphology evolution upon increasing x, the cross sections SEM images of BF-xBT ceramics were shown in , the corresponding insets show the grain size distributions which were measured by using Nano measurer. It is obvious that with the increase of BT content, the average grain sizes of the ceramics increase slightly at first and then display a tendency of decrease, which corresponds with the fact that higher sintering temperature of BT (\u223c1600 \xb0C) content inhibits the grain growth. Temperature-dependent dielectric properties of BF-xBT ceramics at different frequencies are shown in , all compositions exhibit sharp ferroelectric to paraelectric phase transition peaks and the temperature corresponding to the dielectric phase transition peak is defined as the Curie temperature. However, inconspicuous relaxor behavior occurs in ceramics with x = 0.32, peaks decrease, widen and shift to slightly higher temperature with increasing frequencies, which is a typical characteristic for relaxor ferroelectrics. Curie temperatures of the samples decrease monotonously with the increase of x, which were 525 \xb0C, 501 \xb0C, 485 \xb0C and 467 \xb0C, respectively. Dielectric loss curves also descend monotonously with the increase of x, as BT possesses much lower Curie temperature and dielectric loss than BF. At frequency 1 kHz around 400 \xb0C, a dielectric anomaly was detected in all compositions but nearly vanished at x = 0.32. This short-range displacement may cause dielectric anomalies and a huge dielectric loss. (a) shows P-E loops of BF-xBT ceramics, all compositions exhibit well-saturated hysteresis loops, no visible trace of leakage conductance. It is believed that the occurrence of an inhibited domain switching behavior which is commonly associated with domain wall pinning in BiFeO3 ceramics, is caused by defect dipoles. To identify the mechanism responsible for such hysteresis loops, various continuous cyclic electric fields were applied on x = 0.3 sample and the results were shown in (b). Significant changes can be seen in the P-E loops under cyclic electric field of 5 kV/mm, both P max and P r increased notably after repeating cycles of bipolar electric fields, and then approach to an extent of saturation after 1000 cycles. In high temperature sintering environment, oxygen escape from the ceramics easily thus oxygen vacancies form, according to defect reaction OO\xd7\u2192 VO \u2219\u2219+ O (g)+ e\u2032E^{1}E^{2}E^{2}E^{2}. The electrons can be captured by FeE^{3+} and become weakly bound electrons to balance excess charges according to equation Fe Fe\xd7+ e\u2032\u2192 Fe Fe + +\u2032E^{3}E^{2}, causing a high leakage current density. In BiFeO3 the volatile nature of Bi2O3 would create bismuth vacancy and oxygen vacancy which can be explained as 2 Bi Bi\xd7+3 OO\xd7\u21922 V Bi\u2034+3 VO \u2219\u2219+ Bi2 O3\u2191. Therefore, the electrostatic force of these defect charges forms defect complexes (such as { V Bi\u2034\u2212 VO \u22c5\u22c5}\u2032 and { Fe Fe + +\u2032\u2212 VO \u22c5\u22c5}\u2219E^{3}E^{2}), which would hinder the domain wall motion due to defect dipoles on the domain pinning effect under applied electric fields. Cyclic electric fields would induce the relaxation of domain from pinning sites and increase their polarization response , which explains the pronounced enhancement of P r as shown in (b). shows high-temperature impedance spectra of the BF-xBT ceramics, where Z\u2032 and Z\u2033 are regarded as the real and imaginary parts of the complex impedance Z\u2217. All compositions present a partial single semicircle within the measuring frequencies and temperatures, which indicates that the grain resistance is dominant in conduction mechanism in the BF-xBT ceramics. The total resistivity can be estimated by using the low frequency intercept of the arc on Z\u2032 axis. It can be estimated clearly that the total resistivity of BF-xBT ceramics at 450 \xb0C exhibits a tendency of increase with increasing x, which means the introducing of BT content could enhance the insulation of the ceramics. The activation energy (E a), which is the energy barrier that the oxygen vacancies must overcome to participate in conduction, can be obtained by using the Arrhenius plot as shown in (b) from the slope of ln\u03c3\u2212 1000T plots according to \u03c3= \u03c3 e Ea kBTE^{0}, where \u03c3 is the bulk conductivity, \u03c3 0 is the pre-exponent constant, E a is the activation energy of conduction and k is the Boltzmann constant. As shown in (c), all compositions keep an E a value of \u22481.1 eV. The higher activation energy, the lower concentration of free oxygen vacancies at the grains and is in favor of the ceramics to be fully polarized. (a) shows the piezoelectric coefficient d 33 and planar electromechanical coupling factor k p measured at room-temperature as a function of x, the x = 0.31 samples achieved a maximum average d 33 of 191 pC/N, while the k p decreases gradually. (b) shows in-situ depolarization curves of BF-xBT ceramics measured from room temperature to 600 \xb0C, as can be seen, d 33 values increase rapidly to its maximum at first and then decrease with increasing temperature, after drop down to a certain level, the curves maintain almost flat, finally depolarization occurs inevitably and d 33 values decrease to zero as the rise in temperature. The first stage started from room temperature and ended at around 100 \xb0C\u2013150 \xb0C, piezoelectric coefficient presents the tendency of the increase. According to ferroelectric thermodynamics, piezoelectric coefficient of perovskite piezoceramics can be estimated by d33=2Q\u03b5 Pr, where Q is electrostrictive coefficient, \u03b5 is permittivity and P r is remanent polarization. According to the temperature-dependent dielectric properties in , all the samples can be confirmed to be ferroelectric in the first stage, \u03b5 and P r increase with rising temperature in this stage, thus the d 33 increase with rising temperature. Therefore, d 33 curves show a negative temperature coefficient at 150 \xb0C\u2013300 \xb0C. In the third stage, temperature reaches to 300 \xb0C later, a fast increasing of dielectric constant and relaxor behavior appear accompanying with some nanodomains decomposing into polar nano regions. Hence, depolarization curves exhibit a platform according to d33=2Q\u03b5 Pr. In the last stage, ferroelectric to paraelectric phase transition occurs around Curie temperatures, and the piezoelectric responses decrease dramatically and disappear near 600 \xb0C. The temperature when the piezoelectric response decreases sharply is depolarization temperature, it is evident that x = 0.31 sample exhibits a maximum T d of approximately 486 \xb0C as illustrated in (c). Moreover, the depolarization behavior extends beyond Curie temperatures, which results in preserved d 33 values and piezoelectric functions above Curie temperatures. The favorable stability of high-temperature piezoelectric properties makes BF-0.31BT ceramics a promising candidate for high-temperature piezoelectric applications.
+
+# TITLE
+BiFeO<inf>3</inf>-BaTiO<inf>3</inf> piezoelectric ceramics with high depolarization temperature by fine tuning phase boundary
+
+# ABSTRACT
+BiFeO3-BaTiO3 (BF-BT)-based lead-free ceramics have attracted widespread attention in high-temperature piezoelectric fields owing to its high Curie temperature (T
+                     C). Comparing with bismuth-layered high-temperature piezoelectric ceramics, better piezoelectric coefficient of BF-BT show advantages in boosting the sensitivity. Nevertheless, achieving high piezoelectric performance in BF-BT-based ceramics is restricted by ambiguous phase boundary and high leakage conduction. Herein, the phase structures, microstructures, piezoelectric properties together with electrical properties of the (1-x)Bi1.02FeO3-xBaTiO3 (BF-xBT) ceramics were investigated and discussed systematically within a narrow compositional range. The results of d
+                     33 = 191 pC/N, T
+                     c = 485 °C along with high T
+                     d of ∼486 °C were obtained in BF-0.31BT ceramics, which proves BF-0.31BT piezoelectric ceramics a competitive high-temperature piezoelectric application material.
+
+# INTRODUCTION
+Nowadays, commercial piezoelectric materials and devices are dominated by common lead zirconate titanate (PZT). A typical modified composition (PZT-5A) has Curie temperature (T C) \u223c 365 \xb0C and piezoelectric coefficient d 33 \u223c 374 pC/N but depolarization effects restrict the use of these materials to temperatures below 200 \xb0C. Meanwhile, more than 60 wt% of the lead in PZT ceramics causes severe concerns regarding its toxicity to human health and the environment. Because of toxic nature and comparatively low T C of PZT, the demand for eco-friendly and high-temperature piezoelectric sensor applications could not be fulfilled. Commercial ceramic material based on high-temperature ferroelectric bismuth layer structure materials are commonly deployed in high-temperature, piezoelectric-based pressure sensors for the long-term measurement and monitoring such as gas turbines and is resistant to high temperatures (up to 500 \xb0C). However, the relatively low piezoelectric coefficient d 33 comparing with perovskite makes the bismuth layer ceramics lack of high sensitivity. Bismuth ferrite-barium titanate (BiFeO3-BaTiO3; BF-BT) is a new lead-free emerging material with a high T C (>400 \xb0C) which covers great potential in high-temperature piezoelectric applications. However, formation of non-ferroelectric secondary phases during heat treatments (such as Bi25FeO40 and Bi2Fe4O9) , Bi2O3 volatilization at high temperature sintering and reduction of FeE^{3+} during sintering , these issues may result in semi-conductivity in BF-BT ceramics, which manifests as electric field unable to be applied on the sample. Also, these aforementioned issues would produce an insufficient E b  that cause ceramics breakdown unexpectedly during direct-current (DC) filed poling and exhibit an inadequate performance. The electrical properties of BF-BT ceramics can be promoted by phase boundary engineering , the quenched method , rare-earth modification , entropy engineering  and novel poling method. The thermal stability and depolarization behaviors are based on dielectric measurements or d 33 values measured ex situ on the thermally annealed and cooled samples, neither of which reveals the real performance under practical load. In such situation, to explore the potential of BF-BT systems for adapting in dynamic pressure piezoelectric sensor with less layers which can serve in high-temperature environment. A series of (1-x)Bi1.02FeO3-xBaTiO3 (abbreviated as BF-xBT) ceramics were synthesized by conventional solid-state reaction method. The phase structures, microstructures, piezoelectric properties together with electrical properties of the BF-xBT ceramics were investigated and discussed systematically within a narrow compositional range. With the intention of seeking the optimized composition and properties within the morphotropic phase boundary (MPB) since the sensitive functional properties to the x contents, temperature-dependent in situ d 33 was measured to determine the highest depolarization temperature (T d). The results of d 33 = 191 pC/N, T c = 485 \xb0C along with high T d of \u223c486 \xb0C were obtained in BF-0.31BT ceramics, indicating a promising prospect in high-temperature dynamic pressure devices.
+
+# CONCLUSION
+In this paper, (1-x)Bi1.02FeO3-xBaTiO3 (BF-xBT; 0.29 \u2264 x \u2264 0.32) lead-free piezoelectric ceramics were successfully fabricated by solid-state reaction. All the samples show a coexistence of rhombohedral (R) and pseudo-cubic (PC) double phases, and the R/PC phase ratio gradually decreases up on increasing BT content. Owing to the synergy effect of appropriate R/PC phase ratio, enhanced insulating property, performances of d 33 = 191 pC/N, T c = 485 \xb0C along with high T d of \u223c486 \xb0C were achieved in BF-0.31BT ceramics, indicating a potential application in high-temperature dynamic pressure devices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-08 14:57:04: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Rietveld refinement parameters of BF-xBT ceramics.
+|Composition|Phases|a (\xc5)|\u03b1 (\xb0)|Fraction (%)|\u03c7E^{2}|
+|---|---|---|---|---|---|
+|0.29|R|3.9899|89.79|90.5|2.69|
+|C|4.0092|90|9.5|
+|0.3|R|3.9929|89.79|84.6|2.82|
+|C|3.9848|90|15.4|
+|0.31|R|3.9952|89.83|82.4|2.97|
+|C|3.9873|90|17.6|
+|0.32|R|4.0072|89.85|75.2|2.50|
+|C|3.9911|90|24.8|
+
+# RESULTS AND DISCUSSION
+(a) shows the XRD patterns for of BF-xBT ceramics. The vertical bars represent the standard diffraction peaks of rhombohedral phase (R) (R3c ICSD code 417,311) and cubic phase (C) (Pm 3\u203e m ICSD code 28,848), respectively. In the locally magnified XRD patterns as shown in (b), the (111) around 39\xb0 and (200) around 45\xb0 peaks are typically used to identify R phase structure. A splitting (111) peak with a single (200) peak suggests a predominance of R phase. Peaks splits of (111) around 39\xb0 were observed for x = 0.29\u20130.31 and spilt of (111) peak becomes nearly indistinguishable for x = 0.32. the symmetry of (111) peak increased and the crystal structure approached C phase with increasing BT content. However, the obvious ferroelectric and piezoelectric properties for these compositions indicated that a fully symmetrical cubic phase was unreasonable, hence a mixture of R and pseudo-cubic (PC) phases should be responsible for these compositions. To reveal the actual crystal structures, Rietveld refinement analyses were performed for all compositions by using GSAS \u2161 as shown in , lattice parameters, phase ratios, and goodness-of-fit values \u03c7E^{2} are listed in. From the refinement results, it is evident that MPB containing R and PC phases exists in all researched compositions, the lattice parameter \u03b1 of R phase and phase fractions of C phase increases gradually with increasing x, which indicates the rhombohedral distortion decreased and the crystal structure transformed into cubic like phase. Regarding piezoelectric ceramics, high d 33 can be obtained owing to the typical MPB and the changes in crystal structure observed in this study was consistent with those of previously reported. To detect the grain morphology evolution upon increasing x, the cross sections SEM images of BF-xBT ceramics were shown in , the corresponding insets show the grain size distributions which were measured by using Nano measurer. It is obvious that with the increase of BT content, the average grain sizes of the ceramics increase slightly at first and then display a tendency of decrease, which corresponds with the fact that higher sintering temperature of BT (\u223c1600 \xb0C) content inhibits the grain growth. Temperature-dependent dielectric properties of BF-xBT ceramics at different frequencies are shown in , all compositions exhibit sharp ferroelectric to paraelectric phase transition peaks and the temperature corresponding to the dielectric phase transition peak is defined as the Curie temperature. However, inconspicuous relaxor behavior occurs in ceramics with x = 0.32, peaks decrease, widen and shift to slightly higher temperature with increasing frequencies, which is a typical characteristic for relaxor ferroelectrics. Curie temperatures of the samples decrease monotonously with the increase of x, which were 525 \xb0C, 501 \xb0C, 485 \xb0C and 467 \xb0C, respectively. Dielectric loss curves also descend monotonously with the increase of x, as BT possesses much lower Curie temperature and dielectric loss than BF. At frequency 1 kHz around 400 \xb0C, a dielectric anomaly was detected in all compositions but nearly vanished at x = 0.32. This short-range displacement may cause dielectric anomalies and a huge dielectric loss. (a) shows P-E loops of BF-xBT ceramics, all compositions exhibit well-saturated hysteresis loops, no visible trace of leakage conductance. It is believed that the occurrence of an inhibited domain switching behavior which is commonly associated with domain wall pinning in BiFeO3 ceramics, is caused by defect dipoles. To identify the mechanism responsible for such hysteresis loops, various continuous cyclic electric fields were applied on x = 0.3 sample and the results were shown in (b). Significant changes can be seen in the P-E loops under cyclic electric field of 5 kV/mm, both P max and P r increased notably after repeating cycles of bipolar electric fields, and then approach to an extent of saturation after 1000 cycles. In high temperature sintering environment, oxygen escape from the ceramics easily thus oxygen vacancies form, according to defect reaction OO\xd7\u2192 VO \u2219\u2219+ O (g)+ e\u2032E^{1}E^{2}E^{2}E^{2}. The electrons can be captured by FeE^{3+} and become weakly bound electrons to balance excess charges according to equation Fe Fe\xd7+ e\u2032\u2192 Fe Fe + +\u2032E^{3}E^{2}, causing a high leakage current density. In BiFeO3 the volatile nature of Bi2O3 would create bismuth vacancy and oxygen vacancy which can be explained as 2 Bi Bi\xd7+3 OO\xd7\u21922 V Bi\u2034+3 VO \u2219\u2219+ Bi2 O3\u2191. Therefore, the electrostatic force of these defect charges forms defect complexes (such as { V Bi\u2034\u2212 VO \u22c5\u22c5}\u2032 and { Fe Fe + +\u2032\u2212 VO \u22c5\u22c5}\u2219E^{3}E^{2}), which would hinder the domain wall motion due to defect dipoles on the domain pinning effect under applied electric fields. Cyclic electric fields would induce the relaxation of domain from pinning sites and increase their polarization response , which explains the pronounced enhancement of P r as shown in (b). shows high-temperature impedance spectra of the BF-xBT ceramics, where Z\u2032 and Z\u2033 are regarded as the real and imaginary parts of the complex impedance Z\u2217. All compositions present a partial single semicircle within the measuring frequencies and temperatures, which indicates that the grain resistance is dominant in conduction mechanism in the BF-xBT ceramics. The total resistivity can be estimated by using the low frequency intercept of the arc on Z\u2032 axis. It can be estimated clearly that the total resistivity of BF-xBT ceramics at 450 \xb0C exhibits a tendency of increase with increasing x, which means the introducing of BT content could enhance the insulation of the ceramics. The activation energy (E a), which is the energy barrier that the oxygen vacancies must overcome to participate in conduction, can be obtained by using the Arrhenius plot as shown in (b) from the slope of ln\u03c3\u2212 1000T plots according to \u03c3= \u03c3 e Ea kBTE^{0}, where \u03c3 is the bulk conductivity, \u03c3 0 is the pre-exponent constant, E a is the activation energy of conduction and k is the Boltzmann constant. As shown in (c), all compositions keep an E a value of \u22481.1 eV. The higher activation energy, the lower concentration of free oxygen vacancies at the grains and is in favor of the ceramics to be fully polarized. (a) shows the piezoelectric coefficient d 33 and planar electromechanical coupling factor k p measured at room-temperature as a function of x, the x = 0.31 samples achieved a maximum average d 33 of 191 pC/N, while the k p decreases gradually. (b) shows in-situ depolarization curves of BF-xBT ceramics measured from room temperature to 600 \xb0C, as can be seen, d 33 values increase rapidly to its maximum at first and then decrease with increasing temperature, after drop down to a certain level, the curves maintain almost flat, finally depolarization occurs inevitably and d 33 values decrease to zero as the rise in temperature. The first stage started from room temperature and ended at around 100 \xb0C\u2013150 \xb0C, piezoelectric coefficient presents the tendency of the increase. According to ferroelectric thermodynamics, piezoelectric coefficient of perovskite piezoceramics can be estimated by d33=2Q\u03b5 Pr, where Q is electrostrictive coefficient, \u03b5 is permittivity and P r is remanent polarization. According to the temperature-dependent dielectric properties in , all the samples can be confirmed to be ferroelectric in the first stage, \u03b5 and P r increase with rising temperature in this stage, thus the d 33 increase with rising temperature. Therefore, d 33 curves show a negative temperature coefficient at 150 \xb0C\u2013300 \xb0C. In the third stage, temperature reaches to 300 \xb0C later, a fast increasing of dielectric constant and relaxor behavior appear accompanying with some nanodomains decomposing into polar nano regions. Hence, depolarization curves exhibit a platform according to d33=2Q\u03b5 Pr. In the last stage, ferroelectric to paraelectric phase transition occurs around Curie temperatures, and the piezoelectric responses decrease dramatically and disappear near 600 \xb0C. The temperature when the piezoelectric response decreases sharply is depolarization temperature, it is evident that x = 0.31 sample exhibits a maximum T d of approximately 486 \xb0C as illustrated in (c). Moreover, the depolarization behavior extends beyond Curie temperatures, which results in preserved d 33 values and piezoelectric functions above Curie temperatures. The favorable stability of high-temperature piezoelectric properties makes BF-0.31BT ceramics a promising candidate for high-temperature piezoelectric applications.
+
+# TITLE
+BiFeO<inf>3</inf>-BaTiO<inf>3</inf> piezoelectric ceramics with high depolarization temperature by fine tuning phase boundary
+
+# ABSTRACT
+BiFeO3-BaTiO3 (BF-BT)-based lead-free ceramics have attracted widespread attention in high-temperature piezoelectric fields owing to its high Curie temperature (T
+                     C). Comparing with bismuth-layered high-temperature piezoelectric ceramics, better piezoelectric coefficient of BF-BT show advantages in boosting the sensitivity. Nevertheless, achieving high piezoelectric performance in BF-BT-based ceramics is restricted by ambiguous phase boundary and high leakage conduction. Herein, the phase structures, microstructures, piezoelectric properties together with electrical properties of the (1-x)Bi1.02FeO3-xBaTiO3 (BF-xBT) ceramics were investigated and discussed systematically within a narrow compositional range. The results of d
+                     33 = 191 pC/N, T
+                     c = 485 °C along with high T
+                     d of ∼486 °C were obtained in BF-0.31BT ceramics, which proves BF-0.31BT piezoelectric ceramics a competitive high-temperature piezoelectric application material.
+
+# INTRODUCTION
+Nowadays, commercial piezoelectric materials and devices are dominated by common lead zirconate titanate (PZT). A typical modified composition (PZT-5A) has Curie temperature (T C) \u223c 365 \xb0C and piezoelectric coefficient d 33 \u223c 374 pC/N but depolarization effects restrict the use of these materials to temperatures below 200 \xb0C. Meanwhile, more than 60 wt% of the lead in PZT ceramics causes severe concerns regarding its toxicity to human health and the environment. Because of toxic nature and comparatively low T C of PZT, the demand for eco-friendly and high-temperature piezoelectric sensor applications could not be fulfilled. Commercial ceramic material based on high-temperature ferroelectric bismuth layer structure materials are commonly deployed in high-temperature, piezoelectric-based pressure sensors for the long-term measurement and monitoring such as gas turbines and is resistant to high temperatures (up to 500 \xb0C). However, the relatively low piezoelectric coefficient d 33 comparing with perovskite makes the bismuth layer ceramics lack of high sensitivity. Bismuth ferrite-barium titanate (BiFeO3-BaTiO3; BF-BT) is a new lead-free emerging material with a high T C (>400 \xb0C) which covers great potential in high-temperature piezoelectric applications. However, formation of non-ferroelectric secondary phases during heat treatments (such as Bi25FeO40 and Bi2Fe4O9) , Bi2O3 volatilization at high temperature sintering and reduction of FeE^{3+} during sintering , these issues may result in semi-conductivity in BF-BT ceramics, which manifests as electric field unable to be applied on the sample. Also, these aforementioned issues would produce an insufficient E b  that cause ceramics breakdown unexpectedly during direct-current (DC) filed poling and exhibit an inadequate performance. The electrical properties of BF-BT ceramics can be promoted by phase boundary engineering , the quenched method , rare-earth modification , entropy engineering  and novel poling method. The thermal stability and depolarization behaviors are based on dielectric measurements or d 33 values measured ex situ on the thermally annealed and cooled samples, neither of which reveals the real performance under practical load. In such situation, to explore the potential of BF-BT systems for adapting in dynamic pressure piezoelectric sensor with less layers which can serve in high-temperature environment. A series of (1-x)Bi1.02FeO3-xBaTiO3 (abbreviated as BF-xBT) ceramics were synthesized by conventional solid-state reaction method. The phase structures, microstructures, piezoelectric properties together with electrical properties of the BF-xBT ceramics were investigated and discussed systematically within a narrow compositional range. With the intention of seeking the optimized composition and properties within the morphotropic phase boundary (MPB) since the sensitive functional properties to the x contents, temperature-dependent in situ d 33 was measured to determine the highest depolarization temperature (T d). The results of d 33 = 191 pC/N, T c = 485 \xb0C along with high T d of \u223c486 \xb0C were obtained in BF-0.31BT ceramics, indicating a promising prospect in high-temperature dynamic pressure devices.
+
+# CONCLUSION
+In this paper, (1-x)Bi1.02FeO3-xBaTiO3 (BF-xBT; 0.29 \u2264 x \u2264 0.32) lead-free piezoelectric ceramics were successfully fabricated by solid-state reaction. All the samples show a coexistence of rhombohedral (R) and pseudo-cubic (PC) double phases, and the R/PC phase ratio gradually decreases up on increasing BT content. Owing to the synergy effect of appropriate R/PC phase ratio, enhanced insulating property, performances of d 33 = 191 pC/N, T c = 485 \xb0C along with high T d of \u223c486 \xb0C were achieved in BF-0.31BT ceramics, indicating a potential application in high-temperature dynamic pressure devices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(1-x)Bi1.02FeO3 - (x)BaTiO3 where x=0.29": 191,
+      "(1-x)Bi1.02FeO3 - (x)BaTiO3 where x=0.30": 191,
+      "(1-x)Bi1.02FeO3 - (x)BaTiO3 where x=0.31": 191,
+      "(1-x)Bi1.02FeO3 - (x)BaTiO3 where x=0.32": 191
+    },
+    "abbreviations": {},
+    "property_unit": "pC/N",
+    "family": "BiFeO3-BaTiO3"
+  }
+}"

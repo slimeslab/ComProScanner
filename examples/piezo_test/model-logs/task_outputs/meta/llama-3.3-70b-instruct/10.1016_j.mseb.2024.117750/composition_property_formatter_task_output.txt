@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BaBi4Ti4O15":8,"CaBi4Ti4O15":8},"property_unit":"pC/N","family":"ABi4Ti4O15"}}

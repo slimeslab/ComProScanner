@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Pb(Zr,Ti)O3-AsReceived":250,"Pb(Zr,Ti)O3-AfterDiffusionBondingAt275C":110,"Pb(Zr,Ti)O3-After1stThermalCycle":110,"Pb(Zr,Ti)O3-After10thThermalCycle":110},"property_unit":"pC/N","family":"Pb(Zr,Ti)O3"}}

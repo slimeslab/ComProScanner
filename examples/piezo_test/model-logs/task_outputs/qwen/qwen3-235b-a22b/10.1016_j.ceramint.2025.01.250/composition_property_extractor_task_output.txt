@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"CaBi4Ti4O15 + 0.2 wt% MnO2":14.8,"Ca0.9(Na0.5Pr0.25Ce0.25)0.1Bi4Ti4O15 + 0.2 wt% MnO2":22.3},"abbreviations":{"CBT":"Calcium bismuth titanate"},"property_unit":"pC/N","family":"CBT"}}

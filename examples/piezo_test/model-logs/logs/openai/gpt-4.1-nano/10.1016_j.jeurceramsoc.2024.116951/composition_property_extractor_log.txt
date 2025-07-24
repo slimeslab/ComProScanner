@@ -1,0 +1,447 @@
+2025-07-08 14:32:59: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The annealing temperature dependence of the structure and electrical properties for the 600 nm-thick PMN-PZT thin films were first studied. shows the XRD \u03b8-2\u03b8 patterns of the LNO-buffered substrate, as-grown PMN-PZT thin film and the films annealed at 600 \xb0C, 650 \xb0C, 700 \xb0C for 30 mins, respectively. It can be found that the unannealed PMN-PZT films displayed pyrochlore phase. After annealing, the films exhibited characteristic peaks near 22\xb0 and 45\xb0, which corresponded to the <100> and <200> orientations of the perovskite phase, indicating that PMN-PZT possessed a pure phase structure and <100>-oriented growth. This indicated that the <100>-texture of LNO buffer layer promoted the <100>-oriented growth of PMN-PZT due to the good lattice matching, which can promote the transformation of the pyrochlore phase into perovskite. From , the characteristic peaks of the PMN-PZT thin films obtained at 600 \xb0C and 650 \xb0C were sharp and narrow, suggesting that the rapid annealing process significantly enhanced the crystallinity, and the orientation degree along <100> direction was notably high. When the annealing temperature further increased to 700 \xb0C, the relative characteristic peak intensity of the film weakened, which might be attributed to the volatilization of lead element at higher annealing temperature. Also it can be seen that the <200> diffraction peak of LNO moves rightwards from 46\xb0 to 48\xb0 with the increase of annealing temperature, and this process was related to the increased in-plane lattice expansion of the LNO annealed at higher temperature. According to the Poisson\u2019s ratio, the out-of-plane crystal lattice decreased and the characteristic peak shifted to higher angle position. shows the surface topography of 600 nm-thick unannealed PMN-PZT thin films and films annealing at 600 \xb0C, 650 \xb0C, 700 \xb0C, respectively. Compared to the annealed thin films, the as-deposited films exhibited smaller grain sizes (about 137.4 nm). It is evident that an escalation in the annealing temperature accompanied with the formation of the perovskite phase and a progressive increase of the grain size (203 nm at annealing temperature of 600 \xb0C and 277 nm at annealing temperature of 650 \xb0C). Upon reaching an annealing temperature of 700 \xb0C, the pores appeared. This indicated that at elevated temperatures, the substantial evaporation of lead element led to lead vacancy defects, which in turn, had a detrimental impact on the crystallinity along with the microscale morphology of the thin films. shows the frequency dependence of the dielectric constant (\u03b5 33 T/ \u03b5 0) and dissipation factor (tan\u03b4) of the 600 nm-thick PMN-PZT thin films at distinct annealing temperatures. The typical values of \u03b5 33 T/ \u03b5 0 (tan\u03b4) at 1 kHz for films annealed at 600 \xb0C, 650 \xb0C, and 700 \xb0C were measured to be 1106 (0.032), 1319 (0.034), and 1582 (0.06), respectively. An increase in the annealing temperature resulted in a gradual rise in the dielectric constant of the PMN-PZT thin films, suggesting that elevated annealing conditions were conducive to the enhancement of grain growth and the improvement of crystalline quality. Nevertheless, upon further elevation of the annealing temperature to 700 \xb0C, the tan\u03b4 increased. The polarization-electric field (P-E) hysteresis loops of the 600 nm-thick PMN-PZT thin films annealed between 600 and 700 \xb0C are depicted in. At 1 kHz, the remnant polarization (P r) and the coercive electric field (E C) of the films were measured to be 29 \u03bcC/ cmE^{2} (7.5 kV/mm), 40 \u03bcC/ cmE^{2} (7.5 kV/mm), and 41 \u03bcC/ cmE^{2} (7.2 kV/mm) under the electric field of 80 kV/mm, 80 kV/mm, and 30 kV/mm, respectively. Examination of the revealed that the films annealed at temperatures of 600 \xb0C and 650 \xb0C exhibited the characteristic rectangular hysteresis loops, indicative of a ferroelectric behavior. However, the thin film subjected to annealing at a temperature of 700 \xb0C demonstrated a reduced breakdown field and couldn\u2019t endure the 80 kV/mm electric field. During our experiments, the annealing time dependence of the structure and electrical properties for the PMN-PZT thin films were also performed at fixed annealing temperature of 650 \xb0C. shows the XRD \u03b8-2\u03b8 patterns of the 600 nm-thick PMN-PZT thin films annealed at 650 \xb0C for 20 mins, 30 mins and 40 mins. It can be observed that the PMN-PZT thin films subjected to annealing for 30 mins exhibited relatively higher diffraction intensity for the <100> and <200> peaks compared to those annealed for other durations. The thin film annealed for 20 mins exhibited irregular large grain protrusions, which may be attributed to the insufficient annealing time that limited the energy migration and diffusion of the grains. Under the 30 mins and 40 mins annealing duration, larger grain size could be observed and there were more pores in the sample annealed for 40 mins compared to that annealed for 30 mins. These observations were also consistent with the cross-sectional views presented in (d)-(f). displays the dielectric spectrum of the PMN-PZT thin films annealing at 650 \xb0C for different durations. The typical values of \u03b5 33 T/ \u03b5 0 (tan\u03b4) at 1 kHz for films annealed for 20 mins, 30 mins, and 40 mins were measured to be 939 (0.030), 1259 (0.034), and 1319 (0.036), respectively. It is observable that the dielectric constant of the films increased significantly with the increase of annealing time, while the dielectric loss increased slightly. illustrates the P-E hysteresis loops of the 600 nm-thick PMN-PZT thin films fabricated under various annealing durations at room temperature. It is observed that the PMN-PZT thin films annealed for 20 mins, 30 mins, and 40 mins all exhibited typical rectangular hysteresis loops. At 1 kHz, the remnant polarization (P r) and the coercive electric field (E C) of the films were measured to be 22 \u03bcC/ cmE^{2} (6.0 kV/mm), 41 \u03bcC/ cmE^{2} (7.2 kV/mm), and 40 \u03bcC/ cmE^{2} (7.5 kV/mm), respectively. At an annealing time of 30 mins, the film saturated under a bias field of 90 kV/mm and had a high breakdown resistance. However, when the annealing time was increased to 40 mins, the breakdown field strength of the films decreased substantially. The results indicated that the PMN-PZT thin films annealed at 650 \xb0C for 30 mins possessed relatively superior global electrical properties. Considering that films with thickness of micrometer-thick were required for piezoelectric MEMS applications, in this work, the thickness-dependent electrical properties of PMN-PZT films were investigated. (a) shows the XRD \u03b8-2\u03b8 patterns of PMN-PZT with 200 nm, 600 nm, and 1500 nm, respectively. With the increase of film thickness, the relative intensity of <100> and <200> diffraction peaks for PMN-PZT films gradually increased and the full-width at half-maximum (FWHM) decreased, demonstrating better crystallization quality. In addition, the <100> and <200> diffraction peaks shifted leftwards with the thickness increasing, indicating the expansion of the out-of-plane c-axis lattice. Because of the difference of the thermal expansion coefficients between the Si and the PMN-PZT, the PMN-PZT thin film on silicon is typically under a tensile strain. Therefore, the interplanar spacing will increase and the characteristic diffraction peaks shifted leftward based on the Bragg equation. shows the cross-sectional morphologies of PMN-PZT thin films. From the images, it can be observed that the interfaces of PMN-PZT thin films were clear, and the films owned dense morphologies. In (a), it can be seen that the 200 nm thick films owned smaller grains with more porosity. (b) and (c) indicated that as the thickness of the film increased, accompanied by an increase in the sputtering time at 550 \xb0C, the thermal budget also increased and the porosity within the films decreased. When the film thickness reached 1500 nm, the structure of the upper layer of the film resembled the morphology of an epitaxial-grown film on a single-crystal substrate. This was also related with the reduction of substrate clamping with increased thickness, allowing the grains to grow more uniformly. shows the dielectric constant \u03b5 33 T/ \u03b5 0 and loss (tan\u03b4) of the PMN-PZT thin films under different thickness with the frequency range from 0.1 to 100 kHz. At 1 kHz, the dielectric constant and loss of PMN-PZT thin films were 846 (0.036), 1319 (0.034), and 1398 (0.036), under the thickness of 200 nm, 600 nm, and 1200 nm. The results indicated that the ratio of \u03b5 33 T/ \u03b5 0 showed a gradually increasing trend. The polarization-electric field (P-E) loops of PMN-PZT thin films under 200 nm, 600 nm, and 1500 nm are shown in. The P r and E C of PMN-PZT films for the three thickness under 1 kHz were 16 \u03bcC/ cmE^{2} (7 kV/mm), 40 \u03bcC/ cmE^{2} (7.5 kV/mm), 49 \u03bcC/ cmE^{2} (5.7 kV/mm), respectively. As the thickness increased, the remnant polarization of the PMN-PZT thin films tended to strengthen. The substrate clamping releasing made the switching of ferroelectric domains easier, accompanied with enhanced macroscopic ferroelectric properties. (a)-(j) presents the surface morphology, out-of-plane PFM amplitude and phase images of 600 nm-thick and 1500 nm-thick PMN-PZT thin films in 3\xd73 \u03bcmE^{2} area. The out-of-plane phase images demonstrated that the 600 nm-thick PMN-PZT thin film exhibited irregular domain patterns and nano-size domain could be detected. With the thickness increased to 1500 nm, ferroelectric domain size increased. To observe the evolution of domain switching in PMN-PZT thin films, in-situ negative voltages were written in the central area of 1 \xd7 1 \u03bcmE^{2}, and the same positive voltage was written in the external area of 2 \xd7 2 \u03bcmE^{2}. From the out-of-plane phase images, it can be seen that when the DC poling voltage exceeded the coercive voltage, clear polarization inversion can be observed. Under a direct voltage of \xb112 V, the phase images of 1500 nm-thick film exhibited a pronounced contrast between the central and outer square regions, indicative of complete ferroelectric domain switching. While for the 600 nm-thick PMN-PZT thin films, a relatively higher voltage of 16 V is required. To measure the piezoelectric coefficient of micrometer-thick PMN-PZT, an Au electrodes was sputtered onto the surface of the 1.5 \u03bcm thick PMN-PZT thin film. The polarization conditions were set at 10 kV/mm with a temperature of 140 \xb0C and a polarization duration of 5 mins. Upward and downward DC electric fields were applied to the PMN-PZT thin films, respectively. After that, the piezoelectric coefficients of the PMN-PZT thin films were compared shown in (b). It can be observed that for the non-polarized film, weak piezoelectric response with effective d 33 of 85 pC/N was detected, indicating slightly self-polarization characteristics in the as-prepared film. Here the highest piezoelectric coefficient (d 33) poled upward can reached up to 484 pC/N, which showed a two-fold enhancement relative to the commercial Pb(Zr0.52Ti0.48)O3 and previously-reported Mn-doped 0.36Pb(In1/2Nb1/2)O3-0.36Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 thin films measured using the same method. The excellent piezoelectric performance and high quality make the PMN-PZT film great potential in application to advanced piezoelectric MEMS devices.
+
+# TITLE
+Growth and thickness effect of &lt;100&gt;-oriented ternary 0.06Pb(Mn<inf>1/3</inf>Nb<inf>2/3</inf>)O<inf>3</inf>-0.94Pb(Zr<inf>0.48</inf>Ti<inf>0.52</inf>)O<inf>3</inf> ferroelectric thin films on silicon substrate by RF sputtering
+
+# ABSTRACT
+In this work, high-quality <100>-oriented 0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3 (PMN-PZT) thin films were grown on the Pt/Ti/SiO2/Si substrate by sputtering. Well-crystalized micron-thick PMN-PZT films with high remnant polarization of 49 
+                        
+                           μC
+                           /
+                           
+                              
+                                 cm
+                              
+                              
+                                 2
+                              
+                           
+                        
+                      and giant piezoelectric coefficient (
+                        
+                           
+                              d
+                           
+                           
+                              33
+                           
+                        
+                     ) up to 484 
+                        
+                           pC
+                           /
+                           N
+                        
+                      (about twice of the polycrystalline PMN-PZT thin film and thrice of the Pb(Zr0.52Ti0.48)O3 thin film) were obtained. The excellent electrical properties make it highly advantageous for applications in MEMS devices.
+
+# INTRODUCTION
+In recent years, piezoelectric thin films offer a number of advantages in the integrated microelectromechanical systems (MEMS) due to the low power requirements, high driving force, large motions with low hysteresis, and high sensitivity. How to further enhance the performance of the piezoelectric MEMS is an important research topic and has attracted great attention. At present, for the actuator and transducer applications in which force, torque, and output power are very important, the Pb(Zr1-x Ti x )O3 (PZT) family is still the mainstream piezoelectric material ascribed to its excellent piezoelectric and electromechanical properties. In comparison to the PZT system, researches indicated that the relaxor ferroelectric material represented by Pb(Mg1/3Nb2/3)O3-PbTiO3 (PMNT) owns substantially higher piezoelectric performance. The strain level and piezoelectric coefficients can reach 5\u201310 times those of traditional bulk piezoelectric ceramics and electromechanical coupling coefficient k 33 is up to \u223c0.9. PMNT thin film grown on the miscut Si substrate with <100> orientation also exhibited giant piezoelectric coefficient e 31 of \u223c27 C/mE^{2}. Later, Sm-doped PMNT was further developed with higher piezoelectric constant , which could drive the micro-actuator at lower voltage. Nevertheless, the Curie temperature and rhombohedral-tetragonal phase transition temperature for binary PMNT and Sm-doped PMNT were relatively low, which easily cause the depoling and limited their practical applications. The development of relaxor ferroelectrics simultaneously owning superior piezoelectric response and excellent temperature stability is critical for MEMS applications. Recent studies indicated that ternary relaxor ferroelectric materials, represented by Pb(Mn1/3Nb2/3)O3-PbZrO3-PbTiO3 and Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (PIMNT) , attracted much attention due to their excellent global performance, especially owning high piezoelectric coefficients and ferroelectric to ferroelectric phase transition temperature. The 0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3 (PMN-PZT) thin film with the composition near the morphotropic phase boundary was fabricated owning high Curie temperature (T C\u223c600 \xb0C) and large remnant polarization (P r\u223c100 \u03bcC/ cmE^{2}). Nevertheless, the substrate adopted in the work was MgO single crystal, which was undesirable for MEMS applications. Growth of high-quality PMN-PZT thin film on standard Pt/Ti/SiO2/Si substrate is quite necessary for microelectronic device. In our previous work, Si-substrated PMN-PZT thin film was fabricated using RF sputtering and polycrystalline structure was obtained using La0.6Sr0.4CoO3 (LSCO) as a buffer layer. The effective quasi-static piezoelectric coefficient of the PMN\u2013PZT thin film reached 267 pC/N. It is expected that the <100>-oriented PMN-PZT would exhibited more superior piezoelectric response than <110>-oriented one. Therefore, in this work, we aim to report the growth of <100>-oriented ternary PMN-PZT thin films on the Pt/Ti/SiO2/Si substrate. In order to modulate the growing direction, LaNiO3 (LNO) was introduced as a buffer layer, which can promote the growth of <100>-oriented perovskite grains. The influence of fabrication parameters, film thickness (from 200 nm to 1.5 \u03bcm), along with poling direction on the microstructure and electrical properties of PMN-PZT thin films were studied and excellent piezoelectric response were achieved.
+
+# CONCLUSION
+In summary, high-quality ternary PMN-PZT films were grown on Pt/Ti/SiO2/Si substrates by RF magnetron sputtering. The effects of annealing temperature, time and film thickness effect on the phase structure and electrical properties of PMN-PZT thin films were studied. The PMN-PZT thin films annealed at 650 \xb0C for 30 mins with a thickness of 1.5 \u03bcm exhibited the dielectric constant \u03b5 33 T/ \u03b5 0 of 1582 and low loss tan\u03b4 of 0.036. The P r and E C of the films were 49 \u03bcC/ cmE^{2} and 5.7 kV/mm, respectively. The piezoelectric coefficient reached up to 484 pC/N after poling upward, which was about thrice to that of the commercial Pb(Zr0.52Ti0.48)O3 thin film. The excellent piezoelectric performance makes this PMN-PZT thin film great potential to be applied to piezoelectric MEMS devices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-08 14:33:02: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The annealing temperature dependence of the structure and electrical properties for the 600 nm-thick PMN-PZT thin films were first studied. shows the XRD \u03b8-2\u03b8 patterns of the LNO-buffered substrate, as-grown PMN-PZT thin film and the films annealed at 600 \xb0C, 650 \xb0C, 700 \xb0C for 30 mins, respectively. It can be found that the unannealed PMN-PZT films displayed pyrochlore phase. After annealing, the films exhibited characteristic peaks near 22\xb0 and 45\xb0, which corresponded to the <100> and <200> orientations of the perovskite phase, indicating that PMN-PZT possessed a pure phase structure and <100>-oriented growth. This indicated that the <100>-texture of LNO buffer layer promoted the <100>-oriented growth of PMN-PZT due to the good lattice matching, which can promote the transformation of the pyrochlore phase into perovskite. From , the characteristic peaks of the PMN-PZT thin films obtained at 600 \xb0C and 650 \xb0C were sharp and narrow, suggesting that the rapid annealing process significantly enhanced the crystallinity, and the orientation degree along <100> direction was notably high. When the annealing temperature further increased to 700 \xb0C, the relative characteristic peak intensity of the film weakened, which might be attributed to the volatilization of lead element at higher annealing temperature. Also it can be seen that the <200> diffraction peak of LNO moves rightwards from 46\xb0 to 48\xb0 with the increase of annealing temperature, and this process was related to the increased in-plane lattice expansion of the LNO annealed at higher temperature. According to the Poisson\u2019s ratio, the out-of-plane crystal lattice decreased and the characteristic peak shifted to higher angle position. shows the surface topography of 600 nm-thick unannealed PMN-PZT thin films and films annealing at 600 \xb0C, 650 \xb0C, 700 \xb0C, respectively. Compared to the annealed thin films, the as-deposited films exhibited smaller grain sizes (about 137.4 nm). It is evident that an escalation in the annealing temperature accompanied with the formation of the perovskite phase and a progressive increase of the grain size (203 nm at annealing temperature of 600 \xb0C and 277 nm at annealing temperature of 650 \xb0C). Upon reaching an annealing temperature of 700 \xb0C, the pores appeared. This indicated that at elevated temperatures, the substantial evaporation of lead element led to lead vacancy defects, which in turn, had a detrimental impact on the crystallinity along with the microscale morphology of the thin films. shows the frequency dependence of the dielectric constant (\u03b5 33 T/ \u03b5 0) and dissipation factor (tan\u03b4) of the 600 nm-thick PMN-PZT thin films at distinct annealing temperatures. The typical values of \u03b5 33 T/ \u03b5 0 (tan\u03b4) at 1 kHz for films annealed at 600 \xb0C, 650 \xb0C, and 700 \xb0C were measured to be 1106 (0.032), 1319 (0.034), and 1582 (0.06), respectively. An increase in the annealing temperature resulted in a gradual rise in the dielectric constant of the PMN-PZT thin films, suggesting that elevated annealing conditions were conducive to the enhancement of grain growth and the improvement of crystalline quality. Nevertheless, upon further elevation of the annealing temperature to 700 \xb0C, the tan\u03b4 increased. The polarization-electric field (P-E) hysteresis loops of the 600 nm-thick PMN-PZT thin films annealed between 600 and 700 \xb0C are depicted in. At 1 kHz, the remnant polarization (P r) and the coercive electric field (E C) of the films were measured to be 29 \u03bcC/ cmE^{2} (7.5 kV/mm), 40 \u03bcC/ cmE^{2} (7.5 kV/mm), and 41 \u03bcC/ cmE^{2} (7.2 kV/mm) under the electric field of 80 kV/mm, 80 kV/mm, and 30 kV/mm, respectively. Examination of the revealed that the films annealed at temperatures of 600 \xb0C and 650 \xb0C exhibited the characteristic rectangular hysteresis loops, indicative of a ferroelectric behavior. However, the thin film subjected to annealing at a temperature of 700 \xb0C demonstrated a reduced breakdown field and couldn\u2019t endure the 80 kV/mm electric field. During our experiments, the annealing time dependence of the structure and electrical properties for the PMN-PZT thin films were also performed at fixed annealing temperature of 650 \xb0C. shows the XRD \u03b8-2\u03b8 patterns of the 600 nm-thick PMN-PZT thin films annealed at 650 \xb0C for 20 mins, 30 mins and 40 mins. It can be observed that the PMN-PZT thin films subjected to annealing for 30 mins exhibited relatively higher diffraction intensity for the <100> and <200> peaks compared to those annealed for other durations. The thin film annealed for 20 mins exhibited irregular large grain protrusions, which may be attributed to the insufficient annealing time that limited the energy migration and diffusion of the grains. Under the 30 mins and 40 mins annealing duration, larger grain size could be observed and there were more pores in the sample annealed for 40 mins compared to that annealed for 30 mins. These observations were also consistent with the cross-sectional views presented in (d)-(f). displays the dielectric spectrum of the PMN-PZT thin films annealing at 650 \xb0C for different durations. The typical values of \u03b5 33 T/ \u03b5 0 (tan\u03b4) at 1 kHz for films annealed for 20 mins, 30 mins, and 40 mins were measured to be 939 (0.030), 1259 (0.034), and 1319 (0.036), respectively. It is observable that the dielectric constant of the films increased significantly with the increase of annealing time, while the dielectric loss increased slightly. illustrates the P-E hysteresis loops of the 600 nm-thick PMN-PZT thin films fabricated under various annealing durations at room temperature. It is observed that the PMN-PZT thin films annealed for 20 mins, 30 mins, and 40 mins all exhibited typical rectangular hysteresis loops. At 1 kHz, the remnant polarization (P r) and the coercive electric field (E C) of the films were measured to be 22 \u03bcC/ cmE^{2} (6.0 kV/mm), 41 \u03bcC/ cmE^{2} (7.2 kV/mm), and 40 \u03bcC/ cmE^{2} (7.5 kV/mm), respectively. At an annealing time of 30 mins, the film saturated under a bias field of 90 kV/mm and had a high breakdown resistance. However, when the annealing time was increased to 40 mins, the breakdown field strength of the films decreased substantially. The results indicated that the PMN-PZT thin films annealed at 650 \xb0C for 30 mins possessed relatively superior global electrical properties. Considering that films with thickness of micrometer-thick were required for piezoelectric MEMS applications, in this work, the thickness-dependent electrical properties of PMN-PZT films were investigated. (a) shows the XRD \u03b8-2\u03b8 patterns of PMN-PZT with 200 nm, 600 nm, and 1500 nm, respectively. With the increase of film thickness, the relative intensity of <100> and <200> diffraction peaks for PMN-PZT films gradually increased and the full-width at half-maximum (FWHM) decreased, demonstrating better crystallization quality. In addition, the <100> and <200> diffraction peaks shifted leftwards with the thickness increasing, indicating the expansion of the out-of-plane c-axis lattice. Because of the difference of the thermal expansion coefficients between the Si and the PMN-PZT, the PMN-PZT thin film on silicon is typically under a tensile strain. Therefore, the interplanar spacing will increase and the characteristic diffraction peaks shifted leftward based on the Bragg equation. shows the cross-sectional morphologies of PMN-PZT thin films. From the images, it can be observed that the interfaces of PMN-PZT thin films were clear, and the films owned dense morphologies. In (a), it can be seen that the 200 nm thick films owned smaller grains with more porosity. (b) and (c) indicated that as the thickness of the film increased, accompanied by an increase in the sputtering time at 550 \xb0C, the thermal budget also increased and the porosity within the films decreased. When the film thickness reached 1500 nm, the structure of the upper layer of the film resembled the morphology of an epitaxial-grown film on a single-crystal substrate. This was also related with the reduction of substrate clamping with increased thickness, allowing the grains to grow more uniformly. shows the dielectric constant \u03b5 33 T/ \u03b5 0 and loss (tan\u03b4) of the PMN-PZT thin films under different thickness with the frequency range from 0.1 to 100 kHz. At 1 kHz, the dielectric constant and loss of PMN-PZT thin films were 846 (0.036), 1319 (0.034), and 1398 (0.036), under the thickness of 200 nm, 600 nm, and 1200 nm. The results indicated that the ratio of \u03b5 33 T/ \u03b5 0 showed a gradually increasing trend. The polarization-electric field (P-E) loops of PMN-PZT thin films under 200 nm, 600 nm, and 1500 nm are shown in. The P r and E C of PMN-PZT films for the three thickness under 1 kHz were 16 \u03bcC/ cmE^{2} (7 kV/mm), 40 \u03bcC/ cmE^{2} (7.5 kV/mm), 49 \u03bcC/ cmE^{2} (5.7 kV/mm), respectively. As the thickness increased, the remnant polarization of the PMN-PZT thin films tended to strengthen. The substrate clamping releasing made the switching of ferroelectric domains easier, accompanied with enhanced macroscopic ferroelectric properties. (a)-(j) presents the surface morphology, out-of-plane PFM amplitude and phase images of 600 nm-thick and 1500 nm-thick PMN-PZT thin films in 3\xd73 \u03bcmE^{2} area. The out-of-plane phase images demonstrated that the 600 nm-thick PMN-PZT thin film exhibited irregular domain patterns and nano-size domain could be detected. With the thickness increased to 1500 nm, ferroelectric domain size increased. To observe the evolution of domain switching in PMN-PZT thin films, in-situ negative voltages were written in the central area of 1 \xd7 1 \u03bcmE^{2}, and the same positive voltage was written in the external area of 2 \xd7 2 \u03bcmE^{2}. From the out-of-plane phase images, it can be seen that when the DC poling voltage exceeded the coercive voltage, clear polarization inversion can be observed. Under a direct voltage of \xb112 V, the phase images of 1500 nm-thick film exhibited a pronounced contrast between the central and outer square regions, indicative of complete ferroelectric domain switching. While for the 600 nm-thick PMN-PZT thin films, a relatively higher voltage of 16 V is required. To measure the piezoelectric coefficient of micrometer-thick PMN-PZT, an Au electrodes was sputtered onto the surface of the 1.5 \u03bcm thick PMN-PZT thin film. The polarization conditions were set at 10 kV/mm with a temperature of 140 \xb0C and a polarization duration of 5 mins. Upward and downward DC electric fields were applied to the PMN-PZT thin films, respectively. After that, the piezoelectric coefficients of the PMN-PZT thin films were compared shown in (b). It can be observed that for the non-polarized film, weak piezoelectric response with effective d 33 of 85 pC/N was detected, indicating slightly self-polarization characteristics in the as-prepared film. Here the highest piezoelectric coefficient (d 33) poled upward can reached up to 484 pC/N, which showed a two-fold enhancement relative to the commercial Pb(Zr0.52Ti0.48)O3 and previously-reported Mn-doped 0.36Pb(In1/2Nb1/2)O3-0.36Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 thin films measured using the same method. The excellent piezoelectric performance and high quality make the PMN-PZT film great potential in application to advanced piezoelectric MEMS devices.
+
+# TITLE
+Growth and thickness effect of &lt;100&gt;-oriented ternary 0.06Pb(Mn<inf>1/3</inf>Nb<inf>2/3</inf>)O<inf>3</inf>-0.94Pb(Zr<inf>0.48</inf>Ti<inf>0.52</inf>)O<inf>3</inf> ferroelectric thin films on silicon substrate by RF sputtering
+
+# ABSTRACT
+In this work, high-quality <100>-oriented 0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3 (PMN-PZT) thin films were grown on the Pt/Ti/SiO2/Si substrate by sputtering. Well-crystalized micron-thick PMN-PZT films with high remnant polarization of 49 
+                        
+                           μC
+                           /
+                           
+                              
+                                 cm
+                              
+                              
+                                 2
+                              
+                           
+                        
+                      and giant piezoelectric coefficient (
+                        
+                           
+                              d
+                           
+                           
+                              33
+                           
+                        
+                     ) up to 484 
+                        
+                           pC
+                           /
+                           N
+                        
+                      (about twice of the polycrystalline PMN-PZT thin film and thrice of the Pb(Zr0.52Ti0.48)O3 thin film) were obtained. The excellent electrical properties make it highly advantageous for applications in MEMS devices.
+
+# INTRODUCTION
+In recent years, piezoelectric thin films offer a number of advantages in the integrated microelectromechanical systems (MEMS) due to the low power requirements, high driving force, large motions with low hysteresis, and high sensitivity. How to further enhance the performance of the piezoelectric MEMS is an important research topic and has attracted great attention. At present, for the actuator and transducer applications in which force, torque, and output power are very important, the Pb(Zr1-x Ti x )O3 (PZT) family is still the mainstream piezoelectric material ascribed to its excellent piezoelectric and electromechanical properties. In comparison to the PZT system, researches indicated that the relaxor ferroelectric material represented by Pb(Mg1/3Nb2/3)O3-PbTiO3 (PMNT) owns substantially higher piezoelectric performance. The strain level and piezoelectric coefficients can reach 5\u201310 times those of traditional bulk piezoelectric ceramics and electromechanical coupling coefficient k 33 is up to \u223c0.9. PMNT thin film grown on the miscut Si substrate with <100> orientation also exhibited giant piezoelectric coefficient e 31 of \u223c27 C/mE^{2}. Later, Sm-doped PMNT was further developed with higher piezoelectric constant , which could drive the micro-actuator at lower voltage. Nevertheless, the Curie temperature and rhombohedral-tetragonal phase transition temperature for binary PMNT and Sm-doped PMNT were relatively low, which easily cause the depoling and limited their practical applications. The development of relaxor ferroelectrics simultaneously owning superior piezoelectric response and excellent temperature stability is critical for MEMS applications. Recent studies indicated that ternary relaxor ferroelectric materials, represented by Pb(Mn1/3Nb2/3)O3-PbZrO3-PbTiO3 and Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (PIMNT) , attracted much attention due to their excellent global performance, especially owning high piezoelectric coefficients and ferroelectric to ferroelectric phase transition temperature. The 0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3 (PMN-PZT) thin film with the composition near the morphotropic phase boundary was fabricated owning high Curie temperature (T C\u223c600 \xb0C) and large remnant polarization (P r\u223c100 \u03bcC/ cmE^{2}). Nevertheless, the substrate adopted in the work was MgO single crystal, which was undesirable for MEMS applications. Growth of high-quality PMN-PZT thin film on standard Pt/Ti/SiO2/Si substrate is quite necessary for microelectronic device. In our previous work, Si-substrated PMN-PZT thin film was fabricated using RF sputtering and polycrystalline structure was obtained using La0.6Sr0.4CoO3 (LSCO) as a buffer layer. The effective quasi-static piezoelectric coefficient of the PMN\u2013PZT thin film reached 267 pC/N. It is expected that the <100>-oriented PMN-PZT would exhibited more superior piezoelectric response than <110>-oriented one. Therefore, in this work, we aim to report the growth of <100>-oriented ternary PMN-PZT thin films on the Pt/Ti/SiO2/Si substrate. In order to modulate the growing direction, LaNiO3 (LNO) was introduced as a buffer layer, which can promote the growth of <100>-oriented perovskite grains. The influence of fabrication parameters, film thickness (from 200 nm to 1.5 \u03bcm), along with poling direction on the microstructure and electrical properties of PMN-PZT thin films were studied and excellent piezoelectric response were achieved.
+
+# CONCLUSION
+In summary, high-quality ternary PMN-PZT films were grown on Pt/Ti/SiO2/Si substrates by RF magnetron sputtering. The effects of annealing temperature, time and film thickness effect on the phase structure and electrical properties of PMN-PZT thin films were studied. The PMN-PZT thin films annealed at 650 \xb0C for 30 mins with a thickness of 1.5 \u03bcm exhibited the dielectric constant \u03b5 33 T/ \u03b5 0 of 1582 and low loss tan\u03b4 of 0.036. The P r and E C of the films were 49 \u03bcC/ cmE^{2} and 5.7 kV/mm, respectively. The piezoelectric coefficient reached up to 484 pC/N after poling upward, which was about thrice to that of the commercial Pb(Zr0.52Ti0.48)O3 thin film. The excellent piezoelectric performance makes this PMN-PZT thin film great potential to be applied to piezoelectric MEMS devices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3": 484,
+      "0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3 - (best)": 484
+    },
+    "abbreviations": {
+      "PMN-PZT": "Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3"
+    },
+    "property_unit": "pC/N",
+    "family": "Pb(ZrTi)O3"
+  }
+}"
+2025-07-08 16:18:04: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The annealing temperature dependence of the structure and electrical properties for the 600 nm-thick PMN-PZT thin films were first studied. shows the XRD \u03b8-2\u03b8 patterns of the LNO-buffered substrate, as-grown PMN-PZT thin film and the films annealed at 600 \xb0C, 650 \xb0C, 700 \xb0C for 30 mins, respectively. It can be found that the unannealed PMN-PZT films displayed pyrochlore phase. After annealing, the films exhibited characteristic peaks near 22\xb0 and 45\xb0, which corresponded to the <100> and <200> orientations of the perovskite phase, indicating that PMN-PZT possessed a pure phase structure and <100>-oriented growth. This indicated that the <100>-texture of LNO buffer layer promoted the <100>-oriented growth of PMN-PZT due to the good lattice matching, which can promote the transformation of the pyrochlore phase into perovskite. From , the characteristic peaks of the PMN-PZT thin films obtained at 600 \xb0C and 650 \xb0C were sharp and narrow, suggesting that the rapid annealing process significantly enhanced the crystallinity, and the orientation degree along <100> direction was notably high. When the annealing temperature further increased to 700 \xb0C, the relative characteristic peak intensity of the film weakened, which might be attributed to the volatilization of lead element at higher annealing temperature. Also it can be seen that the <200> diffraction peak of LNO moves rightwards from 46\xb0 to 48\xb0 with the increase of annealing temperature, and this process was related to the increased in-plane lattice expansion of the LNO annealed at higher temperature. According to the Poisson\u2019s ratio, the out-of-plane crystal lattice decreased and the characteristic peak shifted to higher angle position. shows the surface topography of 600 nm-thick unannealed PMN-PZT thin films and films annealing at 600 \xb0C, 650 \xb0C, 700 \xb0C, respectively. Compared to the annealed thin films, the as-deposited films exhibited smaller grain sizes (about 137.4 nm). It is evident that an escalation in the annealing temperature accompanied with the formation of the perovskite phase and a progressive increase of the grain size (203 nm at annealing temperature of 600 \xb0C and 277 nm at annealing temperature of 650 \xb0C). Upon reaching an annealing temperature of 700 \xb0C, the pores appeared. This indicated that at elevated temperatures, the substantial evaporation of lead element led to lead vacancy defects, which in turn, had a detrimental impact on the crystallinity along with the microscale morphology of the thin films. shows the frequency dependence of the dielectric constant (\u03b5 33 T/ \u03b5 0) and dissipation factor (tan\u03b4) of the 600 nm-thick PMN-PZT thin films at distinct annealing temperatures. The typical values of \u03b5 33 T/ \u03b5 0 (tan\u03b4) at 1 kHz for films annealed at 600 \xb0C, 650 \xb0C, and 700 \xb0C were measured to be 1106 (0.032), 1319 (0.034), and 1582 (0.06), respectively. An increase in the annealing temperature resulted in a gradual rise in the dielectric constant of the PMN-PZT thin films, suggesting that elevated annealing conditions were conducive to the enhancement of grain growth and the improvement of crystalline quality. Nevertheless, upon further elevation of the annealing temperature to 700 \xb0C, the tan\u03b4 increased. The polarization-electric field (P-E) hysteresis loops of the 600 nm-thick PMN-PZT thin films annealed between 600 and 700 \xb0C are depicted in. At 1 kHz, the remnant polarization (P r) and the coercive electric field (E C) of the films were measured to be 29 \u03bcC/ cmE^{2} (7.5 kV/mm), 40 \u03bcC/ cmE^{2} (7.5 kV/mm), and 41 \u03bcC/ cmE^{2} (7.2 kV/mm) under the electric field of 80 kV/mm, 80 kV/mm, and 30 kV/mm, respectively. Examination of the revealed that the films annealed at temperatures of 600 \xb0C and 650 \xb0C exhibited the characteristic rectangular hysteresis loops, indicative of a ferroelectric behavior. However, the thin film subjected to annealing at a temperature of 700 \xb0C demonstrated a reduced breakdown field and couldn\u2019t endure the 80 kV/mm electric field. During our experiments, the annealing time dependence of the structure and electrical properties for the PMN-PZT thin films were also performed at fixed annealing temperature of 650 \xb0C. shows the XRD \u03b8-2\u03b8 patterns of the 600 nm-thick PMN-PZT thin films annealed at 650 \xb0C for 20 mins, 30 mins and 40 mins. It can be observed that the PMN-PZT thin films subjected to annealing for 30 mins exhibited relatively higher diffraction intensity for the <100> and <200> peaks compared to those annealed for other durations. The thin film annealed for 20 mins exhibited irregular large grain protrusions, which may be attributed to the insufficient annealing time that limited the energy migration and diffusion of the grains. Under the 30 mins and 40 mins annealing duration, larger grain size could be observed and there were more pores in the sample annealed for 40 mins compared to that annealed for 30 mins. These observations were also consistent with the cross-sectional views presented in (d)-(f). displays the dielectric spectrum of the PMN-PZT thin films annealing at 650 \xb0C for different durations. The typical values of \u03b5 33 T/ \u03b5 0 (tan\u03b4) at 1 kHz for films annealed for 20 mins, 30 mins, and 40 mins were measured to be 939 (0.030), 1259 (0.034), and 1319 (0.036), respectively. It is observable that the dielectric constant of the films increased significantly with the increase of annealing time, while the dielectric loss increased slightly. illustrates the P-E hysteresis loops of the 600 nm-thick PMN-PZT thin films fabricated under various annealing durations at room temperature. It is observed that the PMN-PZT thin films annealed for 20 mins, 30 mins, and 40 mins all exhibited typical rectangular hysteresis loops. At 1 kHz, the remnant polarization (P r) and the coercive electric field (E C) of the films were measured to be 22 \u03bcC/ cmE^{2} (6.0 kV/mm), 41 \u03bcC/ cmE^{2} (7.2 kV/mm), and 40 \u03bcC/ cmE^{2} (7.5 kV/mm), respectively. At an annealing time of 30 mins, the film saturated under a bias field of 90 kV/mm and had a high breakdown resistance. However, when the annealing time was increased to 40 mins, the breakdown field strength of the films decreased substantially. The results indicated that the PMN-PZT thin films annealed at 650 \xb0C for 30 mins possessed relatively superior global electrical properties. Considering that films with thickness of micrometer-thick were required for piezoelectric MEMS applications, in this work, the thickness-dependent electrical properties of PMN-PZT films were investigated. (a) shows the XRD \u03b8-2\u03b8 patterns of PMN-PZT with 200 nm, 600 nm, and 1500 nm, respectively. With the increase of film thickness, the relative intensity of <100> and <200> diffraction peaks for PMN-PZT films gradually increased and the full-width at half-maximum (FWHM) decreased, demonstrating better crystallization quality. In addition, the <100> and <200> diffraction peaks shifted leftwards with the thickness increasing, indicating the expansion of the out-of-plane c-axis lattice. Because of the difference of the thermal expansion coefficients between the Si and the PMN-PZT, the PMN-PZT thin film on silicon is typically under a tensile strain. Therefore, the interplanar spacing will increase and the characteristic diffraction peaks shifted leftward based on the Bragg equation. shows the cross-sectional morphologies of PMN-PZT thin films. From the images, it can be observed that the interfaces of PMN-PZT thin films were clear, and the films owned dense morphologies. In (a), it can be seen that the 200 nm thick films owned smaller grains with more porosity. (b) and (c) indicated that as the thickness of the film increased, accompanied by an increase in the sputtering time at 550 \xb0C, the thermal budget also increased and the porosity within the films decreased. When the film thickness reached 1500 nm, the structure of the upper layer of the film resembled the morphology of an epitaxial-grown film on a single-crystal substrate. This was also related with the reduction of substrate clamping with increased thickness, allowing the grains to grow more uniformly. shows the dielectric constant \u03b5 33 T/ \u03b5 0 and loss (tan\u03b4) of the PMN-PZT thin films under different thickness with the frequency range from 0.1 to 100 kHz. At 1 kHz, the dielectric constant and loss of PMN-PZT thin films were 846 (0.036), 1319 (0.034), and 1398 (0.036), under the thickness of 200 nm, 600 nm, and 1200 nm. The results indicated that the ratio of \u03b5 33 T/ \u03b5 0 showed a gradually increasing trend. The polarization-electric field (P-E) loops of PMN-PZT thin films under 200 nm, 600 nm, and 1500 nm are shown in. The P r and E C of PMN-PZT films for the three thickness under 1 kHz were 16 \u03bcC/ cmE^{2} (7 kV/mm), 40 \u03bcC/ cmE^{2} (7.5 kV/mm), 49 \u03bcC/ cmE^{2} (5.7 kV/mm), respectively. As the thickness increased, the remnant polarization of the PMN-PZT thin films tended to strengthen. The substrate clamping releasing made the switching of ferroelectric domains easier, accompanied with enhanced macroscopic ferroelectric properties. (a)-(j) presents the surface morphology, out-of-plane PFM amplitude and phase images of 600 nm-thick and 1500 nm-thick PMN-PZT thin films in 3\xd73 \u03bcmE^{2} area. The out-of-plane phase images demonstrated that the 600 nm-thick PMN-PZT thin film exhibited irregular domain patterns and nano-size domain could be detected. With the thickness increased to 1500 nm, ferroelectric domain size increased. To observe the evolution of domain switching in PMN-PZT thin films, in-situ negative voltages were written in the central area of 1 \xd7 1 \u03bcmE^{2}, and the same positive voltage was written in the external area of 2 \xd7 2 \u03bcmE^{2}. From the out-of-plane phase images, it can be seen that when the DC poling voltage exceeded the coercive voltage, clear polarization inversion can be observed. Under a direct voltage of \xb112 V, the phase images of 1500 nm-thick film exhibited a pronounced contrast between the central and outer square regions, indicative of complete ferroelectric domain switching. While for the 600 nm-thick PMN-PZT thin films, a relatively higher voltage of 16 V is required. To measure the piezoelectric coefficient of micrometer-thick PMN-PZT, an Au electrodes was sputtered onto the surface of the 1.5 \u03bcm thick PMN-PZT thin film. The polarization conditions were set at 10 kV/mm with a temperature of 140 \xb0C and a polarization duration of 5 mins. Upward and downward DC electric fields were applied to the PMN-PZT thin films, respectively. After that, the piezoelectric coefficients of the PMN-PZT thin films were compared shown in (b). It can be observed that for the non-polarized film, weak piezoelectric response with effective d 33 of 85 pC/N was detected, indicating slightly self-polarization characteristics in the as-prepared film. Here the highest piezoelectric coefficient (d 33) poled upward can reached up to 484 pC/N, which showed a two-fold enhancement relative to the commercial Pb(Zr0.52Ti0.48)O3 and previously-reported Mn-doped 0.36Pb(In1/2Nb1/2)O3-0.36Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 thin films measured using the same method. The excellent piezoelectric performance and high quality make the PMN-PZT film great potential in application to advanced piezoelectric MEMS devices.
+
+# TITLE
+Growth and thickness effect of &lt;100&gt;-oriented ternary 0.06Pb(Mn<inf>1/3</inf>Nb<inf>2/3</inf>)O<inf>3</inf>-0.94Pb(Zr<inf>0.48</inf>Ti<inf>0.52</inf>)O<inf>3</inf> ferroelectric thin films on silicon substrate by RF sputtering
+
+# ABSTRACT
+In this work, high-quality <100>-oriented 0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3 (PMN-PZT) thin films were grown on the Pt/Ti/SiO2/Si substrate by sputtering. Well-crystalized micron-thick PMN-PZT films with high remnant polarization of 49 
+                        
+                           μC
+                           /
+                           
+                              
+                                 cm
+                              
+                              
+                                 2
+                              
+                           
+                        
+                      and giant piezoelectric coefficient (
+                        
+                           
+                              d
+                           
+                           
+                              33
+                           
+                        
+                     ) up to 484 
+                        
+                           pC
+                           /
+                           N
+                        
+                      (about twice of the polycrystalline PMN-PZT thin film and thrice of the Pb(Zr0.52Ti0.48)O3 thin film) were obtained. The excellent electrical properties make it highly advantageous for applications in MEMS devices.
+
+# INTRODUCTION
+In recent years, piezoelectric thin films offer a number of advantages in the integrated microelectromechanical systems (MEMS) due to the low power requirements, high driving force, large motions with low hysteresis, and high sensitivity. How to further enhance the performance of the piezoelectric MEMS is an important research topic and has attracted great attention. At present, for the actuator and transducer applications in which force, torque, and output power are very important, the Pb(Zr1-x Ti x )O3 (PZT) family is still the mainstream piezoelectric material ascribed to its excellent piezoelectric and electromechanical properties. In comparison to the PZT system, researches indicated that the relaxor ferroelectric material represented by Pb(Mg1/3Nb2/3)O3-PbTiO3 (PMNT) owns substantially higher piezoelectric performance. The strain level and piezoelectric coefficients can reach 5\u201310 times those of traditional bulk piezoelectric ceramics and electromechanical coupling coefficient k 33 is up to \u223c0.9. PMNT thin film grown on the miscut Si substrate with <100> orientation also exhibited giant piezoelectric coefficient e 31 of \u223c27 C/mE^{2}. Later, Sm-doped PMNT was further developed with higher piezoelectric constant , which could drive the micro-actuator at lower voltage. Nevertheless, the Curie temperature and rhombohedral-tetragonal phase transition temperature for binary PMNT and Sm-doped PMNT were relatively low, which easily cause the depoling and limited their practical applications. The development of relaxor ferroelectrics simultaneously owning superior piezoelectric response and excellent temperature stability is critical for MEMS applications. Recent studies indicated that ternary relaxor ferroelectric materials, represented by Pb(Mn1/3Nb2/3)O3-PbZrO3-PbTiO3 and Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (PIMNT) , attracted much attention due to their excellent global performance, especially owning high piezoelectric coefficients and ferroelectric to ferroelectric phase transition temperature. The 0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3 (PMN-PZT) thin film with the composition near the morphotropic phase boundary was fabricated owning high Curie temperature (T C\u223c600 \xb0C) and large remnant polarization (P r\u223c100 \u03bcC/ cmE^{2}). Nevertheless, the substrate adopted in the work was MgO single crystal, which was undesirable for MEMS applications. Growth of high-quality PMN-PZT thin film on standard Pt/Ti/SiO2/Si substrate is quite necessary for microelectronic device. In our previous work, Si-substrated PMN-PZT thin film was fabricated using RF sputtering and polycrystalline structure was obtained using La0.6Sr0.4CoO3 (LSCO) as a buffer layer. The effective quasi-static piezoelectric coefficient of the PMN\u2013PZT thin film reached 267 pC/N. It is expected that the <100>-oriented PMN-PZT would exhibited more superior piezoelectric response than <110>-oriented one. Therefore, in this work, we aim to report the growth of <100>-oriented ternary PMN-PZT thin films on the Pt/Ti/SiO2/Si substrate. In order to modulate the growing direction, LaNiO3 (LNO) was introduced as a buffer layer, which can promote the growth of <100>-oriented perovskite grains. The influence of fabrication parameters, film thickness (from 200 nm to 1.5 \u03bcm), along with poling direction on the microstructure and electrical properties of PMN-PZT thin films were studied and excellent piezoelectric response were achieved.
+
+# CONCLUSION
+In summary, high-quality ternary PMN-PZT films were grown on Pt/Ti/SiO2/Si substrates by RF magnetron sputtering. The effects of annealing temperature, time and film thickness effect on the phase structure and electrical properties of PMN-PZT thin films were studied. The PMN-PZT thin films annealed at 650 \xb0C for 30 mins with a thickness of 1.5 \u03bcm exhibited the dielectric constant \u03b5 33 T/ \u03b5 0 of 1582 and low loss tan\u03b4 of 0.036. The P r and E C of the films were 49 \u03bcC/ cmE^{2} and 5.7 kV/mm, respectively. The piezoelectric coefficient reached up to 484 pC/N after poling upward, which was about thrice to that of the commercial Pb(Zr0.52Ti0.48)O3 thin film. The excellent piezoelectric performance makes this PMN-PZT thin film great potential to be applied to piezoelectric MEMS devices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-08 16:18:06: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The annealing temperature dependence of the structure and electrical properties for the 600 nm-thick PMN-PZT thin films were first studied. shows the XRD \u03b8-2\u03b8 patterns of the LNO-buffered substrate, as-grown PMN-PZT thin film and the films annealed at 600 \xb0C, 650 \xb0C, 700 \xb0C for 30 mins, respectively. It can be found that the unannealed PMN-PZT films displayed pyrochlore phase. After annealing, the films exhibited characteristic peaks near 22\xb0 and 45\xb0, which corresponded to the <100> and <200> orientations of the perovskite phase, indicating that PMN-PZT possessed a pure phase structure and <100>-oriented growth. This indicated that the <100>-texture of LNO buffer layer promoted the <100>-oriented growth of PMN-PZT due to the good lattice matching, which can promote the transformation of the pyrochlore phase into perovskite. From , the characteristic peaks of the PMN-PZT thin films obtained at 600 \xb0C and 650 \xb0C were sharp and narrow, suggesting that the rapid annealing process significantly enhanced the crystallinity, and the orientation degree along <100> direction was notably high. When the annealing temperature further increased to 700 \xb0C, the relative characteristic peak intensity of the film weakened, which might be attributed to the volatilization of lead element at higher annealing temperature. Also it can be seen that the <200> diffraction peak of LNO moves rightwards from 46\xb0 to 48\xb0 with the increase of annealing temperature, and this process was related to the increased in-plane lattice expansion of the LNO annealed at higher temperature. According to the Poisson\u2019s ratio, the out-of-plane crystal lattice decreased and the characteristic peak shifted to higher angle position. shows the surface topography of 600 nm-thick unannealed PMN-PZT thin films and films annealing at 600 \xb0C, 650 \xb0C, 700 \xb0C, respectively. Compared to the annealed thin films, the as-deposited films exhibited smaller grain sizes (about 137.4 nm). It is evident that an escalation in the annealing temperature accompanied with the formation of the perovskite phase and a progressive increase of the grain size (203 nm at annealing temperature of 600 \xb0C and 277 nm at annealing temperature of 650 \xb0C). Upon reaching an annealing temperature of 700 \xb0C, the pores appeared. This indicated that at elevated temperatures, the substantial evaporation of lead element led to lead vacancy defects, which in turn, had a detrimental impact on the crystallinity along with the microscale morphology of the thin films. shows the frequency dependence of the dielectric constant (\u03b5 33 T/ \u03b5 0) and dissipation factor (tan\u03b4) of the 600 nm-thick PMN-PZT thin films at distinct annealing temperatures. The typical values of \u03b5 33 T/ \u03b5 0 (tan\u03b4) at 1 kHz for films annealed at 600 \xb0C, 650 \xb0C, and 700 \xb0C were measured to be 1106 (0.032), 1319 (0.034), and 1582 (0.06), respectively. An increase in the annealing temperature resulted in a gradual rise in the dielectric constant of the PMN-PZT thin films, suggesting that elevated annealing conditions were conducive to the enhancement of grain growth and the improvement of crystalline quality. Nevertheless, upon further elevation of the annealing temperature to 700 \xb0C, the tan\u03b4 increased. The polarization-electric field (P-E) hysteresis loops of the 600 nm-thick PMN-PZT thin films annealed between 600 and 700 \xb0C are depicted in. At 1 kHz, the remnant polarization (P r) and the coercive electric field (E C) of the films were measured to be 29 \u03bcC/ cmE^{2} (7.5 kV/mm), 40 \u03bcC/ cmE^{2} (7.5 kV/mm), and 41 \u03bcC/ cmE^{2} (7.2 kV/mm) under the electric field of 80 kV/mm, 80 kV/mm, and 30 kV/mm, respectively. Examination of the revealed that the films annealed at temperatures of 600 \xb0C and 650 \xb0C exhibited the characteristic rectangular hysteresis loops, indicative of a ferroelectric behavior. However, the thin film subjected to annealing at a temperature of 700 \xb0C demonstrated a reduced breakdown field and couldn\u2019t endure the 80 kV/mm electric field. During our experiments, the annealing time dependence of the structure and electrical properties for the PMN-PZT thin films were also performed at fixed annealing temperature of 650 \xb0C. shows the XRD \u03b8-2\u03b8 patterns of the 600 nm-thick PMN-PZT thin films annealed at 650 \xb0C for 20 mins, 30 mins and 40 mins. It can be observed that the PMN-PZT thin films subjected to annealing for 30 mins exhibited relatively higher diffraction intensity for the <100> and <200> peaks compared to those annealed for other durations. The thin film annealed for 20 mins exhibited irregular large grain protrusions, which may be attributed to the insufficient annealing time that limited the energy migration and diffusion of the grains. Under the 30 mins and 40 mins annealing duration, larger grain size could be observed and there were more pores in the sample annealed for 40 mins compared to that annealed for 30 mins. These observations were also consistent with the cross-sectional views presented in (d)-(f). displays the dielectric spectrum of the PMN-PZT thin films annealing at 650 \xb0C for different durations. The typical values of \u03b5 33 T/ \u03b5 0 (tan\u03b4) at 1 kHz for films annealed for 20 mins, 30 mins, and 40 mins were measured to be 939 (0.030), 1259 (0.034), and 1319 (0.036), respectively. It is observable that the dielectric constant of the films increased significantly with the increase of annealing time, while the dielectric loss increased slightly. illustrates the P-E hysteresis loops of the 600 nm-thick PMN-PZT thin films fabricated under various annealing durations at room temperature. It is observed that the PMN-PZT thin films annealed for 20 mins, 30 mins, and 40 mins all exhibited typical rectangular hysteresis loops. At 1 kHz, the remnant polarization (P r) and the coercive electric field (E C) of the films were measured to be 22 \u03bcC/ cmE^{2} (6.0 kV/mm), 41 \u03bcC/ cmE^{2} (7.2 kV/mm), and 40 \u03bcC/ cmE^{2} (7.5 kV/mm), respectively. At an annealing time of 30 mins, the film saturated under a bias field of 90 kV/mm and had a high breakdown resistance. However, when the annealing time was increased to 40 mins, the breakdown field strength of the films decreased substantially. The results indicated that the PMN-PZT thin films annealed at 650 \xb0C for 30 mins possessed relatively superior global electrical properties. Considering that films with thickness of micrometer-thick were required for piezoelectric MEMS applications, in this work, the thickness-dependent electrical properties of PMN-PZT films were investigated. (a) shows the XRD \u03b8-2\u03b8 patterns of PMN-PZT with 200 nm, 600 nm, and 1500 nm, respectively. With the increase of film thickness, the relative intensity of <100> and <200> diffraction peaks for PMN-PZT films gradually increased and the full-width at half-maximum (FWHM) decreased, demonstrating better crystallization quality. In addition, the <100> and <200> diffraction peaks shifted leftwards with the thickness increasing, indicating the expansion of the out-of-plane c-axis lattice. Because of the difference of the thermal expansion coefficients between the Si and the PMN-PZT, the PMN-PZT thin film on silicon is typically under a tensile strain. Therefore, the interplanar spacing will increase and the characteristic diffraction peaks shifted leftward based on the Bragg equation. shows the cross-sectional morphologies of PMN-PZT thin films. From the images, it can be observed that the interfaces of PMN-PZT thin films were clear, and the films owned dense morphologies. In (a), it can be seen that the 200 nm thick films owned smaller grains with more porosity. (b) and (c) indicated that as the thickness of the film increased, accompanied by an increase in the sputtering time at 550 \xb0C, the thermal budget also increased and the porosity within the films decreased. When the film thickness reached 1500 nm, the structure of the upper layer of the film resembled the morphology of an epitaxial-grown film on a single-crystal substrate. This was also related with the reduction of substrate clamping with increased thickness, allowing the grains to grow more uniformly. shows the dielectric constant \u03b5 33 T/ \u03b5 0 and loss (tan\u03b4) of the PMN-PZT thin films under different thickness with the frequency range from 0.1 to 100 kHz. At 1 kHz, the dielectric constant and loss of PMN-PZT thin films were 846 (0.036), 1319 (0.034), and 1398 (0.036), under the thickness of 200 nm, 600 nm, and 1200 nm. The results indicated that the ratio of \u03b5 33 T/ \u03b5 0 showed a gradually increasing trend. The polarization-electric field (P-E) loops of PMN-PZT thin films under 200 nm, 600 nm, and 1500 nm are shown in. The P r and E C of PMN-PZT films for the three thickness under 1 kHz were 16 \u03bcC/ cmE^{2} (7 kV/mm), 40 \u03bcC/ cmE^{2} (7.5 kV/mm), 49 \u03bcC/ cmE^{2} (5.7 kV/mm), respectively. As the thickness increased, the remnant polarization of the PMN-PZT thin films tended to strengthen. The substrate clamping releasing made the switching of ferroelectric domains easier, accompanied with enhanced macroscopic ferroelectric properties. (a)-(j) presents the surface morphology, out-of-plane PFM amplitude and phase images of 600 nm-thick and 1500 nm-thick PMN-PZT thin films in 3\xd73 \u03bcmE^{2} area. The out-of-plane phase images demonstrated that the 600 nm-thick PMN-PZT thin film exhibited irregular domain patterns and nano-size domain could be detected. With the thickness increased to 1500 nm, ferroelectric domain size increased. To observe the evolution of domain switching in PMN-PZT thin films, in-situ negative voltages were written in the central area of 1 \xd7 1 \u03bcmE^{2}, and the same positive voltage was written in the external area of 2 \xd7 2 \u03bcmE^{2}. From the out-of-plane phase images, it can be seen that when the DC poling voltage exceeded the coercive voltage, clear polarization inversion can be observed. Under a direct voltage of \xb112 V, the phase images of 1500 nm-thick film exhibited a pronounced contrast between the central and outer square regions, indicative of complete ferroelectric domain switching. While for the 600 nm-thick PMN-PZT thin films, a relatively higher voltage of 16 V is required. To measure the piezoelectric coefficient of micrometer-thick PMN-PZT, an Au electrodes was sputtered onto the surface of the 1.5 \u03bcm thick PMN-PZT thin film. The polarization conditions were set at 10 kV/mm with a temperature of 140 \xb0C and a polarization duration of 5 mins. Upward and downward DC electric fields were applied to the PMN-PZT thin films, respectively. After that, the piezoelectric coefficients of the PMN-PZT thin films were compared shown in (b). It can be observed that for the non-polarized film, weak piezoelectric response with effective d 33 of 85 pC/N was detected, indicating slightly self-polarization characteristics in the as-prepared film. Here the highest piezoelectric coefficient (d 33) poled upward can reached up to 484 pC/N, which showed a two-fold enhancement relative to the commercial Pb(Zr0.52Ti0.48)O3 and previously-reported Mn-doped 0.36Pb(In1/2Nb1/2)O3-0.36Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 thin films measured using the same method. The excellent piezoelectric performance and high quality make the PMN-PZT film great potential in application to advanced piezoelectric MEMS devices.
+
+# TITLE
+Growth and thickness effect of &lt;100&gt;-oriented ternary 0.06Pb(Mn<inf>1/3</inf>Nb<inf>2/3</inf>)O<inf>3</inf>-0.94Pb(Zr<inf>0.48</inf>Ti<inf>0.52</inf>)O<inf>3</inf> ferroelectric thin films on silicon substrate by RF sputtering
+
+# ABSTRACT
+In this work, high-quality <100>-oriented 0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3 (PMN-PZT) thin films were grown on the Pt/Ti/SiO2/Si substrate by sputtering. Well-crystalized micron-thick PMN-PZT films with high remnant polarization of 49 
+                        
+                           μC
+                           /
+                           
+                              
+                                 cm
+                              
+                              
+                                 2
+                              
+                           
+                        
+                      and giant piezoelectric coefficient (
+                        
+                           
+                              d
+                           
+                           
+                              33
+                           
+                        
+                     ) up to 484 
+                        
+                           pC
+                           /
+                           N
+                        
+                      (about twice of the polycrystalline PMN-PZT thin film and thrice of the Pb(Zr0.52Ti0.48)O3 thin film) were obtained. The excellent electrical properties make it highly advantageous for applications in MEMS devices.
+
+# INTRODUCTION
+In recent years, piezoelectric thin films offer a number of advantages in the integrated microelectromechanical systems (MEMS) due to the low power requirements, high driving force, large motions with low hysteresis, and high sensitivity. How to further enhance the performance of the piezoelectric MEMS is an important research topic and has attracted great attention. At present, for the actuator and transducer applications in which force, torque, and output power are very important, the Pb(Zr1-x Ti x )O3 (PZT) family is still the mainstream piezoelectric material ascribed to its excellent piezoelectric and electromechanical properties. In comparison to the PZT system, researches indicated that the relaxor ferroelectric material represented by Pb(Mg1/3Nb2/3)O3-PbTiO3 (PMNT) owns substantially higher piezoelectric performance. The strain level and piezoelectric coefficients can reach 5\u201310 times those of traditional bulk piezoelectric ceramics and electromechanical coupling coefficient k 33 is up to \u223c0.9. PMNT thin film grown on the miscut Si substrate with <100> orientation also exhibited giant piezoelectric coefficient e 31 of \u223c27 C/mE^{2}. Later, Sm-doped PMNT was further developed with higher piezoelectric constant , which could drive the micro-actuator at lower voltage. Nevertheless, the Curie temperature and rhombohedral-tetragonal phase transition temperature for binary PMNT and Sm-doped PMNT were relatively low, which easily cause the depoling and limited their practical applications. The development of relaxor ferroelectrics simultaneously owning superior piezoelectric response and excellent temperature stability is critical for MEMS applications. Recent studies indicated that ternary relaxor ferroelectric materials, represented by Pb(Mn1/3Nb2/3)O3-PbZrO3-PbTiO3 and Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (PIMNT) , attracted much attention due to their excellent global performance, especially owning high piezoelectric coefficients and ferroelectric to ferroelectric phase transition temperature. The 0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3 (PMN-PZT) thin film with the composition near the morphotropic phase boundary was fabricated owning high Curie temperature (T C\u223c600 \xb0C) and large remnant polarization (P r\u223c100 \u03bcC/ cmE^{2}). Nevertheless, the substrate adopted in the work was MgO single crystal, which was undesirable for MEMS applications. Growth of high-quality PMN-PZT thin film on standard Pt/Ti/SiO2/Si substrate is quite necessary for microelectronic device. In our previous work, Si-substrated PMN-PZT thin film was fabricated using RF sputtering and polycrystalline structure was obtained using La0.6Sr0.4CoO3 (LSCO) as a buffer layer. The effective quasi-static piezoelectric coefficient of the PMN\u2013PZT thin film reached 267 pC/N. It is expected that the <100>-oriented PMN-PZT would exhibited more superior piezoelectric response than <110>-oriented one. Therefore, in this work, we aim to report the growth of <100>-oriented ternary PMN-PZT thin films on the Pt/Ti/SiO2/Si substrate. In order to modulate the growing direction, LaNiO3 (LNO) was introduced as a buffer layer, which can promote the growth of <100>-oriented perovskite grains. The influence of fabrication parameters, film thickness (from 200 nm to 1.5 \u03bcm), along with poling direction on the microstructure and electrical properties of PMN-PZT thin films were studied and excellent piezoelectric response were achieved.
+
+# CONCLUSION
+In summary, high-quality ternary PMN-PZT films were grown on Pt/Ti/SiO2/Si substrates by RF magnetron sputtering. The effects of annealing temperature, time and film thickness effect on the phase structure and electrical properties of PMN-PZT thin films were studied. The PMN-PZT thin films annealed at 650 \xb0C for 30 mins with a thickness of 1.5 \u03bcm exhibited the dielectric constant \u03b5 33 T/ \u03b5 0 of 1582 and low loss tan\u03b4 of 0.036. The P r and E C of the films were 49 \u03bcC/ cmE^{2} and 5.7 kV/mm, respectively. The piezoelectric coefficient reached up to 484 pC/N after poling upward, which was about thrice to that of the commercial Pb(Zr0.52Ti0.48)O3 thin film. The excellent piezoelectric performance makes this PMN-PZT thin film great potential to be applied to piezoelectric MEMS devices.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3": 484
+    },
+    "abbreviations": {
+      "PMN-PZT": "0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3"
+    },
+    "property_unit": "pC/N",
+    "family": "Pb(ZrTi)O3"
+  }
+}"

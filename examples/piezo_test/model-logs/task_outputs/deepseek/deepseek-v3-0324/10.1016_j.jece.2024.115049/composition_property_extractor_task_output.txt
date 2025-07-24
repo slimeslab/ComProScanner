@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BiFeO3":17.04,"CdS":20.24,"BiFeO3/CdS (BC10)":26.48,"BiFeO3/CdS (BC20)":35.2,"BiFeO3/CdS (BC30)":29.5},"abbreviations":{"BFO":"BiFeO3","BC10":"BiFeO3/CdS (10 wt% CdS)","BC20":"BiFeO3/CdS (20 wt% CdS)","BC30":"BiFeO3/CdS (30 wt% CdS)"},"property_unit":"pC·N⁻¹","family":"Perovskite"}}

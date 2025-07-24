@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi0.5(Na0.8K0.2)0.5TiO3":180,"(0.99)Bi0.5(Na0.8K0.2)0.5Ti(0.99)Sb0.01O3":null,"(0.99)Bi0.5(Na0.8K0.2)0.5Ti(0.99)Ta0.01O3":null,"(0.97)Bi0.5(Na0.8K0.2)0.5Ti(0.97)Zr0.03O3":null,"(0.97)Bi0.5(Na0.8K0.2)0.5Ti(0.97)Hf0.03O3":null},"property_unit":"pC/N","family":"BNT"}}

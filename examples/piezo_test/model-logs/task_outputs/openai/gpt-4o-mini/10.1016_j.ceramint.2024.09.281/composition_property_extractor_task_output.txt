@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PYN–PHT–0.6Ta":560,"PYN–PHT–0Ta":448},"abbreviations":{"PYN":"Pb(Yb0.5Nb0.5)O3","PHT":"Pb(Hf1−xTix)O3","Ta":"Ta2O5"},"property_unit":"pC/N","family":"PZT"}}

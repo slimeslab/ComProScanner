@@ -1,0 +1,200 @@
+2025-07-08 16:22:13: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Performance comparison of different piezoelectric materials.
+|Material|Types|d33 (pC/N)|tan \u03b4(%)|Ec (kV/cm)| \u03b533T\u2215\u03b50|T1 (\u2103)|Tm (\u2103)|
+|---|---|---|---|---|---|---|---|
+|PZT [20]|Ceramic|373|2.5|11.04|2196|/|244|
+|PMNT [21]|Single crystal|1881|0.8|2.4|6140|92|130|
+|PIMNT [22]|Single crystal|1624|/|4.97|/|125|171|
+|Mn: PIMNT|Single crystal|1161|0.24|5.14|3603|130|183|
+
+Table 2. Performance comparison of different piezoelectric stack actuators.
+|Materials|Types|Dimension(mmE^{3})|Thickness(\u03bcm)|Smax (\u2030)|Hysteresis(%)|
+|---|---|---|---|---|---|
+|PZT[23]|Ceramic|6\u2009\xd7\u20096\u2009\xd7\u200918|/|1.11@150\u2009V|14.4|
+|PZT[24]|Ceramic|7\u2009\xd7\u20097\u2009\xd7\u200932.5|/|1.38@200\u2009V|/|
+|PZNN-PT[25]|Ceramic|7\u2009\xd7\u20097\u2009\xd7\u200936|80|1.54@150\u2009V|19.8|
+|PMNT[8]|Single crystal|4\u2009\xd7\u20094\u2009\xd7\u20099|300|0.81@200\u2009V|--|
+|PMNT[9]|Single crystal|10\u2009\xd7\u200910\u2009\xd7\u200940|1000|0.75@300\u2009V|\u223c5|
+|Mn: PIMNT|Single crystal|6\u2009\xd7\u20096\u2009\xd7\u20095.7|380|1.12@380\u2009V|2.0|
+
+# RESULTS AND DISCUSSION
+Under small-signal testing, the poled Mn: PIMNT single crystal showed a piezoelectric coefficient d33 of 1161 pC/N, a dielectric constant \u03b5 33 T/ \u03b5 0 of 3606, and a dielectric loss tan \u03b4 of 0.24 %. The temperature dependence of the dielectric properties was subsequently measured, with the first phase transition temperature T1 occurring at 130 \u2103, as shown in (A). Below 130 \u2103, the single crystal exhibited a pure rhombohedral (R) phase , while part of the R phase transitioned into the monoclinic (M) phase between 130 \u2103 and 144 \u2103. When the temperature was over 144 \u2103, thermal activation reduced the stability of the M phase, leading to significant depolarization, which triggered a transition to the tetragonal (T) phase. Finally, the structure fully transformed into a cubic (C) phase at a transition temperature Tm of 183 \u2103. The coercive field Ec was found to be 5.14 kV/cm, determined from its ferroelectric hysteresis loop ( B). Compared with commonly used piezoelectric materials ( ), the Mn: PIMNT crystal in this study exhibited lower tan \u03b4, along with significantly higher T1 and Ec, suggesting a more stable ferroelectric domain structure. (A-B) shows optical microscope images of the side view for the PSA. At 100 X magnification, the images reveal uniform layer thickness throughout the PSA, with strong interfacial bonding and no visible defect, such as cracks or bubbles. At 400 X magnification, the adhesive layer can be clearly observed, with its thickness consistently controlled below 3 \u03bcm. (C-D) displays cross-sectional views of the PSA at 100 X and 400 X magnifications, respectively. At 100 X, the image provides a broad overview and 400 X magnification allows for detailed inspection. To analyze strain stability of unit sheets and PSAs, S-E characteristic curves were obtained respectively. The output strain (S) is defined by , and the effective piezoelectric constant( d 33 *) is determined based on , where \u0394t represents the measured displacement and t denotes the effective longitudinal height of the test subject. E0 corresponds to the applied electric field amplitude and Smax refers to the maximum strain. Additionally, the hysteresis of the output strain is expressed as , where \u0394S max is the maximum displacement difference at half of E0. The electric field stability testing results ( A) reveal a linear increase in Smax of the unit sheet with E0. Under the standard condition, the Smax of 1.15 \u2030 was achieved at E0. The temperature stability testing results ( B) indicate that Smax of the unit sheet increases as temperature rises from 25 \u2103 to 115 \u2103. At 95 \u2103, the maximum strain reached 1.72 \u2030. Within 25\u201395 \u2103 range, the strain curves maintained consistent slopes and overlapped during voltage cycling. However, as the temperature elevated to 105 \u2103, the slope changed during voltage increasing, and the curve deviated during voltage decreasing, suggesting the M phase was excited. At 115 \u2103, a secondary slope change occurred near 0.8 kV/mm, indicating intensified domain switching and phase transitions (R-M-T). Compared with T1\u223c130 \u2103 observed in (A), the phase transition under strain test was triggered earlier, attributed to the higher electric field along < 001 >. The relationship between Smax and d 33 * was used to calculate d 33 * under different conditions ( C). The results indicated that the piezoelectric property of the unit sheet was minimally affected by \u0192 and E0. Under the standard test condition, the calculated d 33 * was 1147 pm/V, closely matching the quasi-static d 33 measurement (d33\u223c1161 pC/N). As temperature increased, the growth rate of d 33 * was initially slow but then accelerated at 95 \u2103. The higher growth rate could be attributed to the introduction of the M phase, which formed a mixture of R+M phases, facilitating domain wall motion and electric dipole polarization. (A) shows the input electric field and the output strain of the PSA as a function of time under the standard condition, demonstrating a linear strain response to the applied electric field. At electric field amplitude, the Smax of 1.12 \u2030 is achieved with a 2.0 % hysteresis rate. Meanwhile, the Smax of the PSA is 97.4 % of the unit sheet, indicating a high-quality bonding process with minimal energy loss at the interface, which is consistent with the microscopy. (B) compares output strains under standard and strong-field conditions, showing an obviously larger Smax at 1.5 kV/mm (1.68 \u2030) than at 1.0 kV/mm (1.12 \u2030). (C) shows that S-E curves of the PSA maintain strong linearity across different \u0192 and E0. In (D), the PSA preserves good strain linearity up to 115 \u2103, and Smax increases gradually as temperature rises. Despite the fact that the hysteresis is low at 115 \u2103, less uniformity of the strain curve is observed as the electric field approaches 1.0 kV/mm. For safety and optimal performance, an additional strain test ( ) was conducted at 115 \u2103, 1 Hz and 0.6 kV/mm. Under the excitation condition, the Smax was 1.32 \u2030 and the hysteresis was calculated to be 3.3 % without any significant increase near the field extremes. In order to guarantee better actuation quality, the working condition at 115 \u2103 is advised to be 0.6 kV/mm with 1 Hz. The calculated d 33 * of the PSA exhibits analogous behavior to the unit sheet, as shown in (A). The consistent trend confirms that the performance of the PSA is primarily determined by the internal piezoelectric unit sheets. The d 33 *of the PSA is 1117 pm/V under the standard test condition, increasing by 38.8 % at 95 \u2103. (B) shows the hysteresis of the PSAs remains within 5 % up to 115 \u2103 and across 1.0\u20131.5 kV/mm, indicating high stability under both temperature and electric field. Taking advantages of the low hysteresis and high stability, PSAs based on Mn: PIMNT significantly outperform conventional PSAs ( ). For PSAs based on PZT or PZNN-PT piezoceramics, obvious hysteresis is exacerbated by the presence of grain boundaries, which slow the response of electric dipoles and lead to pronounced relaxation behavior. Compared with PSAs using PMNT single crystals, the superior linearity of Mn: PIMNT crystal is attributed to internal oxygen vacancies formed by acceptor Mn doping, which hinder irreversible domain wall motion, thereby reducing the contribution of extrinsic factors to piezoelectric response. These combined factors make the fabricated PSAs ideal for applications requiring precision and stability.
+
+# TITLE
+Low hysteresis and strong stability of piezoelectric stack actuators based on the Mn-doped Pb (In<inf>1/2</inf>Nb<inf>1/2</inf>) O<inf>3</inf>-Pb (Mg<inf>1/3</inf>Nb<inf>2/3</inf>) O<inf>3</inf>-PbTiO<inf>3</inf> single crystal
+
+# ABSTRACT
+The output performance of piezoelectric stack actuators (PSAs) is characterized by strain magnitude, hysteresis, and stability. Although commercial PSAs offer advantages such as rapid response and noiseless operation, there remains potential for performance enhancement. In this study, 15-layer PSAs (6 × 6 × 6.7 mm3) were fabricated using the 1.0 mol% Mn-doped 0.28Pb(In1/2Nb1/2)O3-0.42Pb(Mg1/3Nb2/3)O3-0.30PbTiO3 single crystal. At 25 ℃, 1 Hz, 1.0 kV/mm, the PSA achieved a 1.12 ‰ maximum strain and a 2.0 % hysteresis. According to unidirectional strain curves, the PSA maintained stable hysteresis and piezoelectric properties across different electric field conditions. As the temperature rose, the maximum strain gradually grew, with hysteresis remaining below 5 % up to 115 ℃. Overall, PSAs in this study improve strain accuracy and extend stable operational range, making them suitable for precision applications.
+
+# INTRODUCTION
+Piezoelectric stacked actuators (PSAs) are highly favored in precision engineering , benefiting from their rapid response, noiseless operation, and simple design. However, with advancements in equipment, commercial PSAs face increasing demand for further improvement in output strain magnitude, linearity, and stability. Enhanced strain magnitude allows PSAs to handle complex tasks and offer flexible control. Among these, the most fundamental methodology is adopting internal piezoelectric materials with high-performance, which directly determine the output properties of PSAs. Initially, piezoceramics, especially lead zirconate titanate (PZT), are widely used for cost efficiency. However, commercial PASs based on piezoceramics exhibited limited strain capacity and precision, presenting difficulties for directly high-precision machining. The advent of relaxor-PT single crystals has brought new opportunities for PSA technology. Feng reported a PSA based on Pb (Mg1/3Nb2/3) O3-PbTiO3 (PMNT), achieving a 0.373 % strain and a hysteresis of about 5 % at 2.0 kV/mm. These PSAs offer enhanced strain capacity and accuracy, along with compact designs that facilitate system integration. However, PMNT typically exhibits low coercive fields and phase transition temperatures, resulting in strict environmental requirements. As evolutions, a new generation of relaxor ferroelectric single crystals, Mn-doped Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (Mn: PIMNT), has demonstrated further advancements in piezoelectric properties. Through defect dipole engineering, Mn: PIMNT effectively reduces dielectric loss and improves strain linearity, which is essential to enhance device efficiency, reduce heat accumulation, and extend lifespan. Furthermore, Mn: PIMNT features high coercive fields and phase transition temperatures, ensuring stable operation under large electric fields and across wide temperature ranges. These combined advantages make Mn: PIMNT single crystals appropriate for high-performance device design. Nevertheless, no research has yet utilized Mn: PIMNT as actuating material. In this article, 15-layer PSAs with dimensions of 6 \xd7 6 \xd7 6.7 mmE^{3} were fabricated based on the 1.0 mol% Mn-doped 0.28Pb(In1/2Nb1/2)O3-0.42Pb(Mg1/3Nb2/3)O3-0.30PbTiO3 single crystal. To examine their output strain characteristics, PSAs were tested under various excitation conditions, including electric field frequency, amplitude, and temperature. According to strain test results, PSAs with low hysteresis and strong stability were successfully fulfilled, which meet the requirements of precision manufacturing.
+
+# CONCLUSION
+In this study, 15-layer PSAs (6 \xd76 \xd76.7 mmE^{3}) were fabricated using the 1.0 mol% Mn-doped 0.28Pb(In1/2Nb1/2)O3-0.42Pb(Mg1/3Nb2/3)O3-0.30PbTiO3 single crystal. Further strain stability test results indicate that the unit sheets and PSAs have consistent trends at different electric fields and temperatures. According to the unidirectional strain curves, the PSA achieved a Smax of 1.12 \u2030 and a hysteresis of 2.0 % at 25 \u2103, 1 Hz, 1.0 kV/mm. As the electric field amplitude rose from 1.0\u20131.5 kV/mm, Smax of the PSA increased linearly, with d 33 * and strain hysteresis fluctuating within a narrow range. When the temperature rose, the Smax gradually grew and the hysteresis remained below 5 % up to 115 \u2103. Overall, the fabricated PSAs showed stable operation across a wide range of electric fields and temperatures, suggesting ideal for precision applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-08 16:22:16: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Performance comparison of different piezoelectric materials.
+|Material|Types|d33 (pC/N)|tan \u03b4(%)|Ec (kV/cm)| \u03b533T\u2215\u03b50|T1 (\u2103)|Tm (\u2103)|
+|---|---|---|---|---|---|---|---|
+|PZT [20]|Ceramic|373|2.5|11.04|2196|/|244|
+|PMNT [21]|Single crystal|1881|0.8|2.4|6140|92|130|
+|PIMNT [22]|Single crystal|1624|/|4.97|/|125|171|
+|Mn: PIMNT|Single crystal|1161|0.24|5.14|3603|130|183|
+
+Table 2. Performance comparison of different piezoelectric stack actuators.
+|Materials|Types|Dimension(mmE^{3})|Thickness(\u03bcm)|Smax (\u2030)|Hysteresis(%)|
+|---|---|---|---|---|---|
+|PZT[23]|Ceramic|6\u2009\xd7\u20096\u2009\xd7\u200918|/|1.11@150\u2009V|14.4|
+|PZT[24]|Ceramic|7\u2009\xd7\u20097\u2009\xd7\u200932.5|/|1.38@200\u2009V|/|
+|PZNN-PT[25]|Ceramic|7\u2009\xd7\u20097\u2009\xd7\u200936|80|1.54@150\u2009V|19.8|
+|PMNT[8]|Single crystal|4\u2009\xd7\u20094\u2009\xd7\u20099|300|0.81@200\u2009V|--|
+|PMNT[9]|Single crystal|10\u2009\xd7\u200910\u2009\xd7\u200940|1000|0.75@300\u2009V|\u223c5|
+|Mn: PIMNT|Single crystal|6\u2009\xd7\u20096\u2009\xd7\u20095.7|380|1.12@380\u2009V|2.0|
+
+# RESULTS AND DISCUSSION
+Under small-signal testing, the poled Mn: PIMNT single crystal showed a piezoelectric coefficient d33 of 1161 pC/N, a dielectric constant \u03b5 33 T/ \u03b5 0 of 3606, and a dielectric loss tan \u03b4 of 0.24 %. The temperature dependence of the dielectric properties was subsequently measured, with the first phase transition temperature T1 occurring at 130 \u2103, as shown in (A). Below 130 \u2103, the single crystal exhibited a pure rhombohedral (R) phase , while part of the R phase transitioned into the monoclinic (M) phase between 130 \u2103 and 144 \u2103. When the temperature was over 144 \u2103, thermal activation reduced the stability of the M phase, leading to significant depolarization, which triggered a transition to the tetragonal (T) phase. Finally, the structure fully transformed into a cubic (C) phase at a transition temperature Tm of 183 \u2103. The coercive field Ec was found to be 5.14 kV/cm, determined from its ferroelectric hysteresis loop ( B). Compared with commonly used piezoelectric materials ( ), the Mn: PIMNT crystal in this study exhibited lower tan \u03b4, along with significantly higher T1 and Ec, suggesting a more stable ferroelectric domain structure. (A-B) shows optical microscope images of the side view for the PSA. At 100 X magnification, the images reveal uniform layer thickness throughout the PSA, with strong interfacial bonding and no visible defect, such as cracks or bubbles. At 400 X magnification, the adhesive layer can be clearly observed, with its thickness consistently controlled below 3 \u03bcm. (C-D) displays cross-sectional views of the PSA at 100 X and 400 X magnifications, respectively. At 100 X, the image provides a broad overview and 400 X magnification allows for detailed inspection. To analyze strain stability of unit sheets and PSAs, S-E characteristic curves were obtained respectively. The output strain (S) is defined by , and the effective piezoelectric constant( d 33 *) is determined based on , where \u0394t represents the measured displacement and t denotes the effective longitudinal height of the test subject. E0 corresponds to the applied electric field amplitude and Smax refers to the maximum strain. Additionally, the hysteresis of the output strain is expressed as , where \u0394S max is the maximum displacement difference at half of E0. The electric field stability testing results ( A) reveal a linear increase in Smax of the unit sheet with E0. Under the standard condition, the Smax of 1.15 \u2030 was achieved at E0. The temperature stability testing results ( B) indicate that Smax of the unit sheet increases as temperature rises from 25 \u2103 to 115 \u2103. At 95 \u2103, the maximum strain reached 1.72 \u2030. Within 25\u201395 \u2103 range, the strain curves maintained consistent slopes and overlapped during voltage cycling. However, as the temperature elevated to 105 \u2103, the slope changed during voltage increasing, and the curve deviated during voltage decreasing, suggesting the M phase was excited. At 115 \u2103, a secondary slope change occurred near 0.8 kV/mm, indicating intensified domain switching and phase transitions (R-M-T). Compared with T1\u223c130 \u2103 observed in (A), the phase transition under strain test was triggered earlier, attributed to the higher electric field along < 001 >. The relationship between Smax and d 33 * was used to calculate d 33 * under different conditions ( C). The results indicated that the piezoelectric property of the unit sheet was minimally affected by \u0192 and E0. Under the standard test condition, the calculated d 33 * was 1147 pm/V, closely matching the quasi-static d 33 measurement (d33\u223c1161 pC/N). As temperature increased, the growth rate of d 33 * was initially slow but then accelerated at 95 \u2103. The higher growth rate could be attributed to the introduction of the M phase, which formed a mixture of R+M phases, facilitating domain wall motion and electric dipole polarization. (A) shows the input electric field and the output strain of the PSA as a function of time under the standard condition, demonstrating a linear strain response to the applied electric field. At electric field amplitude, the Smax of 1.12 \u2030 is achieved with a 2.0 % hysteresis rate. Meanwhile, the Smax of the PSA is 97.4 % of the unit sheet, indicating a high-quality bonding process with minimal energy loss at the interface, which is consistent with the microscopy. (B) compares output strains under standard and strong-field conditions, showing an obviously larger Smax at 1.5 kV/mm (1.68 \u2030) than at 1.0 kV/mm (1.12 \u2030). (C) shows that S-E curves of the PSA maintain strong linearity across different \u0192 and E0. In (D), the PSA preserves good strain linearity up to 115 \u2103, and Smax increases gradually as temperature rises. Despite the fact that the hysteresis is low at 115 \u2103, less uniformity of the strain curve is observed as the electric field approaches 1.0 kV/mm. For safety and optimal performance, an additional strain test ( ) was conducted at 115 \u2103, 1 Hz and 0.6 kV/mm. Under the excitation condition, the Smax was 1.32 \u2030 and the hysteresis was calculated to be 3.3 % without any significant increase near the field extremes. In order to guarantee better actuation quality, the working condition at 115 \u2103 is advised to be 0.6 kV/mm with 1 Hz. The calculated d 33 * of the PSA exhibits analogous behavior to the unit sheet, as shown in (A). The consistent trend confirms that the performance of the PSA is primarily determined by the internal piezoelectric unit sheets. The d 33 *of the PSA is 1117 pm/V under the standard test condition, increasing by 38.8 % at 95 \u2103. (B) shows the hysteresis of the PSAs remains within 5 % up to 115 \u2103 and across 1.0\u20131.5 kV/mm, indicating high stability under both temperature and electric field. Taking advantages of the low hysteresis and high stability, PSAs based on Mn: PIMNT significantly outperform conventional PSAs ( ). For PSAs based on PZT or PZNN-PT piezoceramics, obvious hysteresis is exacerbated by the presence of grain boundaries, which slow the response of electric dipoles and lead to pronounced relaxation behavior. Compared with PSAs using PMNT single crystals, the superior linearity of Mn: PIMNT crystal is attributed to internal oxygen vacancies formed by acceptor Mn doping, which hinder irreversible domain wall motion, thereby reducing the contribution of extrinsic factors to piezoelectric response. These combined factors make the fabricated PSAs ideal for applications requiring precision and stability.
+
+# TITLE
+Low hysteresis and strong stability of piezoelectric stack actuators based on the Mn-doped Pb (In<inf>1/2</inf>Nb<inf>1/2</inf>) O<inf>3</inf>-Pb (Mg<inf>1/3</inf>Nb<inf>2/3</inf>) O<inf>3</inf>-PbTiO<inf>3</inf> single crystal
+
+# ABSTRACT
+The output performance of piezoelectric stack actuators (PSAs) is characterized by strain magnitude, hysteresis, and stability. Although commercial PSAs offer advantages such as rapid response and noiseless operation, there remains potential for performance enhancement. In this study, 15-layer PSAs (6 × 6 × 6.7 mm3) were fabricated using the 1.0 mol% Mn-doped 0.28Pb(In1/2Nb1/2)O3-0.42Pb(Mg1/3Nb2/3)O3-0.30PbTiO3 single crystal. At 25 ℃, 1 Hz, 1.0 kV/mm, the PSA achieved a 1.12 ‰ maximum strain and a 2.0 % hysteresis. According to unidirectional strain curves, the PSA maintained stable hysteresis and piezoelectric properties across different electric field conditions. As the temperature rose, the maximum strain gradually grew, with hysteresis remaining below 5 % up to 115 ℃. Overall, PSAs in this study improve strain accuracy and extend stable operational range, making them suitable for precision applications.
+
+# INTRODUCTION
+Piezoelectric stacked actuators (PSAs) are highly favored in precision engineering , benefiting from their rapid response, noiseless operation, and simple design. However, with advancements in equipment, commercial PSAs face increasing demand for further improvement in output strain magnitude, linearity, and stability. Enhanced strain magnitude allows PSAs to handle complex tasks and offer flexible control. Among these, the most fundamental methodology is adopting internal piezoelectric materials with high-performance, which directly determine the output properties of PSAs. Initially, piezoceramics, especially lead zirconate titanate (PZT), are widely used for cost efficiency. However, commercial PASs based on piezoceramics exhibited limited strain capacity and precision, presenting difficulties for directly high-precision machining. The advent of relaxor-PT single crystals has brought new opportunities for PSA technology. Feng reported a PSA based on Pb (Mg1/3Nb2/3) O3-PbTiO3 (PMNT), achieving a 0.373 % strain and a hysteresis of about 5 % at 2.0 kV/mm. These PSAs offer enhanced strain capacity and accuracy, along with compact designs that facilitate system integration. However, PMNT typically exhibits low coercive fields and phase transition temperatures, resulting in strict environmental requirements. As evolutions, a new generation of relaxor ferroelectric single crystals, Mn-doped Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (Mn: PIMNT), has demonstrated further advancements in piezoelectric properties. Through defect dipole engineering, Mn: PIMNT effectively reduces dielectric loss and improves strain linearity, which is essential to enhance device efficiency, reduce heat accumulation, and extend lifespan. Furthermore, Mn: PIMNT features high coercive fields and phase transition temperatures, ensuring stable operation under large electric fields and across wide temperature ranges. These combined advantages make Mn: PIMNT single crystals appropriate for high-performance device design. Nevertheless, no research has yet utilized Mn: PIMNT as actuating material. In this article, 15-layer PSAs with dimensions of 6 \xd7 6 \xd7 6.7 mmE^{3} were fabricated based on the 1.0 mol% Mn-doped 0.28Pb(In1/2Nb1/2)O3-0.42Pb(Mg1/3Nb2/3)O3-0.30PbTiO3 single crystal. To examine their output strain characteristics, PSAs were tested under various excitation conditions, including electric field frequency, amplitude, and temperature. According to strain test results, PSAs with low hysteresis and strong stability were successfully fulfilled, which meet the requirements of precision manufacturing.
+
+# CONCLUSION
+In this study, 15-layer PSAs (6 \xd76 \xd76.7 mmE^{3}) were fabricated using the 1.0 mol% Mn-doped 0.28Pb(In1/2Nb1/2)O3-0.42Pb(Mg1/3Nb2/3)O3-0.30PbTiO3 single crystal. Further strain stability test results indicate that the unit sheets and PSAs have consistent trends at different electric fields and temperatures. According to the unidirectional strain curves, the PSA achieved a Smax of 1.12 \u2030 and a hysteresis of 2.0 % at 25 \u2103, 1 Hz, 1.0 kV/mm. As the electric field amplitude rose from 1.0\u20131.5 kV/mm, Smax of the PSA increased linearly, with d 33 * and strain hysteresis fluctuating within a narrow range. When the temperature rose, the Smax gradually grew and the hysteresis remained below 5 % up to 115 \u2103. Overall, the fabricated PSAs showed stable operation across a wide range of electric fields and temperatures, suggesting ideal for precision applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Mn: PIMNT": 1161,
+      "0.28Pb(In1/2Nb1/2)O3-0.42Pb(Mg1/3Nb2/3)O3-0.30PbTiO3": 1117
+    },
+    "abbreviations": {
+      "Mn: PIMNT": "Mn-doped Pb (In1/2Nb1/2) O3 - Pb (Mg1/3Nb2/3) O3 - PbTiO3"
+    },
+    "property_unit": "pC/N",
+    "family": "Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3"
+  }
+}"

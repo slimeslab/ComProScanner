@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.85(Bi0.5Na0.5)TiO3-0.15BaTiO3 + 0.1wt%MnO2":118},"property_unit":"pC/N","family":"BNT-BT"}}

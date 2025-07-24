@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"CaBi4Ti4O15":7.5,"CBTNM-0":7.2,"CBTNM-4":21.4,"CBTNM-8":24.8,"CBTNM-12":26.8,"CBTNM-20":24.7,"CaBi2Nb2O9":null,"Bi4Ti3O12":null},"property_unit":"pC/N","family":"BLSFs"}}

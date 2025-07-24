@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Phe-Leu - Vertical":71,"Phe-Leu - Lateral":-73,"Leu-Phe - Vertical":87,"Leu-Phe - Lateral":-19},"property_unit":"pm/V","family":"Dipeptides"}}

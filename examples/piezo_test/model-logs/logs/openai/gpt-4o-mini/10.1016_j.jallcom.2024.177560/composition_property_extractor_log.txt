@@ -1,0 +1,213 @@
+2025-07-09 12:39:19: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Structural parameters of PT\u2013PZ\u2013BLZT\u2013xLN ceramics after Rietveld refinement.
+|Samples| a (\xc5)| c (\xc5)|Cell volume (\xc5E^{3})| R wp| R p| \u03c7 E^{ }|
+|---|---|---|---|---|---|---|
+|x = 0|5.8159|14.3043|417.580|5.9\u2009%|4.3\u2009%|2.56|
+|x = 3|5.8129|14.2801|413.884|5.5\u2009%|4.1\u2009%|2.23|
+|x = 4|5.7903|14.2060|412.491|5.2\u2009%|3.9\u2009%|2.21|
+|x = 5|5.7875|14.1797|411.329|5.5\u2009%|4.1\u2009%|2.27|
+|x = 6|5.7845|14.1667|410.519|5.8\u2009%|4.2\u2009%|2.41|
+|x = 7|5.7840|14.1647|410.411|5.2\u2009%|3.9\u2009%|2.21|
+
+Table 2. Performance comparison of piezoelectric ceramics.
+|Materials| E (kV/cm)|Strain|Hysteresis| d 33 (pC/N)|Refs.|
+|---|---|---|---|---|---|
+|PNN\u2013PZT\u2013Sn|50|0.06\u2009%|28\u2009%|1123|[58]|
+|PNN\u2013PZT\u2013Ta|15|0.12\u2009%|25\u2009%|1090|[59]|
+|BZT\u2013PZ\u2013PT|40|0.13\u2009%|40\u2009%|341|[21]|
+|PHT\u2013PIN\u2013Li/W|30|0.15\u2009%|30\u2009%|655|[28]|
+|BS\u2013PT\u2013Mn|40|0.18\u2009%|32\u2009%|-|[60]|
+|BS\u2013PT-PMN\u2013Fe|40|0.23\u2009%|36\u2009%|160|[61]|
+|BS\u2013PT|40|0.25\u2009%|50\u2009%|-|[60]|
+|BMT\u2013PMN\u2013PT|60|0.29\u2009%|18\u2009%|120|[60]|
+|PT\u2013PZ\u2013BNT|50|0.40\u2009%|38\u2009%|200|[62]|
+|Textured PMN\u221224\u2009%PT|30|0.10\u2009%|0\u2009%|-|[63]|
+|PT\u2013PZ\u2013BLZT\u20135LN|50|0.45\u2009%|16\u2009%|585|This work|
+
+# RESULTS AND DISCUSSION
+(a) shows the XRD patterns of PT\u2013PZ\u2013BLZT\u2013xLN (x = 0, 3, 4, 5, 6, 7) ceramic materials. Upon examination at a 2\u03b8 angle of 44\xb0, the absence of a split in the (200) peak indicates the existence of a rhombohedral (R) phase. A magnification of the (002) diffraction peak, as depicted in (b), reveals that the peak shifts towards a higher angle with an increase in the dopant concentration. This is owing to the different ionic radius of PbE^{2+} (r = 1.19 \xc5) and LaE^{3+} (r = 1.16 \xc5) at the A-site, as well as between ZrE^{4+} (r = 0.72 \xc5), TiE^{4+} (r = 0.61 \xc5), and NbE^{5+} (r = 0.64 \xc5) at the B-site. As a result, cation vacancies are formed within the PT\u2013PZ\u2013BLZT\u2013xLN ceramics to sustain electrical neutrality. To further investigate the factors influencing strain, the samples were analyzed by Rietveld refinement analysis using GSAS-II software to analyze the phase composition in detail. (d-i) displays the XRD profiles for the PT\u2013PZ\u2013BLZT\u2013xLN ceramics (x = 0, 5, 7) after whole pattern fitting. The t value is calculated by , which can be explained by the general formula ABO3. where RA, RB, and RO represent the ionic radii of PbE^{2+} and LaE^{3+}, the ionic radius of NbE^{5+}, TiE^{4+}, and ZrE^{4+}, and the radius of OE^{2-}, respectively. According to is evident that the substitution of LaE^{3+} (with an ionic radius of 1.16 \xc5) for PbE^{2+} (with an ionic radius of 1.19 \xc5) results in a decrease in the molecular dimensions as described in , consequently leading to a reduction in the t value. The Gaussian and Lorentz fitting methods were applied to the Raman spectral data of PT\u2013PZ\u2013BLZT\u2013xLN by using the Peakfit software, as shown in (a). The Raman mode below 200 cmE^{\u22121} is related to the vibrational motion occurring at the A-site within the perovskite crystal lattice. The peak at 125 cmE^{\u22121} undergoes a red shift as x increases. This phenomenon may be attributed to the cationic migration along the crystallographic axis, which could be linked to the displacement of LaE^{3+} ions at the non-centrosymmetric A-site. The vibrational behavior of the B\u2212O bonds and the [BO6] octahedra are manifested in the Raman modes within the wavenumber ranges of 200 cmE^{\u22121} to 400 cmE^{\u22121} and 400 cmE^{\u22121} to 700 cmE^{\u22121}, respectively. The distortions of these B\u2212O bonds and [BO6] octahedra are closely associated with the dynamical properties of the polar nanoregions (PNRs) within the perovskite framework, which reflects the relaxation contributions from the B-site. As illustrated in (c), the increment in the doping concentration of x results in a gradual decrease in the B\u2212O bond length. The bond strength of the B\u2212O bond is quantified through the. where R denotes the refined bond length of the B\u2212O bond, R 1 = 1.907, and N = 5 represent the standard bond length and bond length parameters, respectively. The computational results indicate an enhancement in the bond strength between the B\u2212O bonds, suggesting that the contraction of the [BO6] octahedra and the shortening of the B\u2212O bond are the result of the incorporation of NbE^{5+} at the B-site. Consequently, this led to a strengthening of the B\u2212O bond. This strengthening induces a blue shift within the 200\u2013400 cmE^{\u22121} range. The enhanced bond strength of the B\u2212O bonds contributes to the stabilization of the relaxation state and the non-polar state within the system. (a-f) displays the SEM images of the ceramics sintered at 1230 \u2103. Measuring the average grain size (AGS) of these samples using the line intercept method using nanoscale measurement software allows for an in-depth study of the effect of grain size on piezoelectric properties. The AGS values are 10.63 \u03bcm, 1.63 \u03bcm, 2.00 \u03bcm, 2.38 \u03bcm, 2.50 \u03bcm, and 2.71 \u03bcm when the doping levels of x reach 0, 3, 4, 5, 6, and 7, respectively. This effect may be attributed to NbE^{5+} providing excess electrons when it substitutes for TiE^{4+}, which reduces the concentration of oxygen vacancy and inhibits mass transfer during sintering, resulting in a decrease in grain size. The reduction of the 90\xb0 domain within is facilitated by the small grain size. Consequently, the activity of these 90\xb0 domains increases. This phenomenon is reflected as an enhancement in the piezoelectric coefficient and an improvement in the material\u2019s piezoelectric properties. depicts the Energy-Dispersive Spectroscopy (EDS) spectrum of the sample at x = 5. Nb has a higher electronegativity (1.6) than Ti (1.54) and Zr (1.33), hence, the B\u2212O bond in [BO6] octahedron may be shortened by the strong interaction between Nb and O. When the size of microdomains decreases to nanoscale, PNRs can be found. To directly observe the effect of LaE^{3+} and NbE^{5+} co-doping on domain size, PFM is utilized to study the domains in ceramic samples at x = 0 and x = 5, with the results shown in. In the domain at x = 0, the structure is characterized by the presence of small, uniformly distributed parallel fringe domains. Conversely, the piezoelectric ceramic at x = 5 displays a complex, labyrinthine surface domain pattern with domains oriented randomly. The labyrinthine domain structure with reduced dimensions is instrumental in conferring the superior piezoelectric properties observed in PT\u2013PZ\u2013BLZT\u2013xLN piezoelectric ceramics, as further detailed in Ref.. (a) depicts the dielectric properties of the PT\u2013PZ\u2013BLZT\u2013xLN ceramic samples. The results indicate that there is a steady decline in the relative dielectric constant, designated as \u03b5 r, of the samples. is used to further analyze how the co-doping of LaE^{3+} and NbE^{5+} affects the relaxor behavior of ceramics. In the equation, \u03b5 max is the maximum relative permittivity, \u03b3 represents the dispersion factor, the dispersion factor is denoted by C, which is a constant, and T max is the temperature that the piezoelectric ceramics exhibit the maximum relative permittivity. For a normal ferroelectric, the \u03b3 value ranging from 1 to 2 determines the degree of ferroelectric relaxation, The larger the \u03b3, the stronger the relaxation ferroelectric behavior. When the doping amount increases to x = 5, the \u03b3 value increases from 1.30 to 1.82, which indicates a substantial enhancement in the relaxor properties of the PT\u2013PZ\u2013BLZT\u2013xLN piezoelectric ceramics. The doping of LaE^{3+} and NbE^{5+} may have disrupted the original electrical domains, leading to the emergence of microdomains. Additionally, the introduction of LaE^{3+} and NbE^{5+} may strengthen the disorder of cations, forming smaller PNRs. It has been reported that when LaE^{3+} enters the lattice, the introduction of LaE^{3+} replaces PbE^{2+} at the A-site and creates vacancies, as shown in :  The defect chemistry resulting from the doping of high-valent dopants at the A-site significantly impacts the relaxation properties of piezoelectric ceramics. The T c, \u03b5 r, and tan\u03b4 values of the PT\u2013PZ\u2013BLZT\u2013xLN ceramics are shown in (c). As the doping amount of LaE^{3+} and NbE^{5+} ions increase, both the Curie temperature and the relative permittivity reduce. It is noteworthy that the minimum dielectric loss is achieved when x = 5. As seen in (d-i), the observed samples demonstrate typical relaxor ferroelectric characteristics, meaning that the change in the \u03b5 r near the dielectric maximum value T m shows a broad curve. This is because co-doping with LaE^{3+} and NbE^{5+} ions likely alters the balance of energy states within the material, consequently affecting the characteristics. Additionally, the coercive field (E c) is reduced from 8.85 kV\xb7cmE^{\u22121} to 4.86 kV\xb7cmE^{\u22121}, and the remanent polarization (P r) decreases from 26 \u03bcC/cm\xb2 to 6 \u03bcC/cm\xb2. The maximum polarization (P max) also decreases from 35.06 \u03bcC/cm\xb2 to 30 \u03bcC/cm\xb2. At x = 5, the current peak splits into two distinct peaks, as depicted in (d). Moreover, non-equivalent substitutions, such as PbE^{2+} vacancies, can result in charge enrichment and the formation of defective dipoles, as described in Refs.. These defective dipoles can drive the formation of a charged polarized topological center, influencing the polarization reversal behavior of the material and leading to the emergence of peak splitting. (a-f) displays the strain of the PT\u2013PZ\u2013BLZT\u2013xLN (x = 3, 5, 7) piezoelectric ceramics. It can be observed that the unipolar strain increases from 0.3 % to 0.45 % after the co-doping of LaE^{3+} and NbE^{5+} ions. presents a comparative analysis of the performance of piezoelectric ceramics as reported in different studies, where the rest of the properties can be found in. The piezoelectric ceramics synthesized in this study demonstrate great piezoelectric properties, including strain, strain hysteresis, and the d 33 piezoelectric coefficient.
+
+# TITLE
+A-site and B-site cation doping engineering: A strategy to enhance strain in Pb(Zr, Ti)O<inf>3</inf>-based ceramics
+
+# ABSTRACT
+Pb(Zr, Ti)O3 piezoelectric ceramics with high strain and low hysteresis are essential for ultra-precision driving and positioning in advanced manufacturing and control fields. In this study, the doping engineering via dual cations was utilized to improve the strain characteristics of Pb(Zr, Ti)O3-based ceramics, and thus the ceramics 0.3PbTiO3–0.65PbZrO3–0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3–x wt% (La2O3+Nb2O5) were probed. Results show that excellent comprehensive performance is fulfilled for the ceramic with x = 5, i.e., a high strain S = 0.45 %, low strain hysteresis Hy =16 %, and high piezoelectric coefficient d
+                     33 = 585 pC/N. This study demonstrates a productive cation co-doping engineering to enhance the electrostrictive strain in Pb(Zr, Ti)O3-based ceramics, which enables the ceramics to have good features applied in piezoelectric actuators.
+
+# INTRODUCTION
+PbTiO3\u2013PbZrO3 (PT\u2013PZ) piezoelectric ceramic is one of the most promising candidates for micro-displacement systems in precision instruments for its excellent comprehensive performances. However, the low strain (0.1\u20130.2 %) of commercial piezoelectric materials cannot be applied to the high-precision fields. Currently, there are four common strategies to enhance the strain, including creating morphotropic phase boundaries (MPB), enhancing relaxor properties, establishing local structural heterogeneity, and constructing defect dipoles by ionic doping. The addition of LaE^{3+} ions in perovskite piezoelectric ceramics has been demonstrated to have a substantial impact on the piezoelectric strain characteristics. For instance, Zhang et al. obtained a 0.23 % strain by incorporating LaE^{3+} ions into PIN\u2013PZ\u2013PT ceramics. In Tai\u2019s study , BiFeO3\u2013BaTiO3 ceramics were synthesized with LaE^{3+} ion doping. The research revealed that the incorporation of LaE^{3+} ions led to an increase in the amounts of domains and facilitated greater displacements of BiE^{3+} ions, resulting in enhanced displacement generation. Yang et al. reveal that the introduction of NbE^{5+} ions in piezoelectric ceramics mitigates leakage current while simultaneously enhancing the piezoelectric performance. The illustration in demonstrates that the co-doping of LaE^{3+} and NbE^{5+} ions induces notable lattice distortion. The domain wall moves rapidly under the influence of this distortion and reduces the correlated length of the polar coupling, ultimately leading to a finer S-E (strain-electric field) curve. (b) explains the relationship between the high-voltage electrical strain and the microscopic domain structure, showing the schematic diagram of the evolution of long-range ferroelectric domains ((b), (b1-b3)), PNRs with intermediate ferroelectric order are ((b), b4-b6)), and PNRs ((b), (b7-b9)) for the samples before, during, and after the applied of electric fields, respectively. In addition, the presence of LaE^{3+} and NbE^{5+} ions results in a substantial reduction in grain size. The addition of Bi(Zn0.5Ti0.5)O3 (BZT) may effectively reduce the strain hysteresis in lead-based piezoelectric ceramics, making them suitable for high-precision drives. Moreover, the substitution of the A-site ions in BZT with LaE^{3+} ions can improve the ferroelectric and piezoelectric properties. In our previous study, the 0.3PT\u20130.65PZ\u20130.05BLZT system exhibited a good piezoelectric response. Therefore, the LaE^{3+} and NbE^{5+} ionic co-doping method was used to explore the effects on the electrical characteristics of 0.3PT\u20130.65PZ\u20130.05BLZT ceramics.
+
+# CONCLUSION
+This study conducted a detailed investigation on the influences of LaE^{3+} and NbE^{5+} ions co-doping on the relationship between the structure and properties of PT\u2013PZ\u2013BLZT piezoelectric ceramics. The results indicate that the co-doping of LaE^{3+} and NbE^{5+} ions has induced significant lattice distortion that is reflected by the variations of structural parameters. The co-doping of LaE^{3+} and NbE^{5+} ions decreases the average grain size, which may result in a decrease in domain size. Through the PFM analysis, the co-doping strategy shortens the B\u2013O bond length and then forms the microdomains. Meanwhile, the LaE^{3+} ion can substitute for the Pb site and form PbE^{2+} vacancies, which also results in the relaxor characteristics and improves the d 33 value (585 pC/N). Benefitting from the formation of microdomains, the LaE^{3+} and NbE^{5+} ionic co-doped PT\u2013PZ\u2013BLZT-based ceramics achieve a high strain (0.45 %) and low hysteresis (16 %).
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-09 12:39:22: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Structural parameters of PT\u2013PZ\u2013BLZT\u2013xLN ceramics after Rietveld refinement.
+|Samples| a (\xc5)| c (\xc5)|Cell volume (\xc5E^{3})| R wp| R p| \u03c7 E^{ }|
+|---|---|---|---|---|---|---|
+|x = 0|5.8159|14.3043|417.580|5.9\u2009%|4.3\u2009%|2.56|
+|x = 3|5.8129|14.2801|413.884|5.5\u2009%|4.1\u2009%|2.23|
+|x = 4|5.7903|14.2060|412.491|5.2\u2009%|3.9\u2009%|2.21|
+|x = 5|5.7875|14.1797|411.329|5.5\u2009%|4.1\u2009%|2.27|
+|x = 6|5.7845|14.1667|410.519|5.8\u2009%|4.2\u2009%|2.41|
+|x = 7|5.7840|14.1647|410.411|5.2\u2009%|3.9\u2009%|2.21|
+
+Table 2. Performance comparison of piezoelectric ceramics.
+|Materials| E (kV/cm)|Strain|Hysteresis| d 33 (pC/N)|Refs.|
+|---|---|---|---|---|---|
+|PNN\u2013PZT\u2013Sn|50|0.06\u2009%|28\u2009%|1123|[58]|
+|PNN\u2013PZT\u2013Ta|15|0.12\u2009%|25\u2009%|1090|[59]|
+|BZT\u2013PZ\u2013PT|40|0.13\u2009%|40\u2009%|341|[21]|
+|PHT\u2013PIN\u2013Li/W|30|0.15\u2009%|30\u2009%|655|[28]|
+|BS\u2013PT\u2013Mn|40|0.18\u2009%|32\u2009%|-|[60]|
+|BS\u2013PT-PMN\u2013Fe|40|0.23\u2009%|36\u2009%|160|[61]|
+|BS\u2013PT|40|0.25\u2009%|50\u2009%|-|[60]|
+|BMT\u2013PMN\u2013PT|60|0.29\u2009%|18\u2009%|120|[60]|
+|PT\u2013PZ\u2013BNT|50|0.40\u2009%|38\u2009%|200|[62]|
+|Textured PMN\u221224\u2009%PT|30|0.10\u2009%|0\u2009%|-|[63]|
+|PT\u2013PZ\u2013BLZT\u20135LN|50|0.45\u2009%|16\u2009%|585|This work|
+
+# RESULTS AND DISCUSSION
+(a) shows the XRD patterns of PT\u2013PZ\u2013BLZT\u2013xLN (x = 0, 3, 4, 5, 6, 7) ceramic materials. Upon examination at a 2\u03b8 angle of 44\xb0, the absence of a split in the (200) peak indicates the existence of a rhombohedral (R) phase. A magnification of the (002) diffraction peak, as depicted in (b), reveals that the peak shifts towards a higher angle with an increase in the dopant concentration. This is owing to the different ionic radius of PbE^{2+} (r = 1.19 \xc5) and LaE^{3+} (r = 1.16 \xc5) at the A-site, as well as between ZrE^{4+} (r = 0.72 \xc5), TiE^{4+} (r = 0.61 \xc5), and NbE^{5+} (r = 0.64 \xc5) at the B-site. As a result, cation vacancies are formed within the PT\u2013PZ\u2013BLZT\u2013xLN ceramics to sustain electrical neutrality. To further investigate the factors influencing strain, the samples were analyzed by Rietveld refinement analysis using GSAS-II software to analyze the phase composition in detail. (d-i) displays the XRD profiles for the PT\u2013PZ\u2013BLZT\u2013xLN ceramics (x = 0, 5, 7) after whole pattern fitting. The t value is calculated by , which can be explained by the general formula ABO3. where RA, RB, and RO represent the ionic radii of PbE^{2+} and LaE^{3+}, the ionic radius of NbE^{5+}, TiE^{4+}, and ZrE^{4+}, and the radius of OE^{2-}, respectively. According to is evident that the substitution of LaE^{3+} (with an ionic radius of 1.16 \xc5) for PbE^{2+} (with an ionic radius of 1.19 \xc5) results in a decrease in the molecular dimensions as described in , consequently leading to a reduction in the t value. The Gaussian and Lorentz fitting methods were applied to the Raman spectral data of PT\u2013PZ\u2013BLZT\u2013xLN by using the Peakfit software, as shown in (a). The Raman mode below 200 cmE^{\u22121} is related to the vibrational motion occurring at the A-site within the perovskite crystal lattice. The peak at 125 cmE^{\u22121} undergoes a red shift as x increases. This phenomenon may be attributed to the cationic migration along the crystallographic axis, which could be linked to the displacement of LaE^{3+} ions at the non-centrosymmetric A-site. The vibrational behavior of the B\u2212O bonds and the [BO6] octahedra are manifested in the Raman modes within the wavenumber ranges of 200 cmE^{\u22121} to 400 cmE^{\u22121} and 400 cmE^{\u22121} to 700 cmE^{\u22121}, respectively. The distortions of these B\u2212O bonds and [BO6] octahedra are closely associated with the dynamical properties of the polar nanoregions (PNRs) within the perovskite framework, which reflects the relaxation contributions from the B-site. As illustrated in (c), the increment in the doping concentration of x results in a gradual decrease in the B\u2212O bond length. The bond strength of the B\u2212O bond is quantified through the. where R denotes the refined bond length of the B\u2212O bond, R 1 = 1.907, and N = 5 represent the standard bond length and bond length parameters, respectively. The computational results indicate an enhancement in the bond strength between the B\u2212O bonds, suggesting that the contraction of the [BO6] octahedra and the shortening of the B\u2212O bond are the result of the incorporation of NbE^{5+} at the B-site. Consequently, this led to a strengthening of the B\u2212O bond. This strengthening induces a blue shift within the 200\u2013400 cmE^{\u22121} range. The enhanced bond strength of the B\u2212O bonds contributes to the stabilization of the relaxation state and the non-polar state within the system. (a-f) displays the SEM images of the ceramics sintered at 1230 \u2103. Measuring the average grain size (AGS) of these samples using the line intercept method using nanoscale measurement software allows for an in-depth study of the effect of grain size on piezoelectric properties. The AGS values are 10.63 \u03bcm, 1.63 \u03bcm, 2.00 \u03bcm, 2.38 \u03bcm, 2.50 \u03bcm, and 2.71 \u03bcm when the doping levels of x reach 0, 3, 4, 5, 6, and 7, respectively. This effect may be attributed to NbE^{5+} providing excess electrons when it substitutes for TiE^{4+}, which reduces the concentration of oxygen vacancy and inhibits mass transfer during sintering, resulting in a decrease in grain size. The reduction of the 90\xb0 domain within is facilitated by the small grain size. Consequently, the activity of these 90\xb0 domains increases. This phenomenon is reflected as an enhancement in the piezoelectric coefficient and an improvement in the material\u2019s piezoelectric properties. depicts the Energy-Dispersive Spectroscopy (EDS) spectrum of the sample at x = 5. Nb has a higher electronegativity (1.6) than Ti (1.54) and Zr (1.33), hence, the B\u2212O bond in [BO6] octahedron may be shortened by the strong interaction between Nb and O. When the size of microdomains decreases to nanoscale, PNRs can be found. To directly observe the effect of LaE^{3+} and NbE^{5+} co-doping on domain size, PFM is utilized to study the domains in ceramic samples at x = 0 and x = 5, with the results shown in. In the domain at x = 0, the structure is characterized by the presence of small, uniformly distributed parallel fringe domains. Conversely, the piezoelectric ceramic at x = 5 displays a complex, labyrinthine surface domain pattern with domains oriented randomly. The labyrinthine domain structure with reduced dimensions is instrumental in conferring the superior piezoelectric properties observed in PT\u2013PZ\u2013BLZT\u2013xLN piezoelectric ceramics, as further detailed in Ref.. (a) depicts the dielectric properties of the PT\u2013PZ\u2013BLZT\u2013xLN ceramic samples. The results indicate that there is a steady decline in the relative dielectric constant, designated as \u03b5 r, of the samples. is used to further analyze how the co-doping of LaE^{3+} and NbE^{5+} affects the relaxor behavior of ceramics. In the equation, \u03b5 max is the maximum relative permittivity, \u03b3 represents the dispersion factor, the dispersion factor is denoted by C, which is a constant, and T max is the temperature that the piezoelectric ceramics exhibit the maximum relative permittivity. For a normal ferroelectric, the \u03b3 value ranging from 1 to 2 determines the degree of ferroelectric relaxation, The larger the \u03b3, the stronger the relaxation ferroelectric behavior. When the doping amount increases to x = 5, the \u03b3 value increases from 1.30 to 1.82, which indicates a substantial enhancement in the relaxor properties of the PT\u2013PZ\u2013BLZT\u2013xLN piezoelectric ceramics. The doping of LaE^{3+} and NbE^{5+} may have disrupted the original electrical domains, leading to the emergence of microdomains. Additionally, the introduction of LaE^{3+} and NbE^{5+} may strengthen the disorder of cations, forming smaller PNRs. It has been reported that when LaE^{3+} enters the lattice, the introduction of LaE^{3+} replaces PbE^{2+} at the A-site and creates vacancies, as shown in :  The defect chemistry resulting from the doping of high-valent dopants at the A-site significantly impacts the relaxation properties of piezoelectric ceramics. The T c, \u03b5 r, and tan\u03b4 values of the PT\u2013PZ\u2013BLZT\u2013xLN ceramics are shown in (c). As the doping amount of LaE^{3+} and NbE^{5+} ions increase, both the Curie temperature and the relative permittivity reduce. It is noteworthy that the minimum dielectric loss is achieved when x = 5. As seen in (d-i), the observed samples demonstrate typical relaxor ferroelectric characteristics, meaning that the change in the \u03b5 r near the dielectric maximum value T m shows a broad curve. This is because co-doping with LaE^{3+} and NbE^{5+} ions likely alters the balance of energy states within the material, consequently affecting the characteristics. Additionally, the coercive field (E c) is reduced from 8.85 kV\xb7cmE^{\u22121} to 4.86 kV\xb7cmE^{\u22121}, and the remanent polarization (P r) decreases from 26 \u03bcC/cm\xb2 to 6 \u03bcC/cm\xb2. The maximum polarization (P max) also decreases from 35.06 \u03bcC/cm\xb2 to 30 \u03bcC/cm\xb2. At x = 5, the current peak splits into two distinct peaks, as depicted in (d). Moreover, non-equivalent substitutions, such as PbE^{2+} vacancies, can result in charge enrichment and the formation of defective dipoles, as described in Refs.. These defective dipoles can drive the formation of a charged polarized topological center, influencing the polarization reversal behavior of the material and leading to the emergence of peak splitting. (a-f) displays the strain of the PT\u2013PZ\u2013BLZT\u2013xLN (x = 3, 5, 7) piezoelectric ceramics. It can be observed that the unipolar strain increases from 0.3 % to 0.45 % after the co-doping of LaE^{3+} and NbE^{5+} ions. presents a comparative analysis of the performance of piezoelectric ceramics as reported in different studies, where the rest of the properties can be found in. The piezoelectric ceramics synthesized in this study demonstrate great piezoelectric properties, including strain, strain hysteresis, and the d 33 piezoelectric coefficient.
+
+# TITLE
+A-site and B-site cation doping engineering: A strategy to enhance strain in Pb(Zr, Ti)O<inf>3</inf>-based ceramics
+
+# ABSTRACT
+Pb(Zr, Ti)O3 piezoelectric ceramics with high strain and low hysteresis are essential for ultra-precision driving and positioning in advanced manufacturing and control fields. In this study, the doping engineering via dual cations was utilized to improve the strain characteristics of Pb(Zr, Ti)O3-based ceramics, and thus the ceramics 0.3PbTiO3–0.65PbZrO3–0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3–x wt% (La2O3+Nb2O5) were probed. Results show that excellent comprehensive performance is fulfilled for the ceramic with x = 5, i.e., a high strain S = 0.45 %, low strain hysteresis Hy =16 %, and high piezoelectric coefficient d
+                     33 = 585 pC/N. This study demonstrates a productive cation co-doping engineering to enhance the electrostrictive strain in Pb(Zr, Ti)O3-based ceramics, which enables the ceramics to have good features applied in piezoelectric actuators.
+
+# INTRODUCTION
+PbTiO3\u2013PbZrO3 (PT\u2013PZ) piezoelectric ceramic is one of the most promising candidates for micro-displacement systems in precision instruments for its excellent comprehensive performances. However, the low strain (0.1\u20130.2 %) of commercial piezoelectric materials cannot be applied to the high-precision fields. Currently, there are four common strategies to enhance the strain, including creating morphotropic phase boundaries (MPB), enhancing relaxor properties, establishing local structural heterogeneity, and constructing defect dipoles by ionic doping. The addition of LaE^{3+} ions in perovskite piezoelectric ceramics has been demonstrated to have a substantial impact on the piezoelectric strain characteristics. For instance, Zhang et al. obtained a 0.23 % strain by incorporating LaE^{3+} ions into PIN\u2013PZ\u2013PT ceramics. In Tai\u2019s study , BiFeO3\u2013BaTiO3 ceramics were synthesized with LaE^{3+} ion doping. The research revealed that the incorporation of LaE^{3+} ions led to an increase in the amounts of domains and facilitated greater displacements of BiE^{3+} ions, resulting in enhanced displacement generation. Yang et al. reveal that the introduction of NbE^{5+} ions in piezoelectric ceramics mitigates leakage current while simultaneously enhancing the piezoelectric performance. The illustration in demonstrates that the co-doping of LaE^{3+} and NbE^{5+} ions induces notable lattice distortion. The domain wall moves rapidly under the influence of this distortion and reduces the correlated length of the polar coupling, ultimately leading to a finer S-E (strain-electric field) curve. (b) explains the relationship between the high-voltage electrical strain and the microscopic domain structure, showing the schematic diagram of the evolution of long-range ferroelectric domains ((b), (b1-b3)), PNRs with intermediate ferroelectric order are ((b), b4-b6)), and PNRs ((b), (b7-b9)) for the samples before, during, and after the applied of electric fields, respectively. In addition, the presence of LaE^{3+} and NbE^{5+} ions results in a substantial reduction in grain size. The addition of Bi(Zn0.5Ti0.5)O3 (BZT) may effectively reduce the strain hysteresis in lead-based piezoelectric ceramics, making them suitable for high-precision drives. Moreover, the substitution of the A-site ions in BZT with LaE^{3+} ions can improve the ferroelectric and piezoelectric properties. In our previous study, the 0.3PT\u20130.65PZ\u20130.05BLZT system exhibited a good piezoelectric response. Therefore, the LaE^{3+} and NbE^{5+} ionic co-doping method was used to explore the effects on the electrical characteristics of 0.3PT\u20130.65PZ\u20130.05BLZT ceramics.
+
+# CONCLUSION
+This study conducted a detailed investigation on the influences of LaE^{3+} and NbE^{5+} ions co-doping on the relationship between the structure and properties of PT\u2013PZ\u2013BLZT piezoelectric ceramics. The results indicate that the co-doping of LaE^{3+} and NbE^{5+} ions has induced significant lattice distortion that is reflected by the variations of structural parameters. The co-doping of LaE^{3+} and NbE^{5+} ions decreases the average grain size, which may result in a decrease in domain size. Through the PFM analysis, the co-doping strategy shortens the B\u2013O bond length and then forms the microdomains. Meanwhile, the LaE^{3+} ion can substitute for the Pb site and form PbE^{2+} vacancies, which also results in the relaxor characteristics and improves the d 33 value (585 pC/N). Benefitting from the formation of microdomains, the LaE^{3+} and NbE^{5+} ionic co-doped PT\u2013PZ\u2013BLZT-based ceramics achieve a high strain (0.45 %) and low hysteresis (16 %).
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "0.3PbTiO3–0.65PbZrO3–0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3 + (La2O3+Nb2O5) where x=5": 585
+    },
+    "abbreviations": {},
+    "property_unit": "pC/N",
+    "family": "Pb(Zr, Ti)O3"
+  }
+}"

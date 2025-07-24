@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Mg":1.0,"PEO":1.0,"PEO-BTO2":1.9,"PEO-BTO5":2.5},"abbreviations":{"PEO":"Plasma Electrolytic Oxidation","MLCC":"multilayer capacitors","ROS":"reactive oxygen species","DPBF":"1, 3-diphenyl isobenzofuran","HTA":"2-hydroxyterephthalic acid","TA":"terephthalic acid"},"property_unit":"pC/N","family":"BaTiO3"}}

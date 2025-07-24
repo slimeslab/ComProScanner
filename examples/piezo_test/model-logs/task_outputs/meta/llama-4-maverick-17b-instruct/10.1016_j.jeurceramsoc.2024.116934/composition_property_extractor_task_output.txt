@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"(Ba0.85Ca0.15)(Zr0.1Ti0.9)O3":450,"(Ba0.85Ca0.15)(Zr0.1Ti0.9)O3 with lamellar structure":513},"abbreviations":{"BCZT":"(Ba0.85Ca0.15)(Zr0.1Ti0.9)O3"},"property_unit":"pC/N","family":"BaTiO3"}}

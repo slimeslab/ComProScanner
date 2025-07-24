@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"In2Se3@SnSe-3":13.8,"In2Se3":0,"SnSe":0},"property_unit":"pm/V","family":"In2Se3@SnSe"}}

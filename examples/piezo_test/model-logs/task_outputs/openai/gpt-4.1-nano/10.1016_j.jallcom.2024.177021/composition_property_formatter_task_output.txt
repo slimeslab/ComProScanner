@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(Bi3Ti(1-0.00)Nb(0.00)W0.5O9)":7.5,"(Bi3Ti(1-0.01)Nb(0.01)W0.5O9)":8.0,"(Bi3Ti(1-0.02)Nb(0.02)W0.5O9)":13,"(Bi3Ti(1-0.04)Nb(0.04)W0.5O9)":9.0,"(Bi3Ti(1-0.06)Nb(0.06)W0.5O9)":8.0},"property_unit":"pC/N","family":"Bi3TiO9"}}

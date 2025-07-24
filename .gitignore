@@ -177,5 +177,5 @@ cython_debug/
 .vscode/
 
 # Remove example directory primarily
-examples/
+examples/db/10.*
 tests example/

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.02Nd:BiScO3-0.64PbTiO3":550,"(1-0.62)BiScO3-(0.62)PbTiO3":375,"(1-0.63)BiScO3-(0.63)PbTiO3":425,"(1-0.64)BiScO3-(0.64)PbTiO3":550,"(1-0.65)BiScO3-(0.65)PbTiO3":475},"property_unit":"pC/N","family":"BS-PT"}}

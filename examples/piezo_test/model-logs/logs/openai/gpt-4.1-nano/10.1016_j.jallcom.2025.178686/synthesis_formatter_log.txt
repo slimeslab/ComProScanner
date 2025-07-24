@@ -1,0 +1,142 @@
+2025-07-08 14:25:55: task_name="format_synthesis_data", task="**Task**: Format Synthesis Data **Description**: Format the extracted synthesis data by matching the values to allowed entities if provided. Modify the 'methods' and 'characterization_techniques' if allowed entities are provided specifically, else keep the same. If any precursor has industry name or chemical name instead of chemical composition, change it to chemical composition. No need to change the 'steps'.
+**Parameters**: - Extracted synthesis data containing method, precursors, steps and characterization techniques:  {'synthesis_extracted_data': {'method': 'solid state reaction', 'precursors': ['MgO', 'Sc2O3', 'Nb2O5', 'TiO2', 'PbO'], 'steps': ['Synthesize MgNb2O6 at 1000°C and ScNbO4 at 1150°C.', 'Select and weigh MgO, Sc2O3, Nb2O5, TiO2, and PbO powders according to stoichiometric proportions, adding 2 mol% extra PbO to compensate for vaporization.', 'Mix powders with alcohol in a 1:1 ratio via wet-milling for 24 hours.', 'Calcine the mixture at 800–850°C for 2 hours.', 'Mix the calcined powder again for 12 hours.', 'Conglutinate the powder with PVA solution and press into tablets under 8 MPa.', 'Burn off PVA at 550°C for 2 hours.', 'Cover tablets with powders of the same composition to maintain Pb-rich atmosphere.', 'Sinter the covered tablets at 1200–1280°C for 4 hours.', 'Polish the sintered ceramics into cylindrical disks.', 'Apply silver electrodes on both sides of the disks.', 'Pole the samples at 130°C for 15 minutes under 30 kV/cm electric field.', 'Characterize phase structure and morphology using XRD and SEM.', 'Test d33 with a quasi-static piezoelectric meter.', 'Measure dielectric permittivity and loss from 30–300°C using an LCR meter.', 'Obtain ferroelectric P–E hysteresis loops with a ferroelectric test system.', 'Test electromechanical coupling factor kp with impedance analyzer.', 'Measure thermal stimulated depolarization current with Keithley 6487.', 'Assess temperature stability of d33 using length-extensional mode of k33 resonator.', 'Evaluate ultrasonic transducer performance via pulse-echo response measurement.'], 'characterization_techniques': ['XRD', 'SEM', 'quasi-static piezoelectric meter', 'LCR meter', 'ferroelectric test system', 'impedance analyzer', 'Keithley 6487', 'k33 resonator', 'pulse-echo response measurement']}}
+**Notes**:
+- Only modify 'methods' and 'characterization_techniques' values to match allowed entities
+- Keep 'steps' and 'precursors' values unmodified
+", agent="Synthesis Data Formatter", status="started"
+2025-07-08 14:26:01: task_name="format_synthesis_data", task="**Task**: Format Synthesis Data **Description**: Format the extracted synthesis data by matching the values to allowed entities if provided. Modify the 'methods' and 'characterization_techniques' if allowed entities are provided specifically, else keep the same. If any precursor has industry name or chemical name instead of chemical composition, change it to chemical composition. No need to change the 'steps'.
+**Parameters**: - Extracted synthesis data containing method, precursors, steps and characterization techniques:  {'synthesis_extracted_data': {'method': 'solid state reaction', 'precursors': ['MgO', 'Sc2O3', 'Nb2O5', 'TiO2', 'PbO'], 'steps': ['Synthesize MgNb2O6 at 1000°C and ScNbO4 at 1150°C.', 'Select and weigh MgO, Sc2O3, Nb2O5, TiO2, and PbO powders according to stoichiometric proportions, adding 2 mol% extra PbO to compensate for vaporization.', 'Mix powders with alcohol in a 1:1 ratio via wet-milling for 24 hours.', 'Calcine the mixture at 800–850°C for 2 hours.', 'Mix the calcined powder again for 12 hours.', 'Conglutinate the powder with PVA solution and press into tablets under 8 MPa.', 'Burn off PVA at 550°C for 2 hours.', 'Cover tablets with powders of the same composition to maintain Pb-rich atmosphere.', 'Sinter the covered tablets at 1200–1280°C for 4 hours.', 'Polish the sintered ceramics into cylindrical disks.', 'Apply silver electrodes on both sides of the disks.', 'Pole the samples at 130°C for 15 minutes under 30 kV/cm electric field.', 'Characterize phase structure and morphology using XRD and SEM.', 'Test d33 with a quasi-static piezoelectric meter.', 'Measure dielectric permittivity and loss from 30–300°C using an LCR meter.', 'Obtain ferroelectric P–E hysteresis loops with a ferroelectric test system.', 'Test electromechanical coupling factor kp with impedance analyzer.', 'Measure thermal stimulated depolarization current with Keithley 6487.', 'Assess temperature stability of d33 using length-extensional mode of k33 resonator.', 'Evaluate ultrasonic transducer performance via pulse-echo response measurement.'], 'characterization_techniques': ['XRD', 'SEM', 'quasi-static piezoelectric meter', 'LCR meter', 'ferroelectric test system', 'impedance analyzer', 'Keithley 6487', 'k33 resonator', 'pulse-echo response measurement']}}
+**Notes**:
+- Only modify 'methods' and 'characterization_techniques' values to match allowed entities
+- Keep 'steps' and 'precursors' values unmodified
+", agent="Synthesis Data Formatter", status="completed", output="{
+  "synthesis_formatted_data": {
+    "method": "solid state reaction",
+    "precursors": ["MgO", "Sc2O3", "Nb2O5", "TiO2", "PbO"],
+    "steps": [
+      "Synthesize MgNb2O6 at 1000°C and ScNbO4 at 1150°C.",
+      "Select and weigh MgO, Sc2O3, Nb2O5, TiO2, and PbO powders according to stoichiometric proportions, adding 2 mol% extra PbO to compensate for vaporization.",
+      "Mix powders with alcohol in a 1:1 ratio via wet-milling for 24 hours.",
+      "Calcine the mixture at 800–850°C for 2 hours.",
+      "Mix the calcined powder again for 12 hours.",
+      "Conglutinate the powder with PVA solution and press into tablets under 8 MPa.",
+      "Burn off PVA at 550°C for 2 hours.",
+      "Cover tablets with powders of the same composition to maintain Pb-rich atmosphere.",
+      "Sinter the covered tablets at 1200–1280°C for 4 hours.",
+      "Polish the sintered ceramics into cylindrical disks.",
+      "Apply silver electrodes on both sides of the disks.",
+      "Pole the samples at 130°C for 15 minutes under 30 kV/cm electric field.",
+      "Characterize phase structure and morphology using XRD and SEM.",
+      "Test d33 with a quasi-static piezoelectric meter.",
+      "Measure dielectric permittivity and loss from 30–300°C using an LCR meter.",
+      "Obtain ferroelectric P–E hysteresis loops with a ferroelectric test system.",
+      "Test electromechanical coupling factor kp with impedance analyzer.",
+      "Measure thermal stimulated depolarization current with Keithley 6487.",
+      "Assess temperature stability of d33 using length-extensional mode of k33 resonator.",
+      "Evaluate ultrasonic transducer performance via pulse-echo response measurement."
+    ],
+    "characterization_techniques": ["XRD", "SEM", "quasi-static piezoelectric meter", "LCR meter", "ferroelectric test system", "impedance analyzer", "Keithley 6487", "k33 resonator", "pulse-echo response measurement"]
+  }
+}"
+2025-07-08 16:14:34: task_name="format_synthesis_data", task="**Task**: Format Synthesis Data **Description**: Format the extracted synthesis data by matching the values to allowed entities if provided. Modify the 'methods' and 'characterization_techniques' if allowed entities are provided specifically, else keep the same. If any precursor has industry name or chemical name instead of chemical composition, change it to chemical composition. No need to change the 'steps'.
+**Parameters**: - Extracted synthesis data containing method, precursors, steps and characterization techniques:  {'synthesis_extracted_data': {'method': 'solid state reaction', 'precursors': ['MgO', 'Sc2O3', 'Nb2O5', 'TiO2', 'PbO'], 'steps': ['Synthesize MgNb2O6 at 1000°C and ScNbO4 at 1150°C.', 'Select and weigh MgO, Sc2O3, Nb2O5, TiO2, and PbO powders according to stoichiometric proportions, adding 2 mol% excess PbO to compensate for vaporization.', 'Mix powders with alcohol in a 1:1 ratio via wet-milling for 24 hours.', 'Calcine the mixture at 800–850°C for 2 hours.', 'Mix the calcined powder again for 12 hours.', 'Conglutinate the powder with PVA solution and press into tablets under 8 MPa.', 'Burn off PVA at 550°C for 2 hours.', 'Cover tablets with powders of the same composition to maintain Pb-rich atmosphere.', 'Sinter the covered tablets at 1200–1280°C for 4 hours.', 'Polish the sintered ceramics into cylindrical disks.', 'Coat both sides with silver electrodes.', 'Pole the samples at 130°C for 15 minutes under 30 kV/cm electric field.'], 'characterization_techniques': ['XRD', 'SEM', 'quasi-static piezoelectric meter', 'LCR meter', 'ferroelectric test system', 'impedance analyzer', 'Keithley 6487', 'resonant method (k33 measurement)']}}
+**Notes**:
+- Only modify 'methods' and 'characterization_techniques' values to match allowed entities
+- Keep 'steps' and 'precursors' values unmodified
+", agent="Synthesis Data Formatter", status="started"
+2025-07-08 16:14:38: task_name="format_synthesis_data", task="**Task**: Format Synthesis Data **Description**: Format the extracted synthesis data by matching the values to allowed entities if provided. Modify the 'methods' and 'characterization_techniques' if allowed entities are provided specifically, else keep the same. If any precursor has industry name or chemical name instead of chemical composition, change it to chemical composition. No need to change the 'steps'.
+**Parameters**: - Extracted synthesis data containing method, precursors, steps and characterization techniques:  {'synthesis_extracted_data': {'method': 'solid state reaction', 'precursors': ['MgO', 'Sc2O3', 'Nb2O5', 'TiO2', 'PbO'], 'steps': ['Synthesize MgNb2O6 at 1000°C and ScNbO4 at 1150°C.', 'Select and weigh MgO, Sc2O3, Nb2O5, TiO2, and PbO powders according to stoichiometric proportions, adding 2 mol% excess PbO to compensate for vaporization.', 'Mix powders with alcohol in a 1:1 ratio via wet-milling for 24 hours.', 'Calcine the mixture at 800–850°C for 2 hours.', 'Mix the calcined powder again for 12 hours.', 'Conglutinate the powder with PVA solution and press into tablets under 8 MPa.', 'Burn off PVA at 550°C for 2 hours.', 'Cover tablets with powders of the same composition to maintain Pb-rich atmosphere.', 'Sinter the covered tablets at 1200–1280°C for 4 hours.', 'Polish the sintered ceramics into cylindrical disks.', 'Coat both sides with silver electrodes.', 'Pole the samples at 130°C for 15 minutes under 30 kV/cm electric field.'], 'characterization_techniques': ['XRD', 'SEM', 'quasi-static piezoelectric meter', 'LCR meter', 'ferroelectric test system', 'impedance analyzer', 'Keithley 6487', 'resonant method (k33 measurement)']}}
+**Notes**:
+- Only modify 'methods' and 'characterization_techniques' values to match allowed entities
+- Keep 'steps' and 'precursors' values unmodified
+", agent="Synthesis Data Formatter", status="completed", output="{
+  "synthesis_formatted_data": {
+    "method": "solid state reaction",
+    "precursors": ["MgO", "Sc2O3", "Nb2O5", "TiO2", "PbO"],
+    "steps": [
+      "Synthesize MgNb2O6 at 1000°C and ScNbO4 at 1150°C.",
+      "Select and weigh MgO, Sc2O3, Nb2O5, TiO2, and PbO powders according to stoichiometric proportions, adding 2 mol% excess PbO to compensate for vaporization.",
+      "Mix powders with alcohol in a 1:1 ratio via wet-milling for 24 hours.",
+      "Calcine the mixture at 800–850°C for 2 hours.",
+      "Mix the calcined powder again for 12 hours.",
+      "Conglutinate the powder with PVA solution and press into tablets under 8 MPa.",
+      "Burn off PVA at 550°C for 2 hours.",
+      "Cover tablets with powders of the same composition to maintain Pb-rich atmosphere.",
+      "Sinter the covered tablets at 1200–1280°C for 4 hours.",
+      "Polish the sintered ceramics into cylindrical disks.",
+      "Coat both sides with silver electrodes.",
+      "Pole the samples at 130°C for 15 minutes under 30 kV/cm electric field."
+    ],
+    "characterization_techniques": ["XRD", "SEM", "quasi-static piezoelectric meter", "LCR meter", "ferroelectric test system", "impedance analyzer", "Keithley 6487", "resonant method (k33 measurement)"]
+  }
+}"
+2025-07-08 16:48:04: task_name="format_synthesis_data", task="**Task**: Format Synthesis Data **Description**: Format the extracted synthesis data by matching the values to allowed entities if provided. Modify the 'methods' and 'characterization_techniques' if allowed entities are provided specifically, else keep the same. If any precursor has industry name or chemical name instead of chemical composition, change it to chemical composition. No need to change the 'steps'.
+**Parameters**: - Extracted synthesis data containing method, precursors, steps and characterization techniques:  {'synthesis_extracted_data': {'method': 'solid state reaction', 'precursors': ['MgO', 'Sc2O3', 'Nb2O5', 'TiO2', 'PbO'], 'steps': ['Synthesize MgNb2O6 at 1000°C and ScNbO4 at 1150°C from MgO, Sc2O3, and Nb2O5.', 'Select and weigh MgNb2O6, ScNbO4, TiO2, and PbO powders according to stoichiometric proportions, adding 2 mol% extra PbO to compensate for vaporization.', 'Mix powders with alcohol in a 1:1 ratio via wet-milling for 24 hours.', 'Calcine the mixture at 800–850°C for 2 hours.', 'Mix the calcined powder again for 12 hours.', 'Conglutinate the powder with PVA solution and press into tablets under 8 MPa.', 'Burn off PVA at 550°C for 2 hours.', 'Cover tablets with powders of same composition to maintain Pb-rich atmosphere.', 'Sinter at 1200–1280°C for 4 hours.', 'Polish the sintered ceramics into cylindrical disks.', 'Apply silver electrodes on both sides of the samples.', 'Pole the samples at 130°C for 15 minutes under 30 kV/cm electric field.', 'Characterize phase structure with XRD.', 'Examine morphology with SEM.', 'Test d33 with quasi-static piezoelectric meter.', 'Measure dielectric permittivity and loss from 30–300°C with LCR meter.', 'Obtain ferroelectric P–E hysteresis loops with ferroelectric test system.', 'Test electromechanical coupling factor kp with impedance analyzer.', 'Measure thermal stimulated depolarization current with Keithley 6487.', 'Assess temperature stability of d33 using length-extensional mode of k33 resonator.', 'Evaluate ultrasonic transducer performance via pulse-echo response measurement.'], 'characterization_techniques': ['XRD', 'SEM', 'quasi-static piezoelectric meter', 'LCR meter', 'ferroelectric test system', 'impedance analyzer', 'Keithley 6487', 'k33 resonator', 'pulse-echo measurement']}}
+**Notes**:
+- Only modify 'methods' and 'characterization_techniques' values to match allowed entities
+- Keep 'steps' and 'precursors' values unmodified
+", agent="Synthesis Data Formatter", status="started"
+2025-07-08 16:48:09: task_name="format_synthesis_data", task="**Task**: Format Synthesis Data **Description**: Format the extracted synthesis data by matching the values to allowed entities if provided. Modify the 'methods' and 'characterization_techniques' if allowed entities are provided specifically, else keep the same. If any precursor has industry name or chemical name instead of chemical composition, change it to chemical composition. No need to change the 'steps'.
+**Parameters**: - Extracted synthesis data containing method, precursors, steps and characterization techniques:  {'synthesis_extracted_data': {'method': 'solid state reaction', 'precursors': ['MgO', 'Sc2O3', 'Nb2O5', 'TiO2', 'PbO'], 'steps': ['Synthesize MgNb2O6 at 1000°C and ScNbO4 at 1150°C from MgO, Sc2O3, and Nb2O5.', 'Select and weigh MgNb2O6, ScNbO4, TiO2, and PbO powders according to stoichiometric proportions, adding 2 mol% extra PbO to compensate for vaporization.', 'Mix powders with alcohol in a 1:1 ratio via wet-milling for 24 hours.', 'Calcine the mixture at 800–850°C for 2 hours.', 'Mix the calcined powder again for 12 hours.', 'Conglutinate the powder with PVA solution and press into tablets under 8 MPa.', 'Burn off PVA at 550°C for 2 hours.', 'Cover tablets with powders of same composition to maintain Pb-rich atmosphere.', 'Sinter at 1200–1280°C for 4 hours.', 'Polish the sintered ceramics into cylindrical disks.', 'Apply silver electrodes on both sides of the samples.', 'Pole the samples at 130°C for 15 minutes under 30 kV/cm electric field.', 'Characterize phase structure with XRD.', 'Examine morphology with SEM.', 'Test d33 with quasi-static piezoelectric meter.', 'Measure dielectric permittivity and loss from 30–300°C with LCR meter.', 'Obtain ferroelectric P–E hysteresis loops with ferroelectric test system.', 'Test electromechanical coupling factor kp with impedance analyzer.', 'Measure thermal stimulated depolarization current with Keithley 6487.', 'Assess temperature stability of d33 using length-extensional mode of k33 resonator.', 'Evaluate ultrasonic transducer performance via pulse-echo response measurement.'], 'characterization_techniques': ['XRD', 'SEM', 'quasi-static piezoelectric meter', 'LCR meter', 'ferroelectric test system', 'impedance analyzer', 'Keithley 6487', 'k33 resonator', 'pulse-echo measurement']}}
+**Notes**:
+- Only modify 'methods' and 'characterization_techniques' values to match allowed entities
+- Keep 'steps' and 'precursors' values unmodified
+", agent="Synthesis Data Formatter", status="completed", output="{
+  "synthesis_formatted_data": {
+    "method": "solid state reaction",
+    "precursors": ["MgO", "Sc2O3", "Nb2O5", "TiO2", "PbO"],
+    "steps": [
+      "Synthesize MgNb2O6 at 1000°C and ScNbO4 at 1150°C from MgO, Sc2O3, and Nb2O5.",
+      "Select and weigh MgNb2O6, ScNbO4, TiO2, and PbO powders according to stoichiometric proportions, adding 2 mol% extra PbO to compensate for vaporization.",
+      "Mix powders with alcohol in a 1:1 ratio via wet-milling for 24 hours.",
+      "Calcine the mixture at 800–850°C for 2 hours.",
+      "Mix the calcined powder again for 12 hours.",
+      "Conglutinate the powder with PVA solution and press into tablets under 8 MPa.",
+      "Burn off PVA at 550°C for 2 hours.",
+      "Cover tablets with powders of same composition to maintain Pb-rich atmosphere.",
+      "Sinter at 1200–1280°C for 4 hours.",
+      "Polish the sintered ceramics into cylindrical disks.",
+      "Apply silver electrodes on both sides of the samples.",
+      "Pole the samples at 130°C for 15 minutes under 30 kV/cm electric field.",
+      "Characterize phase structure with XRD.",
+      "Examine morphology with SEM.",
+      "Test d33 with quasi-static piezoelectric meter.",
+      "Measure dielectric permittivity and loss from 30–300°C with LCR meter.",
+      "Obtain ferroelectric P–E hysteresis loops with ferroelectric test system.",
+      "Test electromechanical coupling factor kp with impedance analyzer.",
+      "Measure thermal stimulated depolarization current with Keithley 6487.",
+      "Assess temperature stability of d33 using length-extensional mode of k33 resonator.",
+      "Evaluate ultrasonic transducer performance via pulse-echo response measurement."
+    ],
+    "characterization_techniques": ["XRD", "SEM", "quasi-static piezoelectric meter", "LCR meter", "ferroelectric test system", "impedance analyzer", "Keithley 6487", "k33 resonator", "pulse-echo measurement"]
+  }
+}"
+2025-07-08 17:13:16: task_name="format_synthesis_data", task="**Task**: Format Synthesis Data **Description**: Format the extracted synthesis data by matching the values to allowed entities if provided. Modify the 'methods' and 'characterization_techniques' if allowed entities are provided specifically, else keep the same. If any precursor has industry name or chemical name instead of chemical composition, change it to chemical composition. No need to change the 'steps'.
+**Parameters**: - Extracted synthesis data containing method, precursors, steps and characterization techniques:  {'synthesis_extracted_data': {'method': 'solid state reaction', 'precursors': ['MgO', 'Sc2O3', 'Nb2O5', 'TiO2', 'PbO'], 'steps': ['Synthesize MgNb2O6 at 1000°C and ScNbO4 at 1150°C from MgO, Sc2O3, and Nb2O5.', 'Select and weigh MgNb2O6, ScNbO4, TiO2, and PbO powders according to stoichiometric proportions, adding 2 mol% extra PbO to compensate for vaporization.', 'Mix powders with alcohol in a 1:1 ratio via wet-milling for 24 hours.', 'Calcine the mixture at 800–850°C for 2 hours.', 'Mix the calcined powder again for 12 hours.', 'Conglutinate the powder with PVA solution and press into tablets under 8 MPa.', 'Burn off PVA at 550°C for 2 hours.', 'Cover tablets with powders of the same composition to maintain Pb-rich atmosphere and sinter at 1200–1280°C for 4 hours.', 'Polish the sintered samples into cylindrical disks, coat with silver electrodes, and perform electrical poling at 130°C for 15 minutes under 30 kV/cm electric field.'], 'characterization_techniques': ['XRD', 'SEM', 'quasi-static piezoelectric meter', 'LCR meter', 'ferroelectric test system', 'impedance analyzer', 'Keithley 6487', 'resonant method']}}
+**Notes**:
+- Only modify 'methods' and 'characterization_techniques' values to match allowed entities
+- Keep 'steps' and 'precursors' values unmodified
+", agent="Synthesis Data Formatter", status="started"
+2025-07-08 17:13:20: task_name="format_synthesis_data", task="**Task**: Format Synthesis Data **Description**: Format the extracted synthesis data by matching the values to allowed entities if provided. Modify the 'methods' and 'characterization_techniques' if allowed entities are provided specifically, else keep the same. If any precursor has industry name or chemical name instead of chemical composition, change it to chemical composition. No need to change the 'steps'.
+**Parameters**: - Extracted synthesis data containing method, precursors, steps and characterization techniques:  {'synthesis_extracted_data': {'method': 'solid state reaction', 'precursors': ['MgO', 'Sc2O3', 'Nb2O5', 'TiO2', 'PbO'], 'steps': ['Synthesize MgNb2O6 at 1000°C and ScNbO4 at 1150°C from MgO, Sc2O3, and Nb2O5.', 'Select and weigh MgNb2O6, ScNbO4, TiO2, and PbO powders according to stoichiometric proportions, adding 2 mol% extra PbO to compensate for vaporization.', 'Mix powders with alcohol in a 1:1 ratio via wet-milling for 24 hours.', 'Calcine the mixture at 800–850°C for 2 hours.', 'Mix the calcined powder again for 12 hours.', 'Conglutinate the powder with PVA solution and press into tablets under 8 MPa.', 'Burn off PVA at 550°C for 2 hours.', 'Cover tablets with powders of the same composition to maintain Pb-rich atmosphere and sinter at 1200–1280°C for 4 hours.', 'Polish the sintered samples into cylindrical disks, coat with silver electrodes, and perform electrical poling at 130°C for 15 minutes under 30 kV/cm electric field.'], 'characterization_techniques': ['XRD', 'SEM', 'quasi-static piezoelectric meter', 'LCR meter', 'ferroelectric test system', 'impedance analyzer', 'Keithley 6487', 'resonant method']}}
+**Notes**:
+- Only modify 'methods' and 'characterization_techniques' values to match allowed entities
+- Keep 'steps' and 'precursors' values unmodified
+", agent="Synthesis Data Formatter", status="completed", output="{
+  "synthesis_formatted_data": {
+    "method": "solid state reaction",
+    "precursors": ["MgO", "Sc2O3", "Nb2O5", "TiO2", "PbO"],
+    "steps": [
+      "Synthesize MgNb2O6 at 1000°C and ScNbO4 at 1150°C from MgO, Sc2O3, and Nb2O5.",
+      "Select and weigh MgNb2O6, ScNbO4, TiO2, and PbO powders according to stoichiometric proportions, adding 2 mol% extra PbO to compensate for vaporization.",
+      "Mix powders with alcohol in a 1:1 ratio via wet-milling for 24 hours.",
+      "Calcine the mixture at 800–850°C for 2 hours.",
+      "Mix the calcined powder again for 12 hours.",
+      "Conglutinate the powder with PVA solution and press into tablets under 8 MPa.",
+      "Burn off PVA at 550°C for 2 hours.",
+      "Cover tablets with powders of the same composition to maintain Pb-rich atmosphere and sinter at 1200–1280°C for 4 hours.",
+      "Polish the sintered samples into cylindrical disks, coat with silver electrodes, and perform electrical poling at 130°C for 15 minutes under 30 kV/cm electric field."
+    ],
+    "characterization_techniques": ["XRD", "SEM", "quasi-static piezoelectric meter", "LCR meter", "ferroelectric test system", "impedance analyzer", "Keithley 6487", "resonant method"]
+  }
+}"

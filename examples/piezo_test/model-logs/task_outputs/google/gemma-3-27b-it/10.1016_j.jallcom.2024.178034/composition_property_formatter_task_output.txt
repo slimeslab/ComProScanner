@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"lead zirconate titanate":373,"Pb (Mg1/3Nb2/3) O3-PbTiO3":1881,"Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3":1624,"Mn-doped Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3":1161,"PZNN-PT":154,"0.28Pb(In1/2Nb1/2)O3-0.42Pb(Mg1/3Nb2/3)O3-0.30PbTiO3 + 1.0 mol% Mn":1161},"property_unit":"pC/N","family":"Perovskite"}}

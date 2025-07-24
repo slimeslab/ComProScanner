@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"PMN-0.26PT":1780,"PMN-0.30PT":2710,"PMN-0.30PT ACP":3050,"PMN-0.27PT":1410,"PMN-0.27PT ACP":1920,"PMN-0.25PT":1220,"PMN-0.25PT ACP":1730,"Pb(In1/2Nb1/2)-Pb(Mg1/3Nb2/3)-PbTiO3":1624,"Pb(In1/2Nb1/2)-Pb(Mg1/3Nb2/3)-PbTiO3 ACP":2020},"property_unit":"pC/N","family":"PbTiO3"}}

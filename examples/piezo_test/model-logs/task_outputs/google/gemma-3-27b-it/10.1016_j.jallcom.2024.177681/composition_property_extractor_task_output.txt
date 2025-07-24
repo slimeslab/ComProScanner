@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"KNNS-BF-xBNZ where x=0":293,"KNNS-BF-xBNZ where x=0.03":358},"abbreviations":{},"property_unit":"pC/N","family":"KNNS"}}

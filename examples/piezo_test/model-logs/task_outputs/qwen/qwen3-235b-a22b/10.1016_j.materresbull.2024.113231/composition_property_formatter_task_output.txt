@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Na0.5Bi0.5TiO3*(1-0.02) - BaTiO3*0.02":null,"Na0.5Bi0.5TiO3*(1-0.06) - BaTiO3*0.06":null,"Na0.5Bi0.5TiO3*(1-0.10) - BaTiO3*0.10":null,"Sr-modified Na0.5Bi0.5TiO3*(1-0.03) - BaTiO3*0.03":201,"Bi-modified Na0.5Bi0.5TiO3*(1-0.02) - BaTiO3*0.02":207},"property_unit":"pC/N","family":"NBT-BT"}}

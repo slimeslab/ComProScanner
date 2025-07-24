@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{},"property_unit":"pC/N","family":"Pb-based relaxor ferroelectric"}}

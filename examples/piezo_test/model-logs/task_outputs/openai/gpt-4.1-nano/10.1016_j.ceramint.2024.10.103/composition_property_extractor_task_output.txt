@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi(1-x)Sc(x)O3-0.275BaTiO3 where x=0":163,"Bi(1-x)Sc(x)O3-0.275BaTiO3 where x=0.01":163,"Bi(1-x)Sc(x)O3-0.275BaTiO3 where x=0.02":163},"abbreviations":{"BFScx-BT":"BiFe(1-x)Sc(x)O3-0.275BaTiO3"},"property_unit":"pC/N","family":"BiFeO3-based"}}

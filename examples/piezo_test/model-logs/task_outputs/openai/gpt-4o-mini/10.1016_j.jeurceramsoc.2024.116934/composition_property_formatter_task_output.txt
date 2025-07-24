@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(Ba0.85Ca0.15)(Zr0.1Ti0.9)O3":395},"property_unit":"pC/N","family":"BCZT"}}

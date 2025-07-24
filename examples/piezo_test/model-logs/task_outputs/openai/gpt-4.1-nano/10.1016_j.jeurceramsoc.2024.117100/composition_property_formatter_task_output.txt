@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BaTi(1-((2*0.89)/1))Hf(1-((2*0.11)/1))O3":337,"BaTi(1-((2*0.89)/1))Hf(1-((2*0.11)/1))O3 + 1%Fe":337},"property_unit":"pC/N","family":"BaTiO3"}}

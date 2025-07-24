@@ -1,0 +1,425 @@
+2025-07-08 14:33:30: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The performance comparison of 0.08BZT-(1-x)BS-xPT (x values are 0.57, 0.58, 0.585, 0.59 and 0.60) and other high temperature piezoelectric ceramics.
+|Samples| \u03b5\u2032(@1\u2009kHz)|Loss(@1\u2009kHz)| d 33 (pC/N)| T m (\xb0C)| P r (\xb5C/cmE^{2})| E c (kV/cm)| k 33|Ref.|
+|---|---|---|---|---|---|---|---|---|
+|x = 0.57|1050|3.2\u2009%|372|410|42.2|22.7|0.70|This work|
+|x = 0.58|1192|4.0\u2009%|480|413|55.8|22.5|0.71|This work|
+|x = 0.585|2380|5.0\u2009%|585|421|54.7|23.6|0.75|This work|
+|x = 0.59|2342|4.6\u2009%|546|424|40.1|24.9|0.72|This work|
+|x = 0.60|1904|3.1\u2009%|406|428|48.7|31.3|0.70|This work|
+|BiScO3-PbTiO3-|2010|/|450|450|32|20|/|[27]|
+|Bi(Zn1/2Ti1/2)O3-BiScO3-PbTiO3|1377|/|336|\u223c 415|/|/|/|[28]|
+|Bi(Zn1/2Ti1/2)O3-BiScO3-PbTiO3|1825|/|520|425|46.8|\u223c 25|/|[29]|
+|Pb(Ni1/3Nb2/3)O3-BiScO3-PbTiO3|2216|4.9\u2009%|522|400|39.2|19.3|/|[30]|
+|Pb(Sb1/2Nb1/2)O3-BiScO3-PbTiO3|2098|3.7\u2009%|553|384|39.1|19.7|/|[31]|
+|BaTiO3-BiFeO3-PbTiO3|/|/|380|483|\u223c 36|\u223c 25|/|[32]|
+|PZT-5A|1900|1.8\u2009%|390|350|39.0|12.0|0.72|[33]|
+
+# RESULTS AND DISCUSSION
+shows the XRD spectra of 0.08BZT-(1-x)BS-xPT (x = 0.57, 0.58, 0.585, 0.59, and 0.6) ceramic samples. As indexed, the peaks corresponding to the (100), (101), (111) and (200) planes represent characteristic perovskite phases in the material under investigation. Notably, no discernible peaks associated with other phases are detected in the spectra, indicating successful synthesis of a BZT-BS-PT solid solution with a pure perovskite phase structure. The local enlarged XRD diffraction peak near 45\xb0 reveals that the ceramic components with x = 0.57 and x = 0.60 exhibit a rhombohedral phase and tetragonal phase, respectively, at room temperature, while all other components reside within the morphotropic phase boundary (MPB). With the increase in BiScO3 content, the XRD diffraction peak gradually shifts towards higher angles. According to the Bragg equation 2dsin\u03b8 = n\u03bb, where d is the lattice spacing, \u03b8 is the diffraction peak angle and \u03bb is the wavelength of incident X-ray, it can be seen that the lattice constant of BZT-BS-PT ceramics reduces gradually. The microstructure images and density of the ceramic samples are presented in , with the grain size distribution inset in the SEM images. The microstructure morphology of all samples is similar, with the average grain size predominantly ranging from 2 to 3 \xb5m, and the statistical chart of ceramic grain size can be viewed in the. The varying content of BiScO3 has minimal impact on the sintering behavior of ceramics. As depicted in f, the density range of BZT-BS-PT ceramics falls between 7.55 and 7.60 g/cmE^{3}, while their theoretical density is approximately 7.80 g/cmE^{3} ; thus, the relative density of BZT-BS-PT ceramics exceeds 95 %. The presence of pores observed in the cross-section of ceramics can be attributed to grain spalling occurring during fracture. shows the temperature-dependent dielectric spectra of 0.08BZT-(1-x)BS-xPT (x = 0.57, 0.58, 0.585, 0.59, and 0.6) ceramic samples at different frequencies (1 kHz, 10 kHz, and 100 kHz). The Curie temperature of 0.08BZT-BS-PT piezoelectric ceramics is in the range of 410\u2013430 \xb0C, which is reduced by 20\u201340 \xb0C compared to that of BS-PT at MPB. This observation aligns with previous findings by Eitel et al. , where PT-based perovskite ferroelectrics with lower tolerance factors generally exhibit higher Curie temperatures. Tolerance factor for Bi(Zn1/2Ti1/2)O3 is calculated as t = 0.95 which is significantly larger than that for BiScO3 (t = 0.907) , resulting in a reduction in the Curie temperature for BS-PT ceramics. Notably, at room temperature, the ceramic with x = 0.585 exhibits a high dielectric constant of up to 2380 (at 1 kHz), while maintaining a dielectric loss below 5 % over the temperature range of 30\u2013340 \xb0C. It should be noted here that compared with commercial PZT-5A ceramics, dielectric loss of BZT-BS-PT ceramics was relatively high, thus making use of \u201chard\u201d doping to reduce the dielectric loss in BZT-BS-PT ceramics is the work that needs to be carried out in the future. shows the hysteresis loops of polarization (P-E) and strain (S-E) of 0.08BZT-(1-x)BS-xPT. As the PbTiO3 content increases, the residual polarization intensity ( ) initially rises and then declines. At MPB, the maximum value of spontaneous polarization intensity (residual polarization intensity) reaches 55.8 \xb5C/cmE^{2}, while pure BS-PT ceramics generally exhibit a spontaneous polarization intensity not exceeding 40 \xb5C/cmE^{2}. Therefore, incorporating Bi(Zn1/2Ti1/2)O3 with exceptionally high spontaneous polarization intensity can effectively enhance the overall spontaneous polarization intensity of BS-PT ceramics. Compared to BS-PT (MPB) ceramics, the coercive field of BZT-BS-PT ceramics exceeds 20 kV/cm. b demonstrates that the BZT-BS-PT ceramics exhibit a maximum normal strain of 0.277 % at x = 0.585 in the MPB region under an electric field of 45 kV/cm. Moreover, even at x = 0.60 with a tetragonal phase structure, these ceramics still maintain a significant strain of 0.267 % under identical electric field conditions (45 kV/cm). Interestingly, when x = 0.58, the BZT-BS-PT ceramics display an exceptionally high negative strain close to 0.5 % under an electric field intensity of 22.5 kV/cm, which is comparable to the observed strain 0.4 % in BS-PT piezoelectric single crystals (at an electric field intensity of 50 kV/cm) at 35 \xb0C. Regarding this unusually large negative strain behavior, one possible explanation can be attributed to the presence of highly saturated domains during poling and subsequent manifestation of numerous intermediate domain states upon polarization reversal. compares the dielectric, ferroelectric, and piezoelectric properties of 0.08BZT-(1-x)BS-xPT with other high-temperature piezoelectric ceramics. At x = 0.585, the ceramics exhibit a piezoelectric coefficient d 33 of 585 pC/N and an electromechanical coupling coefficient k 33 of 75 %, surpassing the ferroelectric properties of PZT-5A ceramics (CTS electronic components, USA). At x = 0.60, the coercive field of BZT-BS-PT ceramics increases by approximately 50 % compared to BS-PT ceramics while maintaining a small difference in piezoelectric coefficient. This significant increase in coercive field ensures enhanced resistance to temperature changes for the practical application of these piezoelectric ceramics. illustrates the temperature-dependent unipolar S-E loop of 0.08BZT-(1-x)BS-xPT ceramics (x = 0.585 and 0.60) under an electric field of 45 kV/cm. The x = 0.585 ceramic samples exhibits room-temperature uniaxial strain of 0.277 % and a piezoelectric coefficient d 33* of 615 pm/V. Upon increasing testing temperature, a light increase in the strain is observed with a limited variation rate of 15 % in the temperature range of 30\u2013210 \xb0C. Similarly, the uniaxial strain of x = 0.60 ceramic samples exhibit a high strain of 0.243 % at room temperature (which corresponds to the piezoelectric coefficient d 33* of 540 pm/V). However, with increasing temperature from 30 \xb0C to 210 \xb0C, the change rate of strain is 45 %, and the piezoelectric strain coefficient d 33* reaches the maximum value of 783 pm/V at 210 \xb0C. To further validate the high-temperature stability of the present BZT-BS-PT ceramics, the temperature dependent electromechanical coupling coefficient (k 33 and k p) and ferroelectric properties (P s and E c) were evaluated across a broad temperature range (30\u2013450 \xb0C). a&b shows the variation curves in k 33 and k p for samples with x = 0.585 and 0.60. For x = 0.585, both k 33 and k p kept stable up to 400 \xb0C, demonstrating exceptional thermal stability. Similar stability is also observed for the x = 0.60 samples. The depolarization temperature at which there is a significant drop in the electromechanical coupling coefficient was determined to be 400 \xb0C for x = 0.585 and 420 \xb0C for x = 0.60, respectively. It should be noted that undoped BS-PT has been reported to have a depolarization temperature ranging from 410 to 430 \xb0C. Thus, while incorporating Bi(Zn1/2Ti1/2)O3 does cause a decrease in the Curie temperature of the BS-PT system, it does not significantly affect the depolarization temperature. Additionally, we observe that piezoelectric ceramics in the tetragonal phase (x = 0.60) exhibit a higher depolarization temperature than those in the MPB region (x = 0.585), likely due to phase transitions occurring below the Curie temperature. Furthermore, 90\xb0 domains have better thermal stability , this suggests that ceramics with a higher tetragonal phase content have a higher depolarization temperature around MPB region. c&d show that the spontaneous polarization intensity of x = 0.585 and x = 0.60 ceramic samples show good temperature stability in the test temperature range of 30\u2013210 \xb0C. With the increase of test temperature, the coercive field intensity shows an approximate linear downward trend, and the coercive field of x = 0.585 and x = 0.60 ceramic samples still reach the relatively large value of 8.5 kV/cm and 14.5 kV/cm at 210 \xb0C, respectively. At the same time, Pb0.990(Zr0.45Ti0.47(Sb0.67Nb0.33)0.08)O3 ceramics (PIC151, PI Ceramics) have poor thermal stability. As the testing temperature increases, both the polarization strength and the coercive field of PIC151 ceramics decrease almost linearly, and the coercive field is about 4 kV/cm at the highest testing temperature 250 \xb0C. This indicates that BZT-BS- PT ceramics have a stronger competitive edge in terms of thermal stability compared to PZT ceramics. Here we use the Rayleigh law to study the effects of intrinsic and extrinsic contributions on piezoelectric coefficient, the Rayleigh law can be expressed using the following formulae :  where S(E) is the electric-field-induced strain, and E 0 is the level of applied electric field. The BS-PT systems were confirmed to obey the Rayleigh law within suitable field regions (E 0 \u2264 E c/2), as shown in. The coefficient \u03b1 is the irreversible Rayleigh parameter, resulting from the irreversible motion of internal interfaces. describes the Rayleigh hysteresis, where the signs \u201c+\u201d and \u201c\u2212\u201d correspond to decreasing and increasing electric field, respectively, and in , S p-p represents the peak-to-peak strain in the electric field. shows the Rayleigh analysis of BZT-BS-PT near MPB and BS-PT near MPB piezoelectric ceramics. Under the AC electric field, an approximately linear relationship between strain and electric field can be observed in a&b, indicating that the BZT-BS-PT ceramics can apply Rayleigh's law in this electric field environment. c show that a very good positive linear relationship between the piezoelectric coefficient and weak electric field. There, the slope of fitted line is Rayleigh parameters \u03b1, and the \u03b1 coefficient of x = 0.585 samples is larger than that of x = 0.59 samples. The ferroelectric domain and domain walls of x = 0.585 samples can have better piezoelectric response in the same electric field environment because of the higher content of tripartite phase which can provide more external contributions. According to Rayleigh analysis results on 0.36BS-0.64PT ceramics , we compared the Rayleigh parameters of BZT-BS-PT ceramics with BS-PT ceramics. In the case where the coefficient of \u03b1 is approximately equal, the d init value of 597 pm/V for x = 0.585 sample is significantly greater than the dint value of 490 pm/V for 0.36BS-0.64PT ceramics. This indicates that the higher piezoelectricity observed in BZT-BS-PT ceramics compared to BS-PT ceramics is mainly from the enhanced d init. High d init value of BZT-BS-PT ceramics is consistent with the observed ultra-high spontaneous polarization in a, as a high spontaneous polarization may contribute to high intrinsic piezoelectricity based on the equation (d 33=2Q 33 P S \u03b5 33).
+
+# TITLE
+Enhancing piezoelectric properties of BiScO<inf>3</inf>-PbTiO<inf>3</inf> ceramics via- incorporation of Bi(Zn<inf>1/2</inf>Ti<inf>1/2</inf>)O<inf>3</inf> with high spontaneous polarization
+
+# ABSTRACT
+To address this issue, we incorporated Bi(Zn1/2Ti1/2)O3 with a large spontaneous polarization (P
+                     s ∼ 100 µC/cm2) and high Curie temperature (T
+                     c ∼ 1380 °C) into BiScO3-PbTiO3 ceramics to improve the piezoelectric response while maintaining high T
+                     c. The newly developed 0.08Bi(Zn1/2Ti1/2)O3-0.335BiScO3-0.585PbTiO3 ceramic exhibits impressive properties including a high d
+                     33 value of 585 pC/N (increased by ∼ 33 % compared to the 0.36BiScO3-0.64PbTiO3 ceramics), an electromechanical coupling coefficient k
+                     33 of 0.75, a dielectric constant ε′ of 2380, a relatively high T
+                     c of 421 °C.
+
+# INTRODUCTION
+As established, piezoelectric materials that can operate at temperatures exceeding 400 \xb0C are commonly referred to as high-temperature piezoelectric materials. Among these materials, BiScO3-PbTiO3 (BS-PT) stands out as a high-temperature system with both high piezoelectric performance and a relatively high Curie temperature of approximately 450 \xb0C. Its longitudinal piezoelectric coefficient d 33 is up to 450 pC/N and electromechanical coupling factor k 33 are similar to that of PZT soft ceramics (around 0.7), thus BS-PT ceramics have emerged as the leading candidate among various high-temperature options. To enhance the piezoelectric properties of BS-PT, extensive efforts have been devoted to cation doping in either the A or B site and incorporating perovskite end members with high d 33 values or high T c to form solid solutions. Doping with soft dopants in BS-PT ceramics typically leads to improvements in piezoelectric activities; however, it is often accompanied by an undesirable reduction in Curie temperature and coercive field. Guided by the relationship d = 2PsQ\u03b5 (where P S denotes the spontaneous polarization, Q is the electrostrictive coefficient, and \u03b5 signifies the free dielectric constant), it is a prerequisite to pursue a high P s to manifest a large piezoelectric coefficient d value. As reported, Bi(Zn1/2Ti1/2)O3 (BZT) possess a large spontaneous polarization of 100\u2013150 \xb5C/cmE^{2} (the spontaneous polarization of pure BS-PT ceramics is usually no more than 40 \xb5C/cmE^{2}). Moreover, the Curie temperature of Bi(Zn1/2Ti1/2)O3-PbTiO3 ferroelectric solid solution can reach up to 700 \xb0C. It is proposed that BZT holds great promise as an ideal candidate for enhancing the piezoelectric response while maintaining a high Curie temperature for BS-PT ceramics. The incorporation of 8 mol% BZT into the BS-PT solid solution was selected for investigation in the present study. A comprehensive characterization was employed to systematically explore the effects of BZT on the crystal structure, microstructure, dielectric properties, and piezoelectric properties of BZT-BS-PT solid solution ceramics. By correlating these properties with microstructural features, our aim is to establish a thorough understanding of the factors governing the piezoelectric performance of BZT-BS-PT.
+
+# CONCLUSION
+In this work, we found that the incorporation of Bi(Zn1/2Ti1/2)O3 with large spontaneous polarization into BS-PT ceramics could improve the piezoelectric properties of BS-PT ceramics. Although Bi(Zn1/2Ti1/2)O3 causes the Curie temperature of BS-PT ceramics decrease slightly, the depolarization temperature (400\u2013420 \xb0C) of BZT-BS-PT ceramics is still equivalent to that of BS-PT ceramics. For the composition of 0.08BZT-0.335BS-0.585PT, the dielectric permittivity, dielectric loss, d 33, k 33, k t, k p and E-field-induced strain (@45 kV/mm) are found to be 2380, 0.05, 585 pC/N, 0.75, 0.54, 0.62 and 0.277 % respectively, indicating that it is a promising candidate for high-temperature piezoelectric applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-08 14:33:34: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The performance comparison of 0.08BZT-(1-x)BS-xPT (x values are 0.57, 0.58, 0.585, 0.59 and 0.60) and other high temperature piezoelectric ceramics.
+|Samples| \u03b5\u2032(@1\u2009kHz)|Loss(@1\u2009kHz)| d 33 (pC/N)| T m (\xb0C)| P r (\xb5C/cmE^{2})| E c (kV/cm)| k 33|Ref.|
+|---|---|---|---|---|---|---|---|---|
+|x = 0.57|1050|3.2\u2009%|372|410|42.2|22.7|0.70|This work|
+|x = 0.58|1192|4.0\u2009%|480|413|55.8|22.5|0.71|This work|
+|x = 0.585|2380|5.0\u2009%|585|421|54.7|23.6|0.75|This work|
+|x = 0.59|2342|4.6\u2009%|546|424|40.1|24.9|0.72|This work|
+|x = 0.60|1904|3.1\u2009%|406|428|48.7|31.3|0.70|This work|
+|BiScO3-PbTiO3-|2010|/|450|450|32|20|/|[27]|
+|Bi(Zn1/2Ti1/2)O3-BiScO3-PbTiO3|1377|/|336|\u223c 415|/|/|/|[28]|
+|Bi(Zn1/2Ti1/2)O3-BiScO3-PbTiO3|1825|/|520|425|46.8|\u223c 25|/|[29]|
+|Pb(Ni1/3Nb2/3)O3-BiScO3-PbTiO3|2216|4.9\u2009%|522|400|39.2|19.3|/|[30]|
+|Pb(Sb1/2Nb1/2)O3-BiScO3-PbTiO3|2098|3.7\u2009%|553|384|39.1|19.7|/|[31]|
+|BaTiO3-BiFeO3-PbTiO3|/|/|380|483|\u223c 36|\u223c 25|/|[32]|
+|PZT-5A|1900|1.8\u2009%|390|350|39.0|12.0|0.72|[33]|
+
+# RESULTS AND DISCUSSION
+shows the XRD spectra of 0.08BZT-(1-x)BS-xPT (x = 0.57, 0.58, 0.585, 0.59, and 0.6) ceramic samples. As indexed, the peaks corresponding to the (100), (101), (111) and (200) planes represent characteristic perovskite phases in the material under investigation. Notably, no discernible peaks associated with other phases are detected in the spectra, indicating successful synthesis of a BZT-BS-PT solid solution with a pure perovskite phase structure. The local enlarged XRD diffraction peak near 45\xb0 reveals that the ceramic components with x = 0.57 and x = 0.60 exhibit a rhombohedral phase and tetragonal phase, respectively, at room temperature, while all other components reside within the morphotropic phase boundary (MPB). With the increase in BiScO3 content, the XRD diffraction peak gradually shifts towards higher angles. According to the Bragg equation 2dsin\u03b8 = n\u03bb, where d is the lattice spacing, \u03b8 is the diffraction peak angle and \u03bb is the wavelength of incident X-ray, it can be seen that the lattice constant of BZT-BS-PT ceramics reduces gradually. The microstructure images and density of the ceramic samples are presented in , with the grain size distribution inset in the SEM images. The microstructure morphology of all samples is similar, with the average grain size predominantly ranging from 2 to 3 \xb5m, and the statistical chart of ceramic grain size can be viewed in the. The varying content of BiScO3 has minimal impact on the sintering behavior of ceramics. As depicted in f, the density range of BZT-BS-PT ceramics falls between 7.55 and 7.60 g/cmE^{3}, while their theoretical density is approximately 7.80 g/cmE^{3} ; thus, the relative density of BZT-BS-PT ceramics exceeds 95 %. The presence of pores observed in the cross-section of ceramics can be attributed to grain spalling occurring during fracture. shows the temperature-dependent dielectric spectra of 0.08BZT-(1-x)BS-xPT (x = 0.57, 0.58, 0.585, 0.59, and 0.6) ceramic samples at different frequencies (1 kHz, 10 kHz, and 100 kHz). The Curie temperature of 0.08BZT-BS-PT piezoelectric ceramics is in the range of 410\u2013430 \xb0C, which is reduced by 20\u201340 \xb0C compared to that of BS-PT at MPB. This observation aligns with previous findings by Eitel et al. , where PT-based perovskite ferroelectrics with lower tolerance factors generally exhibit higher Curie temperatures. Tolerance factor for Bi(Zn1/2Ti1/2)O3 is calculated as t = 0.95 which is significantly larger than that for BiScO3 (t = 0.907) , resulting in a reduction in the Curie temperature for BS-PT ceramics. Notably, at room temperature, the ceramic with x = 0.585 exhibits a high dielectric constant of up to 2380 (at 1 kHz), while maintaining a dielectric loss below 5 % over the temperature range of 30\u2013340 \xb0C. It should be noted here that compared with commercial PZT-5A ceramics, dielectric loss of BZT-BS-PT ceramics was relatively high, thus making use of \u201chard\u201d doping to reduce the dielectric loss in BZT-BS-PT ceramics is the work that needs to be carried out in the future. shows the hysteresis loops of polarization (P-E) and strain (S-E) of 0.08BZT-(1-x)BS-xPT. As the PbTiO3 content increases, the residual polarization intensity ( ) initially rises and then declines. At MPB, the maximum value of spontaneous polarization intensity (residual polarization intensity) reaches 55.8 \xb5C/cmE^{2}, while pure BS-PT ceramics generally exhibit a spontaneous polarization intensity not exceeding 40 \xb5C/cmE^{2}. Therefore, incorporating Bi(Zn1/2Ti1/2)O3 with exceptionally high spontaneous polarization intensity can effectively enhance the overall spontaneous polarization intensity of BS-PT ceramics. Compared to BS-PT (MPB) ceramics, the coercive field of BZT-BS-PT ceramics exceeds 20 kV/cm. b demonstrates that the BZT-BS-PT ceramics exhibit a maximum normal strain of 0.277 % at x = 0.585 in the MPB region under an electric field of 45 kV/cm. Moreover, even at x = 0.60 with a tetragonal phase structure, these ceramics still maintain a significant strain of 0.267 % under identical electric field conditions (45 kV/cm). Interestingly, when x = 0.58, the BZT-BS-PT ceramics display an exceptionally high negative strain close to 0.5 % under an electric field intensity of 22.5 kV/cm, which is comparable to the observed strain 0.4 % in BS-PT piezoelectric single crystals (at an electric field intensity of 50 kV/cm) at 35 \xb0C. Regarding this unusually large negative strain behavior, one possible explanation can be attributed to the presence of highly saturated domains during poling and subsequent manifestation of numerous intermediate domain states upon polarization reversal. compares the dielectric, ferroelectric, and piezoelectric properties of 0.08BZT-(1-x)BS-xPT with other high-temperature piezoelectric ceramics. At x = 0.585, the ceramics exhibit a piezoelectric coefficient d 33 of 585 pC/N and an electromechanical coupling coefficient k 33 of 75 %, surpassing the ferroelectric properties of PZT-5A ceramics (CTS electronic components, USA). At x = 0.60, the coercive field of BZT-BS-PT ceramics increases by approximately 50 % compared to BS-PT ceramics while maintaining a small difference in piezoelectric coefficient. This significant increase in coercive field ensures enhanced resistance to temperature changes for the practical application of these piezoelectric ceramics. illustrates the temperature-dependent unipolar S-E loop of 0.08BZT-(1-x)BS-xPT ceramics (x = 0.585 and 0.60) under an electric field of 45 kV/cm. The x = 0.585 ceramic samples exhibits room-temperature uniaxial strain of 0.277 % and a piezoelectric coefficient d 33* of 615 pm/V. Upon increasing testing temperature, a light increase in the strain is observed with a limited variation rate of 15 % in the temperature range of 30\u2013210 \xb0C. Similarly, the uniaxial strain of x = 0.60 ceramic samples exhibit a high strain of 0.243 % at room temperature (which corresponds to the piezoelectric coefficient d 33* of 540 pm/V). However, with increasing temperature from 30 \xb0C to 210 \xb0C, the change rate of strain is 45 %, and the piezoelectric strain coefficient d 33* reaches the maximum value of 783 pm/V at 210 \xb0C. To further validate the high-temperature stability of the present BZT-BS-PT ceramics, the temperature dependent electromechanical coupling coefficient (k 33 and k p) and ferroelectric properties (P s and E c) were evaluated across a broad temperature range (30\u2013450 \xb0C). a&b shows the variation curves in k 33 and k p for samples with x = 0.585 and 0.60. For x = 0.585, both k 33 and k p kept stable up to 400 \xb0C, demonstrating exceptional thermal stability. Similar stability is also observed for the x = 0.60 samples. The depolarization temperature at which there is a significant drop in the electromechanical coupling coefficient was determined to be 400 \xb0C for x = 0.585 and 420 \xb0C for x = 0.60, respectively. It should be noted that undoped BS-PT has been reported to have a depolarization temperature ranging from 410 to 430 \xb0C. Thus, while incorporating Bi(Zn1/2Ti1/2)O3 does cause a decrease in the Curie temperature of the BS-PT system, it does not significantly affect the depolarization temperature. Additionally, we observe that piezoelectric ceramics in the tetragonal phase (x = 0.60) exhibit a higher depolarization temperature than those in the MPB region (x = 0.585), likely due to phase transitions occurring below the Curie temperature. Furthermore, 90\xb0 domains have better thermal stability , this suggests that ceramics with a higher tetragonal phase content have a higher depolarization temperature around MPB region. c&d show that the spontaneous polarization intensity of x = 0.585 and x = 0.60 ceramic samples show good temperature stability in the test temperature range of 30\u2013210 \xb0C. With the increase of test temperature, the coercive field intensity shows an approximate linear downward trend, and the coercive field of x = 0.585 and x = 0.60 ceramic samples still reach the relatively large value of 8.5 kV/cm and 14.5 kV/cm at 210 \xb0C, respectively. At the same time, Pb0.990(Zr0.45Ti0.47(Sb0.67Nb0.33)0.08)O3 ceramics (PIC151, PI Ceramics) have poor thermal stability. As the testing temperature increases, both the polarization strength and the coercive field of PIC151 ceramics decrease almost linearly, and the coercive field is about 4 kV/cm at the highest testing temperature 250 \xb0C. This indicates that BZT-BS- PT ceramics have a stronger competitive edge in terms of thermal stability compared to PZT ceramics. Here we use the Rayleigh law to study the effects of intrinsic and extrinsic contributions on piezoelectric coefficient, the Rayleigh law can be expressed using the following formulae :  where S(E) is the electric-field-induced strain, and E 0 is the level of applied electric field. The BS-PT systems were confirmed to obey the Rayleigh law within suitable field regions (E 0 \u2264 E c/2), as shown in. The coefficient \u03b1 is the irreversible Rayleigh parameter, resulting from the irreversible motion of internal interfaces. describes the Rayleigh hysteresis, where the signs \u201c+\u201d and \u201c\u2212\u201d correspond to decreasing and increasing electric field, respectively, and in , S p-p represents the peak-to-peak strain in the electric field. shows the Rayleigh analysis of BZT-BS-PT near MPB and BS-PT near MPB piezoelectric ceramics. Under the AC electric field, an approximately linear relationship between strain and electric field can be observed in a&b, indicating that the BZT-BS-PT ceramics can apply Rayleigh's law in this electric field environment. c show that a very good positive linear relationship between the piezoelectric coefficient and weak electric field. There, the slope of fitted line is Rayleigh parameters \u03b1, and the \u03b1 coefficient of x = 0.585 samples is larger than that of x = 0.59 samples. The ferroelectric domain and domain walls of x = 0.585 samples can have better piezoelectric response in the same electric field environment because of the higher content of tripartite phase which can provide more external contributions. According to Rayleigh analysis results on 0.36BS-0.64PT ceramics , we compared the Rayleigh parameters of BZT-BS-PT ceramics with BS-PT ceramics. In the case where the coefficient of \u03b1 is approximately equal, the d init value of 597 pm/V for x = 0.585 sample is significantly greater than the dint value of 490 pm/V for 0.36BS-0.64PT ceramics. This indicates that the higher piezoelectricity observed in BZT-BS-PT ceramics compared to BS-PT ceramics is mainly from the enhanced d init. High d init value of BZT-BS-PT ceramics is consistent with the observed ultra-high spontaneous polarization in a, as a high spontaneous polarization may contribute to high intrinsic piezoelectricity based on the equation (d 33=2Q 33 P S \u03b5 33).
+
+# TITLE
+Enhancing piezoelectric properties of BiScO<inf>3</inf>-PbTiO<inf>3</inf> ceramics via- incorporation of Bi(Zn<inf>1/2</inf>Ti<inf>1/2</inf>)O<inf>3</inf> with high spontaneous polarization
+
+# ABSTRACT
+To address this issue, we incorporated Bi(Zn1/2Ti1/2)O3 with a large spontaneous polarization (P
+                     s ∼ 100 µC/cm2) and high Curie temperature (T
+                     c ∼ 1380 °C) into BiScO3-PbTiO3 ceramics to improve the piezoelectric response while maintaining high T
+                     c. The newly developed 0.08Bi(Zn1/2Ti1/2)O3-0.335BiScO3-0.585PbTiO3 ceramic exhibits impressive properties including a high d
+                     33 value of 585 pC/N (increased by ∼ 33 % compared to the 0.36BiScO3-0.64PbTiO3 ceramics), an electromechanical coupling coefficient k
+                     33 of 0.75, a dielectric constant ε′ of 2380, a relatively high T
+                     c of 421 °C.
+
+# INTRODUCTION
+As established, piezoelectric materials that can operate at temperatures exceeding 400 \xb0C are commonly referred to as high-temperature piezoelectric materials. Among these materials, BiScO3-PbTiO3 (BS-PT) stands out as a high-temperature system with both high piezoelectric performance and a relatively high Curie temperature of approximately 450 \xb0C. Its longitudinal piezoelectric coefficient d 33 is up to 450 pC/N and electromechanical coupling factor k 33 are similar to that of PZT soft ceramics (around 0.7), thus BS-PT ceramics have emerged as the leading candidate among various high-temperature options. To enhance the piezoelectric properties of BS-PT, extensive efforts have been devoted to cation doping in either the A or B site and incorporating perovskite end members with high d 33 values or high T c to form solid solutions. Doping with soft dopants in BS-PT ceramics typically leads to improvements in piezoelectric activities; however, it is often accompanied by an undesirable reduction in Curie temperature and coercive field. Guided by the relationship d = 2PsQ\u03b5 (where P S denotes the spontaneous polarization, Q is the electrostrictive coefficient, and \u03b5 signifies the free dielectric constant), it is a prerequisite to pursue a high P s to manifest a large piezoelectric coefficient d value. As reported, Bi(Zn1/2Ti1/2)O3 (BZT) possess a large spontaneous polarization of 100\u2013150 \xb5C/cmE^{2} (the spontaneous polarization of pure BS-PT ceramics is usually no more than 40 \xb5C/cmE^{2}). Moreover, the Curie temperature of Bi(Zn1/2Ti1/2)O3-PbTiO3 ferroelectric solid solution can reach up to 700 \xb0C. It is proposed that BZT holds great promise as an ideal candidate for enhancing the piezoelectric response while maintaining a high Curie temperature for BS-PT ceramics. The incorporation of 8 mol% BZT into the BS-PT solid solution was selected for investigation in the present study. A comprehensive characterization was employed to systematically explore the effects of BZT on the crystal structure, microstructure, dielectric properties, and piezoelectric properties of BZT-BS-PT solid solution ceramics. By correlating these properties with microstructural features, our aim is to establish a thorough understanding of the factors governing the piezoelectric performance of BZT-BS-PT.
+
+# CONCLUSION
+In this work, we found that the incorporation of Bi(Zn1/2Ti1/2)O3 with large spontaneous polarization into BS-PT ceramics could improve the piezoelectric properties of BS-PT ceramics. Although Bi(Zn1/2Ti1/2)O3 causes the Curie temperature of BS-PT ceramics decrease slightly, the depolarization temperature (400\u2013420 \xb0C) of BZT-BS-PT ceramics is still equivalent to that of BS-PT ceramics. For the composition of 0.08BZT-0.335BS-0.585PT, the dielectric permittivity, dielectric loss, d 33, k 33, k t, k p and E-field-induced strain (@45 kV/mm) are found to be 2380, 0.05, 585 pC/N, 0.75, 0.54, 0.62 and 0.277 % respectively, indicating that it is a promising candidate for high-temperature piezoelectric applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "0.08Bi(Zn1/2Ti1/2)O3-0.335BiScO3-0.585PbTiO3": 585,
+      "0.57Bi(Zn1/2Ti1/2)O3-0.43BiScO3-0.585PbTiO3": 372,
+      "0.58Bi(Zn1/2Ti1/2)O3-0.42BiScO3-0.585PbTiO3": 480,
+      "0.585Bi(Zn1/2Ti1/2)O3-0.415BiScO3-0.585PbTiO3": 585,
+      "0.59Bi(Zn1/2Ti1/2)O3-0.41BiScO3-0.585PbTiO3": 546,
+      "0.60Bi(Zn1/2Ti1/2)O3-0.40BiScO3-0.585PbTiO3": 406
+    },
+    "abbreviations": {},
+    "property_unit": "pC/N",
+    "family": "PbTiO3"
+  }
+}"
+2025-07-08 16:19:26: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The performance comparison of 0.08BZT-(1-x)BS-xPT (x values are 0.57, 0.58, 0.585, 0.59 and 0.60) and other high temperature piezoelectric ceramics.
+|Samples| \u03b5\u2032(@1\u2009kHz)|Loss(@1\u2009kHz)| d 33 (pC/N)| T m (\xb0C)| P r (\xb5C/cmE^{2})| E c (kV/cm)| k 33|Ref.|
+|---|---|---|---|---|---|---|---|---|
+|x = 0.57|1050|3.2\u2009%|372|410|42.2|22.7|0.70|This work|
+|x = 0.58|1192|4.0\u2009%|480|413|55.8|22.5|0.71|This work|
+|x = 0.585|2380|5.0\u2009%|585|421|54.7|23.6|0.75|This work|
+|x = 0.59|2342|4.6\u2009%|546|424|40.1|24.9|0.72|This work|
+|x = 0.60|1904|3.1\u2009%|406|428|48.7|31.3|0.70|This work|
+|BiScO3-PbTiO3-|2010|/|450|450|32|20|/|[27]|
+|Bi(Zn1/2Ti1/2)O3-BiScO3-PbTiO3|1377|/|336|\u223c 415|/|/|/|[28]|
+|Bi(Zn1/2Ti1/2)O3-BiScO3-PbTiO3|1825|/|520|425|46.8|\u223c 25|/|[29]|
+|Pb(Ni1/3Nb2/3)O3-BiScO3-PbTiO3|2216|4.9\u2009%|522|400|39.2|19.3|/|[30]|
+|Pb(Sb1/2Nb1/2)O3-BiScO3-PbTiO3|2098|3.7\u2009%|553|384|39.1|19.7|/|[31]|
+|BaTiO3-BiFeO3-PbTiO3|/|/|380|483|\u223c 36|\u223c 25|/|[32]|
+|PZT-5A|1900|1.8\u2009%|390|350|39.0|12.0|0.72|[33]|
+
+# RESULTS AND DISCUSSION
+shows the XRD spectra of 0.08BZT-(1-x)BS-xPT (x = 0.57, 0.58, 0.585, 0.59, and 0.6) ceramic samples. As indexed, the peaks corresponding to the (100), (101), (111) and (200) planes represent characteristic perovskite phases in the material under investigation. Notably, no discernible peaks associated with other phases are detected in the spectra, indicating successful synthesis of a BZT-BS-PT solid solution with a pure perovskite phase structure. The local enlarged XRD diffraction peak near 45\xb0 reveals that the ceramic components with x = 0.57 and x = 0.60 exhibit a rhombohedral phase and tetragonal phase, respectively, at room temperature, while all other components reside within the morphotropic phase boundary (MPB). With the increase in BiScO3 content, the XRD diffraction peak gradually shifts towards higher angles. According to the Bragg equation 2dsin\u03b8 = n\u03bb, where d is the lattice spacing, \u03b8 is the diffraction peak angle and \u03bb is the wavelength of incident X-ray, it can be seen that the lattice constant of BZT-BS-PT ceramics reduces gradually. The microstructure images and density of the ceramic samples are presented in , with the grain size distribution inset in the SEM images. The microstructure morphology of all samples is similar, with the average grain size predominantly ranging from 2 to 3 \xb5m, and the statistical chart of ceramic grain size can be viewed in the. The varying content of BiScO3 has minimal impact on the sintering behavior of ceramics. As depicted in f, the density range of BZT-BS-PT ceramics falls between 7.55 and 7.60 g/cmE^{3}, while their theoretical density is approximately 7.80 g/cmE^{3} ; thus, the relative density of BZT-BS-PT ceramics exceeds 95 %. The presence of pores observed in the cross-section of ceramics can be attributed to grain spalling occurring during fracture. shows the temperature-dependent dielectric spectra of 0.08BZT-(1-x)BS-xPT (x = 0.57, 0.58, 0.585, 0.59, and 0.6) ceramic samples at different frequencies (1 kHz, 10 kHz, and 100 kHz). The Curie temperature of 0.08BZT-BS-PT piezoelectric ceramics is in the range of 410\u2013430 \xb0C, which is reduced by 20\u201340 \xb0C compared to that of BS-PT at MPB. This observation aligns with previous findings by Eitel et al. , where PT-based perovskite ferroelectrics with lower tolerance factors generally exhibit higher Curie temperatures. Tolerance factor for Bi(Zn1/2Ti1/2)O3 is calculated as t = 0.95 which is significantly larger than that for BiScO3 (t = 0.907) , resulting in a reduction in the Curie temperature for BS-PT ceramics. Notably, at room temperature, the ceramic with x = 0.585 exhibits a high dielectric constant of up to 2380 (at 1 kHz), while maintaining a dielectric loss below 5 % over the temperature range of 30\u2013340 \xb0C. It should be noted here that compared with commercial PZT-5A ceramics, dielectric loss of BZT-BS-PT ceramics was relatively high, thus making use of \u201chard\u201d doping to reduce the dielectric loss in BZT-BS-PT ceramics is the work that needs to be carried out in the future. shows the hysteresis loops of polarization (P-E) and strain (S-E) of 0.08BZT-(1-x)BS-xPT. As the PbTiO3 content increases, the residual polarization intensity ( ) initially rises and then declines. At MPB, the maximum value of spontaneous polarization intensity (residual polarization intensity) reaches 55.8 \xb5C/cmE^{2}, while pure BS-PT ceramics generally exhibit a spontaneous polarization intensity not exceeding 40 \xb5C/cmE^{2}. Therefore, incorporating Bi(Zn1/2Ti1/2)O3 with exceptionally high spontaneous polarization intensity can effectively enhance the overall spontaneous polarization intensity of BS-PT ceramics. Compared to BS-PT (MPB) ceramics, the coercive field of BZT-BS-PT ceramics exceeds 20 kV/cm. b demonstrates that the BZT-BS-PT ceramics exhibit a maximum normal strain of 0.277 % at x = 0.585 in the MPB region under an electric field of 45 kV/cm. Moreover, even at x = 0.60 with a tetragonal phase structure, these ceramics still maintain a significant strain of 0.267 % under identical electric field conditions (45 kV/cm). Interestingly, when x = 0.58, the BZT-BS-PT ceramics display an exceptionally high negative strain close to 0.5 % under an electric field intensity of 22.5 kV/cm, which is comparable to the observed strain 0.4 % in BS-PT piezoelectric single crystals (at an electric field intensity of 50 kV/cm) at 35 \xb0C. Regarding this unusually large negative strain behavior, one possible explanation can be attributed to the presence of highly saturated domains during poling and subsequent manifestation of numerous intermediate domain states upon polarization reversal. compares the dielectric, ferroelectric, and piezoelectric properties of 0.08BZT-(1-x)BS-xPT with other high-temperature piezoelectric ceramics. At x = 0.585, the ceramics exhibit a piezoelectric coefficient d 33 of 585 pC/N and an electromechanical coupling coefficient k 33 of 75 %, surpassing the ferroelectric properties of PZT-5A ceramics (CTS electronic components, USA). At x = 0.60, the coercive field of BZT-BS-PT ceramics increases by approximately 50 % compared to BS-PT ceramics while maintaining a small difference in piezoelectric coefficient. This significant increase in coercive field ensures enhanced resistance to temperature changes for the practical application of these piezoelectric ceramics. illustrates the temperature-dependent unipolar S-E loop of 0.08BZT-(1-x)BS-xPT ceramics (x = 0.585 and 0.60) under an electric field of 45 kV/cm. The x = 0.585 ceramic samples exhibits room-temperature uniaxial strain of 0.277 % and a piezoelectric coefficient d 33* of 615 pm/V. Upon increasing testing temperature, a light increase in the strain is observed with a limited variation rate of 15 % in the temperature range of 30\u2013210 \xb0C. Similarly, the uniaxial strain of x = 0.60 ceramic samples exhibit a high strain of 0.243 % at room temperature (which corresponds to the piezoelectric coefficient d 33* of 540 pm/V). However, with increasing temperature from 30 \xb0C to 210 \xb0C, the change rate of strain is 45 %, and the piezoelectric strain coefficient d 33* reaches the maximum value of 783 pm/V at 210 \xb0C. To further validate the high-temperature stability of the present BZT-BS-PT ceramics, the temperature dependent electromechanical coupling coefficient (k 33 and k p) and ferroelectric properties (P s and E c) were evaluated across a broad temperature range (30\u2013450 \xb0C). a&b shows the variation curves in k 33 and k p for samples with x = 0.585 and 0.60. For x = 0.585, both k 33 and k p kept stable up to 400 \xb0C, demonstrating exceptional thermal stability. Similar stability is also observed for the x = 0.60 samples. The depolarization temperature at which there is a significant drop in the electromechanical coupling coefficient was determined to be 400 \xb0C for x = 0.585 and 420 \xb0C for x = 0.60, respectively. It should be noted that undoped BS-PT has been reported to have a depolarization temperature ranging from 410 to 430 \xb0C. Thus, while incorporating Bi(Zn1/2Ti1/2)O3 does cause a decrease in the Curie temperature of the BS-PT system, it does not significantly affect the depolarization temperature. Additionally, we observe that piezoelectric ceramics in the tetragonal phase (x = 0.60) exhibit a higher depolarization temperature than those in the MPB region (x = 0.585), likely due to phase transitions occurring below the Curie temperature. Furthermore, 90\xb0 domains have better thermal stability , this suggests that ceramics with a higher tetragonal phase content have a higher depolarization temperature around MPB region. c&d show that the spontaneous polarization intensity of x = 0.585 and x = 0.60 ceramic samples show good temperature stability in the test temperature range of 30\u2013210 \xb0C. With the increase of test temperature, the coercive field intensity shows an approximate linear downward trend, and the coercive field of x = 0.585 and x = 0.60 ceramic samples still reach the relatively large value of 8.5 kV/cm and 14.5 kV/cm at 210 \xb0C, respectively. At the same time, Pb0.990(Zr0.45Ti0.47(Sb0.67Nb0.33)0.08)O3 ceramics (PIC151, PI Ceramics) have poor thermal stability. As the testing temperature increases, both the polarization strength and the coercive field of PIC151 ceramics decrease almost linearly, and the coercive field is about 4 kV/cm at the highest testing temperature 250 \xb0C. This indicates that BZT-BS- PT ceramics have a stronger competitive edge in terms of thermal stability compared to PZT ceramics. Here we use the Rayleigh law to study the effects of intrinsic and extrinsic contributions on piezoelectric coefficient, the Rayleigh law can be expressed using the following formulae :  where S(E) is the electric-field-induced strain, and E 0 is the level of applied electric field. The BS-PT systems were confirmed to obey the Rayleigh law within suitable field regions (E 0 \u2264 E c/2), as shown in. The coefficient \u03b1 is the irreversible Rayleigh parameter, resulting from the irreversible motion of internal interfaces. describes the Rayleigh hysteresis, where the signs \u201c+\u201d and \u201c\u2212\u201d correspond to decreasing and increasing electric field, respectively, and in , S p-p represents the peak-to-peak strain in the electric field. shows the Rayleigh analysis of BZT-BS-PT near MPB and BS-PT near MPB piezoelectric ceramics. Under the AC electric field, an approximately linear relationship between strain and electric field can be observed in a&b, indicating that the BZT-BS-PT ceramics can apply Rayleigh's law in this electric field environment. c show that a very good positive linear relationship between the piezoelectric coefficient and weak electric field. There, the slope of fitted line is Rayleigh parameters \u03b1, and the \u03b1 coefficient of x = 0.585 samples is larger than that of x = 0.59 samples. The ferroelectric domain and domain walls of x = 0.585 samples can have better piezoelectric response in the same electric field environment because of the higher content of tripartite phase which can provide more external contributions. According to Rayleigh analysis results on 0.36BS-0.64PT ceramics , we compared the Rayleigh parameters of BZT-BS-PT ceramics with BS-PT ceramics. In the case where the coefficient of \u03b1 is approximately equal, the d init value of 597 pm/V for x = 0.585 sample is significantly greater than the dint value of 490 pm/V for 0.36BS-0.64PT ceramics. This indicates that the higher piezoelectricity observed in BZT-BS-PT ceramics compared to BS-PT ceramics is mainly from the enhanced d init. High d init value of BZT-BS-PT ceramics is consistent with the observed ultra-high spontaneous polarization in a, as a high spontaneous polarization may contribute to high intrinsic piezoelectricity based on the equation (d 33=2Q 33 P S \u03b5 33).
+
+# TITLE
+Enhancing piezoelectric properties of BiScO<inf>3</inf>-PbTiO<inf>3</inf> ceramics via- incorporation of Bi(Zn<inf>1/2</inf>Ti<inf>1/2</inf>)O<inf>3</inf> with high spontaneous polarization
+
+# ABSTRACT
+To address this issue, we incorporated Bi(Zn1/2Ti1/2)O3 with a large spontaneous polarization (P
+                     s ∼ 100 µC/cm2) and high Curie temperature (T
+                     c ∼ 1380 °C) into BiScO3-PbTiO3 ceramics to improve the piezoelectric response while maintaining high T
+                     c. The newly developed 0.08Bi(Zn1/2Ti1/2)O3-0.335BiScO3-0.585PbTiO3 ceramic exhibits impressive properties including a high d
+                     33 value of 585 pC/N (increased by ∼ 33 % compared to the 0.36BiScO3-0.64PbTiO3 ceramics), an electromechanical coupling coefficient k
+                     33 of 0.75, a dielectric constant ε′ of 2380, a relatively high T
+                     c of 421 °C.
+
+# INTRODUCTION
+As established, piezoelectric materials that can operate at temperatures exceeding 400 \xb0C are commonly referred to as high-temperature piezoelectric materials. Among these materials, BiScO3-PbTiO3 (BS-PT) stands out as a high-temperature system with both high piezoelectric performance and a relatively high Curie temperature of approximately 450 \xb0C. Its longitudinal piezoelectric coefficient d 33 is up to 450 pC/N and electromechanical coupling factor k 33 are similar to that of PZT soft ceramics (around 0.7), thus BS-PT ceramics have emerged as the leading candidate among various high-temperature options. To enhance the piezoelectric properties of BS-PT, extensive efforts have been devoted to cation doping in either the A or B site and incorporating perovskite end members with high d 33 values or high T c to form solid solutions. Doping with soft dopants in BS-PT ceramics typically leads to improvements in piezoelectric activities; however, it is often accompanied by an undesirable reduction in Curie temperature and coercive field. Guided by the relationship d = 2PsQ\u03b5 (where P S denotes the spontaneous polarization, Q is the electrostrictive coefficient, and \u03b5 signifies the free dielectric constant), it is a prerequisite to pursue a high P s to manifest a large piezoelectric coefficient d value. As reported, Bi(Zn1/2Ti1/2)O3 (BZT) possess a large spontaneous polarization of 100\u2013150 \xb5C/cmE^{2} (the spontaneous polarization of pure BS-PT ceramics is usually no more than 40 \xb5C/cmE^{2}). Moreover, the Curie temperature of Bi(Zn1/2Ti1/2)O3-PbTiO3 ferroelectric solid solution can reach up to 700 \xb0C. It is proposed that BZT holds great promise as an ideal candidate for enhancing the piezoelectric response while maintaining a high Curie temperature for BS-PT ceramics. The incorporation of 8 mol% BZT into the BS-PT solid solution was selected for investigation in the present study. A comprehensive characterization was employed to systematically explore the effects of BZT on the crystal structure, microstructure, dielectric properties, and piezoelectric properties of BZT-BS-PT solid solution ceramics. By correlating these properties with microstructural features, our aim is to establish a thorough understanding of the factors governing the piezoelectric performance of BZT-BS-PT.
+
+# CONCLUSION
+In this work, we found that the incorporation of Bi(Zn1/2Ti1/2)O3 with large spontaneous polarization into BS-PT ceramics could improve the piezoelectric properties of BS-PT ceramics. Although Bi(Zn1/2Ti1/2)O3 causes the Curie temperature of BS-PT ceramics decrease slightly, the depolarization temperature (400\u2013420 \xb0C) of BZT-BS-PT ceramics is still equivalent to that of BS-PT ceramics. For the composition of 0.08BZT-0.335BS-0.585PT, the dielectric permittivity, dielectric loss, d 33, k 33, k t, k p and E-field-induced strain (@45 kV/mm) are found to be 2380, 0.05, 585 pC/N, 0.75, 0.54, 0.62 and 0.277 % respectively, indicating that it is a promising candidate for high-temperature piezoelectric applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-08 16:19:32: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The performance comparison of 0.08BZT-(1-x)BS-xPT (x values are 0.57, 0.58, 0.585, 0.59 and 0.60) and other high temperature piezoelectric ceramics.
+|Samples| \u03b5\u2032(@1\u2009kHz)|Loss(@1\u2009kHz)| d 33 (pC/N)| T m (\xb0C)| P r (\xb5C/cmE^{2})| E c (kV/cm)| k 33|Ref.|
+|---|---|---|---|---|---|---|---|---|
+|x = 0.57|1050|3.2\u2009%|372|410|42.2|22.7|0.70|This work|
+|x = 0.58|1192|4.0\u2009%|480|413|55.8|22.5|0.71|This work|
+|x = 0.585|2380|5.0\u2009%|585|421|54.7|23.6|0.75|This work|
+|x = 0.59|2342|4.6\u2009%|546|424|40.1|24.9|0.72|This work|
+|x = 0.60|1904|3.1\u2009%|406|428|48.7|31.3|0.70|This work|
+|BiScO3-PbTiO3-|2010|/|450|450|32|20|/|[27]|
+|Bi(Zn1/2Ti1/2)O3-BiScO3-PbTiO3|1377|/|336|\u223c 415|/|/|/|[28]|
+|Bi(Zn1/2Ti1/2)O3-BiScO3-PbTiO3|1825|/|520|425|46.8|\u223c 25|/|[29]|
+|Pb(Ni1/3Nb2/3)O3-BiScO3-PbTiO3|2216|4.9\u2009%|522|400|39.2|19.3|/|[30]|
+|Pb(Sb1/2Nb1/2)O3-BiScO3-PbTiO3|2098|3.7\u2009%|553|384|39.1|19.7|/|[31]|
+|BaTiO3-BiFeO3-PbTiO3|/|/|380|483|\u223c 36|\u223c 25|/|[32]|
+|PZT-5A|1900|1.8\u2009%|390|350|39.0|12.0|0.72|[33]|
+
+# RESULTS AND DISCUSSION
+shows the XRD spectra of 0.08BZT-(1-x)BS-xPT (x = 0.57, 0.58, 0.585, 0.59, and 0.6) ceramic samples. As indexed, the peaks corresponding to the (100), (101), (111) and (200) planes represent characteristic perovskite phases in the material under investigation. Notably, no discernible peaks associated with other phases are detected in the spectra, indicating successful synthesis of a BZT-BS-PT solid solution with a pure perovskite phase structure. The local enlarged XRD diffraction peak near 45\xb0 reveals that the ceramic components with x = 0.57 and x = 0.60 exhibit a rhombohedral phase and tetragonal phase, respectively, at room temperature, while all other components reside within the morphotropic phase boundary (MPB). With the increase in BiScO3 content, the XRD diffraction peak gradually shifts towards higher angles. According to the Bragg equation 2dsin\u03b8 = n\u03bb, where d is the lattice spacing, \u03b8 is the diffraction peak angle and \u03bb is the wavelength of incident X-ray, it can be seen that the lattice constant of BZT-BS-PT ceramics reduces gradually. The microstructure images and density of the ceramic samples are presented in , with the grain size distribution inset in the SEM images. The microstructure morphology of all samples is similar, with the average grain size predominantly ranging from 2 to 3 \xb5m, and the statistical chart of ceramic grain size can be viewed in the. The varying content of BiScO3 has minimal impact on the sintering behavior of ceramics. As depicted in f, the density range of BZT-BS-PT ceramics falls between 7.55 and 7.60 g/cmE^{3}, while their theoretical density is approximately 7.80 g/cmE^{3} ; thus, the relative density of BZT-BS-PT ceramics exceeds 95 %. The presence of pores observed in the cross-section of ceramics can be attributed to grain spalling occurring during fracture. shows the temperature-dependent dielectric spectra of 0.08BZT-(1-x)BS-xPT (x = 0.57, 0.58, 0.585, 0.59, and 0.6) ceramic samples at different frequencies (1 kHz, 10 kHz, and 100 kHz). The Curie temperature of 0.08BZT-BS-PT piezoelectric ceramics is in the range of 410\u2013430 \xb0C, which is reduced by 20\u201340 \xb0C compared to that of BS-PT at MPB. This observation aligns with previous findings by Eitel et al. , where PT-based perovskite ferroelectrics with lower tolerance factors generally exhibit higher Curie temperatures. Tolerance factor for Bi(Zn1/2Ti1/2)O3 is calculated as t = 0.95 which is significantly larger than that for BiScO3 (t = 0.907) , resulting in a reduction in the Curie temperature for BS-PT ceramics. Notably, at room temperature, the ceramic with x = 0.585 exhibits a high dielectric constant of up to 2380 (at 1 kHz), while maintaining a dielectric loss below 5 % over the temperature range of 30\u2013340 \xb0C. It should be noted here that compared with commercial PZT-5A ceramics, dielectric loss of BZT-BS-PT ceramics was relatively high, thus making use of \u201chard\u201d doping to reduce the dielectric loss in BZT-BS-PT ceramics is the work that needs to be carried out in the future. shows the hysteresis loops of polarization (P-E) and strain (S-E) of 0.08BZT-(1-x)BS-xPT. As the PbTiO3 content increases, the residual polarization intensity ( ) initially rises and then declines. At MPB, the maximum value of spontaneous polarization intensity (residual polarization intensity) reaches 55.8 \xb5C/cmE^{2}, while pure BS-PT ceramics generally exhibit a spontaneous polarization intensity not exceeding 40 \xb5C/cmE^{2}. Therefore, incorporating Bi(Zn1/2Ti1/2)O3 with exceptionally high spontaneous polarization intensity can effectively enhance the overall spontaneous polarization intensity of BS-PT ceramics. Compared to BS-PT (MPB) ceramics, the coercive field of BZT-BS-PT ceramics exceeds 20 kV/cm. b demonstrates that the BZT-BS-PT ceramics exhibit a maximum normal strain of 0.277 % at x = 0.585 in the MPB region under an electric field of 45 kV/cm. Moreover, even at x = 0.60 with a tetragonal phase structure, these ceramics still maintain a significant strain of 0.267 % under identical electric field conditions (45 kV/cm). Interestingly, when x = 0.58, the BZT-BS-PT ceramics display an exceptionally high negative strain close to 0.5 % under an electric field intensity of 22.5 kV/cm, which is comparable to the observed strain 0.4 % in BS-PT piezoelectric single crystals (at an electric field intensity of 50 kV/cm) at 35 \xb0C. Regarding this unusually large negative strain behavior, one possible explanation can be attributed to the presence of highly saturated domains during poling and subsequent manifestation of numerous intermediate domain states upon polarization reversal. compares the dielectric, ferroelectric, and piezoelectric properties of 0.08BZT-(1-x)BS-xPT with other high-temperature piezoelectric ceramics. At x = 0.585, the ceramics exhibit a piezoelectric coefficient d 33 of 585 pC/N and an electromechanical coupling coefficient k 33 of 75 %, surpassing the ferroelectric properties of PZT-5A ceramics (CTS electronic components, USA). At x = 0.60, the coercive field of BZT-BS-PT ceramics increases by approximately 50 % compared to BS-PT ceramics while maintaining a small difference in piezoelectric coefficient. This significant increase in coercive field ensures enhanced resistance to temperature changes for the practical application of these piezoelectric ceramics. illustrates the temperature-dependent unipolar S-E loop of 0.08BZT-(1-x)BS-xPT ceramics (x = 0.585 and 0.60) under an electric field of 45 kV/cm. The x = 0.585 ceramic samples exhibits room-temperature uniaxial strain of 0.277 % and a piezoelectric coefficient d 33* of 615 pm/V. Upon increasing testing temperature, a light increase in the strain is observed with a limited variation rate of 15 % in the temperature range of 30\u2013210 \xb0C. Similarly, the uniaxial strain of x = 0.60 ceramic samples exhibit a high strain of 0.243 % at room temperature (which corresponds to the piezoelectric coefficient d 33* of 540 pm/V). However, with increasing temperature from 30 \xb0C to 210 \xb0C, the change rate of strain is 45 %, and the piezoelectric strain coefficient d 33* reaches the maximum value of 783 pm/V at 210 \xb0C. To further validate the high-temperature stability of the present BZT-BS-PT ceramics, the temperature dependent electromechanical coupling coefficient (k 33 and k p) and ferroelectric properties (P s and E c) were evaluated across a broad temperature range (30\u2013450 \xb0C). a&b shows the variation curves in k 33 and k p for samples with x = 0.585 and 0.60. For x = 0.585, both k 33 and k p kept stable up to 400 \xb0C, demonstrating exceptional thermal stability. Similar stability is also observed for the x = 0.60 samples. The depolarization temperature at which there is a significant drop in the electromechanical coupling coefficient was determined to be 400 \xb0C for x = 0.585 and 420 \xb0C for x = 0.60, respectively. It should be noted that undoped BS-PT has been reported to have a depolarization temperature ranging from 410 to 430 \xb0C. Thus, while incorporating Bi(Zn1/2Ti1/2)O3 does cause a decrease in the Curie temperature of the BS-PT system, it does not significantly affect the depolarization temperature. Additionally, we observe that piezoelectric ceramics in the tetragonal phase (x = 0.60) exhibit a higher depolarization temperature than those in the MPB region (x = 0.585), likely due to phase transitions occurring below the Curie temperature. Furthermore, 90\xb0 domains have better thermal stability , this suggests that ceramics with a higher tetragonal phase content have a higher depolarization temperature around MPB region. c&d show that the spontaneous polarization intensity of x = 0.585 and x = 0.60 ceramic samples show good temperature stability in the test temperature range of 30\u2013210 \xb0C. With the increase of test temperature, the coercive field intensity shows an approximate linear downward trend, and the coercive field of x = 0.585 and x = 0.60 ceramic samples still reach the relatively large value of 8.5 kV/cm and 14.5 kV/cm at 210 \xb0C, respectively. At the same time, Pb0.990(Zr0.45Ti0.47(Sb0.67Nb0.33)0.08)O3 ceramics (PIC151, PI Ceramics) have poor thermal stability. As the testing temperature increases, both the polarization strength and the coercive field of PIC151 ceramics decrease almost linearly, and the coercive field is about 4 kV/cm at the highest testing temperature 250 \xb0C. This indicates that BZT-BS- PT ceramics have a stronger competitive edge in terms of thermal stability compared to PZT ceramics. Here we use the Rayleigh law to study the effects of intrinsic and extrinsic contributions on piezoelectric coefficient, the Rayleigh law can be expressed using the following formulae :  where S(E) is the electric-field-induced strain, and E 0 is the level of applied electric field. The BS-PT systems were confirmed to obey the Rayleigh law within suitable field regions (E 0 \u2264 E c/2), as shown in. The coefficient \u03b1 is the irreversible Rayleigh parameter, resulting from the irreversible motion of internal interfaces. describes the Rayleigh hysteresis, where the signs \u201c+\u201d and \u201c\u2212\u201d correspond to decreasing and increasing electric field, respectively, and in , S p-p represents the peak-to-peak strain in the electric field. shows the Rayleigh analysis of BZT-BS-PT near MPB and BS-PT near MPB piezoelectric ceramics. Under the AC electric field, an approximately linear relationship between strain and electric field can be observed in a&b, indicating that the BZT-BS-PT ceramics can apply Rayleigh's law in this electric field environment. c show that a very good positive linear relationship between the piezoelectric coefficient and weak electric field. There, the slope of fitted line is Rayleigh parameters \u03b1, and the \u03b1 coefficient of x = 0.585 samples is larger than that of x = 0.59 samples. The ferroelectric domain and domain walls of x = 0.585 samples can have better piezoelectric response in the same electric field environment because of the higher content of tripartite phase which can provide more external contributions. According to Rayleigh analysis results on 0.36BS-0.64PT ceramics , we compared the Rayleigh parameters of BZT-BS-PT ceramics with BS-PT ceramics. In the case where the coefficient of \u03b1 is approximately equal, the d init value of 597 pm/V for x = 0.585 sample is significantly greater than the dint value of 490 pm/V for 0.36BS-0.64PT ceramics. This indicates that the higher piezoelectricity observed in BZT-BS-PT ceramics compared to BS-PT ceramics is mainly from the enhanced d init. High d init value of BZT-BS-PT ceramics is consistent with the observed ultra-high spontaneous polarization in a, as a high spontaneous polarization may contribute to high intrinsic piezoelectricity based on the equation (d 33=2Q 33 P S \u03b5 33).
+
+# TITLE
+Enhancing piezoelectric properties of BiScO<inf>3</inf>-PbTiO<inf>3</inf> ceramics via- incorporation of Bi(Zn<inf>1/2</inf>Ti<inf>1/2</inf>)O<inf>3</inf> with high spontaneous polarization
+
+# ABSTRACT
+To address this issue, we incorporated Bi(Zn1/2Ti1/2)O3 with a large spontaneous polarization (P
+                     s ∼ 100 µC/cm2) and high Curie temperature (T
+                     c ∼ 1380 °C) into BiScO3-PbTiO3 ceramics to improve the piezoelectric response while maintaining high T
+                     c. The newly developed 0.08Bi(Zn1/2Ti1/2)O3-0.335BiScO3-0.585PbTiO3 ceramic exhibits impressive properties including a high d
+                     33 value of 585 pC/N (increased by ∼ 33 % compared to the 0.36BiScO3-0.64PbTiO3 ceramics), an electromechanical coupling coefficient k
+                     33 of 0.75, a dielectric constant ε′ of 2380, a relatively high T
+                     c of 421 °C.
+
+# INTRODUCTION
+As established, piezoelectric materials that can operate at temperatures exceeding 400 \xb0C are commonly referred to as high-temperature piezoelectric materials. Among these materials, BiScO3-PbTiO3 (BS-PT) stands out as a high-temperature system with both high piezoelectric performance and a relatively high Curie temperature of approximately 450 \xb0C. Its longitudinal piezoelectric coefficient d 33 is up to 450 pC/N and electromechanical coupling factor k 33 are similar to that of PZT soft ceramics (around 0.7), thus BS-PT ceramics have emerged as the leading candidate among various high-temperature options. To enhance the piezoelectric properties of BS-PT, extensive efforts have been devoted to cation doping in either the A or B site and incorporating perovskite end members with high d 33 values or high T c to form solid solutions. Doping with soft dopants in BS-PT ceramics typically leads to improvements in piezoelectric activities; however, it is often accompanied by an undesirable reduction in Curie temperature and coercive field. Guided by the relationship d = 2PsQ\u03b5 (where P S denotes the spontaneous polarization, Q is the electrostrictive coefficient, and \u03b5 signifies the free dielectric constant), it is a prerequisite to pursue a high P s to manifest a large piezoelectric coefficient d value. As reported, Bi(Zn1/2Ti1/2)O3 (BZT) possess a large spontaneous polarization of 100\u2013150 \xb5C/cmE^{2} (the spontaneous polarization of pure BS-PT ceramics is usually no more than 40 \xb5C/cmE^{2}). Moreover, the Curie temperature of Bi(Zn1/2Ti1/2)O3-PbTiO3 ferroelectric solid solution can reach up to 700 \xb0C. It is proposed that BZT holds great promise as an ideal candidate for enhancing the piezoelectric response while maintaining a high Curie temperature for BS-PT ceramics. The incorporation of 8 mol% BZT into the BS-PT solid solution was selected for investigation in the present study. A comprehensive characterization was employed to systematically explore the effects of BZT on the crystal structure, microstructure, dielectric properties, and piezoelectric properties of BZT-BS-PT solid solution ceramics. By correlating these properties with microstructural features, our aim is to establish a thorough understanding of the factors governing the piezoelectric performance of BZT-BS-PT.
+
+# CONCLUSION
+In this work, we found that the incorporation of Bi(Zn1/2Ti1/2)O3 with large spontaneous polarization into BS-PT ceramics could improve the piezoelectric properties of BS-PT ceramics. Although Bi(Zn1/2Ti1/2)O3 causes the Curie temperature of BS-PT ceramics decrease slightly, the depolarization temperature (400\u2013420 \xb0C) of BZT-BS-PT ceramics is still equivalent to that of BS-PT ceramics. For the composition of 0.08BZT-0.335BS-0.585PT, the dielectric permittivity, dielectric loss, d 33, k 33, k t, k p and E-field-induced strain (@45 kV/mm) are found to be 2380, 0.05, 585 pC/N, 0.75, 0.54, 0.62 and 0.277 % respectively, indicating that it is a promising candidate for high-temperature piezoelectric applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "0.08Bi(Zn1/2Ti1/2)O3-0.335BiScO3-0.585PbTiO3": 585,
+      "0.57Bi(Zn1/2Ti1/2)O3-0.43BiScO3-0.57PbTiO3": 372,
+      "0.58Bi(Zn1/2Ti1/2)O3-0.42BiScO3-0.58PbTiO3": 480,
+      "0.585Bi(Zn1/2Ti1/2)O3-0.415BiScO3-0.585PbTiO3": 585,
+      "0.59Bi(Zn1/2Ti1/2)O3-0.41BiScO3-0.59PbTiO3": 546,
+      "0.60Bi(Zn1/2Ti1/2)O3-0.40BiScO3-0.60PbTiO3": 406
+    },
+    "abbreviations": {
+      "BZT": "Bi(Zn1/2Ti1/2)O3",
+      "BS-PT": "BiScO3-PbTiO3",
+      "BZT-BS-PT": "Bi(Zn1/2Ti1/2)O3- BiScO3- PbTiO3",
+      "PZT-5A": "Pb(Zr0.52Ti0.48)O3"
+    },
+    "property_unit": "pC/N",
+    "family": "PbTiO3"
+  }
+}"

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi5Ti3FeO15":7.1,"Bi((1-0.02)+0.02Ho)Ti3FeO15":21.8,"Bi((1-0.03)+0.03Ho)Ti3FeO15":21.1,"Bi((1-0.04)+0.04Ho)Ti3FeO15":23.1,"Bi((1-0.05)+0.05Ho)Ti3FeO15":20.0,"Bi((1-0.08)+0.08Ho)Ti3FeO15":18.6},"property_unit":"pC/N","family":"Bi5Ti3FeO15"}}

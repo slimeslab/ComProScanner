@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PSMNZT–xMn where x=0.0":580,"PSMNZT–xMn where x=0.2":620,"PSMNZT–xMn where x=0.4":708,"PSMNZT–xMn where x=0.6":550,"PSMNZT–xMn where x=0.8":461},"abbreviations":{"PSMNZT":"Pb0.94Sr0.06(Mg1/3Nb2/3)0.2(Zr0.388Ti0.412)O3"},"property_unit":"pC/N","family":"PZT"}}

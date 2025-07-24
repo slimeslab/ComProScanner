@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi0.85La0.15FeO3":34},"abbreviations":{"BFO":"BiFeO3","AGS":"average grain size"},"property_unit":"pC/N","family":"BiFeO3"}}

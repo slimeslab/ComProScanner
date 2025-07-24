@@ -1,0 +1,1 @@
+{"synthesis_formatted_data":{"method":"Compaction and Poling","precursors":["CaBi4Ti4-x (Nb2/3Mn1/3) x O15"],"steps":["The powder was compacted into a bulk of dimensions of 15 mm × 2 mm × 2 mm.","The specimens were poled along the thickness direction."],"characterization_techniques":["DMA","SEM","EDS","TEM","HRTEM","Universal Testing Machine"]}}

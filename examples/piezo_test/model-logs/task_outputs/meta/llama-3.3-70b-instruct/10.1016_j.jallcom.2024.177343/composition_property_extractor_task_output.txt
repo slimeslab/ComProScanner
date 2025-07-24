@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi5Ti3FeO15":7.1,"Bi4.96Yb0.04Ti3FeO15":21.4,"BTF-2Yb":20.1,"BTF-4Yb":21.4,"BTF-6Yb":20.4,"BTF-8Yb":19.7,"BTF-10Yb":21.0,"BTF-15Yb":17.0,"BTF-20Yb":14.0},"abbreviations":{"BTF":"Bi5Ti3FeO15"},"property_unit":"pC/N","family":"BTF"}}

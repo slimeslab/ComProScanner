@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BiFeO3":null,"Bi0.9La0.1FeO3":null,"Bi0.85La0.15FeO3":34,"BiFe0.998Zr0.002O3+δ":null,"BiFe0.99Zr0.01O3+δ":null,"Bi0.9La0.1Fe0.998Zr0.002O3+δ":null,"Bi0.9La0.1Fe0.99Zr0.01O3+δ":null,"Bi0.85La0.15Fe0.998Zr0.002O3+δ":null,"Bi0.85La0.15Fe0.99Zr0.01O3+δ":null},"property_unit":"pC/N","family":"BiFeO3"}}

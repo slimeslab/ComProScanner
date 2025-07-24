@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Pb0.95K0.1[Nb0.96Ta0.04]2O6":44,"Pb0.90K0.2[Nb0.96Ta0.04]2O6":54,"Pb0.85K0.3[Nb0.96Ta0.04]2O6":93,"Pb0.80K0.4[Nb0.96Ta0.04]2O6":141},"property_unit":"pC/N","family":"PbNb2O6"}}

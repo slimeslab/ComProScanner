@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Nd2O3: BS-0.64PT":550,"La2O3: BS-0.64PT":465,"Y2O3: BS-0.56PT":147,"ZrO2: BS-0.53PT":430,"ZrO2: BS-0.64PT":476,"Bi(Sr,Nb)O3: BS-0.98(BS-0.64PT)":450,"Bi(Mg,Sb)O3: BS-0.63PT":330,"MnO: BS-0.62PT-0.03SBT":358,"Pb(Mn,N)O3: BS-0.58PT":300,"PZT4":290,"PZT5A":375,"PZT8":225},"property_unit":"pC/N","family":"BS-PT"}}

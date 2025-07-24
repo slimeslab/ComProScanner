@@ -1,0 +1,237 @@
+2025-07-10 09:58:35: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Model and parameters of the PZT.
+|Material: PZT|Normal temperature (20\xa0\xb0C)|Trend with temperature change|
+|---|---|---|
+|d31|\u2212185|d\u0394T,\u0394\u03c3T=--\xd7\u0394T+2.035\xd7-\u0394\u03c3T-\u0394\u03c3TE^{31}E^{185}E^{0.194}E^{10}E^{3}E^{2}E^{0.777}|
+|\u03b533|2155|\u03b533(\u0394T)=2155+4.12\xd7\u0394T|
+|Dielectric losses|0.02|
+|Density|7800\xa0kg/mE^{3}|
+|Thermal expansion coefficient|3\xa0\xd7\xa010E^{\u22126}|
+|Geometrical dimensions|8\xa0mm\xa0\xd7\xa00.48\xa0mm|
+
+Table 2. Model and parameters of the bonding layers.
+|Material: bonding layers|Normal temperature (20\xa0\xb0C)|Trend with temperature change|
+|---|---|---|
+|Storage modulus|3.61|Gbond(\u0394T)=3.61-0.01\xd7\u0394T|
+|Poisson\u2019s ratio|0.29|v(\u0394T)=+\xd7-\xd7\u0394TE^{0.29}E^{3.27}E^{10}E^{5}|
+|Thermal expansion coefficient|2.3\xa0\xd7\xa010E^{\u22126}|
+|Density|2750\xa0kg/mE^{3}|
+
+Table 3. Model and parameters of the structure.
+|Material: Al6061|Normal temperature (20\xa0\xb0C)|Trend with temperature change|
+|---|---|---|
+|Young\u2019s modulus|68.9|YplateE(\u0394T)=68.9-0.06\xd7\u0394T|
+|Poisson\u2019s ratio|0.33|v(\u0394T)=+\xd7-\xd7\u0394TE^{0.33}E^{5.13}E^{10}E^{5}|
+|Density|2750\xa0kg/mE^{3}|
+|Thermal expansion coefficient|5.4\xa0\xd7\xa010E^{\u22125}|
+|Geometrical dimensions|200\xa0mm\xa0\xd7\xa0400\xa0mm\xa0\xd7\xa02 mm|
+
+Table 4. The error between simulation and experimental data.
+|Temperature|Relative error of amplitude|Relative error of phase|
+|---|---|---|
+|\u221240\xa0\xb0C|3.06\xa0%|1.42\xa0%|
+|\u221230\xa0\xb0C|3.19\xa0%|1.56\xa0%|
+|\u221220\xa0\xb0C|3.78\xa0%|1.44\xa0%|
+|\u221210\xa0\xb0C|3.73\xa0%|1.83\xa0%|
+|10\xa0\xb0C|3.52\xa0%|2.01\xa0%|
+|20\xa0\xb0C|3.95\xa0%|1.95\xa0%|
+|30\xa0\xb0C|3.47\xa0%|1.88\xa0%|
+|40\xa0\xb0C|3.36\xa0%|2.08\xa0%|
+|50\xa0\xb0C|3.85\xa0%|1.96\xa0%|
+|60\xa0\xb0C|3.91\xa0%|1.76\xa0%|
+|70\xa0\xb0C|4.01\xa0%|3.86\xa0%|
+|80\xa0\xb0C|3.15\xa0%|3.67\xa0%|
+
+# ABSTRACT
+To accurately simulate the dynamic behavior of Piezoelectric Transducer (PZT) under variable temperature, a nonlinear numerical model of the dynamic parameters (piezoelectric coefficient, dielectric constant) of PZTs has been developed based on the experiment of the temperature influence on Lamb wave. The model emphasizes the nonlinear pattern of change in the key dynamic parameters of the PZT with temperature fluctuations. In addition, a thermal expansion stress model of the PZT-bonding layers-structure is established to reveal the mechanical-thermal coupling mechanism. Based on the COMSOL, a mechanical-electrical-thermal direct coupling simulation model of PZT-bonding layers- structure under variable temperature is established. The simulation results at −40 °C to 80 °C are obtained and compared to the experiment.
+
+# INTRODUCTION
+Due to the wide latitude and longitude and the large temperature difference in China, such as the Haerbin-Guangzhou high-speed rail line, trains operate at \u221240 \xb0C to 40 \xb0C. In recent decades, there has been substantial and extensive exploration of finite element analysis (FEA) for simulating Lamb wave propagation in metal and composite structures. However, there is limited research on Lamb wave simulation under variable temperature conditions, especially when considering the presence of PZT connections to the structure. Current investigations into Lamb waves in variable temperature environments primarily focus on the influence of temperature on PZT devices. Kijanka focused on studying the actuation and sensing characteristics of PZT at different temperature levels. The temperature related physical properties of the PZT bonding layer and the main structure significantly affect the amplitude and phase of Lamb wave. The above study significantly simplified PZT without considering the positive and negative piezoelectric effects of PZT. Qu conducted transient dynamic finite element simulation of Lamb waves in piezoelectric transducers used for damage detection of stiffened plates under different temperature conditions using the finite element program ANSYS platform, exploring the material characteristics with temperature changes and the differences in measurement response signal waveforms. Niu proposed an analytical method for solving the temperature response of nonlinear guided waves based on the semi-analytical finite element (SAFE) method. However, PZT model is extensively simplified in these models without combining the piezoelectric model of sensors model and the FEA models of structures. The piezoelectric coefficient d31 describes its ability to generate charge in the polarization direction when subjected to a stress perpendicular to the polarization direction. The dielectric constant \u03b533 is one of the essential parameters describing the dielectric properties of PZT, which reflects the ability to store electrical energy in the polarization direction. To accurately simulate the dynamic behavior of PZT under variable temperature, the nonlinear numerical model of the dynamic parameters (piezoelectric coefficient, dielectric constant) of PZT is developed based on the experiment of the temperature influence on Lamb wave. To elucidate the mechanical-thermal coupling mechanism, a thermal expansion stress model is developed for the PZT-bonded layer-structure. Based on the COMSOL, coupling simulation model of the PZT-bonding layers-structure under variable temperature is established.
+
+# CONCLUSION
+Based on current research, several conclusions have been drawn. (1) Aiming at the problem of expensive and time-consuming acquisition of experimental signals and challenging simulation under variable temperature environments, the mechanical\u2013electrical-thermal simulation method based on PZT for Lamb wave propagation is proposed. (2) A nonlinear numerical model has been developed to accurately capture the temperature-dependent relationship between the piezoelectric and dielectric constants of PZT. Furthermore, the thermal expansion stress model is established to reveal the mechanical-thermal coupling mechanism in the PZT-bonding layers-structure system. The combined model accurately simulates Lamb waves' amplitude and phase variations, demonstrating its high precision and reliability. (3) Comparing the amplitude and phase velocity of the S0 mode between simulation and experimental signals reveals a firm consistency, with maximum relative errors of 4.01 % and 3.86 % respectively. This validation confirms the practical applicability and accuracy of the proposed simulation method, which can significantly contribute to damage monitoring and structural health assessment in high-speed rail vehicles operating under variable temperature conditions. (4) There are still several limitations in the current study. Aiming at the problem of expensive and time-consuming acquisition of experimental signals and challenging simulation under variable temperature environments, the mechanical\u2013electrical-thermal simulation method based on PZT for Lamb wave propagation is proposed. A nonlinear numerical model has been developed to accurately capture the temperature-dependent relationship between the piezoelectric and dielectric constants of PZT. Furthermore, the thermal expansion stress model is established to reveal the mechanical-thermal coupling mechanism in the PZT-bonding layers-structure system. Comparing the amplitude and phase velocity of the S0 mode between simulation and experimental signals reveals a firm consistency, with maximum relative errors of 4.01 % and 3.86 % respectively.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 09:58:37: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Model and parameters of the PZT.
+|Material: PZT|Normal temperature (20\xa0\xb0C)|Trend with temperature change|
+|---|---|---|
+|d31|\u2212185|d\u0394T,\u0394\u03c3T=--\xd7\u0394T+2.035\xd7-\u0394\u03c3T-\u0394\u03c3TE^{31}E^{185}E^{0.194}E^{10}E^{3}E^{2}E^{0.777}|
+|\u03b533|2155|\u03b533(\u0394T)=2155+4.12\xd7\u0394T|
+|Dielectric losses|0.02|
+|Density|7800\xa0kg/mE^{3}|
+|Thermal expansion coefficient|3\xa0\xd7\xa010E^{\u22126}|
+|Geometrical dimensions|8\xa0mm\xa0\xd7\xa00.48\xa0mm|
+
+Table 2. Model and parameters of the bonding layers.
+|Material: bonding layers|Normal temperature (20\xa0\xb0C)|Trend with temperature change|
+|---|---|---|
+|Storage modulus|3.61|Gbond(\u0394T)=3.61-0.01\xd7\u0394T|
+|Poisson\u2019s ratio|0.29|v(\u0394T)=+\xd7-\xd7\u0394TE^{0.29}E^{3.27}E^{10}E^{5}|
+|Thermal expansion coefficient|2.3\xa0\xd7\xa010E^{\u22126}|
+|Density|2750\xa0kg/mE^{3}|
+
+Table 3. Model and parameters of the structure.
+|Material: Al6061|Normal temperature (20\xa0\xb0C)|Trend with temperature change|
+|---|---|---|
+|Young\u2019s modulus|68.9|YplateE(\u0394T)=68.9-0.06\xd7\u0394T|
+|Poisson\u2019s ratio|0.33|v(\u0394T)=+\xd7-\xd7\u0394TE^{0.33}E^{5.13}E^{10}E^{5}|
+|Density|2750\xa0kg/mE^{3}|
+|Thermal expansion coefficient|5.4\xa0\xd7\xa010E^{\u22125}|
+|Geometrical dimensions|200\xa0mm\xa0\xd7\xa0400\xa0mm\xa0\xd7\xa02 mm|
+
+Table 4. The error between simulation and experimental data.
+|Temperature|Relative error of amplitude|Relative error of phase|
+|---|---|---|
+|\u221240\xa0\xb0C|3.06\xa0%|1.42\xa0%|
+|\u221230\xa0\xb0C|3.19\xa0%|1.56\xa0%|
+|\u221220\xa0\xb0C|3.78\xa0%|1.44\xa0%|
+|\u221210\xa0\xb0C|3.73\xa0%|1.83\xa0%|
+|10\xa0\xb0C|3.52\xa0%|2.01\xa0%|
+|20\xa0\xb0C|3.95\xa0%|1.95\xa0%|
+|30\xa0\xb0C|3.47\xa0%|1.88\xa0%|
+|40\xa0\xb0C|3.36\xa0%|2.08\xa0%|
+|50\xa0\xb0C|3.85\xa0%|1.96\xa0%|
+|60\xa0\xb0C|3.91\xa0%|1.76\xa0%|
+|70\xa0\xb0C|4.01\xa0%|3.86\xa0%|
+|80\xa0\xb0C|3.15\xa0%|3.67\xa0%|
+
+# ABSTRACT
+To accurately simulate the dynamic behavior of Piezoelectric Transducer (PZT) under variable temperature, a nonlinear numerical model of the dynamic parameters (piezoelectric coefficient, dielectric constant) of PZTs has been developed based on the experiment of the temperature influence on Lamb wave. The model emphasizes the nonlinear pattern of change in the key dynamic parameters of the PZT with temperature fluctuations. In addition, a thermal expansion stress model of the PZT-bonding layers-structure is established to reveal the mechanical-thermal coupling mechanism. Based on the COMSOL, a mechanical-electrical-thermal direct coupling simulation model of PZT-bonding layers- structure under variable temperature is established. The simulation results at −40 °C to 80 °C are obtained and compared to the experiment.
+
+# INTRODUCTION
+Due to the wide latitude and longitude and the large temperature difference in China, such as the Haerbin-Guangzhou high-speed rail line, trains operate at \u221240 \xb0C to 40 \xb0C. In recent decades, there has been substantial and extensive exploration of finite element analysis (FEA) for simulating Lamb wave propagation in metal and composite structures. However, there is limited research on Lamb wave simulation under variable temperature conditions, especially when considering the presence of PZT connections to the structure. Current investigations into Lamb waves in variable temperature environments primarily focus on the influence of temperature on PZT devices. Kijanka focused on studying the actuation and sensing characteristics of PZT at different temperature levels. The temperature related physical properties of the PZT bonding layer and the main structure significantly affect the amplitude and phase of Lamb wave. The above study significantly simplified PZT without considering the positive and negative piezoelectric effects of PZT. Qu conducted transient dynamic finite element simulation of Lamb waves in piezoelectric transducers used for damage detection of stiffened plates under different temperature conditions using the finite element program ANSYS platform, exploring the material characteristics with temperature changes and the differences in measurement response signal waveforms. Niu proposed an analytical method for solving the temperature response of nonlinear guided waves based on the semi-analytical finite element (SAFE) method. However, PZT model is extensively simplified in these models without combining the piezoelectric model of sensors model and the FEA models of structures. The piezoelectric coefficient d31 describes its ability to generate charge in the polarization direction when subjected to a stress perpendicular to the polarization direction. The dielectric constant \u03b533 is one of the essential parameters describing the dielectric properties of PZT, which reflects the ability to store electrical energy in the polarization direction. To accurately simulate the dynamic behavior of PZT under variable temperature, the nonlinear numerical model of the dynamic parameters (piezoelectric coefficient, dielectric constant) of PZT is developed based on the experiment of the temperature influence on Lamb wave. To elucidate the mechanical-thermal coupling mechanism, a thermal expansion stress model is developed for the PZT-bonded layer-structure. Based on the COMSOL, coupling simulation model of the PZT-bonding layers-structure under variable temperature is established.
+
+# CONCLUSION
+Based on current research, several conclusions have been drawn. (1) Aiming at the problem of expensive and time-consuming acquisition of experimental signals and challenging simulation under variable temperature environments, the mechanical\u2013electrical-thermal simulation method based on PZT for Lamb wave propagation is proposed. (2) A nonlinear numerical model has been developed to accurately capture the temperature-dependent relationship between the piezoelectric and dielectric constants of PZT. Furthermore, the thermal expansion stress model is established to reveal the mechanical-thermal coupling mechanism in the PZT-bonding layers-structure system. The combined model accurately simulates Lamb waves' amplitude and phase variations, demonstrating its high precision and reliability. (3) Comparing the amplitude and phase velocity of the S0 mode between simulation and experimental signals reveals a firm consistency, with maximum relative errors of 4.01 % and 3.86 % respectively. This validation confirms the practical applicability and accuracy of the proposed simulation method, which can significantly contribute to damage monitoring and structural health assessment in high-speed rail vehicles operating under variable temperature conditions. (4) There are still several limitations in the current study. Aiming at the problem of expensive and time-consuming acquisition of experimental signals and challenging simulation under variable temperature environments, the mechanical\u2013electrical-thermal simulation method based on PZT for Lamb wave propagation is proposed. A nonlinear numerical model has been developed to accurately capture the temperature-dependent relationship between the piezoelectric and dielectric constants of PZT. Furthermore, the thermal expansion stress model is established to reveal the mechanical-thermal coupling mechanism in the PZT-bonding layers-structure system. Comparing the amplitude and phase velocity of the S0 mode between simulation and experimental signals reveals a firm consistency, with maximum relative errors of 4.01 % and 3.86 % respectively.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "PZT": 2155
+    },
+    "abbreviations": {
+      "PZT": "Pb(ZrTi)O3"
+    },
+    "property_unit": "pC/N",
+    "family": "PZT"
+  }
+}"

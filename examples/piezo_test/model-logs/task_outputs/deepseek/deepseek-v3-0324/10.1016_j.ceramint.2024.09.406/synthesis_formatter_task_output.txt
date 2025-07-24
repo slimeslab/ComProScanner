@@ -1,0 +1,1 @@
+{"synthesis_formatted_data":{"method":"Solid-state reaction","precursors":["CaBi4Ti4O15","Nb2O5","MnO2"],"steps":["Powder compaction into bulk dimensions of 15 mm × 2 mm × 2 mm","Poling along the thickness direction"],"characterization_techniques":["SEM","EDS","TEM","HRTEM","DMA","Three-point bending test","Compression test"]}}

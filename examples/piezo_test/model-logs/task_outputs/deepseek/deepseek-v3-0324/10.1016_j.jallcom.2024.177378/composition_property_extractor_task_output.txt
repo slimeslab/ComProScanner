@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Pb(Zn1/3Nb2/3)0.1(Hf0.49Ti0.51)0.9O3":550,"P(ZN)0.1(HT)0.9":550},"abbreviations":{"PZNHT":"Pb(Zn1/3Nb2/3)0.1(Hf0.49Ti0.51)0.9O3","P(ZN)":"Pb(Zn1/3Nb2/3)","(HT)":"(Hf0.49Ti0.51)"},"property_unit":"pC/N","family":"PbTiO3"}}

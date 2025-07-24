@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PEO":1.0,"PEO-BTO2":1.9,"PEO-BTO5":2.5},"abbreviations":{"PEO":"MgO + Mg2SiO4 + SiO2 + MgF","PEO-BTO2":"PEO + BaTiO3 (2% BTO)","PEO-BTO5":"PEO + BaTiO3 (5% BTO)","BTO":"BaTiO3"},"property_unit":"pC/N","family":"BaTiO3"}}

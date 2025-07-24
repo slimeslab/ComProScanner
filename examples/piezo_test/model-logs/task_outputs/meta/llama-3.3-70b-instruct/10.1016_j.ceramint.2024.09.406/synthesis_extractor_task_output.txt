@@ -1,0 +1,1 @@
+{"synthesis_extracted_data":{"method":"Compaction","precursors":["Ca","Bi","Ti","O","Nb","Mn"],"steps":["Powder compaction","Poling along the thickness direction"],"characterization_techniques":["SEM","EDS","TEM","HRTEM","DMA"]}}

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.85(Bi(0.5)Na(0.5))TiO3-0.15(Ba)TiO3":118,"0.94(Bi(0.5)Na(0.5))TiO3-0.06(Ba)TiO3":360,"0.95(Bi(0.5)Na(0.5))TiO3-0.05(Ba)TiO3":420},"property_unit":"pC/N","family":"BNT-BT"}}

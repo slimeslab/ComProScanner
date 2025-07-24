@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi0.5Na0.5TiO3-0.2SrTiO3-0.02BaTiO3":43.0,"Bi0.5Na0.5TiO3-0.2SrTiO3-0.04BaTiO3":35.2,"Bi0.5Na0.5TiO3-0.2SrTiO3-0.06BaTiO3":39.5,"Bi0.5Na0.5TiO3-0.2SrTiO3-0.08BaTiO3":37.3,"Bi0.5Na0.5TiO3-0.2SrTiO3-0.11BaTiO3":35.5},"property_unit":"pm/V","family":"BNT-ST-BT"}}

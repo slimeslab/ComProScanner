@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PZT-8":218},"abbreviations":{"HPUT":"high-frequency piezoelectric ultrasonic transducer","PUT":"piezoelectric ultrasonic transducer"},"property_unit":"eE-12C/N","family":"PZT"}}

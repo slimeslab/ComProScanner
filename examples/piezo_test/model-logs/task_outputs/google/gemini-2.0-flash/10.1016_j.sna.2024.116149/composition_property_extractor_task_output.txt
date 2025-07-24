@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3":1500,"Pb(Zr1-xTix)O3 where x=0":200,"Pb(Zr1-xTix)O3 where x=1":400},"abbreviations":{"PIMNT":"Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3","PZT":"Pb(Zr1-xTix)O3","PIN-PMN-PT":"Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3"},"property_unit":"pC/N","family":"PZT"}}

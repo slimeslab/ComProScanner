@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Pb(1-x)K2x[Nb0.96Ta0.04]2O6 where x=0.05":44,"Pb(1-x)K2x[Nb0.96Ta0.04]2O6 where x=0.10":54,"Pb(1-x)K2x[Nb0.96Ta0.04]2O6 where x=0.15":93,"Pb(1-x)K2x[Nb0.96Ta0.04]2O6 where x=0.20":141,"PbK0.20NT":141},"abbreviations":{"PKxNT":"Pb(1-x)K2x[Nb0.96Ta0.04]2O6"},"property_unit":"pC/N","family":"PbTiO3"}}

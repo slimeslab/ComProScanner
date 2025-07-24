@@ -1,0 +1,1 @@
+{"synthesis_formatted_data":{"method":"modified Bridgeman method","precursors":[],"steps":["Growing single crystals","Orienting crystals","Cutting into slices","Covering with Ni","Sputtering Au electrodes","Annealing","Air-cooling","Aging"],"characterization_techniques":["XRD","Impedance analyzer","TF analyzer","Function Generator","Oscilloscope","d33 m","PFM"]}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BNn21.8":-0.11,"F-BNn21.8":-0.21,"H/F-BNn21.8":0.4,"F-BNn27.8":-0.58,"H/F-BNn27.8":-0.08,"AlNn27.8":-0.32,"F-AlNn27.8":182,"H/F-AlNn27.8":-31.6,"GaNn27.8":0.43,"F-GaNn27.8":16.7,"H/F-GaNn27.8":-2.76},"abbreviations":{},"property_unit":"pm/V","family":"nitridanes"}}

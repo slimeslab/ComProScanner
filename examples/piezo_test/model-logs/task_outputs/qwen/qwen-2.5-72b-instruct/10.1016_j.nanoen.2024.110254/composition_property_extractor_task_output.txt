@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Ba0.85Ca0.15Zr0.1Ti0.9O3":467,"Ba0.85Ca0.15Zr0.1Ti0.9O3 (porous)":596},"abbreviations":{},"property_unit":"pC/N","family":"BCZT"}}

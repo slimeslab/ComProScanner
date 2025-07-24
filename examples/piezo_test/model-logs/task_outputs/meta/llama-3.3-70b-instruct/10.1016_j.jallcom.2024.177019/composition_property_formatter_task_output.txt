@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Ba0.98Sr0.02Ti0.36Pt0.64O3":550},"property_unit":"pC/N","family":"BS-PT"}}

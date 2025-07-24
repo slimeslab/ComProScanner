@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"CaBi2Nb2O9":5},"property_unit":"pC/N","family":"CBN"}}

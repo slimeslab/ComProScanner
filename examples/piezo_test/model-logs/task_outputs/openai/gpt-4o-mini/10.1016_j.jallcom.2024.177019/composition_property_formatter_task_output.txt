@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.02Nd2O3: BiScO3-0.64PbTiO3":550},"property_unit":"pC/N","family":"BiScO3-PbTiO3"}}

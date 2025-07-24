@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"KNNS-BF-0BNZ":293,"KNNS-BF-0.03BNZ":358,"KNNS-BF-0.06BNZ":6884,"KNNS-BF-0.09BNZ":358,"KNNS-BF-0.12BNZ":358},"property_unit":"pC/N","family":"KNNS"}}

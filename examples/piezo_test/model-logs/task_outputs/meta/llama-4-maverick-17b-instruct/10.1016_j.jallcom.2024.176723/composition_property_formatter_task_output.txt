@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"AlN":5.0},"property_unit":"pC/N","family":"AlN"}}

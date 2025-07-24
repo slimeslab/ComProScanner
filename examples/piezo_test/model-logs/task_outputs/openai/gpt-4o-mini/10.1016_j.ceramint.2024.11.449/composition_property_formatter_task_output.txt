@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Ca(1-2*0.03)(NaCe)(Bi2)(Nb2-(W0.75Mn0.25)*0.03)O9":17.2,"CBN":5.5},"property_unit":"pC/N","family":"BLSFs"}}

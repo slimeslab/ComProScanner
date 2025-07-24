@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Ba0.85Ca0.15Zr0.1Ti0.9O3":520,"(Ba1-x-yCaxLiy) (Ti1-u-v-wZruSnvHfw) O3 where 0 < x, y < 0.3, and 0 < u, v, w < 0.2":null,"BaTiO3":null,"2% Li–BaTiO3":null,"4% Li–BaTiO3":null},"abbreviations":{},"property_unit":"pC/N","family":"BaTiO3"}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PZT":250,"PZT - After diffusion bonding at 275 °C":120,"PZT - After 1st thermal cycle between 250 °C and room temperature":120,"PZT - After 10th thermal cycle between 250 °C and room temperature":120,"PZT - After repoling":250},"abbreviations":{},"property_unit":"pC/N","family":"PZT"}}

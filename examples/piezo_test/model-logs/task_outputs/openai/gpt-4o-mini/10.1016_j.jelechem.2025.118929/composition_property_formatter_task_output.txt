@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"LiTaO3":8,"LiCoO2":0},"property_unit":"pC/N","family":"LiCoO2"}}

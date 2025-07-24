@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.5Pb(Ni1/3Nb2/3)O3-0.16PbZrO3-0.34PbTiO3":1334},"property_unit":"pC/N","family":"PNNZT"}}

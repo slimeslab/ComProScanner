@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"25BiTO/0.5rGO":15.66,"25BiTO/0rGO":14.04,"0BiTO/0.5rGO":0,"50BiTO/0.5rGO":28.21,"7.3BiTO/0.8rGO":24.82,"42.6BiTO/0.1rGO":18.57,"25BiTO/1rGO":16.3,"7.3BiTO/0.14rGO":5.21},"abbreviations":{"BiTO":"Bi4Ti3O12","rGO":"reduced graphene oxide"},"property_unit":"pC/N","family":"Bi4Ti3O12"}}

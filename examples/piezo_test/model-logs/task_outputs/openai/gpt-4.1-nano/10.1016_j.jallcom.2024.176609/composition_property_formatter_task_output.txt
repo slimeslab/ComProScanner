@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"PbNi1/3Ta2/3O3-(0.41)PbZrO3-PbTiO3-Mn":310,"PbNi1/3Ta2/3O3-(0.42)PbZrO3-PbTiO3-Mn":368,"PbNi1/3Ta2/3O3-(0.43)PbZrO3-PbTiO3-Mn":400,"PbNi1/3Ta2/3O3-(0.44)PbZrO3-PbTiO3-Mn":238,"PbNi1/3Ta2/3O3-0.43PbZrO3-PbTiO3-Mn":400},"property_unit":"pC/N","family":"PbNi1/3Ta2/3O3"}}

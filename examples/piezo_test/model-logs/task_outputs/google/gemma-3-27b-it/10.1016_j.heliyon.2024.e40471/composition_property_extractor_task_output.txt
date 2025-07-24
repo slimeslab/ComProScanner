@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Pb0.65Ba0.35Nb2O6":null,"Pb0.62Ba0.35Nd0.02Nb2O6":null,"Pb0.59Ba0.35Nd0.04Nb2O6":null,"Pb0.56Ba0.35Nd0.06Nb2O6":178},"abbreviations":{},"property_unit":"pC/N","family":"PBN"}}

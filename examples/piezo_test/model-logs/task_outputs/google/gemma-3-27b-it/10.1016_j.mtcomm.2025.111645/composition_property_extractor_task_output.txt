@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Ba0.92Ca0.08Zr0.05Ti0.95O3":null,"BCZT-0.8%La-xTm where x=0":null,"BCZT-0.8%La-xTm where x=0.3%":null,"BCZT-0.8%La-xTm where x=0.7%":181,"BCZT-0.8%La-xTm where x=1%":null,"BCZT-0.8%La-xTm where x=2%":null},"abbreviations":{"BCZT":"Barium calcium zirconate titanate"},"property_unit":"pC/N","family":"BCZT"}}

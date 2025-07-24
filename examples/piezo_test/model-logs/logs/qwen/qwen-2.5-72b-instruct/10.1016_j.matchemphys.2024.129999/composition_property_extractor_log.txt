@@ -1,0 +1,219 @@
+2025-07-11 15:24:37: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Features utilized in the study with their description.
+|No.|Feature Name|Description and Reference|
+|---|---|---|
+|1|PA|Weighed polarization of elements at A site [37]|
+|2|PB|Weighed polarization of elements at B site|
+|3|ENA|Weighed MB Electronegativity of elements at A site [38]|
+|4|ENB|Weighed MB Electronegativity of elements at B site|
+|5|RA|Weighed Ionic radii of elements at A site [39]|
+|6|RB|Weighed Ionic radii of elements at B site|
+|7|VA|Weighed Atomic volume of elements at A site [40]|
+|8|VB|Weighed Atomic volume of elements at B site|
+|9|At. Comp.|Weighed Atomic mass of composition|
+|10|At. Num.|Weighed Atomic number of compositions|
+|11|CRSA|Weighed Core radii sum of A site elements [38]|
+|12|CRSB|Weighed Core radii sum of B site elements|
+|13|NTC|Effect of doping on TC  \u03f5 (\u22121,0,1)|
+|14|T|Temperature (for dielectric spectrum prediction)|
+
+Table 2. Lattice parameters for various Li-doped BaTiO3 compositions.
+|Sample Name|a (\xc5)|b (\xc5)|c (\xc5)| \u03c7E^{2}|
+|---|---|---|---|---|
+|BaTiO3|4.0050|4.0050|4.0185|3.74|
+|2\xa0% Li\u2013BaTiO3|4.0061|4.0061|4.0154|3.15|
+|4\xa0% Li\u2013BaTiO3|4.0068|4.0068|4.0151|2.53|
+
+Table 3. Prediction of Curie temperature for synthesized Li-doped BT samples.
+|Sample Name|Actual TC (\xb0C)|Predicted TC (\xb0C) [XG-boost]|Predicted TC (\xb0C) [XG-boost] [from Fig. 6]|Max % error|
+|---|---|---|---|---|
+|BaTiO3|114|122.2|127|11.40|
+|2\xa0% Li\u2013BaTiO3|120|116.6|127.5|6.25|
+|4\xa0% Li\u2013BaTiO3|128|116.8|128.7|8.75|
+
+# RESULTS AND DISCUSSION
+Now, to further experimentally validate our approach towards prediction, Li-doped BaTiO3 ceramics were synthesized with varying weight percentages of Li (0 wt%, 2 wt%, and 4 wt%) using the solvothermal approach. During the Rietveld refinement, all the samples demonstrated a single-phase structure (tetragonal p4mm), and no impurity phase was detected. As observed from , peak (110), slightly shifted towards lower angles upon increase of lithium percentage, which is consistent with the literature. With 12 coordination number, BaE^{2+} and Li E^{+} have ionic sizes of 0.161 nm and 0.118 nm, respectively, whereas with coordination number 6, TiE^{4+} and Li E^{+} have ionic sizes of 0.061 nm and 0.076 nm, respectively. Hence, the decrease in the lattice parameters upon adding Li E^{+} ions is due to the substitution of BaE^{2+} with LiE^{+}, while the increase in them is because of the substitution of LiE^{+} at the B-site upon higher percentage doping. Further, shows the elemental analysis of the prepared BaTiO3 sample which confirms the presence of barium and titanium in the composition. Transmission electron microscopy results provide more insights into the structure of the synthesized BaTiO3 nanoparticles, as shown in. Transmission electron microscopy results revealed the formation of nanoparticles of BaTiO3 and 4 % Li\u2013BaTiO3 compositions with a diameter in the range of 30\u2013100 nm. Inset in revealed the SAED pattern for both samples, and the results display polycrystalline diffused diffraction rings, indicating the polycrystalline nature of the composition. Analysis of SAED patterns was carried out with the help of CrysTBox software. In this section, the dielectric properties of the Li-doped BaTiO3 samples were analyzed. For dielectric measurements of the samples, the powders were pressed, and the pellets were sintered in a closed environment at 1100 \xb0C for 2 h. Investigating the imaginary component of electric modulus (M\u2033) is critical for unravelling the material's electrical transport dynamics, and hopping mechanisms. The emergence of peaks in the M\u2033 vs log(frequency) as well as tan\u03b4 vs log(frequency) plot reflects the relaxation processes occurring within the material. The high dispersion of relative permittivity in lower frequency limits is predominantly ascribed to the Maxwell-Wagner-Sillars (MWS) effect, also known as space-charge polarization. In the overall range of frequency, 4 % Li\u2013BaTiO3 showed relatively less dielectric loss as compared to other compositions. The temperature-dependent dielectric spectrum of all samples was captured with the help of a dielectric impedance spectroscope at 10 MHz, and the prediction of the dielectric plot was carried out. The dielectric results of the Li\u2013BaTiO3 samples are consistent with the earlier literature. As observed, the predictions are in good agreement with the actual results except for the 2 % Li\u2013BaTiO3 sample ( ). The Curie temperature for all the synthesized samples is tabulated in , along with predicted values from the ML algorithms. As in the given study, we predicted TC and TOT for lead-free compositions and also extended the same ML model for Li-doped BaTiO3 systems. As mentioned, it is clearly visible from the feature importance, TC is highly influenced by the nature of elements at the B-site of the crystal structure. In the case of size factors, the atomic volume of B-site elements and CRSB are important and directly influence the piezoelectric properties. Among electrochemical properties, ENB is critical as ferroelectric properties gets highly influenced by the electronegativity of the elements. In the present section, we employed machine learning-based reverse engineering to optimize the synthesis process of lead-free ceramics, utilizing a combination of features denoted as VA and VB. The above observation strongly suggests that the employed machine learning regression model successfully captured the underlying relationship between the input features (VA and VB), and the target properties during the training phase, and the training allowed the model to replicate it well during the prediction of the unseen data. In conclusion, the XG-boost model not only delivers optimal performance but also unveils new physical insights through its effective feature engineering capabilities. A similar analysis based on the contour plots with features CRSA and CRSB for given properties is provided in. With the help of the developed regression model, we attempted to understand the variation of TC and TOT over a wide range of compositions given as (Ba1-x-yCaxLiy) (Ti1-u-v-wZruSnvHfw) O3. The values of all the variables vary in the range as, 0 < x, y < 0.3, and 0 < u, v, w < 0.2 with a step size of 0.05. A python program is developed, giving a total compositional space of around 6150. The constraints for stoichiometry are provided as, x + y \u2264 0.3 and u + v + w \u2264 0.75, respectively to avoid the other phase formation. The trained model with Dataset 1 predicted the functional properties for the complete compositional space created, and the 3D scatter plots were plotted and shown in. All 1400 computationally created compositions were tabulated and sorted to trace back the element-wise stoichiometry of the composition, allowing us to optimize the synthesis process with a specific range for target property. He et al. to find the optimized composition of piezoelectric ceramic with the highest value of d33. For example, if a specific application needs ceramics with TC in the range of 90\u2013100 \xb0C, the present machine learning model can suggest several compositions having Curie temperature in the given range. The same approach can be extended to other properties such as, d33, energy storage properties, and ferroelectric properties for the given system.
+
+# ABSTRACT
+In the present study, three supervised machine learning models (random forest, XG-boost, and SVR-rbf) were implemented to predict and optimize the functional properties of lead-free ceramics. The machine learning models are successfully able to predict the TC, TOT, and dielectric temperature spectrum of the newly considered multi-component ferroelectric (Ba1-x-yCaxLiy) (Ti1-u-v-wZruSnvHfw) O3 system with a certain tolerance (ΔTC = 5.87 °C, and ΔTOT = 7.53 °C) to achieve the accelerated prediction. For experimental validation, Li-doped BaTiO3 samples were prepared via a solvothermal route, and properties were predicted with a maximum error of 11.4 % in TC for the as-prepared samples.
+
+# INTRODUCTION
+Among lead-free ferroelectric materials, BaTiO3 - based (BT) ceramics were extensively studied to understand their crystal structure, phase transitions, and corresponding physical mechanisms for high piezoelectric properties. Recently, it has been shown that upon introducing specific cations to substitute for A-site (CaE^{2+}) and B-site (ZrE^{4+}) in BaTiO3, a high value of d33 (>520 pC/N) was achieved for Ba0.85Ca0.15Zr0.1Ti0.9O3 (BCZT)  ceramics and Tm-modified BCZT. The barium titanate\u2013based ceramics are significant in energy harvesting because they possess lower dielectric loss, high dielectric constant, and excellent piezoelectric performance. In today's era of machine learning (ML), it is achievable to explore the vast space of chemical compositions to identify potential candidates for smart-materials applications. ML models are practically data-driven and can potentially extract the hidden pattern from the given input data to elucidate the underlying mechanism. With the implementation of diverse ways of feature engineering, the property prediction capabilities of the ML models increased magnificently, but the black-box effect in machine learning algorithms is usually criticized for not allowing researchers to achieve physical insights into the possible dynamics. To tackle the issue of the black-box effect in machine learning, researchers invented interpretable machine learning strategies such as the sure independence screening and sparsifying operator (SISSO) method to extract the essential features and their relation with the target properties. It is possible to create predictive ML models for lead-free ceramics with the data available in the form of literature and, by doing so, predict the properties of the compounds with different stoichiometry. Recently, crucial studies have been conducted to accelerate the prediction of BaTiO3-based ceramics for energy applications. He et al. predicted the multi-component phase diagrams and dielectric temperature spectrum for the system (Ba1-x-yCaxSry) (Ti1-u-v-wZruSnvHfw)O3 with fine boundary information with the help of regression and classification models. These studies were performed with the help of neural network models having CaE^{2+} and SrE^{2+} substituting for the BaE^{2+} site. Therefore, A-site Li-doped BaTiO3 ceramics were synthesized solvothermally for experimental validation of the developed machine-learning models. In addition, the reverse engineering concept was implemented to accelerate the identification of available compounds for a specific range of TC or TOT, based on the application. The article demonstrates ML algorithms, which can support monitoring the functional properties. For the same, the three supervised machine learning models were trained (SVR-rbf, XG-Boost, and random forest) to predict the phase transition temperatures (TC and TOT) and dielectric temperature spectrum of considered (Ba1-x-yCaxLiy) (Ti1-u-v-wZruSnvHfw) O3 - based ceramics with low standard deviations (\u0394TC = 5.87 \xb0C, and \u0394TOT = 7.53 \xb0C). The proposed model captured the TOT phase transition point in the predicted dielectric temperature spectrum. The SVR-rbf model demonstrated the best results, RE^{2} = 0.96 for TC, and RE^{2} = 0.9 for TOT. The XG-Boost model is implemented to predict the dielectric temperature spectrum of 17 different compositions with a mean absolute error of 8.1 \xb0C, giving predictions close to the actual value as compared to other models, with very few entries having a high deviation value. The machine-learning models were validated by predicting TC for Li-doped BaTiO3, with a maximum error of 11.4 %. Also, the proposed reverse engineering helps identify the available compositions with the value of TC or TOT lying in a specific range.
+
+# CONCLUSION
+Machine learning-motivated framework was proposed to forecast the phase-transition temperatures and dielectric temperature spectrum for the (Ba1-x-yCaxLiy) (Ti1-u-v-wZruSnvHfw) O3 system. Among the three machine learning models (XG-boost, random forest, and SVR-rbf) used, XG-boost demonstrated better prediction capabilities with standard deviation for TC as \u0394TC = 5.87 \xb0C, and for TOT as \u0394TOT = 7.53 \xb0C. Also, a total of 17 dielectric temperature spectrums were predicted for different complex compositions, with a mean absolute error of 8.1 \xb0C in the TC values. Again, a maximum error of 11.4 % was obtained in the predicted TC value of the synthesized A-sight Li-doped BaTiO3 samples. The reported study provides new insights for feature engineering, which successfully captured the TC and TOT phase transition temperatures in the predicted dielectric spectrum.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-11 15:24:41: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Features utilized in the study with their description.
+|No.|Feature Name|Description and Reference|
+|---|---|---|
+|1|PA|Weighed polarization of elements at A site [37]|
+|2|PB|Weighed polarization of elements at B site|
+|3|ENA|Weighed MB Electronegativity of elements at A site [38]|
+|4|ENB|Weighed MB Electronegativity of elements at B site|
+|5|RA|Weighed Ionic radii of elements at A site [39]|
+|6|RB|Weighed Ionic radii of elements at B site|
+|7|VA|Weighed Atomic volume of elements at A site [40]|
+|8|VB|Weighed Atomic volume of elements at B site|
+|9|At. Comp.|Weighed Atomic mass of composition|
+|10|At. Num.|Weighed Atomic number of compositions|
+|11|CRSA|Weighed Core radii sum of A site elements [38]|
+|12|CRSB|Weighed Core radii sum of B site elements|
+|13|NTC|Effect of doping on TC  \u03f5 (\u22121,0,1)|
+|14|T|Temperature (for dielectric spectrum prediction)|
+
+Table 2. Lattice parameters for various Li-doped BaTiO3 compositions.
+|Sample Name|a (\xc5)|b (\xc5)|c (\xc5)| \u03c7E^{2}|
+|---|---|---|---|---|
+|BaTiO3|4.0050|4.0050|4.0185|3.74|
+|2\xa0% Li\u2013BaTiO3|4.0061|4.0061|4.0154|3.15|
+|4\xa0% Li\u2013BaTiO3|4.0068|4.0068|4.0151|2.53|
+
+Table 3. Prediction of Curie temperature for synthesized Li-doped BT samples.
+|Sample Name|Actual TC (\xb0C)|Predicted TC (\xb0C) [XG-boost]|Predicted TC (\xb0C) [XG-boost] [from Fig. 6]|Max % error|
+|---|---|---|---|---|
+|BaTiO3|114|122.2|127|11.40|
+|2\xa0% Li\u2013BaTiO3|120|116.6|127.5|6.25|
+|4\xa0% Li\u2013BaTiO3|128|116.8|128.7|8.75|
+
+# RESULTS AND DISCUSSION
+Now, to further experimentally validate our approach towards prediction, Li-doped BaTiO3 ceramics were synthesized with varying weight percentages of Li (0 wt%, 2 wt%, and 4 wt%) using the solvothermal approach. During the Rietveld refinement, all the samples demonstrated a single-phase structure (tetragonal p4mm), and no impurity phase was detected. As observed from , peak (110), slightly shifted towards lower angles upon increase of lithium percentage, which is consistent with the literature. With 12 coordination number, BaE^{2+} and Li E^{+} have ionic sizes of 0.161 nm and 0.118 nm, respectively, whereas with coordination number 6, TiE^{4+} and Li E^{+} have ionic sizes of 0.061 nm and 0.076 nm, respectively. Hence, the decrease in the lattice parameters upon adding Li E^{+} ions is due to the substitution of BaE^{2+} with LiE^{+}, while the increase in them is because of the substitution of LiE^{+} at the B-site upon higher percentage doping. Further, shows the elemental analysis of the prepared BaTiO3 sample which confirms the presence of barium and titanium in the composition. Transmission electron microscopy results provide more insights into the structure of the synthesized BaTiO3 nanoparticles, as shown in. Transmission electron microscopy results revealed the formation of nanoparticles of BaTiO3 and 4 % Li\u2013BaTiO3 compositions with a diameter in the range of 30\u2013100 nm. Inset in revealed the SAED pattern for both samples, and the results display polycrystalline diffused diffraction rings, indicating the polycrystalline nature of the composition. Analysis of SAED patterns was carried out with the help of CrysTBox software. In this section, the dielectric properties of the Li-doped BaTiO3 samples were analyzed. For dielectric measurements of the samples, the powders were pressed, and the pellets were sintered in a closed environment at 1100 \xb0C for 2 h. Investigating the imaginary component of electric modulus (M\u2033) is critical for unravelling the material's electrical transport dynamics, and hopping mechanisms. The emergence of peaks in the M\u2033 vs log(frequency) as well as tan\u03b4 vs log(frequency) plot reflects the relaxation processes occurring within the material. The high dispersion of relative permittivity in lower frequency limits is predominantly ascribed to the Maxwell-Wagner-Sillars (MWS) effect, also known as space-charge polarization. In the overall range of frequency, 4 % Li\u2013BaTiO3 showed relatively less dielectric loss as compared to other compositions. The temperature-dependent dielectric spectrum of all samples was captured with the help of a dielectric impedance spectroscope at 10 MHz, and the prediction of the dielectric plot was carried out. The dielectric results of the Li\u2013BaTiO3 samples are consistent with the earlier literature. As observed, the predictions are in good agreement with the actual results except for the 2 % Li\u2013BaTiO3 sample ( ). The Curie temperature for all the synthesized samples is tabulated in , along with predicted values from the ML algorithms. As in the given study, we predicted TC and TOT for lead-free compositions and also extended the same ML model for Li-doped BaTiO3 systems. As mentioned, it is clearly visible from the feature importance, TC is highly influenced by the nature of elements at the B-site of the crystal structure. In the case of size factors, the atomic volume of B-site elements and CRSB are important and directly influence the piezoelectric properties. Among electrochemical properties, ENB is critical as ferroelectric properties gets highly influenced by the electronegativity of the elements. In the present section, we employed machine learning-based reverse engineering to optimize the synthesis process of lead-free ceramics, utilizing a combination of features denoted as VA and VB. The above observation strongly suggests that the employed machine learning regression model successfully captured the underlying relationship between the input features (VA and VB), and the target properties during the training phase, and the training allowed the model to replicate it well during the prediction of the unseen data. In conclusion, the XG-boost model not only delivers optimal performance but also unveils new physical insights through its effective feature engineering capabilities. A similar analysis based on the contour plots with features CRSA and CRSB for given properties is provided in. With the help of the developed regression model, we attempted to understand the variation of TC and TOT over a wide range of compositions given as (Ba1-x-yCaxLiy) (Ti1-u-v-wZruSnvHfw) O3. The values of all the variables vary in the range as, 0 < x, y < 0.3, and 0 < u, v, w < 0.2 with a step size of 0.05. A python program is developed, giving a total compositional space of around 6150. The constraints for stoichiometry are provided as, x + y \u2264 0.3 and u + v + w \u2264 0.75, respectively to avoid the other phase formation. The trained model with Dataset 1 predicted the functional properties for the complete compositional space created, and the 3D scatter plots were plotted and shown in. All 1400 computationally created compositions were tabulated and sorted to trace back the element-wise stoichiometry of the composition, allowing us to optimize the synthesis process with a specific range for target property. He et al. to find the optimized composition of piezoelectric ceramic with the highest value of d33. For example, if a specific application needs ceramics with TC in the range of 90\u2013100 \xb0C, the present machine learning model can suggest several compositions having Curie temperature in the given range. The same approach can be extended to other properties such as, d33, energy storage properties, and ferroelectric properties for the given system.
+
+# ABSTRACT
+In the present study, three supervised machine learning models (random forest, XG-boost, and SVR-rbf) were implemented to predict and optimize the functional properties of lead-free ceramics. The machine learning models are successfully able to predict the TC, TOT, and dielectric temperature spectrum of the newly considered multi-component ferroelectric (Ba1-x-yCaxLiy) (Ti1-u-v-wZruSnvHfw) O3 system with a certain tolerance (ΔTC = 5.87 °C, and ΔTOT = 7.53 °C) to achieve the accelerated prediction. For experimental validation, Li-doped BaTiO3 samples were prepared via a solvothermal route, and properties were predicted with a maximum error of 11.4 % in TC for the as-prepared samples.
+
+# INTRODUCTION
+Among lead-free ferroelectric materials, BaTiO3 - based (BT) ceramics were extensively studied to understand their crystal structure, phase transitions, and corresponding physical mechanisms for high piezoelectric properties. Recently, it has been shown that upon introducing specific cations to substitute for A-site (CaE^{2+}) and B-site (ZrE^{4+}) in BaTiO3, a high value of d33 (>520 pC/N) was achieved for Ba0.85Ca0.15Zr0.1Ti0.9O3 (BCZT)  ceramics and Tm-modified BCZT. The barium titanate\u2013based ceramics are significant in energy harvesting because they possess lower dielectric loss, high dielectric constant, and excellent piezoelectric performance. In today's era of machine learning (ML), it is achievable to explore the vast space of chemical compositions to identify potential candidates for smart-materials applications. ML models are practically data-driven and can potentially extract the hidden pattern from the given input data to elucidate the underlying mechanism. With the implementation of diverse ways of feature engineering, the property prediction capabilities of the ML models increased magnificently, but the black-box effect in machine learning algorithms is usually criticized for not allowing researchers to achieve physical insights into the possible dynamics. To tackle the issue of the black-box effect in machine learning, researchers invented interpretable machine learning strategies such as the sure independence screening and sparsifying operator (SISSO) method to extract the essential features and their relation with the target properties. It is possible to create predictive ML models for lead-free ceramics with the data available in the form of literature and, by doing so, predict the properties of the compounds with different stoichiometry. Recently, crucial studies have been conducted to accelerate the prediction of BaTiO3-based ceramics for energy applications. He et al. predicted the multi-component phase diagrams and dielectric temperature spectrum for the system (Ba1-x-yCaxSry) (Ti1-u-v-wZruSnvHfw)O3 with fine boundary information with the help of regression and classification models. These studies were performed with the help of neural network models having CaE^{2+} and SrE^{2+} substituting for the BaE^{2+} site. Therefore, A-site Li-doped BaTiO3 ceramics were synthesized solvothermally for experimental validation of the developed machine-learning models. In addition, the reverse engineering concept was implemented to accelerate the identification of available compounds for a specific range of TC or TOT, based on the application. The article demonstrates ML algorithms, which can support monitoring the functional properties. For the same, the three supervised machine learning models were trained (SVR-rbf, XG-Boost, and random forest) to predict the phase transition temperatures (TC and TOT) and dielectric temperature spectrum of considered (Ba1-x-yCaxLiy) (Ti1-u-v-wZruSnvHfw) O3 - based ceramics with low standard deviations (\u0394TC = 5.87 \xb0C, and \u0394TOT = 7.53 \xb0C). The proposed model captured the TOT phase transition point in the predicted dielectric temperature spectrum. The SVR-rbf model demonstrated the best results, RE^{2} = 0.96 for TC, and RE^{2} = 0.9 for TOT. The XG-Boost model is implemented to predict the dielectric temperature spectrum of 17 different compositions with a mean absolute error of 8.1 \xb0C, giving predictions close to the actual value as compared to other models, with very few entries having a high deviation value. The machine-learning models were validated by predicting TC for Li-doped BaTiO3, with a maximum error of 11.4 %. Also, the proposed reverse engineering helps identify the available compositions with the value of TC or TOT lying in a specific range.
+
+# CONCLUSION
+Machine learning-motivated framework was proposed to forecast the phase-transition temperatures and dielectric temperature spectrum for the (Ba1-x-yCaxLiy) (Ti1-u-v-wZruSnvHfw) O3 system. Among the three machine learning models (XG-boost, random forest, and SVR-rbf) used, XG-boost demonstrated better prediction capabilities with standard deviation for TC as \u0394TC = 5.87 \xb0C, and for TOT as \u0394TOT = 7.53 \xb0C. Also, a total of 17 dielectric temperature spectrums were predicted for different complex compositions, with a mean absolute error of 8.1 \xb0C in the TC values. Again, a maximum error of 11.4 % was obtained in the predicted TC value of the synthesized A-sight Li-doped BaTiO3 samples. The reported study provides new insights for feature engineering, which successfully captured the TC and TOT phase transition temperatures in the predicted dielectric spectrum.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Ba0.85Ca0.15Zr0.1Ti0.9O3": 520
+    },
+    "abbreviations": {},
+    "property_unit": "pC/N",
+    "family": "BaTiO3"
+  }
+}"

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(K0.50Na0.50)Eu0.01NbO3":135},"property_unit":"pC/N","family":"NaNbO3"}}

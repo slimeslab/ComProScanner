@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"In2Se3@SnSe-3":13.8,"In2Se3":0,"SnSe":0},"abbreviations":{"U(VI)":"Uranium (VI)","TC":"Tetracycline","CBZ":"Carbamazepine","2,4-DCP":"2,4-Dichlorophenol","NOR":"Norfloxacin","BPA":"Bisphenol A"},"property_unit":"pm/V","family":"In2Se3@SnSe"}}

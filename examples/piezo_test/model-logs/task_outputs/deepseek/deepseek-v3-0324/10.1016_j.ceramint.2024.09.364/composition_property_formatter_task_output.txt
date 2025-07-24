@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi3TiNbO9":3.1,"Bi2.99Ce0.01TiNbO9":5,"Bi2.97Ce0.03TiNbO9":12.4,"Bi2.95Ce0.05TiNbO9":15.1,"Bi2.93Ce0.07TiNbO9":17.1,"Bi2.91Ce0.09TiNbO9":15.7,"Bi2.89Ce0.11TiNbO9":12.5},"property_unit":"pC/N","family":"Aurivillius"}}

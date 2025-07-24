@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi3Ti(1.5-0.00)Nb0.00W0.5O9":7.5,"Bi3Ti(1.5-0.02)Nb0.02W0.5O9":13},"property_unit":"pC/N","family":"BLSFs"}}

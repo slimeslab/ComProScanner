@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"(Ba0.936Ca0.064)(Sn0.096Ti0.904)O3":452},"abbreviations":{"BCST-4":"(Ba0.936Ca0.064)(Sn0.096Ti0.904)O3"},"property_unit":"pC/N","family":"BaTiO3"}}

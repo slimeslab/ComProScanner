@@ -1,0 +1,468 @@
+2025-07-08 14:18:37: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Parameters in four experimental cases.
+| Bonding variables| Case 1| Case 2| Case 3| Case 4|
+|---|---|---|---|---|
+|Thickness of Ag coating|1 \u03bcm|1 \u03bcm|10 \u03bcm|10 \u03bcm|
+|Bonding Temperature|275 \xb0C|400 \xb0C|400 \xb0C|400 \xb0C|
+|Bonding Pressure|20\xa0MPa|20\xa0MPa|20\xa0MPa|20\xa0MPa|
+|Duration|60\xa0min|60\xa0min|60\xa0min|60\xa0min|
+|Additional 25 \u03bcm thick Ag foil|\u2013|\u2013|\u2013|Placed between PZT and Ni|
+
+Table 2. Characteristic acoustic impedances of materials.
+|Material| Z(MRayl)|Reference|
+|---|---|---|
+|PZT|33|(Wang et al., 2018)|
+|Silver|37.8|(Bhadwal et al., 2019)|
+|Nickel|50.7|(Kazys and Vaskeliene, 2021)|
+|Liquid Sodium @ 200 \xb0C|2.23|(Saillant et al., 2019)|
+|Water @ 20 \xb0C|1.48|(Rathod, 2020)|
+
+Table 3. Piezoelectric coefficient (d33) of the PZT discs after diffusion bonding case 1.
+|Sample details|d33 (pC/N)|Sample 1|Sample 2|
+|---|---|---|---|
+|As received PZT disc|250|250|
+|After diffusion bonding at 275 \xb0C|120|100|
+|After 1st thermal cycle between 250 \xb0C and room temperature|120|100|
+|After 10th thermal cycle between 250 \xb0C and room temperature|120|100|
+
+# RESULTS AND DISCUSSION
+The scanning set up and typical C-scan images of five as-received PZT discs of 2 mm thickness and 20 mm diameter which were screen printed with 25 \u03bcm of silver are shown in. Consequently, the PZT discs exhibiting a 20 % or more reduction in back wall echo amplitude from the reference level was excluded from diffusion bonding. The reflected echo amplitude from the FBH, adjusted to be at 80 % of the FSH, was used as the reference for assessing the quality of the PZT-Ni bond, as discussed in. Given that the acoustic impedance of nickel is 50.7 MRayl and that of the PZT-SP6 is 33 MRayl the R value is calculated to be 0.045. This indicates that only \u223c 4.5 % of the incident energy would be reflected from a Ni-PZT interface. Interfaces with a reflected amplitude exceeding 20 % of the reference amplitude were considered de-bonded. The C-scan images, which map the reflected amplitudes into a color scale, clearly identify and quantify areas with abrupt changes in reflection amplitudes. (a) and 10(b) show a typical diffusion bonded specimen and the C-scan images of the Ni-PZT interfaces of five such specimens, respectively. (c) and 10(d) compare the reflected echoes from the de-bonded and bonded interfaces. The C-scan images were analyzed using a threshold set at 20 % of the reference amplitude, as described in. The area of de-bonding was calculated from the C-scan images and the intensity profile using the relation: Based on the experimental results, only specimens with bonding more than 90 % of the total PZT disc area was selected for fabrication of under sodium transducers intended for deployment in the PFBR. The C-scan images of the interface of the PZT discs bonded to nickel wear plates under four cases outlined in , including after thermal cycles, are shown in. It is evident that the bonding parameters used in cases 1 and 2 (screen-printed silver layer augmented with an additional sputter-coated silver layer, and 20 MPa pressure at either 275 \xb0C (Case 1) or 400 \xb0C (Case 2)) achieved an acceptable bond quality, with the total bonded area exceeding 90 % of the PZT disc area. However, cases 3 and 4 exhibited substantial de-bonding after thermal cycling. presents the average d33 values of two PZT discs of Case 1, measured before bonding, after bonding and after the thermal cycles. The reduction in d33 values observed after bonding and thermal cycling is due to the partial loss of piezoelectric properties of PZT disc upon holding at high temperatures. As the temperature increases, the dipole orientation within the polycrystalline disc becomes partly randomized, leading to a decrease in d33 values. In all these cases, the measurement uncertainty was found to be less than 1 %. It is to be noted that the PZT discs bonded at 400 \xb0C (Cases 2, 3 and 4) experienced a significant loss of piezoelectric properties, with their d33 values approaching zero after bonding. Although the bond quality was satisfactory for Case 2, the PZT disc requires repoling before it can be integrated into the under-sodium transducer. The conductivity (\u03c3) of a 1 MHz PZT disc at different temperatures was measured using the experimental set up depicted in (a). Eq. can be re-written as where A\u2032= (lnA)/E^{2.303}. From the slope of this line (=- Ea/ 2.303kB), the activation energy for conduction in PZT material was calculated to be 0.94 eV. The DC resistance of the PZT discs tends to fall below 1 M\u03a9 at temperatures above 180 \xb0C. Since the maximum permissible leakage current of the poling equipment was 10 mA, a repoling temperature of 150 \xb0C was chosen, where the leakage current was measured at 1.5 mA. During repoling, the PZT discs were immersed in dry silicone oil maintained at 150 \xb0C, and a DC potential of 15 kV was applied across the disc for 15 min. After removal from the silicone oil bath, the discs were cleaned, their d33 values were measured and bond quality was re-examined. The d33 value after repoling was found to be 250 pC/N, similar to the as-received condition, and the bond quality remained satisfactory. It is worth noting that, the solubility of silver in nickel is higher at 400 \xb0C than at 275 \xb0C. Hence, when the bonding is carried out at 400 \xb0C the Ag interlayer thickness gets considerably reduced than when bonding is carried out at 275\xb0C. This is the reason for the relatively better bond quality observed at 275 \xb0C (Case 1, ) compared to 400 \xb0C (Case 2, ). Since the process of bonding at 400 \xb0C requires additional steps of poling the bonded PZT disc for using it in the transducer, we have not explored this aspect further. compares the beam profiles of a qualified 1 MHz transducer with those of a transducer that has poorly bonded PZT disc. On the other hand, debonding of the PZT disc from the Ni wear plate causes light damping of the transducer, resulting in reduced energy output and distortion in the beam\u2019s symmetry. The intensity profile and the wave form were used to calculate the transducer parameters according to ASTM standard E1065. Prior to the liquid sodium experiments, the performance of under-sodium transducers was evaluated in silicone oil at various temperatures (100 \xb0C to 250 \xb0C).
+
+# TITLE
+Diffusion bonding of PZT disc to nickel wear plate for fabrication of high temperature under-sodium ultrasonic transducers
+
+# ABSTRACT
+In this paper, we present a diffusion bonding technique designed for the fabrication of sodium-compatible high-temperature ultrasonic transducers, intended for use in the under-sodium ultrasonic scanning system of the prototype fast breeder reactor (PFBR). Lead Zirconate Titanate (PZT) was chosen as the piezoelectric material due to its relatively high Curie temperature and stable piezoelectric properties in liquid sodium environments. PZT and nickel discs were coated with silver layers of various thickness and diffusion bonded at 275 °C and 400 °C under vacuum, applying a pressure of 20 MPa for 1 h. Bonding at 275°C and 400 °C with 1 
+                        
+                           μ
+                           m
+                        
+                      silver layer deposited on both the PZT disc and nickel disc provided acceptable bond quality. Further, the high-temperature performance of the diffusion bonded transducers was assessed in silicone oil for five days and static liquid sodium for three months, both at 250 °C.
+
+# INTRODUCTION
+The Prototype Fast Breeder Reactor (PFBR) is a pool-type nuclear reactor that utilizes liquid sodium as a coolant. Under normal operational conditions, with the reactor operating at around 550 \xb0C, the fuel subassemblies (FSA) that contain the fuel pins experience void swelling due to neutron irradiation as well as deformation caused by thermal and irradiation creep. To ensure the integrity of these FSAs, in-service inspection and core mapping are crucial. For high-temperature applications, the choice of piezoelectric material is primarily based on its Curie temperature (Tc), piezoelectric charge coefficient (d33) and electromechanical or acoustic coupling factor (k33). The Z-cut lithium niobate (LiNbO3) single crystal had been used in high-temperature transducers because of its high Curie temperature (Tc = 1210 \xb0C). Another high-temperature piezoelectric material is bismuth titanate (Bi4Ti3O12) which has a Curie temperature of 650 \xb0C and is used in polycrystalline ceramic form. However, both lithium niobate and bismuth titanate exhibit lower piezoelectric charge coefficients (\u223c6 pC/N and \u223c 20 pC/N, respectively) compared to Lead zirconate-titanate (PZT), which has a charge coefficient of \u2265 200 pC/N. Further, lithium niobate tends to lose oxygen at temperatures above 500 \xb0C, leading to enhanced electrical conductivity and a deterioration in piezoelectric properties. Lead zirconate-titanate (Pb [ Zrx Ti 1-x] O3) is the most used piezoelectric material in ultrasonic transducers. The Curie temperature of the PZT material varies according to the fraction (x) of Zr and Ti as illustrated in the morphotropic phase diagram elsewhere. Further, the PZT can be modified with dopants to enhance its performance. Due to its relatively low Curie temperature, PZT-based transducers are typically deployed only during shut down conditions of fast reactors, where the liquid sodium temperature is around 250 \xb0C. Although sodium wets stainless steel at temperatures above 300 \xb0C and at low dissolved oxygen concentrations, the wetting behavior is often slow and unpredictable at lower temperatures and high dissolved oxygen concentrations. In contrast, nickel exhibits instantaneous wetting by sodium at relatively low temperatures in the range 150 \xb0C \u2212 190 \xb0C , making it a preferred choice for sodium systems. Commonly used lead\u2013tin soft solder alloys, along with minor additional elements, have low melting points limiting the maximum operational temperature of the transducer. For example, Darling et al.  successfully diffusion bonded PZT and lithium niobate discs to diamond and alumina, respectively, by coating the bonding surfaces with silver and heating them under pressure in a high vacuum. Dierckx  bonded PZT to SS-316 wear plate with a gold interlayer at 200 \xb0C and 40 MPa pressure under vacuum. Similarly, Yerganian et al.,  employed a silver interlayer and operated under vacuum at 200 \xb0C with pressure ranging from 20 to 40 MPa. In this paper, we report on the diffusion bonding of a PZT ceramic disc to nickel wear plate, a technique that has not been previously investigated. The ultrasonic transducers fabricated with the diffusion-bonded PZT disc and Ni wear plate are intended for use in a sodium system at a maximum temperature of 250 \xb1 10 \xb0C. Silver was chosen as the interlayer material for bonding PZT to nickel. These parameters were optimized for bonding PZT to the nickel wear plate. The integrity of the bonds was evaluated by subjecting them to thermal cycling between 250 \xb0C and room temperature.
+
+# CONCLUSION
+The PZT discs were successfully bonded to nickel wear plate, and the bond quality was verified through thermal cycling. The transducers have demonstrated satisfactory performance and durability in liquid sodium environments up to 250 \xb0C, for three months. The performance of the transducers was found acceptable to be deployed in the prototype fast breeder reactor (PFBR) core during the shutdown period.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-08 14:18:39: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Parameters in four experimental cases.
+| Bonding variables| Case 1| Case 2| Case 3| Case 4|
+|---|---|---|---|---|
+|Thickness of Ag coating|1 \u03bcm|1 \u03bcm|10 \u03bcm|10 \u03bcm|
+|Bonding Temperature|275 \xb0C|400 \xb0C|400 \xb0C|400 \xb0C|
+|Bonding Pressure|20\xa0MPa|20\xa0MPa|20\xa0MPa|20\xa0MPa|
+|Duration|60\xa0min|60\xa0min|60\xa0min|60\xa0min|
+|Additional 25 \u03bcm thick Ag foil|\u2013|\u2013|\u2013|Placed between PZT and Ni|
+
+Table 2. Characteristic acoustic impedances of materials.
+|Material| Z(MRayl)|Reference|
+|---|---|---|
+|PZT|33|(Wang et al., 2018)|
+|Silver|37.8|(Bhadwal et al., 2019)|
+|Nickel|50.7|(Kazys and Vaskeliene, 2021)|
+|Liquid Sodium @ 200 \xb0C|2.23|(Saillant et al., 2019)|
+|Water @ 20 \xb0C|1.48|(Rathod, 2020)|
+
+Table 3. Piezoelectric coefficient (d33) of the PZT discs after diffusion bonding case 1.
+|Sample details|d33 (pC/N)|Sample 1|Sample 2|
+|---|---|---|---|
+|As received PZT disc|250|250|
+|After diffusion bonding at 275 \xb0C|120|100|
+|After 1st thermal cycle between 250 \xb0C and room temperature|120|100|
+|After 10th thermal cycle between 250 \xb0C and room temperature|120|100|
+
+# RESULTS AND DISCUSSION
+The scanning set up and typical C-scan images of five as-received PZT discs of 2 mm thickness and 20 mm diameter which were screen printed with 25 \u03bcm of silver are shown in. Consequently, the PZT discs exhibiting a 20 % or more reduction in back wall echo amplitude from the reference level was excluded from diffusion bonding. The reflected echo amplitude from the FBH, adjusted to be at 80 % of the FSH, was used as the reference for assessing the quality of the PZT-Ni bond, as discussed in. Given that the acoustic impedance of nickel is 50.7 MRayl and that of the PZT-SP6 is 33 MRayl the R value is calculated to be 0.045. This indicates that only \u223c 4.5 % of the incident energy would be reflected from a Ni-PZT interface. Interfaces with a reflected amplitude exceeding 20 % of the reference amplitude were considered de-bonded. The C-scan images, which map the reflected amplitudes into a color scale, clearly identify and quantify areas with abrupt changes in reflection amplitudes. (a) and 10(b) show a typical diffusion bonded specimen and the C-scan images of the Ni-PZT interfaces of five such specimens, respectively. (c) and 10(d) compare the reflected echoes from the de-bonded and bonded interfaces. The C-scan images were analyzed using a threshold set at 20 % of the reference amplitude, as described in. The area of de-bonding was calculated from the C-scan images and the intensity profile using the relation: Based on the experimental results, only specimens with bonding more than 90 % of the total PZT disc area was selected for fabrication of under sodium transducers intended for deployment in the PFBR. The C-scan images of the interface of the PZT discs bonded to nickel wear plates under four cases outlined in , including after thermal cycles, are shown in. It is evident that the bonding parameters used in cases 1 and 2 (screen-printed silver layer augmented with an additional sputter-coated silver layer, and 20 MPa pressure at either 275 \xb0C (Case 1) or 400 \xb0C (Case 2)) achieved an acceptable bond quality, with the total bonded area exceeding 90 % of the PZT disc area. However, cases 3 and 4 exhibited substantial de-bonding after thermal cycling. presents the average d33 values of two PZT discs of Case 1, measured before bonding, after bonding and after the thermal cycles. The reduction in d33 values observed after bonding and thermal cycling is due to the partial loss of piezoelectric properties of PZT disc upon holding at high temperatures. As the temperature increases, the dipole orientation within the polycrystalline disc becomes partly randomized, leading to a decrease in d33 values. In all these cases, the measurement uncertainty was found to be less than 1 %. It is to be noted that the PZT discs bonded at 400 \xb0C (Cases 2, 3 and 4) experienced a significant loss of piezoelectric properties, with their d33 values approaching zero after bonding. Although the bond quality was satisfactory for Case 2, the PZT disc requires repoling before it can be integrated into the under-sodium transducer. The conductivity (\u03c3) of a 1 MHz PZT disc at different temperatures was measured using the experimental set up depicted in (a). Eq. can be re-written as where A\u2032= (lnA)/E^{2.303}. From the slope of this line (=- Ea/ 2.303kB), the activation energy for conduction in PZT material was calculated to be 0.94 eV. The DC resistance of the PZT discs tends to fall below 1 M\u03a9 at temperatures above 180 \xb0C. Since the maximum permissible leakage current of the poling equipment was 10 mA, a repoling temperature of 150 \xb0C was chosen, where the leakage current was measured at 1.5 mA. During repoling, the PZT discs were immersed in dry silicone oil maintained at 150 \xb0C, and a DC potential of 15 kV was applied across the disc for 15 min. After removal from the silicone oil bath, the discs were cleaned, their d33 values were measured and bond quality was re-examined. The d33 value after repoling was found to be 250 pC/N, similar to the as-received condition, and the bond quality remained satisfactory. It is worth noting that, the solubility of silver in nickel is higher at 400 \xb0C than at 275 \xb0C. Hence, when the bonding is carried out at 400 \xb0C the Ag interlayer thickness gets considerably reduced than when bonding is carried out at 275\xb0C. This is the reason for the relatively better bond quality observed at 275 \xb0C (Case 1, ) compared to 400 \xb0C (Case 2, ). Since the process of bonding at 400 \xb0C requires additional steps of poling the bonded PZT disc for using it in the transducer, we have not explored this aspect further. compares the beam profiles of a qualified 1 MHz transducer with those of a transducer that has poorly bonded PZT disc. On the other hand, debonding of the PZT disc from the Ni wear plate causes light damping of the transducer, resulting in reduced energy output and distortion in the beam\u2019s symmetry. The intensity profile and the wave form were used to calculate the transducer parameters according to ASTM standard E1065. Prior to the liquid sodium experiments, the performance of under-sodium transducers was evaluated in silicone oil at various temperatures (100 \xb0C to 250 \xb0C).
+
+# TITLE
+Diffusion bonding of PZT disc to nickel wear plate for fabrication of high temperature under-sodium ultrasonic transducers
+
+# ABSTRACT
+In this paper, we present a diffusion bonding technique designed for the fabrication of sodium-compatible high-temperature ultrasonic transducers, intended for use in the under-sodium ultrasonic scanning system of the prototype fast breeder reactor (PFBR). Lead Zirconate Titanate (PZT) was chosen as the piezoelectric material due to its relatively high Curie temperature and stable piezoelectric properties in liquid sodium environments. PZT and nickel discs were coated with silver layers of various thickness and diffusion bonded at 275 °C and 400 °C under vacuum, applying a pressure of 20 MPa for 1 h. Bonding at 275°C and 400 °C with 1 
+                        
+                           μ
+                           m
+                        
+                      silver layer deposited on both the PZT disc and nickel disc provided acceptable bond quality. Further, the high-temperature performance of the diffusion bonded transducers was assessed in silicone oil for five days and static liquid sodium for three months, both at 250 °C.
+
+# INTRODUCTION
+The Prototype Fast Breeder Reactor (PFBR) is a pool-type nuclear reactor that utilizes liquid sodium as a coolant. Under normal operational conditions, with the reactor operating at around 550 \xb0C, the fuel subassemblies (FSA) that contain the fuel pins experience void swelling due to neutron irradiation as well as deformation caused by thermal and irradiation creep. To ensure the integrity of these FSAs, in-service inspection and core mapping are crucial. For high-temperature applications, the choice of piezoelectric material is primarily based on its Curie temperature (Tc), piezoelectric charge coefficient (d33) and electromechanical or acoustic coupling factor (k33). The Z-cut lithium niobate (LiNbO3) single crystal had been used in high-temperature transducers because of its high Curie temperature (Tc = 1210 \xb0C). Another high-temperature piezoelectric material is bismuth titanate (Bi4Ti3O12) which has a Curie temperature of 650 \xb0C and is used in polycrystalline ceramic form. However, both lithium niobate and bismuth titanate exhibit lower piezoelectric charge coefficients (\u223c6 pC/N and \u223c 20 pC/N, respectively) compared to Lead zirconate-titanate (PZT), which has a charge coefficient of \u2265 200 pC/N. Further, lithium niobate tends to lose oxygen at temperatures above 500 \xb0C, leading to enhanced electrical conductivity and a deterioration in piezoelectric properties. Lead zirconate-titanate (Pb [ Zrx Ti 1-x] O3) is the most used piezoelectric material in ultrasonic transducers. The Curie temperature of the PZT material varies according to the fraction (x) of Zr and Ti as illustrated in the morphotropic phase diagram elsewhere. Further, the PZT can be modified with dopants to enhance its performance. Due to its relatively low Curie temperature, PZT-based transducers are typically deployed only during shut down conditions of fast reactors, where the liquid sodium temperature is around 250 \xb0C. Although sodium wets stainless steel at temperatures above 300 \xb0C and at low dissolved oxygen concentrations, the wetting behavior is often slow and unpredictable at lower temperatures and high dissolved oxygen concentrations. In contrast, nickel exhibits instantaneous wetting by sodium at relatively low temperatures in the range 150 \xb0C \u2212 190 \xb0C , making it a preferred choice for sodium systems. Commonly used lead\u2013tin soft solder alloys, along with minor additional elements, have low melting points limiting the maximum operational temperature of the transducer. For example, Darling et al.  successfully diffusion bonded PZT and lithium niobate discs to diamond and alumina, respectively, by coating the bonding surfaces with silver and heating them under pressure in a high vacuum. Dierckx  bonded PZT to SS-316 wear plate with a gold interlayer at 200 \xb0C and 40 MPa pressure under vacuum. Similarly, Yerganian et al.,  employed a silver interlayer and operated under vacuum at 200 \xb0C with pressure ranging from 20 to 40 MPa. In this paper, we report on the diffusion bonding of a PZT ceramic disc to nickel wear plate, a technique that has not been previously investigated. The ultrasonic transducers fabricated with the diffusion-bonded PZT disc and Ni wear plate are intended for use in a sodium system at a maximum temperature of 250 \xb1 10 \xb0C. Silver was chosen as the interlayer material for bonding PZT to nickel. These parameters were optimized for bonding PZT to the nickel wear plate. The integrity of the bonds was evaluated by subjecting them to thermal cycling between 250 \xb0C and room temperature.
+
+# CONCLUSION
+The PZT discs were successfully bonded to nickel wear plate, and the bond quality was verified through thermal cycling. The transducers have demonstrated satisfactory performance and durability in liquid sodium environments up to 250 \xb0C, for three months. The performance of the transducers was found acceptable to be deployed in the prototype fast breeder reactor (PFBR) core during the shutdown period.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "PZT": 120,
+      "PZT (diffusion bonded at 275°C)": 120,
+      "PZT (diffusion bonded at 400°C)": 0,
+      "(1-x)PZT (x=0)": 120,
+      "(1-x)PZT (x=0.1)": 120,
+      "(1-x)PZT (x=0.2)": 120,
+      "(1-x)PZT (x=0.3)": 120
+    },
+    "abbreviations": {
+      "PZT": "Lead Zirconate Titanate"
+    },
+    "property_unit": "pC/N",
+    "family": "PbZrTiO3"
+  }
+}"
+2025-07-08 16:11:40: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Parameters in four experimental cases.
+| Bonding variables| Case 1| Case 2| Case 3| Case 4|
+|---|---|---|---|---|
+|Thickness of Ag coating|1 \u03bcm|1 \u03bcm|10 \u03bcm|10 \u03bcm|
+|Bonding Temperature|275 \xb0C|400 \xb0C|400 \xb0C|400 \xb0C|
+|Bonding Pressure|20\xa0MPa|20\xa0MPa|20\xa0MPa|20\xa0MPa|
+|Duration|60\xa0min|60\xa0min|60\xa0min|60\xa0min|
+|Additional 25 \u03bcm thick Ag foil|\u2013|\u2013|\u2013|Placed between PZT and Ni|
+
+Table 2. Characteristic acoustic impedances of materials.
+|Material| Z(MRayl)|Reference|
+|---|---|---|
+|PZT|33|(Wang et al., 2018)|
+|Silver|37.8|(Bhadwal et al., 2019)|
+|Nickel|50.7|(Kazys and Vaskeliene, 2021)|
+|Liquid Sodium @ 200 \xb0C|2.23|(Saillant et al., 2019)|
+|Water @ 20 \xb0C|1.48|(Rathod, 2020)|
+
+Table 3. Piezoelectric coefficient (d33) of the PZT discs after diffusion bonding case 1.
+|Sample details|d33 (pC/N)|Sample 1|Sample 2|
+|---|---|---|---|
+|As received PZT disc|250|250|
+|After diffusion bonding at 275 \xb0C|120|100|
+|After 1st thermal cycle between 250 \xb0C and room temperature|120|100|
+|After 10th thermal cycle between 250 \xb0C and room temperature|120|100|
+
+# RESULTS AND DISCUSSION
+The scanning set up and typical C-scan images of five as-received PZT discs of 2 mm thickness and 20 mm diameter which were screen printed with 25 \u03bcm of silver are shown in. Consequently, the PZT discs exhibiting a 20 % or more reduction in back wall echo amplitude from the reference level was excluded from diffusion bonding. The reflected echo amplitude from the FBH, adjusted to be at 80 % of the FSH, was used as the reference for assessing the quality of the PZT-Ni bond, as discussed in. Given that the acoustic impedance of nickel is 50.7 MRayl and that of the PZT-SP6 is 33 MRayl the R value is calculated to be 0.045. This indicates that only \u223c 4.5 % of the incident energy would be reflected from a Ni-PZT interface. Interfaces with a reflected amplitude exceeding 20 % of the reference amplitude were considered de-bonded. The C-scan images, which map the reflected amplitudes into a color scale, clearly identify and quantify areas with abrupt changes in reflection amplitudes. (a) and 10(b) show a typical diffusion bonded specimen and the C-scan images of the Ni-PZT interfaces of five such specimens, respectively. (c) and 10(d) compare the reflected echoes from the de-bonded and bonded interfaces. The C-scan images were analyzed using a threshold set at 20 % of the reference amplitude, as described in. The area of de-bonding was calculated from the C-scan images and the intensity profile using the relation: Based on the experimental results, only specimens with bonding more than 90 % of the total PZT disc area was selected for fabrication of under sodium transducers intended for deployment in the PFBR. The C-scan images of the interface of the PZT discs bonded to nickel wear plates under four cases outlined in , including after thermal cycles, are shown in. It is evident that the bonding parameters used in cases 1 and 2 (screen-printed silver layer augmented with an additional sputter-coated silver layer, and 20 MPa pressure at either 275 \xb0C (Case 1) or 400 \xb0C (Case 2)) achieved an acceptable bond quality, with the total bonded area exceeding 90 % of the PZT disc area. However, cases 3 and 4 exhibited substantial de-bonding after thermal cycling. presents the average d33 values of two PZT discs of Case 1, measured before bonding, after bonding and after the thermal cycles. The reduction in d33 values observed after bonding and thermal cycling is due to the partial loss of piezoelectric properties of PZT disc upon holding at high temperatures. As the temperature increases, the dipole orientation within the polycrystalline disc becomes partly randomized, leading to a decrease in d33 values. In all these cases, the measurement uncertainty was found to be less than 1 %. It is to be noted that the PZT discs bonded at 400 \xb0C (Cases 2, 3 and 4) experienced a significant loss of piezoelectric properties, with their d33 values approaching zero after bonding. Although the bond quality was satisfactory for Case 2, the PZT disc requires repoling before it can be integrated into the under-sodium transducer. The conductivity (\u03c3) of a 1 MHz PZT disc at different temperatures was measured using the experimental set up depicted in (a). Eq. can be re-written as where A\u2032= (lnA)/E^{2.303}. From the slope of this line (=- Ea/ 2.303kB), the activation energy for conduction in PZT material was calculated to be 0.94 eV. The DC resistance of the PZT discs tends to fall below 1 M\u03a9 at temperatures above 180 \xb0C. Since the maximum permissible leakage current of the poling equipment was 10 mA, a repoling temperature of 150 \xb0C was chosen, where the leakage current was measured at 1.5 mA. During repoling, the PZT discs were immersed in dry silicone oil maintained at 150 \xb0C, and a DC potential of 15 kV was applied across the disc for 15 min. After removal from the silicone oil bath, the discs were cleaned, their d33 values were measured and bond quality was re-examined. The d33 value after repoling was found to be 250 pC/N, similar to the as-received condition, and the bond quality remained satisfactory. It is worth noting that, the solubility of silver in nickel is higher at 400 \xb0C than at 275 \xb0C. Hence, when the bonding is carried out at 400 \xb0C the Ag interlayer thickness gets considerably reduced than when bonding is carried out at 275\xb0C. This is the reason for the relatively better bond quality observed at 275 \xb0C (Case 1, ) compared to 400 \xb0C (Case 2, ). Since the process of bonding at 400 \xb0C requires additional steps of poling the bonded PZT disc for using it in the transducer, we have not explored this aspect further. compares the beam profiles of a qualified 1 MHz transducer with those of a transducer that has poorly bonded PZT disc. On the other hand, debonding of the PZT disc from the Ni wear plate causes light damping of the transducer, resulting in reduced energy output and distortion in the beam\u2019s symmetry. The intensity profile and the wave form were used to calculate the transducer parameters according to ASTM standard E1065. Prior to the liquid sodium experiments, the performance of under-sodium transducers was evaluated in silicone oil at various temperatures (100 \xb0C to 250 \xb0C).
+
+# TITLE
+Diffusion bonding of PZT disc to nickel wear plate for fabrication of high temperature under-sodium ultrasonic transducers
+
+# ABSTRACT
+In this paper, we present a diffusion bonding technique designed for the fabrication of sodium-compatible high-temperature ultrasonic transducers, intended for use in the under-sodium ultrasonic scanning system of the prototype fast breeder reactor (PFBR). Lead Zirconate Titanate (PZT) was chosen as the piezoelectric material due to its relatively high Curie temperature and stable piezoelectric properties in liquid sodium environments. PZT and nickel discs were coated with silver layers of various thickness and diffusion bonded at 275 °C and 400 °C under vacuum, applying a pressure of 20 MPa for 1 h. Bonding at 275°C and 400 °C with 1 
+                        
+                           μ
+                           m
+                        
+                      silver layer deposited on both the PZT disc and nickel disc provided acceptable bond quality. Further, the high-temperature performance of the diffusion bonded transducers was assessed in silicone oil for five days and static liquid sodium for three months, both at 250 °C.
+
+# INTRODUCTION
+The Prototype Fast Breeder Reactor (PFBR) is a pool-type nuclear reactor that utilizes liquid sodium as a coolant. Under normal operational conditions, with the reactor operating at around 550 \xb0C, the fuel subassemblies (FSA) that contain the fuel pins experience void swelling due to neutron irradiation as well as deformation caused by thermal and irradiation creep. To ensure the integrity of these FSAs, in-service inspection and core mapping are crucial. For high-temperature applications, the choice of piezoelectric material is primarily based on its Curie temperature (Tc), piezoelectric charge coefficient (d33) and electromechanical or acoustic coupling factor (k33). The Z-cut lithium niobate (LiNbO3) single crystal had been used in high-temperature transducers because of its high Curie temperature (Tc = 1210 \xb0C). Another high-temperature piezoelectric material is bismuth titanate (Bi4Ti3O12) which has a Curie temperature of 650 \xb0C and is used in polycrystalline ceramic form. However, both lithium niobate and bismuth titanate exhibit lower piezoelectric charge coefficients (\u223c6 pC/N and \u223c 20 pC/N, respectively) compared to Lead zirconate-titanate (PZT), which has a charge coefficient of \u2265 200 pC/N. Further, lithium niobate tends to lose oxygen at temperatures above 500 \xb0C, leading to enhanced electrical conductivity and a deterioration in piezoelectric properties. Lead zirconate-titanate (Pb [ Zrx Ti 1-x] O3) is the most used piezoelectric material in ultrasonic transducers. The Curie temperature of the PZT material varies according to the fraction (x) of Zr and Ti as illustrated in the morphotropic phase diagram elsewhere. Further, the PZT can be modified with dopants to enhance its performance. Due to its relatively low Curie temperature, PZT-based transducers are typically deployed only during shut down conditions of fast reactors, where the liquid sodium temperature is around 250 \xb0C. Although sodium wets stainless steel at temperatures above 300 \xb0C and at low dissolved oxygen concentrations, the wetting behavior is often slow and unpredictable at lower temperatures and high dissolved oxygen concentrations. In contrast, nickel exhibits instantaneous wetting by sodium at relatively low temperatures in the range 150 \xb0C \u2212 190 \xb0C , making it a preferred choice for sodium systems. Commonly used lead\u2013tin soft solder alloys, along with minor additional elements, have low melting points limiting the maximum operational temperature of the transducer. For example, Darling et al.  successfully diffusion bonded PZT and lithium niobate discs to diamond and alumina, respectively, by coating the bonding surfaces with silver and heating them under pressure in a high vacuum. Dierckx  bonded PZT to SS-316 wear plate with a gold interlayer at 200 \xb0C and 40 MPa pressure under vacuum. Similarly, Yerganian et al.,  employed a silver interlayer and operated under vacuum at 200 \xb0C with pressure ranging from 20 to 40 MPa. In this paper, we report on the diffusion bonding of a PZT ceramic disc to nickel wear plate, a technique that has not been previously investigated. The ultrasonic transducers fabricated with the diffusion-bonded PZT disc and Ni wear plate are intended for use in a sodium system at a maximum temperature of 250 \xb1 10 \xb0C. Silver was chosen as the interlayer material for bonding PZT to nickel. These parameters were optimized for bonding PZT to the nickel wear plate. The integrity of the bonds was evaluated by subjecting them to thermal cycling between 250 \xb0C and room temperature.
+
+# CONCLUSION
+The PZT discs were successfully bonded to nickel wear plate, and the bond quality was verified through thermal cycling. The transducers have demonstrated satisfactory performance and durability in liquid sodium environments up to 250 \xb0C, for three months. The performance of the transducers was found acceptable to be deployed in the prototype fast breeder reactor (PFBR) core during the shutdown period.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-08 16:11:44: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Parameters in four experimental cases.
+| Bonding variables| Case 1| Case 2| Case 3| Case 4|
+|---|---|---|---|---|
+|Thickness of Ag coating|1 \u03bcm|1 \u03bcm|10 \u03bcm|10 \u03bcm|
+|Bonding Temperature|275 \xb0C|400 \xb0C|400 \xb0C|400 \xb0C|
+|Bonding Pressure|20\xa0MPa|20\xa0MPa|20\xa0MPa|20\xa0MPa|
+|Duration|60\xa0min|60\xa0min|60\xa0min|60\xa0min|
+|Additional 25 \u03bcm thick Ag foil|\u2013|\u2013|\u2013|Placed between PZT and Ni|
+
+Table 2. Characteristic acoustic impedances of materials.
+|Material| Z(MRayl)|Reference|
+|---|---|---|
+|PZT|33|(Wang et al., 2018)|
+|Silver|37.8|(Bhadwal et al., 2019)|
+|Nickel|50.7|(Kazys and Vaskeliene, 2021)|
+|Liquid Sodium @ 200 \xb0C|2.23|(Saillant et al., 2019)|
+|Water @ 20 \xb0C|1.48|(Rathod, 2020)|
+
+Table 3. Piezoelectric coefficient (d33) of the PZT discs after diffusion bonding case 1.
+|Sample details|d33 (pC/N)|Sample 1|Sample 2|
+|---|---|---|---|
+|As received PZT disc|250|250|
+|After diffusion bonding at 275 \xb0C|120|100|
+|After 1st thermal cycle between 250 \xb0C and room temperature|120|100|
+|After 10th thermal cycle between 250 \xb0C and room temperature|120|100|
+
+# RESULTS AND DISCUSSION
+The scanning set up and typical C-scan images of five as-received PZT discs of 2 mm thickness and 20 mm diameter which were screen printed with 25 \u03bcm of silver are shown in. Consequently, the PZT discs exhibiting a 20 % or more reduction in back wall echo amplitude from the reference level was excluded from diffusion bonding. The reflected echo amplitude from the FBH, adjusted to be at 80 % of the FSH, was used as the reference for assessing the quality of the PZT-Ni bond, as discussed in. Given that the acoustic impedance of nickel is 50.7 MRayl and that of the PZT-SP6 is 33 MRayl the R value is calculated to be 0.045. This indicates that only \u223c 4.5 % of the incident energy would be reflected from a Ni-PZT interface. Interfaces with a reflected amplitude exceeding 20 % of the reference amplitude were considered de-bonded. The C-scan images, which map the reflected amplitudes into a color scale, clearly identify and quantify areas with abrupt changes in reflection amplitudes. (a) and 10(b) show a typical diffusion bonded specimen and the C-scan images of the Ni-PZT interfaces of five such specimens, respectively. (c) and 10(d) compare the reflected echoes from the de-bonded and bonded interfaces. The C-scan images were analyzed using a threshold set at 20 % of the reference amplitude, as described in. The area of de-bonding was calculated from the C-scan images and the intensity profile using the relation: Based on the experimental results, only specimens with bonding more than 90 % of the total PZT disc area was selected for fabrication of under sodium transducers intended for deployment in the PFBR. The C-scan images of the interface of the PZT discs bonded to nickel wear plates under four cases outlined in , including after thermal cycles, are shown in. It is evident that the bonding parameters used in cases 1 and 2 (screen-printed silver layer augmented with an additional sputter-coated silver layer, and 20 MPa pressure at either 275 \xb0C (Case 1) or 400 \xb0C (Case 2)) achieved an acceptable bond quality, with the total bonded area exceeding 90 % of the PZT disc area. However, cases 3 and 4 exhibited substantial de-bonding after thermal cycling. presents the average d33 values of two PZT discs of Case 1, measured before bonding, after bonding and after the thermal cycles. The reduction in d33 values observed after bonding and thermal cycling is due to the partial loss of piezoelectric properties of PZT disc upon holding at high temperatures. As the temperature increases, the dipole orientation within the polycrystalline disc becomes partly randomized, leading to a decrease in d33 values. In all these cases, the measurement uncertainty was found to be less than 1 %. It is to be noted that the PZT discs bonded at 400 \xb0C (Cases 2, 3 and 4) experienced a significant loss of piezoelectric properties, with their d33 values approaching zero after bonding. Although the bond quality was satisfactory for Case 2, the PZT disc requires repoling before it can be integrated into the under-sodium transducer. The conductivity (\u03c3) of a 1 MHz PZT disc at different temperatures was measured using the experimental set up depicted in (a). Eq. can be re-written as where A\u2032= (lnA)/E^{2.303}. From the slope of this line (=- Ea/ 2.303kB), the activation energy for conduction in PZT material was calculated to be 0.94 eV. The DC resistance of the PZT discs tends to fall below 1 M\u03a9 at temperatures above 180 \xb0C. Since the maximum permissible leakage current of the poling equipment was 10 mA, a repoling temperature of 150 \xb0C was chosen, where the leakage current was measured at 1.5 mA. During repoling, the PZT discs were immersed in dry silicone oil maintained at 150 \xb0C, and a DC potential of 15 kV was applied across the disc for 15 min. After removal from the silicone oil bath, the discs were cleaned, their d33 values were measured and bond quality was re-examined. The d33 value after repoling was found to be 250 pC/N, similar to the as-received condition, and the bond quality remained satisfactory. It is worth noting that, the solubility of silver in nickel is higher at 400 \xb0C than at 275 \xb0C. Hence, when the bonding is carried out at 400 \xb0C the Ag interlayer thickness gets considerably reduced than when bonding is carried out at 275\xb0C. This is the reason for the relatively better bond quality observed at 275 \xb0C (Case 1, ) compared to 400 \xb0C (Case 2, ). Since the process of bonding at 400 \xb0C requires additional steps of poling the bonded PZT disc for using it in the transducer, we have not explored this aspect further. compares the beam profiles of a qualified 1 MHz transducer with those of a transducer that has poorly bonded PZT disc. On the other hand, debonding of the PZT disc from the Ni wear plate causes light damping of the transducer, resulting in reduced energy output and distortion in the beam\u2019s symmetry. The intensity profile and the wave form were used to calculate the transducer parameters according to ASTM standard E1065. Prior to the liquid sodium experiments, the performance of under-sodium transducers was evaluated in silicone oil at various temperatures (100 \xb0C to 250 \xb0C).
+
+# TITLE
+Diffusion bonding of PZT disc to nickel wear plate for fabrication of high temperature under-sodium ultrasonic transducers
+
+# ABSTRACT
+In this paper, we present a diffusion bonding technique designed for the fabrication of sodium-compatible high-temperature ultrasonic transducers, intended for use in the under-sodium ultrasonic scanning system of the prototype fast breeder reactor (PFBR). Lead Zirconate Titanate (PZT) was chosen as the piezoelectric material due to its relatively high Curie temperature and stable piezoelectric properties in liquid sodium environments. PZT and nickel discs were coated with silver layers of various thickness and diffusion bonded at 275 °C and 400 °C under vacuum, applying a pressure of 20 MPa for 1 h. Bonding at 275°C and 400 °C with 1 
+                        
+                           μ
+                           m
+                        
+                      silver layer deposited on both the PZT disc and nickel disc provided acceptable bond quality. Further, the high-temperature performance of the diffusion bonded transducers was assessed in silicone oil for five days and static liquid sodium for three months, both at 250 °C.
+
+# INTRODUCTION
+The Prototype Fast Breeder Reactor (PFBR) is a pool-type nuclear reactor that utilizes liquid sodium as a coolant. Under normal operational conditions, with the reactor operating at around 550 \xb0C, the fuel subassemblies (FSA) that contain the fuel pins experience void swelling due to neutron irradiation as well as deformation caused by thermal and irradiation creep. To ensure the integrity of these FSAs, in-service inspection and core mapping are crucial. For high-temperature applications, the choice of piezoelectric material is primarily based on its Curie temperature (Tc), piezoelectric charge coefficient (d33) and electromechanical or acoustic coupling factor (k33). The Z-cut lithium niobate (LiNbO3) single crystal had been used in high-temperature transducers because of its high Curie temperature (Tc = 1210 \xb0C). Another high-temperature piezoelectric material is bismuth titanate (Bi4Ti3O12) which has a Curie temperature of 650 \xb0C and is used in polycrystalline ceramic form. However, both lithium niobate and bismuth titanate exhibit lower piezoelectric charge coefficients (\u223c6 pC/N and \u223c 20 pC/N, respectively) compared to Lead zirconate-titanate (PZT), which has a charge coefficient of \u2265 200 pC/N. Further, lithium niobate tends to lose oxygen at temperatures above 500 \xb0C, leading to enhanced electrical conductivity and a deterioration in piezoelectric properties. Lead zirconate-titanate (Pb [ Zrx Ti 1-x] O3) is the most used piezoelectric material in ultrasonic transducers. The Curie temperature of the PZT material varies according to the fraction (x) of Zr and Ti as illustrated in the morphotropic phase diagram elsewhere. Further, the PZT can be modified with dopants to enhance its performance. Due to its relatively low Curie temperature, PZT-based transducers are typically deployed only during shut down conditions of fast reactors, where the liquid sodium temperature is around 250 \xb0C. Although sodium wets stainless steel at temperatures above 300 \xb0C and at low dissolved oxygen concentrations, the wetting behavior is often slow and unpredictable at lower temperatures and high dissolved oxygen concentrations. In contrast, nickel exhibits instantaneous wetting by sodium at relatively low temperatures in the range 150 \xb0C \u2212 190 \xb0C , making it a preferred choice for sodium systems. Commonly used lead\u2013tin soft solder alloys, along with minor additional elements, have low melting points limiting the maximum operational temperature of the transducer. For example, Darling et al.  successfully diffusion bonded PZT and lithium niobate discs to diamond and alumina, respectively, by coating the bonding surfaces with silver and heating them under pressure in a high vacuum. Dierckx  bonded PZT to SS-316 wear plate with a gold interlayer at 200 \xb0C and 40 MPa pressure under vacuum. Similarly, Yerganian et al.,  employed a silver interlayer and operated under vacuum at 200 \xb0C with pressure ranging from 20 to 40 MPa. In this paper, we report on the diffusion bonding of a PZT ceramic disc to nickel wear plate, a technique that has not been previously investigated. The ultrasonic transducers fabricated with the diffusion-bonded PZT disc and Ni wear plate are intended for use in a sodium system at a maximum temperature of 250 \xb1 10 \xb0C. Silver was chosen as the interlayer material for bonding PZT to nickel. These parameters were optimized for bonding PZT to the nickel wear plate. The integrity of the bonds was evaluated by subjecting them to thermal cycling between 250 \xb0C and room temperature.
+
+# CONCLUSION
+The PZT discs were successfully bonded to nickel wear plate, and the bond quality was verified through thermal cycling. The transducers have demonstrated satisfactory performance and durability in liquid sodium environments up to 250 \xb0C, for three months. The performance of the transducers was found acceptable to be deployed in the prototype fast breeder reactor (PFBR) core during the shutdown period.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "LiNbO3": 6,
+      "Bi4Ti3O12": 20,
+      "Pb(Zr0.52Ti0.48)O3": 200,
+      "Pb(Zr0.3Ti0.7)O3": 200,
+      "Pb(Zr0.52Ti0.48)O3": 200,
+      "Pb(Zr0.3Ti0.7)O3 + 2%wt Mg": 200,
+      "(1-x)Pb(Zr0.52Ti0.48)O3 - (x)NaNbO3 where x=0": 250,
+      "(1-x)Pb(Zr0.52Ti0.48)O3 - (x)NaNbO3 where x=0.1": 250,
+      "(1-x)Pb(Zr0.52Ti0.48)O3 - (x)NaNbO3 where x=0.2": 250,
+      "(1-x)Pb(Zr0.52Ti0.48)O3 - (x)NaNbO3 where x=0.3": 250
+    },
+    "abbreviations": {
+      "LiNbO3": "LiNbO3",
+      "Bi4Ti3O12": "Bi4Ti3O12",
+      "Pb(Zr0.52Ti0.48)O3": "Pb(Zr0.52Ti0.48)O3",
+      "Pb(Zr0.3Ti0.7)O3": "Pb(Zr0.3Ti0.7)O3"
+    },
+    "property_unit": "pC/N",
+    "family": "PbZrTiO3"
+  }
+}"

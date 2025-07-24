@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Undoped":137,"1 mol % B3+ doped":171,"1 mol% B3+ - 1 mol% Mn3+ co-doped":150},"property_unit":"pC/N","family":"BNT-6BT"}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Ba0.85Ca0.15Zr0.10Ti0.90O3 - Cylinder-Shaped":467.1,"Ba0.85Ca0.15Zr0.10Ti0.90O3 - Frustum-of-a-Cone-Shaped":524.7},"abbreviations":{"BCZT":"Ba0.85Ca0.15Zr0.10Ti0.90O3","BTO":"BaTiO3","PZT":"PbZrO3-PbTiO3","BNT":"(Bi,Na)TiO3","KNN":"(K,Na)NbO3"},"property_unit":"pC/N","family":"BaTiO3"}}

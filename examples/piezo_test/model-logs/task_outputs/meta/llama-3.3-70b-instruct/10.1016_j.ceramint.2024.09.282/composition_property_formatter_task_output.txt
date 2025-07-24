@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(Ba0.95Ca0.05)(Ti0.89Sn0.11)O3":232,"(Ba0.95Ca0.05)(Ti0.89Sn0.11)O3 + 0.1%BFO":188,"(Ba0.95Ca0.05)(Ti0.89Sn0.11)O3 + 0.5%BFO":20,"(Ba0.95Ca0.05)(Ti0.89Sn0.11)O3 + 0.9%BFO":2},"property_unit":"pC/N","family":"BaTiO3"}}

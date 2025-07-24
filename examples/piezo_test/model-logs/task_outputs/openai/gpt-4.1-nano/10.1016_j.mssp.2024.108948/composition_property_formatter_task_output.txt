@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BF(1-0)BT(0)BZT(0.02)BA(0.01)":801,"BF(1-0.01)BT(0.01)BZT(0.02)BA(0.01)":null,"BF(1-0.02)BT(0.02)BZT(0.02)BA(0.01)":null,"BF(1-0.03)BT(0.03)BZT(0.02)BA(0.01)":null,"BF(1-0.04)BT(0.04)BZT(0.02)BA(0.01)":null,"BF(1-0.05)BT(0.05)BZT(0.02)BA(0.01)":null},"property_unit":"pC/N","family":"BiFeO3-BaTiO3"}}

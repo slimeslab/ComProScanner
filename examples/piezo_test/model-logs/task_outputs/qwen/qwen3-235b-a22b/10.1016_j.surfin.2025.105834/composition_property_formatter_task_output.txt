@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Y2CO2":99.53,"Y2COS":72.32,"Y2COSe":70.72},"property_unit":"pm/V","family":"MXene Y2COX"}}

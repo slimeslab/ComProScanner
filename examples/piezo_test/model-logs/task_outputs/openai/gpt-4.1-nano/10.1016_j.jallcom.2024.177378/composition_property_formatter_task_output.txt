@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Pb(Zn(1-((1*1)/3)))Nb(2-((2*1)/3)))0.1(Hf(0.49)Ti(0.51)))0.9O3":17400},"property_unit":"pm^2/N","family":"Pb-based perovskite"}}

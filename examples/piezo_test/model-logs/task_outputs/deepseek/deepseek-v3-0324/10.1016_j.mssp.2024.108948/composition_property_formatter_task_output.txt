@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.67BiFeO3-0.33BaTiO3-0.02Bi(Zn0.5Ti0.5)O3-0.01BiAlO3":801,"0.67BiFeO3-0.33BaTiO3-0.02Bi(Zn0.5Ti0.5)O3-0.03BiAlO3":509},"property_unit":"pC/N","family":"BiFeO3-BaTiO3"}}

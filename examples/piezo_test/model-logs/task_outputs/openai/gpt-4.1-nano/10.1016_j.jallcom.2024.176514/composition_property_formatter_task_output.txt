@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BNT-ST-2BT":43.0,"BNT-ST-4BT":35.2,"BNT-ST-6BT":39.5,"BNT-ST-8BT":37.3,"BNT-ST-11BT":35.5},"property_unit":"pm/V","family":"BNT-based"}}

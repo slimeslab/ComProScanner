@@ -1,0 +1,213 @@
+2025-07-11 22:31:01: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Phase fraction and lattice parameters obtained from Rietveld refinement of the Xray diffraction data for all compositions.
+|Composition|Crystal system|Phase ratio (%)|Lattice parameters|Rp (%)|a (\xc5)|c (\xc5)|c/a||
+|---|---|---|---|---|---|---|---|---|
+|Undoped|Rhombohedral|60.74|5.5432790|13.4507057|2.4265|7.63|
+|Tetragonal|39.26|3.8799204|3.9353752|1.0143|
+|1B-doped|Rhombohedral|93.41|5.5367638|13.4752833|2.4338|9.35|
+|Tetragonal|6.59|3.8811545|3.9389934|1.0149|
+|1B-1Mn co-doped|Rhombohedral|83.69|5.5214209|13.5224002|2.4491|7.67|
+|Tetragonal|16.31|3.9183741|3.9232901|1.0013|
+
+Table 2. Bipolar hysteresis measurement data in undoped, 1B-doped and 1B-1Mn co-doped BNT-6BT ceramics sintered at 1150\xa0\xb0C for 12h.
+|Composition|Pmax (\u03bcC/cmE^{2})|Pr (\u03bcC/cmE^{2})|Ec (kV/cm)||Smax| (%)|
+|---|---|---|---|---|
+|Undoped|30.04|26.93|26.67|0.21|
+|1B-doped|35.07|31.24|26.87|0.23|
+|1B-1Mn co-doped|27.76|26.13|22.73|0.20|
+
+Table 3. Piezoelectric and dielectric properties obtained at optimum poling conditions and density values of undoped and doped BNT-6BT ceramics.
+|Composition|d33 (pC/N)|\u0190r (1\xa0kHz)|tan\u03b4|\u03c1b (g/cmE^{3})|\u03c1th (g/cmE^{3})|\u03c1r (=\u03c1b/\u03c1th)(%)|
+|---|---|---|---|---|---|---|
+|Undoped|137|739|0.0203|5,57|5,99|93|
+|1B-doped|171|826|0.0314|5,71|5,98|95|
+|1B-1Mn co-doped|150|579|0,0170|5,10|5,97|85|
+
+# RESULTS AND DISCUSSION
+The room temperature XRD diffraction pattern of undoped, 1B-doped, 1B-1Mn co-doped BNT-6BT sintered ceramics have been shown in (a) where the 2\u03b8 range is 20\u201370\xb0. It can be seen that all samples have a pure perovskite structure without any secondary phase detected, indicating that all dopants have diffused into the BNT lattice and formed a homogeneous solid solution. As observed in the expanded XRD patterns of ceramics in the 2\u03b8 range of 39\u201347\xb0 ((b)), for samples of all compositions, peak splitting on (111) and (200) planes were found, implying that these ceramics possess the MPB composition, where the rhombohedral (R) and tetragonal (T) phases co-exist. The R-T phase percentage ratio of 60.74\u201339.26 clearly shows that BNT-6BT is located on the MPB position. However, both 1B single doping and 1B-1Mn co-doping greatly change the amounts of present phases in favor of R as the R% increases up to 93.41 and 83.69, respectively. The Rietveld refinement results also provided \u201cc/a\u201d ratios for the T phase as 1.0143, 1.0149, and 1.0013 for the undoped, 1B-doped, and 1B-1Mn co-doped BNT-6BT ceramics. This indicates increased \u201ctetragonality\u201d for Mn-doping in BNT-BT ceramics as also reported by Zhu et al.. The microstructure images of BNT-6BT ceramics taken with an SEM instrument (LEO 1430VP) have been given in. It is obvious that the grain size of 1B-1Mn co-doped sample is much coarser than that of undoped and 1B-doped ceramics, which is a characteristic effect of acceptor dopants as a result of increased oxygen vacancy in the grain boundaries. Similar results were observed by Zhu et al. as the grain size increases with the addition of Mn ion into (Na0.5Bi0.5)0.92Ba0.08TiO3 ceramics. The observed substantial grain growth was explained as the Mn ion entering into the perovskite lattice to substitute TiE^{4+} ion; leading to the creation of oxygen vacancies (Eq. ), which enhances the transfer of mass and energy between the reactants, thus improving the sintering behavior and inducing an increase in grain size continually. On the other hand, no significant change was observed in the microstructure and grain size in BNT-6BT when doped with NbE^{5+}, a well-known donor for the titanate perovskite systems, except that the dielectric loss is increased. As in the case of BE^{3+} doping in this study, donors are effective in suppressing the oxygen vacancy formation, thus, inhibiting grain growth. Theoretical densities (\u03c1th) of the ceramics with different compositions are calculated using reported theoretical densities of BNT-6BT, B2O3 and Mn2O3 as 5.99, 2.46 and 5.025 g/cmE^{3}, respectively. The calculated theoretical and relative density values are given in with the measured bulk densities (\u03c1b) and obtained electrical properties. The lower relative density value (85 %) was exhibited by 1B-1Mn co-doped ceramics, possessing coarse grains, compared to both undoped (93 %) and 1B-doped (95 %) ceramics. It has been also observed that the measured densities correlate well with the piezoelectric (d33) and dielectric (\u03b5r, tan\u03b4) properties in undoped and doped ceramics. shows the (P-E) hysteresis loop (a) and (S-E) strain curve (b) of the ceramics obtained at room temperature. From the P-E and S-E hysteresis loop plots, the maximum polarization (Pmax) where the material is fully polarized, the remenant polarization (Pr) that remains after the electric field is removed, the coercive field (EC) that cancels out the net polarization, and the maximum strain (|Smax|) which is calculated by Eq. where SE^{P} and SE^{N} gives the positive and negative strain values, respectively, data were extracted. As can be seen in , the highest values of Pmax, Pr, and EC were displayed by the 1B-doped ceramics. On the other hand, 1B-1Mn co-doped ceramics provided the lowest Pmax and Pr values. Additionally, it has been observed that the 1B-1Mn co-doped ceramics have a narrower strain curve than that of undoped and 1B-doped ones. The most prominent result among others here is the significant reduction of EC value in MnE^{3+} containing composition. This is consistent with the role of an acceptor dopant, i.e., MnE^{3+}, to balance the effects of single BE^{3+} doped BNT-6BT perovskite crystal. Indeed, it was one of the main goals in this study to reduce the EC by the addition of MnE^{3+}. The reduction of EC from 26.87 kV/cm for 1B to 22.73 kV/cm for 1B-1Mn is quite significant in terms of the aims of the study from the device applications perspective. shows the dependence of piezoelectric coefficient (d33) on poling time for all compositions and no considerable effect was observed for the samples in the range of 5\u201320 min at RT. However, the poling field has an improving effect on the piezoelectric properties of 1B-1Mn co-doped ceramics ( ). To elucidate the correlation between the poling field and the piezoelectric properties of the ceramics, all samples were poled in the range of 3\u20135 kV/mm at 25 \xb0C for 5 min. It was found that the poling field has no improving effect on the piezoelectric properties, except when 1B-1Mn co-doped ceramics were poled at 3.5 kV/mm electric field. Thus, it has been ascertained that as the poling field 3 kV/mm was enough for both undoped and 1B-single doped compositions, while 3.5 kV/mm provided higher d33 for 1B-1Mn co-doped samples. At the next step, all the samples were poled for 5 min at the temperature range of 25\u201380 \xb0C under the optimum electric field for each composition. show the change of piezoelectric (d33) and dielectric properties (\u03b5r and tan\u03b4) as a function of the poling temperature, respectively. It was observed that d33 values decreased for undoped and 1B-doped compositions at higher temperatures, as 1B-1Mn co-doped ceramics have improved values at 60 \xb0C. It can be presumed that this difference is a result of MnE^{3+} doping, which obstructs domain motion in the material since it behaves as an acceptor by replacing TiE^{4+} ions. With respect to all collected data, the poling temperature has been chosen as the RT (25 \xb0C) for undoped and 1B-doped, and 60 \xb0C for 1B-1Mn co-doped BNT-6BT ceramics. summarizes the piezoelectric and dielectric properties of the poled samples for each composition with their optimum parameters. The results indicate that a significant improvement in d33 with an increase in tan\u03b4 has been observed in 1B composition. On the other hand, 1B-1Mn composition has provided the lowest tan\u03b4 value among all the compositions studied, which is a positive achievement for dielectric properties and complies with the aim of the study.
+
+# TITLE
+Effects of boron and manganese doping on electrical poling and properties of 0.94(Bi<inf>0.5</inf>Na<inf>0.5</inf>)TiO<inf>3</inf>-0.06BaTiO<inf>3</inf> piezoelectric ceramics
+
+# ABSTRACT
+Undoped, 1 mol % B3+ doped (1B), and 1 mol% B3+ - 1 mol% Mn3+ co-doped (1B-1Mn) 0.94(Bi0.5Na0.5)TiO3-0.06BaTiO3 (BNT-6BT) lead-free piezoelectric ceramics were produced by solid-state reaction method. Samples were shaped into disc pellets using high-purity perovskite phase powders of all compositions and were sintered at 1150 °C for 12 h in air. After the structural characterizations of the produced materials by using X-ray Diffraction (XRD), Scanning Electron Microscopy (SEM), and Archimedes method, electrical property measurements were peformed for the undoped and variously doped samples. As it is a critical step for the improved piezoelectric properties, poling conditions were systematically studied in the range of 5–20 min time duration, at temperatures from room temperature (RT) up to 80 °C, and electric fields between 3 and 5 kV/mm. Major electrical properties were determined in terms of dielectric constant (εr), dielectric loss (tanδ), piezoelectric coefficient (d33), maximum polarization (Pmax), remanent polarization (Pr), coercive field (EC), and maximum strain (Smax). The measured values were compared for undoped, 1B and 1B-1Mn ceramics. The highest εr, d33, Pmax, Pr, and Smax values were obtained for 1B composition after the poling process at RT. Although all other properties were greatly improved by B3+ doping, high values of EC (26.87 kV/cm) and tanδ (0.0314) are considered to be detrimental for many applications. It has been observed that 1B-1Mn composition exhibited significantly reduced EC (22.73 kV/cm) and tanδ (0,0170) values with only a slight drop in other properties. It was also noted that Mn3+ doping increased the poling electric field and temperature, while the influence of poling time on properties was found to be quite negligible for all compositions in this study. As a result, the doping-dependent optimized poling conditions were determined for 1B-1Mn co-doped BNT-6BT lead-free piezoelectric ceramics in this study.
+
+# INTRODUCTION
+Since its discovery in the 1950s, lead zirconate titanate (PbZrxTi1-xO3; PZT) has been extensively studied and used in a variety of technological and daily applications, ranging from sensors, transducers, and actuators. PZT, a ceramic material with perovskite structure, exhibits strong dielectric, piezoelectric, and ferroelectric properties, as well as high-temperature stability. However, lead (Pb) is a critical element in PZT and other Pb-containing material compositions due to its toxicity, and environmental concerns were augmented, resulting in new regulations on limiting the use of lead (Pb) containing materials. Consequently, lead-free, environmentally-friendly ceramics with high piezo/ferro-electric properties comparable to PZT have been widely investigated. For the last several decades, many researchers have directed their studies toward several perovskite-type oxides such as (Bi0.5Na0.5)TiO3 (BNT), BaTiO3 (BT), and their solid solutions. It has been noted that either undoped BNT or BT do not provide the expectedly high piezoelectric properties and performance of PZT and its derivates. However, very similar to PZT with a Zr/Ti ratio of approximately 53/47, 0.94(Bi0.5Na0.5)TiO3-0.06BaTiO3 (BNT-6BT) is a solid solution of BNT and BT having a Morphotropic Phase Boundary (MBP), where rhombohedral and tetragonal phases co-exist and electrical properties are greatly improved. Due to such improvements, BNT-6BT has received great interest for its nontoxic lead-free content and dielectric, piezoelectric, and ferroelectric properties as a potential replacement for PZT. As commonly applied in many ceramic systems, the piezoelectric properties in BNT-6BT ceramics have been improved by adding various dopants , and obtaining a well-oriented domain structure with a large magnitude of dipoles by optimizing poling conditions. Nonetheless, certain materials, particularly lead-free ceramics like BNT and alkali niobates (KNaNbO3; KNN), are notoriously difficult to pole effectively. Given its strong ferroelectricity and high Curie temperature, BNT ceramics have been considered as one of the potential lead-free candidate ferroelectric materials. However, high coercive field values (73 kV/cm) in BNT piezoceramic materials inhibit an efficient poling, hence limiting their properties and applications. In order to overcome this poling difficulty and obtain improved dielectric/piezoelectric/ferroelectric properties, various BNT-based solid solutions have been studied. The (1-x)BNT-xBT (BNT-BT) system, with a composition near x = 0.06\u20130.07, has garnered significant interest due to its rhombohedral-tetragonal MPB. Compared to pure BNT, ceramics within this composition range exhibit notably improved poling and piezoelectric characteristics. By adding dopants with higher or lower valence, it is possible to obtain a \u201csoft\u201d or \u201chard\u201d ferroelectric material, respectively. Soft ferroelectrics, i.e., LaE^{3+} substituted with NaE^{+}, which is a donor dopant in this case, have generally provide reduced aging behavior, an increase in dielectric constant and piezoelectric coupling factor, lower coercive fields, and greater dielectric losses. On the other hand, hard ferroelectrics exhibit higher coercive fields, lower dielectric constants, and more stable domains, for instance, when MnE^{3+}, which is an acceptor dopant in this case, replaced with TiE^{4+} in BNT-BT. Recent studies have examined also the effects of adding B2O3 to BaTiO3-based materials and BNT-6BT ceramics and reported remarkable improvements in dielectric and piezoelectric performance as boron (BE^{3+}) has a donor effect (Eq. ) occupying intersitial positions in the lattice. It has been reported that the incorporation of only 1 mol% BE^{3+} ions into the BNT-6BT crystal structure resulted in a remarkable increase in piezoelectric and dielectric coefficients of d33 from 137 to 171 pC/N and \u03b5r from 739 to 826, respectively. However, it was observed that both EC and tan\u03b4 values were greatly increased which may be detrimental for some applications. With its well known B-site acceptor role for perovskite type piezoelectrics, manganese (MnE^{3+}) is considered to be an effective candidate co-dopant with BE^{3+} to control the increase of both EC and tan\u03b4 values in the 1 mol% BE^{3+} doped BNT-6BT ceramics. When co-doped with BE^{3+} and MnE^{3+}, BNT-6BT ceramics are expected to exhibit balanced improved properties with no adverse effects such as rising EC and tan\u03b4 values which would be critical for various technological applications. In this perspective, we aimed to report the effects of boron (B2O3) and manganese (Mn2O3) doping on the dielectric, piezoelectric, and ferroelectric properties of BNT-6BT ceramics. A part of the study was also to determine the effect of the poling parameters on the piezoelectric and dielectric properties of undoped, 1B, and 1B-1Mn doped BNT-6BT lead-free ceramics. It is aimed to perform an improved poling process by adding B2O3, where boron is assumed to be as an interstitial donor dopant. Furthermore, the effects of acceptor doping, MnE^{3+} in this case coupled with BE^{3+}, on the poling conditions; consequently, on the electrical properties were also examined with the goal of reducing dielectric loss, which was increased by boron single doping as reported in our earlier study.
+
+# CONCLUSION
+The effect of doping on electrical poling behavior and the dielectric/piezoelectric properties of undoped, 1 mol% BE^{3+} (1B) doped, and 1 mol% BE^{3+}-1 mol% MnE^{3+} (1B-1Mn) co-doped BNT-6BT ceramics was studied. The highest \u03b5r, d33, Pmax, Pr, and Smax values were obtained for 1B composition after the poling process at RT. Although all other properties were greatly improved by BE^{3+} doping, high values of EC (26.87 kV/cm) and tan\u03b4 (0.0314) are considered to be detrimental for many applications. It has been observed that 1B-1Mn composition exhibited significantly reduced EC (22.73 kV/cm) and tan\u03b4 (0,0170) values with only a slight drop in other properties. It was also noted that MnE^{3+} doping increased the poling electric field and temperature, while the influence of poling time on properties was found to be quite negligible for all compositions in this study. As a main conclusion of this study, the preferred poling conditions were obtained as 3 kV/mm at RT for undoped and 1B-doped BNT-6BT. However, 3.5 kV/mm at 60 \xb0C provided better results for 1B-1Mn co-doped lead-free ceramics.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-11 22:33:47: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Phase fraction and lattice parameters obtained from Rietveld refinement of the Xray diffraction data for all compositions.
+|Composition|Crystal system|Phase ratio (%)|Lattice parameters|Rp (%)|a (\xc5)|c (\xc5)|c/a||
+|---|---|---|---|---|---|---|---|---|
+|Undoped|Rhombohedral|60.74|5.5432790|13.4507057|2.4265|7.63|
+|Tetragonal|39.26|3.8799204|3.9353752|1.0143|
+|1B-doped|Rhombohedral|93.41|5.5367638|13.4752833|2.4338|9.35|
+|Tetragonal|6.59|3.8811545|3.9389934|1.0149|
+|1B-1Mn co-doped|Rhombohedral|83.69|5.5214209|13.5224002|2.4491|7.67|
+|Tetragonal|16.31|3.9183741|3.9232901|1.0013|
+
+Table 2. Bipolar hysteresis measurement data in undoped, 1B-doped and 1B-1Mn co-doped BNT-6BT ceramics sintered at 1150\xa0\xb0C for 12h.
+|Composition|Pmax (\u03bcC/cmE^{2})|Pr (\u03bcC/cmE^{2})|Ec (kV/cm)||Smax| (%)|
+|---|---|---|---|---|
+|Undoped|30.04|26.93|26.67|0.21|
+|1B-doped|35.07|31.24|26.87|0.23|
+|1B-1Mn co-doped|27.76|26.13|22.73|0.20|
+
+Table 3. Piezoelectric and dielectric properties obtained at optimum poling conditions and density values of undoped and doped BNT-6BT ceramics.
+|Composition|d33 (pC/N)|\u0190r (1\xa0kHz)|tan\u03b4|\u03c1b (g/cmE^{3})|\u03c1th (g/cmE^{3})|\u03c1r (=\u03c1b/\u03c1th)(%)|
+|---|---|---|---|---|---|---|
+|Undoped|137|739|0.0203|5,57|5,99|93|
+|1B-doped|171|826|0.0314|5,71|5,98|95|
+|1B-1Mn co-doped|150|579|0,0170|5,10|5,97|85|
+
+# RESULTS AND DISCUSSION
+The room temperature XRD diffraction pattern of undoped, 1B-doped, 1B-1Mn co-doped BNT-6BT sintered ceramics have been shown in (a) where the 2\u03b8 range is 20\u201370\xb0. It can be seen that all samples have a pure perovskite structure without any secondary phase detected, indicating that all dopants have diffused into the BNT lattice and formed a homogeneous solid solution. As observed in the expanded XRD patterns of ceramics in the 2\u03b8 range of 39\u201347\xb0 ((b)), for samples of all compositions, peak splitting on (111) and (200) planes were found, implying that these ceramics possess the MPB composition, where the rhombohedral (R) and tetragonal (T) phases co-exist. The R-T phase percentage ratio of 60.74\u201339.26 clearly shows that BNT-6BT is located on the MPB position. However, both 1B single doping and 1B-1Mn co-doping greatly change the amounts of present phases in favor of R as the R% increases up to 93.41 and 83.69, respectively. The Rietveld refinement results also provided \u201cc/a\u201d ratios for the T phase as 1.0143, 1.0149, and 1.0013 for the undoped, 1B-doped, and 1B-1Mn co-doped BNT-6BT ceramics. This indicates increased \u201ctetragonality\u201d for Mn-doping in BNT-BT ceramics as also reported by Zhu et al.. The microstructure images of BNT-6BT ceramics taken with an SEM instrument (LEO 1430VP) have been given in. It is obvious that the grain size of 1B-1Mn co-doped sample is much coarser than that of undoped and 1B-doped ceramics, which is a characteristic effect of acceptor dopants as a result of increased oxygen vacancy in the grain boundaries. Similar results were observed by Zhu et al. as the grain size increases with the addition of Mn ion into (Na0.5Bi0.5)0.92Ba0.08TiO3 ceramics. The observed substantial grain growth was explained as the Mn ion entering into the perovskite lattice to substitute TiE^{4+} ion; leading to the creation of oxygen vacancies (Eq. ), which enhances the transfer of mass and energy between the reactants, thus improving the sintering behavior and inducing an increase in grain size continually. On the other hand, no significant change was observed in the microstructure and grain size in BNT-6BT when doped with NbE^{5+}, a well-known donor for the titanate perovskite systems, except that the dielectric loss is increased. As in the case of BE^{3+} doping in this study, donors are effective in suppressing the oxygen vacancy formation, thus, inhibiting grain growth. Theoretical densities (\u03c1th) of the ceramics with different compositions are calculated using reported theoretical densities of BNT-6BT, B2O3 and Mn2O3 as 5.99, 2.46 and 5.025 g/cmE^{3}, respectively. The calculated theoretical and relative density values are given in with the measured bulk densities (\u03c1b) and obtained electrical properties. The lower relative density value (85 %) was exhibited by 1B-1Mn co-doped ceramics, possessing coarse grains, compared to both undoped (93 %) and 1B-doped (95 %) ceramics. It has been also observed that the measured densities correlate well with the piezoelectric (d33) and dielectric (\u03b5r, tan\u03b4) properties in undoped and doped ceramics. shows the (P-E) hysteresis loop (a) and (S-E) strain curve (b) of the ceramics obtained at room temperature. From the P-E and S-E hysteresis loop plots, the maximum polarization (Pmax) where the material is fully polarized, the remenant polarization (Pr) that remains after the electric field is removed, the coercive field (EC) that cancels out the net polarization, and the maximum strain (|Smax|) which is calculated by Eq. where SE^{P} and SE^{N} gives the positive and negative strain values, respectively, data were extracted. As can be seen in , the highest values of Pmax, Pr, and EC were displayed by the 1B-doped ceramics. On the other hand, 1B-1Mn co-doped ceramics provided the lowest Pmax and Pr values. Additionally, it has been observed that the 1B-1Mn co-doped ceramics have a narrower strain curve than that of undoped and 1B-doped ones. The most prominent result among others here is the significant reduction of EC value in MnE^{3+} containing composition. This is consistent with the role of an acceptor dopant, i.e., MnE^{3+}, to balance the effects of single BE^{3+} doped BNT-6BT perovskite crystal. Indeed, it was one of the main goals in this study to reduce the EC by the addition of MnE^{3+}. The reduction of EC from 26.87 kV/cm for 1B to 22.73 kV/cm for 1B-1Mn is quite significant in terms of the aims of the study from the device applications perspective. shows the dependence of piezoelectric coefficient (d33) on poling time for all compositions and no considerable effect was observed for the samples in the range of 5\u201320 min at RT. However, the poling field has an improving effect on the piezoelectric properties of 1B-1Mn co-doped ceramics ( ). To elucidate the correlation between the poling field and the piezoelectric properties of the ceramics, all samples were poled in the range of 3\u20135 kV/mm at 25 \xb0C for 5 min. It was found that the poling field has no improving effect on the piezoelectric properties, except when 1B-1Mn co-doped ceramics were poled at 3.5 kV/mm electric field. Thus, it has been ascertained that as the poling field 3 kV/mm was enough for both undoped and 1B-single doped compositions, while 3.5 kV/mm provided higher d33 for 1B-1Mn co-doped samples. At the next step, all the samples were poled for 5 min at the temperature range of 25\u201380 \xb0C under the optimum electric field for each composition. show the change of piezoelectric (d33) and dielectric properties (\u03b5r and tan\u03b4) as a function of the poling temperature, respectively. It was observed that d33 values decreased for undoped and 1B-doped compositions at higher temperatures, as 1B-1Mn co-doped ceramics have improved values at 60 \xb0C. It can be presumed that this difference is a result of MnE^{3+} doping, which obstructs domain motion in the material since it behaves as an acceptor by replacing TiE^{4+} ions. With respect to all collected data, the poling temperature has been chosen as the RT (25 \xb0C) for undoped and 1B-doped, and 60 \xb0C for 1B-1Mn co-doped BNT-6BT ceramics. summarizes the piezoelectric and dielectric properties of the poled samples for each composition with their optimum parameters. The results indicate that a significant improvement in d33 with an increase in tan\u03b4 has been observed in 1B composition. On the other hand, 1B-1Mn composition has provided the lowest tan\u03b4 value among all the compositions studied, which is a positive achievement for dielectric properties and complies with the aim of the study.
+
+# TITLE
+Effects of boron and manganese doping on electrical poling and properties of 0.94(Bi<inf>0.5</inf>Na<inf>0.5</inf>)TiO<inf>3</inf>-0.06BaTiO<inf>3</inf> piezoelectric ceramics
+
+# ABSTRACT
+Undoped, 1 mol % B3+ doped (1B), and 1 mol% B3+ - 1 mol% Mn3+ co-doped (1B-1Mn) 0.94(Bi0.5Na0.5)TiO3-0.06BaTiO3 (BNT-6BT) lead-free piezoelectric ceramics were produced by solid-state reaction method. Samples were shaped into disc pellets using high-purity perovskite phase powders of all compositions and were sintered at 1150 °C for 12 h in air. After the structural characterizations of the produced materials by using X-ray Diffraction (XRD), Scanning Electron Microscopy (SEM), and Archimedes method, electrical property measurements were peformed for the undoped and variously doped samples. As it is a critical step for the improved piezoelectric properties, poling conditions were systematically studied in the range of 5–20 min time duration, at temperatures from room temperature (RT) up to 80 °C, and electric fields between 3 and 5 kV/mm. Major electrical properties were determined in terms of dielectric constant (εr), dielectric loss (tanδ), piezoelectric coefficient (d33), maximum polarization (Pmax), remanent polarization (Pr), coercive field (EC), and maximum strain (Smax). The measured values were compared for undoped, 1B and 1B-1Mn ceramics. The highest εr, d33, Pmax, Pr, and Smax values were obtained for 1B composition after the poling process at RT. Although all other properties were greatly improved by B3+ doping, high values of EC (26.87 kV/cm) and tanδ (0.0314) are considered to be detrimental for many applications. It has been observed that 1B-1Mn composition exhibited significantly reduced EC (22.73 kV/cm) and tanδ (0,0170) values with only a slight drop in other properties. It was also noted that Mn3+ doping increased the poling electric field and temperature, while the influence of poling time on properties was found to be quite negligible for all compositions in this study. As a result, the doping-dependent optimized poling conditions were determined for 1B-1Mn co-doped BNT-6BT lead-free piezoelectric ceramics in this study.
+
+# INTRODUCTION
+Since its discovery in the 1950s, lead zirconate titanate (PbZrxTi1-xO3; PZT) has been extensively studied and used in a variety of technological and daily applications, ranging from sensors, transducers, and actuators. PZT, a ceramic material with perovskite structure, exhibits strong dielectric, piezoelectric, and ferroelectric properties, as well as high-temperature stability. However, lead (Pb) is a critical element in PZT and other Pb-containing material compositions due to its toxicity, and environmental concerns were augmented, resulting in new regulations on limiting the use of lead (Pb) containing materials. Consequently, lead-free, environmentally-friendly ceramics with high piezo/ferro-electric properties comparable to PZT have been widely investigated. For the last several decades, many researchers have directed their studies toward several perovskite-type oxides such as (Bi0.5Na0.5)TiO3 (BNT), BaTiO3 (BT), and their solid solutions. It has been noted that either undoped BNT or BT do not provide the expectedly high piezoelectric properties and performance of PZT and its derivates. However, very similar to PZT with a Zr/Ti ratio of approximately 53/47, 0.94(Bi0.5Na0.5)TiO3-0.06BaTiO3 (BNT-6BT) is a solid solution of BNT and BT having a Morphotropic Phase Boundary (MBP), where rhombohedral and tetragonal phases co-exist and electrical properties are greatly improved. Due to such improvements, BNT-6BT has received great interest for its nontoxic lead-free content and dielectric, piezoelectric, and ferroelectric properties as a potential replacement for PZT. As commonly applied in many ceramic systems, the piezoelectric properties in BNT-6BT ceramics have been improved by adding various dopants , and obtaining a well-oriented domain structure with a large magnitude of dipoles by optimizing poling conditions. Nonetheless, certain materials, particularly lead-free ceramics like BNT and alkali niobates (KNaNbO3; KNN), are notoriously difficult to pole effectively. Given its strong ferroelectricity and high Curie temperature, BNT ceramics have been considered as one of the potential lead-free candidate ferroelectric materials. However, high coercive field values (73 kV/cm) in BNT piezoceramic materials inhibit an efficient poling, hence limiting their properties and applications. In order to overcome this poling difficulty and obtain improved dielectric/piezoelectric/ferroelectric properties, various BNT-based solid solutions have been studied. The (1-x)BNT-xBT (BNT-BT) system, with a composition near x = 0.06\u20130.07, has garnered significant interest due to its rhombohedral-tetragonal MPB. Compared to pure BNT, ceramics within this composition range exhibit notably improved poling and piezoelectric characteristics. By adding dopants with higher or lower valence, it is possible to obtain a \u201csoft\u201d or \u201chard\u201d ferroelectric material, respectively. Soft ferroelectrics, i.e., LaE^{3+} substituted with NaE^{+}, which is a donor dopant in this case, have generally provide reduced aging behavior, an increase in dielectric constant and piezoelectric coupling factor, lower coercive fields, and greater dielectric losses. On the other hand, hard ferroelectrics exhibit higher coercive fields, lower dielectric constants, and more stable domains, for instance, when MnE^{3+}, which is an acceptor dopant in this case, replaced with TiE^{4+} in BNT-BT. Recent studies have examined also the effects of adding B2O3 to BaTiO3-based materials and BNT-6BT ceramics and reported remarkable improvements in dielectric and piezoelectric performance as boron (BE^{3+}) has a donor effect (Eq. ) occupying intersitial positions in the lattice. It has been reported that the incorporation of only 1 mol% BE^{3+} ions into the BNT-6BT crystal structure resulted in a remarkable increase in piezoelectric and dielectric coefficients of d33 from 137 to 171 pC/N and \u03b5r from 739 to 826, respectively. However, it was observed that both EC and tan\u03b4 values were greatly increased which may be detrimental for some applications. With its well known B-site acceptor role for perovskite type piezoelectrics, manganese (MnE^{3+}) is considered to be an effective candidate co-dopant with BE^{3+} to control the increase of both EC and tan\u03b4 values in the 1 mol% BE^{3+} doped BNT-6BT ceramics. When co-doped with BE^{3+} and MnE^{3+}, BNT-6BT ceramics are expected to exhibit balanced improved properties with no adverse effects such as rising EC and tan\u03b4 values which would be critical for various technological applications. In this perspective, we aimed to report the effects of boron (B2O3) and manganese (Mn2O3) doping on the dielectric, piezoelectric, and ferroelectric properties of BNT-6BT ceramics. A part of the study was also to determine the effect of the poling parameters on the piezoelectric and dielectric properties of undoped, 1B, and 1B-1Mn doped BNT-6BT lead-free ceramics. It is aimed to perform an improved poling process by adding B2O3, where boron is assumed to be as an interstitial donor dopant. Furthermore, the effects of acceptor doping, MnE^{3+} in this case coupled with BE^{3+}, on the poling conditions; consequently, on the electrical properties were also examined with the goal of reducing dielectric loss, which was increased by boron single doping as reported in our earlier study.
+
+# CONCLUSION
+The effect of doping on electrical poling behavior and the dielectric/piezoelectric properties of undoped, 1 mol% BE^{3+} (1B) doped, and 1 mol% BE^{3+}-1 mol% MnE^{3+} (1B-1Mn) co-doped BNT-6BT ceramics was studied. The highest \u03b5r, d33, Pmax, Pr, and Smax values were obtained for 1B composition after the poling process at RT. Although all other properties were greatly improved by BE^{3+} doping, high values of EC (26.87 kV/cm) and tan\u03b4 (0.0314) are considered to be detrimental for many applications. It has been observed that 1B-1Mn composition exhibited significantly reduced EC (22.73 kV/cm) and tan\u03b4 (0,0170) values with only a slight drop in other properties. It was also noted that MnE^{3+} doping increased the poling electric field and temperature, while the influence of poling time on properties was found to be quite negligible for all compositions in this study. As a main conclusion of this study, the preferred poling conditions were obtained as 3 kV/mm at RT for undoped and 1B-doped BNT-6BT. However, 3.5 kV/mm at 60 \xb0C provided better results for 1B-1Mn co-doped lead-free ceramics.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "0.94(Bi0.5Na0.5)TiO3-0.06BaTiO3": 137,
+      "0.94(Bi0.5Na0.5)TiO3-0.06BaTiO3 + B3+ (1 mol%)": 171,
+      "0.94(Bi0.5Na0.5)TiO3-0.06BaTiO3 + B3+ (1 mol%) + Mn3+ (1 mol%)": 150
+    },
+    "abbreviations": {
+      "BNT-6BT": "0.94(Bi0.5Na0.5)TiO3-0.06BaTiO3"
+    },
+    "property_unit": "pC/N",
+    "family": "BNT-6BT"
+  }
+}"

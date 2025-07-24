@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Pb(Zn1/3Nb2/3)0.1(Hf0.49Ti0.51)0.9O3":550},"property_unit":"pC/N","family":"PbTiO3"}}

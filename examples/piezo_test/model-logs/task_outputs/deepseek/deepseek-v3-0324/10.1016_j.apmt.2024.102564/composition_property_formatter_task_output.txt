@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Phe-Leu":71,"Leu-Phe":87},"property_unit":"pm/V","family":"dipeptides"}}

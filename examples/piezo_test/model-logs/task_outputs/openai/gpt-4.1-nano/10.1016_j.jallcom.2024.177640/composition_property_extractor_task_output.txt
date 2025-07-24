@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"2.5%Sm,0.0%Pr":1532,"2.0%Sm,0.5%Pr":1547,"1.5%Sm,1.0%Pr":1318,"1.0%Sm,1.5%Pr":1014,"0.5%Sm,2.0%Pr":819,"(1-x)Pb(Mg1/3Nb2/3)O3 - (y)PbTiO3 where x=0.28, y=0.72":1310},"abbreviations":{"PMN-PT":"Pb(Mg1/3Nb2/3)O3-0.72PbTiO3"},"property_unit":"pC/N","family":"Pb(Mg1/3Nb2/3)O3-PT"}}

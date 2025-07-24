@@ -1,0 +1,226 @@
+2025-07-11 10:54:27: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Comparison of T  dr and In-situ d  33 based on BF-BT materials with published literature.
+|Materials| T  dr (\u2103)| In-situ d  33 (pC/N)| T  c \uff08\u2103\uff09|Ref|
+|---|---|---|---|---|
+|0.7BF\u22120.3BT- 0.04BZT|360|502|473|[35]|
+|0.7BF\u22120.297BT+0.003BiGaO3|340|466|485|[36]|
+|0.69BF\u22120.31BT\u22120.005(BNT\u221220BKT)\u22120.025BZT|395|749|491|[37]|
+|0.74BF\u22120.25BT\u22120.01BKT+1\u2009%MnO2|590|200|605|[38]|
+|0.66BF\u22120.30BT\u22120.04BiAlO3|252|310|487|[39]|
+|0.68BF\u22120.32BT|334|451|470|[40]|
+|0.7BF-(0.3-x)BT-xBNT|280|332|488|[41]|
+|0.69BF\u22120.31BT+0.005 (0.8BNT\u22120.2BKT)|314|419|483|This work|
+|0.69BF\u22120.31BT+0.01 (0.8BNT\u22120.2BKT)|382|687|474|This work|
+|0.69BF\u22120.31BT+0.015 (0.8BNT\u22120.2BKT)|326|681|469|This work|
+|0.69BF\u22120.31BT+0.025 (0.8BNT\u22120.2BKT)|351|571|461|This work|
+
+# RESULTS AND DISCUSSION
+shows the room temperature XRD patterns of 0.69BF-0.31BT+x(0.8BNT-0.2BKT)(x = 0, x = 0.005, x = 0.010, x = 0.015, x = 0.020, x = 0.025) ceramics, all of which exhibit a typical ABO3 structure, indicating that BNT and BKT are fully dissolved into the main phase. A single diffraction peak is observed in the expanded plot of (b), where the main peak angle is shifted slightly to a higher angle at x = 0.005 with the introduction of x, indicating the presence of a slight lattice contraction. The contraction of the cell volume induces a change in the lattice parameter, which leads to lattice distortion and hence enhanced piezoelectric properties. (c) shows an extended XRD pattern where two double peaks are observed at x = 0 and x = 0.025. These peaks correspond to the standard card PDF#71\u20132494, indicating the coexistence of the R and Pc phases. The space group of the R-phase was identified as R3c, while the space group of the Pc-phase was determined to be Pm3\xafm.The phase fractions and lattice parameters are summarized in. As x increases, the phase fractions of the Pc-phase increases from 24 % to 34 %, and the phase fractions of the R-phase decreases from 76 % to 66 %. This indicates the coexistence of the R-phases and Pc-phases, consistent with previous XRD results. Specific details of the Rietveld refinement are provided in. shows SEM images of 0.69BiFeO3-0.31BaTiO3 +x(0.2BKT-0.8BNT) (x = 0, x = 0.005, x = 0.010, x = 0.015, x = 0.020, x = 0.025) ceramics with different compositions. The average grain size of the samples increases and then decreases from 3.85 \xb5m to 6.37 \xb5m with increasing x. This may be because the moderate amount of NaE^{+} and KE^{+} promotes the formation of the liquid phase, which is conducive to the sintering of the ceramics and the growth of the grains. However, when x increases from 0.01 to 0.025, the average grain size decreases from 6.37 \xb5m to 4.33 \xb5m, which may be due to the excess NaE^{+} and KE^{+} accumulation at the grain boundaries, which inhibits the further growth of the grains. In the case of simple variation of grain size, the relationship between domain size (d) and grain size (g) can be expressed as where \u03c3, P s and\u03b5 * are the energy density, spontaneous polarisation and effective dielectric constant of the domain wall, respectively. To demonstrate the homogeneity of the distribution of ceramics, EDS plots for x = 0.01 are presented in Supplementary Material. The dielectric temperature spectrum of x = 0\u20130.025 ceramics measured in the frequency range of 1 kHz to 100 kHz (from room temperature to 550 \u2103) for the samples is shown in , which shows the phase transition from room temperature to the final temperature. Within the phase from room temperature to 300 \u2103, it is a normal ferroelectric, which exhibits a low dielectric constant, there are long-range ordered ferroelectric domains in this section, and as the temperature rises, it exhibits an obvious relaxation ferroelectric behavior at the curie temperature (T c ), and the dielectric constant maximum increases with frequency, which exhibits a frequency dispersion feature. As x increases, the dielectric peak first becomes sharp, then broadens and moves towards higher temperatures, a phase that activates the polar nanoregions (PNRs) with the increase of temperature. The relaxation ferroelectric behavior is attributed to the introduction of different ions of NaE^{+} and KE^{+} at the A-site, which breaks the long-range ferroelectric order. In order to characterize the degree of relaxation, Curie-Weiss law fitting was used to obtain the dispersion factor \u03b3 of the material, and the Curie-Weiss formula is as follows. with \u03b5r being the dielectric constant at a temperature of T, \u03b5 max being the maximum of the dielectric constant, C being the Curie constant, T max being the peak temperature of the dielectric constant, and \u03b3 being the degree of diffusion.1 denotes normal ferroelectric, 2 denotes an ideal relaxing ferroelectric, and values between 1 and 2 denote a relaxor ferroelectric. The gradually increasing value of \u03b3 in the indicates that the sample is a relaxor ferroelectric. The anomalous peak in dielectric loss may be attributed to the large polarization fluctuation and domain wall displacement during heating, the loss will increase considerably , the dielectric loss starts to increase after the T c temperature attributed to the space charge polarization and increase in conductivity. (a) demonstrates the high-temperature in-situ depolarization curves of 0.69BF-0.31BT+x(0.8BNT-0.2BKT) ceramics (x = 0.005, x = 0.01, x = 0.015 and x = 0.025). As shown in Fig. (a), d 33 increases gradually with increasing temperature, continues to increase gradually with increasing temperature after reaching the plateau stage, and decreases rapidly after reaching the maximum value. When x = 0.01, the ceramic exhibits the highest piezoelectric performance at the ultra-high temperature of T dr = 382\u2103, reaching 687 pC/N. Huang et al.. attributed the rise in the first stage of the in-situ depolarization curve to the non-intrinsic contribution of the non-180\xb0 domain walls; while Tan et al.. concluded that the rise of in-situ d 33 in the second stage is due to the large increase in the dielectric constant close to T c. The results show that the introduction of an appropriate amount of BNT-BKT can effectively improve the thermal stability of the ceramics, which may be attributed to the refinement of the local electric domains due to the introduction of BNT-BKT, which promotes the formation of polar nanoregions (PNRs), thus breaking the long-range ordering and enhancing the piezoelectric activity. As shown in (b), the BF-BT-(BNT-BKT) quaternary ceramics in this study have higher T dr and in-situ d 33 at x = 0.010 than the previously reported BF-BT ceramics. A comparison of T dr and in-situ d 33 values for other lead-free ceramics is presented in. shows the P-E loop and I-E curve at room temperature. Similarly, the coercive field E c follows the same trend, reaching a maximum at x = 0.015. The increase in P r can be attributed to the reorientation of non-180\xb0 domains and the incorporation of relaxation ferroelectric elements (BKT-BNT). The optimal ratio of R and Pc phases, along with the addition of small amounts of BNT-BKT, enhanced the polarization properties. In order to study the variation of Fe valence and O elements in BF-BT, we measured the X-ray photoelectron spectra of Fe 2p and O 1 s, as shown in (a) and (b). The peaks of BF-BT and BF-BT+0.01 (0.8BNT-0.2BKT) are at 710.3 eV and 709.6 eV, respectively, and in general, the binding energies of FeE^{3+}and FeE^{2+} occur at 711 eV and 709 eV , respectively. The peaks at 711 eV and 709 eV indicate the presence of mixed valence states of FeE^{3+} to FeE^{2+} in these two ceramic samples. According to the fitting results, the FeE^{3+} content in x = 0 and x = 0.01 ceramics is 34.3 % and 53.1 %, respectively, with a significant increase in FeE^{3+}. The XPS spectra of O1 shown in. (c) and (d) were fitted with two peaks at 529.6 eV and 531.5 eV, which correspond to the characteristics of lattice oxygen (O1) and adsorbed (O2) oxygen vacancies , This is due to the introduction of small amounts of NaE^{+} and KE^{+} into BaTiO3, which causes lattice distortions, promotes the formation of sintering, and reduces the volatilisation of Bi, thus inhibiting the transition from FeE^{3+} to FeE^{2+} and the generation of oxygen vacancies. shows the results of transmission electron microscopy (TEM) tests on 0.69BF-0.31BT+0.01 (0.8BNT-0.2BKT) ceramics. Fig. (a) shows the magnified region of lattice fringes, with a lattice spacing of d = 0.301 nm. In Fig. (b) we can observe Moir\xe9 fringes in striped nanoscale regions, which exhibit short-range ordering (white dashed box), i.e., typical polar nanoregions (PNRs). The introduction of BNT-BKT forms local compositional inhomogeneity, leading to local structural heterogeneity; as the formation of local heterogeneous structure will disturb the long-range ordering of the surrounding normal ferroelectric domains, which will lead to the formation of short-range ordering. Yang et al. observed the refined nanodomain structure in situ variable-temperature TEM, and the substantial high-temperature piezoelectric response was attributed to the emergence of small-scale composite nanodomain structures.
+
+# TITLE
+High-temperature piezoelectric properties and thermal stability of BF-BT-based ceramics by double A-site ion modification
+
+# ABSTRACT
+This paper investigates 0.69BiFeO3-0.31BaTiO3+x(0.8Bi0.5Na0.5TiO3-0.2Bi0.5K0.5TiO3) (abbreviated as 0.69BF-0.31BT+x(0.8BNT-0.2BKT) (0≤x≤0.025) quaternary high-temperature lead-free piezoelectric ceramics. X-ray diffraction(XRD) analysis reveals that these ceramics exhibit morphotropic phase boundaries (MPB) with coexistence of rhombohedral (R) and pseudo-cubic (Pc) phases. The in-situ d
+                     
+                        33
+                      measurements indicate that 0.69BF-0.31BT+x(0.8BNT-0.2BKT) possesses excellent thermal stability, achieving an in-situ d
+                     
+                        33
+                      of 687 pC/N at T
+                     
+                        dr
+                      = 382℃, and a high Curie temperature (T
+                     
+                        c
+                      = 474℃). Transmission electron microscopy (TEM) results show that the high depolarization temperature (T
+                     
+                        dr
+                     ) and excellent piezoelectric properties are attributed to compositional inhomogeneity introduced by the incorporation of double relaxation ferroelectrics (0.8BNT-0.2BKT), resulting in the formation of polar nanoregions (PNRs). This design demonstrates that the quaternary system of BF-BT+(BNT-BKT)-based ceramics serves as a promising example for optimizing high-temperature lead-free piezoelectric ceramics.
+
+# INTRODUCTION
+Although Pb-based ceramics, such as PbTiO3-BiScO3 (PT-BS), exhibit both high Curie temperature (T c \u2248 450\u2103) and excellent piezoelectric properties (d 33 \u2248 460 pC/N) , the presence of lead poses health hazards and environmental pollution, hindering their commercial use. In contrast, the BiFeO3-BaTiO3 (BF-BT) lead-free piezoelectric system offers both high Curie temperature and favorable piezoelectric properties, making it a promising material for high-temperature applications. The properties of BF-BT still have a large gap compared to lead-based ceramics, so in order to further improve the thermal stability and piezoelectric properties of lead-free piezoelectric ceramics, existing studies have been carried out by adding the relaxation ferroelectrics Bi0.5Na0.5TiO3(BNT), Bi0.5K0.5TiO3(BKT). Cheng used an A-site substitution method to prepare 0.7BiFeO3-(0.3-x)BaTiO3-xBi0.5Na0.5TiO3 (BF-BT-xBNT, 0.00\u2264x\u22640.04) at x = 0.01 with d 33 = 206pC/N, which improved the room temperature piezoelectric properties. BKT is a typical A-site composite lead-free relaxation ferroelectric with a high Curie temperature (T c = 380\u2103). Lin et al. prepared a BF-BT-BKT solid solution and obtained d 33 = 135pC/N) and a high Curie temperature (T c = 708\u2103) at x=0.025. BiFeO3-BaTiO3 (BF-BT) ceramics in the high-temperature sintering process due to the volatilization of Bi2O3 and FeE^{3+} ion valence, easy to produce heterogeneous phases, such as Bi25FeO39 and BiFe4O9, and at the same time, will produce a large number of oxygen vacancies (abbreviated as V\xf6). Chang et al. improved the insulating and piezoelectric properties of BF-BT ceramics by proper Na/Bi co-doping and enhanced the lattice distortion and domain structure by using a quenching process, which resulted in excellent piezoelectric properties and high Curie temperatures. Chen et al. improved the oxygen vacancies and suppressed the leakage current of BF-BT ceramics by B-site ion substitution, which greatly enhanced the Curie temperature and piezoelectric properties. Compared with the existing studies, in this paper, a new quaternary system is formed by introducing BNT-BKT, a perovskite structure relaxation ferroelectric with disordered A-site ions, and the quaternary system extends the MPB of the binary system from the point to the surface, thus realizing the ceramic properties to be regulated in a wider range. It is well known that BNT-BKT is a typical A-site composite lead-free relaxation ferroelectric with the A-site occupied by multiple ions of NaE^{+}, KE^{+}, and BiE^{3+} in an ABO3 perovskite structure. The relaxation ferroelectrics have very high dielectric constants , and the relaxation ferroelectrics contain complex dynamic polar nanoregions (PNRs), and the presence of the PNRs makes the polar ferroelectric phase and the nonpolar cis-phase coexist in a wide range of temperatures, generating a diffuse phase transition, which effectively improves the temperature stability and piezoelectric properties of the materials. Based on the above discussion, the introduction of BF-BT as a matrix into the relaxation ferroelectric is based on one point:(1) Wei et al. concluded that the crystal structure of BF-xBT ceramics is an R-phase when x<0.30 and a P c -phase when x>0.30. It has been reported that 0.69BiFeO3-0.31BaTiO3 is located at the R-phase and Pc-phase morphotropic phase boundary (MPB), and 0.8BNT-0.2BKT is located at the R-phase and T-phase MPB. Both compositions exhibit a broadened MPB.. An ultra-high in-situ depolarization temperature of 382 \u2103 was obtained in the sample with x = 0.01, while an ultra-high piezoelectric response of d 33 = 687 pC/N was achieved.
+
+# CONCLUSION
+In summary, this study primarily investigates the piezoelectric properties and thermal stability of quaternary system 0.69BF-0.31BT+x(0.8BNT-0.2BKT) high-temperature lead-free piezoelectric ceramics. X-ray diffraction (XRD) patterns indicate the coexistence of R-phase and Pc-phase structures, with an increase in the Pc-phase content as x increases. Excellent high-temperature piezoelectric properties of d 33 = 687 pC/N and T dr = 382\u2103 are obtained in ceramics with x = 0.01. Transmission electron microscopy (TEM) results indicate the coexistence of nanodomains and polar nanoregions.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-11 10:54:38: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Comparison of T  dr and In-situ d  33 based on BF-BT materials with published literature.
+|Materials| T  dr (\u2103)| In-situ d  33 (pC/N)| T  c \uff08\u2103\uff09|Ref|
+|---|---|---|---|---|
+|0.7BF\u22120.3BT- 0.04BZT|360|502|473|[35]|
+|0.7BF\u22120.297BT+0.003BiGaO3|340|466|485|[36]|
+|0.69BF\u22120.31BT\u22120.005(BNT\u221220BKT)\u22120.025BZT|395|749|491|[37]|
+|0.74BF\u22120.25BT\u22120.01BKT+1\u2009%MnO2|590|200|605|[38]|
+|0.66BF\u22120.30BT\u22120.04BiAlO3|252|310|487|[39]|
+|0.68BF\u22120.32BT|334|451|470|[40]|
+|0.7BF-(0.3-x)BT-xBNT|280|332|488|[41]|
+|0.69BF\u22120.31BT+0.005 (0.8BNT\u22120.2BKT)|314|419|483|This work|
+|0.69BF\u22120.31BT+0.01 (0.8BNT\u22120.2BKT)|382|687|474|This work|
+|0.69BF\u22120.31BT+0.015 (0.8BNT\u22120.2BKT)|326|681|469|This work|
+|0.69BF\u22120.31BT+0.025 (0.8BNT\u22120.2BKT)|351|571|461|This work|
+
+# RESULTS AND DISCUSSION
+shows the room temperature XRD patterns of 0.69BF-0.31BT+x(0.8BNT-0.2BKT)(x = 0, x = 0.005, x = 0.010, x = 0.015, x = 0.020, x = 0.025) ceramics, all of which exhibit a typical ABO3 structure, indicating that BNT and BKT are fully dissolved into the main phase. A single diffraction peak is observed in the expanded plot of (b), where the main peak angle is shifted slightly to a higher angle at x = 0.005 with the introduction of x, indicating the presence of a slight lattice contraction. The contraction of the cell volume induces a change in the lattice parameter, which leads to lattice distortion and hence enhanced piezoelectric properties. (c) shows an extended XRD pattern where two double peaks are observed at x = 0 and x = 0.025. These peaks correspond to the standard card PDF#71\u20132494, indicating the coexistence of the R and Pc phases. The space group of the R-phase was identified as R3c, while the space group of the Pc-phase was determined to be Pm3\xafm.The phase fractions and lattice parameters are summarized in. As x increases, the phase fractions of the Pc-phase increases from 24 % to 34 %, and the phase fractions of the R-phase decreases from 76 % to 66 %. This indicates the coexistence of the R-phases and Pc-phases, consistent with previous XRD results. Specific details of the Rietveld refinement are provided in. shows SEM images of 0.69BiFeO3-0.31BaTiO3 +x(0.2BKT-0.8BNT) (x = 0, x = 0.005, x = 0.010, x = 0.015, x = 0.020, x = 0.025) ceramics with different compositions. The average grain size of the samples increases and then decreases from 3.85 \xb5m to 6.37 \xb5m with increasing x. This may be because the moderate amount of NaE^{+} and KE^{+} promotes the formation of the liquid phase, which is conducive to the sintering of the ceramics and the growth of the grains. However, when x increases from 0.01 to 0.025, the average grain size decreases from 6.37 \xb5m to 4.33 \xb5m, which may be due to the excess NaE^{+} and KE^{+} accumulation at the grain boundaries, which inhibits the further growth of the grains. In the case of simple variation of grain size, the relationship between domain size (d) and grain size (g) can be expressed as where \u03c3, P s and\u03b5 * are the energy density, spontaneous polarisation and effective dielectric constant of the domain wall, respectively. To demonstrate the homogeneity of the distribution of ceramics, EDS plots for x = 0.01 are presented in Supplementary Material. The dielectric temperature spectrum of x = 0\u20130.025 ceramics measured in the frequency range of 1 kHz to 100 kHz (from room temperature to 550 \u2103) for the samples is shown in , which shows the phase transition from room temperature to the final temperature. Within the phase from room temperature to 300 \u2103, it is a normal ferroelectric, which exhibits a low dielectric constant, there are long-range ordered ferroelectric domains in this section, and as the temperature rises, it exhibits an obvious relaxation ferroelectric behavior at the curie temperature (T c ), and the dielectric constant maximum increases with frequency, which exhibits a frequency dispersion feature. As x increases, the dielectric peak first becomes sharp, then broadens and moves towards higher temperatures, a phase that activates the polar nanoregions (PNRs) with the increase of temperature. The relaxation ferroelectric behavior is attributed to the introduction of different ions of NaE^{+} and KE^{+} at the A-site, which breaks the long-range ferroelectric order. In order to characterize the degree of relaxation, Curie-Weiss law fitting was used to obtain the dispersion factor \u03b3 of the material, and the Curie-Weiss formula is as follows. with \u03b5r being the dielectric constant at a temperature of T, \u03b5 max being the maximum of the dielectric constant, C being the Curie constant, T max being the peak temperature of the dielectric constant, and \u03b3 being the degree of diffusion.1 denotes normal ferroelectric, 2 denotes an ideal relaxing ferroelectric, and values between 1 and 2 denote a relaxor ferroelectric. The gradually increasing value of \u03b3 in the indicates that the sample is a relaxor ferroelectric. The anomalous peak in dielectric loss may be attributed to the large polarization fluctuation and domain wall displacement during heating, the loss will increase considerably , the dielectric loss starts to increase after the T c temperature attributed to the space charge polarization and increase in conductivity. (a) demonstrates the high-temperature in-situ depolarization curves of 0.69BF-0.31BT+x(0.8BNT-0.2BKT) ceramics (x = 0.005, x = 0.01, x = 0.015 and x = 0.025). As shown in Fig. (a), d 33 increases gradually with increasing temperature, continues to increase gradually with increasing temperature after reaching the plateau stage, and decreases rapidly after reaching the maximum value. When x = 0.01, the ceramic exhibits the highest piezoelectric performance at the ultra-high temperature of T dr = 382\u2103, reaching 687 pC/N. Huang et al.. attributed the rise in the first stage of the in-situ depolarization curve to the non-intrinsic contribution of the non-180\xb0 domain walls; while Tan et al.. concluded that the rise of in-situ d 33 in the second stage is due to the large increase in the dielectric constant close to T c. The results show that the introduction of an appropriate amount of BNT-BKT can effectively improve the thermal stability of the ceramics, which may be attributed to the refinement of the local electric domains due to the introduction of BNT-BKT, which promotes the formation of polar nanoregions (PNRs), thus breaking the long-range ordering and enhancing the piezoelectric activity. As shown in (b), the BF-BT-(BNT-BKT) quaternary ceramics in this study have higher T dr and in-situ d 33 at x = 0.010 than the previously reported BF-BT ceramics. A comparison of T dr and in-situ d 33 values for other lead-free ceramics is presented in. shows the P-E loop and I-E curve at room temperature. Similarly, the coercive field E c follows the same trend, reaching a maximum at x = 0.015. The increase in P r can be attributed to the reorientation of non-180\xb0 domains and the incorporation of relaxation ferroelectric elements (BKT-BNT). The optimal ratio of R and Pc phases, along with the addition of small amounts of BNT-BKT, enhanced the polarization properties. In order to study the variation of Fe valence and O elements in BF-BT, we measured the X-ray photoelectron spectra of Fe 2p and O 1 s, as shown in (a) and (b). The peaks of BF-BT and BF-BT+0.01 (0.8BNT-0.2BKT) are at 710.3 eV and 709.6 eV, respectively, and in general, the binding energies of FeE^{3+}and FeE^{2+} occur at 711 eV and 709 eV , respectively. The peaks at 711 eV and 709 eV indicate the presence of mixed valence states of FeE^{3+} to FeE^{2+} in these two ceramic samples. According to the fitting results, the FeE^{3+} content in x = 0 and x = 0.01 ceramics is 34.3 % and 53.1 %, respectively, with a significant increase in FeE^{3+}. The XPS spectra of O1 shown in. (c) and (d) were fitted with two peaks at 529.6 eV and 531.5 eV, which correspond to the characteristics of lattice oxygen (O1) and adsorbed (O2) oxygen vacancies , This is due to the introduction of small amounts of NaE^{+} and KE^{+} into BaTiO3, which causes lattice distortions, promotes the formation of sintering, and reduces the volatilisation of Bi, thus inhibiting the transition from FeE^{3+} to FeE^{2+} and the generation of oxygen vacancies. shows the results of transmission electron microscopy (TEM) tests on 0.69BF-0.31BT+0.01 (0.8BNT-0.2BKT) ceramics. Fig. (a) shows the magnified region of lattice fringes, with a lattice spacing of d = 0.301 nm. In Fig. (b) we can observe Moir\xe9 fringes in striped nanoscale regions, which exhibit short-range ordering (white dashed box), i.e., typical polar nanoregions (PNRs). The introduction of BNT-BKT forms local compositional inhomogeneity, leading to local structural heterogeneity; as the formation of local heterogeneous structure will disturb the long-range ordering of the surrounding normal ferroelectric domains, which will lead to the formation of short-range ordering. Yang et al. observed the refined nanodomain structure in situ variable-temperature TEM, and the substantial high-temperature piezoelectric response was attributed to the emergence of small-scale composite nanodomain structures.
+
+# TITLE
+High-temperature piezoelectric properties and thermal stability of BF-BT-based ceramics by double A-site ion modification
+
+# ABSTRACT
+This paper investigates 0.69BiFeO3-0.31BaTiO3+x(0.8Bi0.5Na0.5TiO3-0.2Bi0.5K0.5TiO3) (abbreviated as 0.69BF-0.31BT+x(0.8BNT-0.2BKT) (0≤x≤0.025) quaternary high-temperature lead-free piezoelectric ceramics. X-ray diffraction(XRD) analysis reveals that these ceramics exhibit morphotropic phase boundaries (MPB) with coexistence of rhombohedral (R) and pseudo-cubic (Pc) phases. The in-situ d
+                     
+                        33
+                      measurements indicate that 0.69BF-0.31BT+x(0.8BNT-0.2BKT) possesses excellent thermal stability, achieving an in-situ d
+                     
+                        33
+                      of 687 pC/N at T
+                     
+                        dr
+                      = 382℃, and a high Curie temperature (T
+                     
+                        c
+                      = 474℃). Transmission electron microscopy (TEM) results show that the high depolarization temperature (T
+                     
+                        dr
+                     ) and excellent piezoelectric properties are attributed to compositional inhomogeneity introduced by the incorporation of double relaxation ferroelectrics (0.8BNT-0.2BKT), resulting in the formation of polar nanoregions (PNRs). This design demonstrates that the quaternary system of BF-BT+(BNT-BKT)-based ceramics serves as a promising example for optimizing high-temperature lead-free piezoelectric ceramics.
+
+# INTRODUCTION
+Although Pb-based ceramics, such as PbTiO3-BiScO3 (PT-BS), exhibit both high Curie temperature (T c \u2248 450\u2103) and excellent piezoelectric properties (d 33 \u2248 460 pC/N) , the presence of lead poses health hazards and environmental pollution, hindering their commercial use. In contrast, the BiFeO3-BaTiO3 (BF-BT) lead-free piezoelectric system offers both high Curie temperature and favorable piezoelectric properties, making it a promising material for high-temperature applications. The properties of BF-BT still have a large gap compared to lead-based ceramics, so in order to further improve the thermal stability and piezoelectric properties of lead-free piezoelectric ceramics, existing studies have been carried out by adding the relaxation ferroelectrics Bi0.5Na0.5TiO3(BNT), Bi0.5K0.5TiO3(BKT). Cheng used an A-site substitution method to prepare 0.7BiFeO3-(0.3-x)BaTiO3-xBi0.5Na0.5TiO3 (BF-BT-xBNT, 0.00\u2264x\u22640.04) at x = 0.01 with d 33 = 206pC/N, which improved the room temperature piezoelectric properties. BKT is a typical A-site composite lead-free relaxation ferroelectric with a high Curie temperature (T c = 380\u2103). Lin et al. prepared a BF-BT-BKT solid solution and obtained d 33 = 135pC/N) and a high Curie temperature (T c = 708\u2103) at x=0.025. BiFeO3-BaTiO3 (BF-BT) ceramics in the high-temperature sintering process due to the volatilization of Bi2O3 and FeE^{3+} ion valence, easy to produce heterogeneous phases, such as Bi25FeO39 and BiFe4O9, and at the same time, will produce a large number of oxygen vacancies (abbreviated as V\xf6). Chang et al. improved the insulating and piezoelectric properties of BF-BT ceramics by proper Na/Bi co-doping and enhanced the lattice distortion and domain structure by using a quenching process, which resulted in excellent piezoelectric properties and high Curie temperatures. Chen et al. improved the oxygen vacancies and suppressed the leakage current of BF-BT ceramics by B-site ion substitution, which greatly enhanced the Curie temperature and piezoelectric properties. Compared with the existing studies, in this paper, a new quaternary system is formed by introducing BNT-BKT, a perovskite structure relaxation ferroelectric with disordered A-site ions, and the quaternary system extends the MPB of the binary system from the point to the surface, thus realizing the ceramic properties to be regulated in a wider range. It is well known that BNT-BKT is a typical A-site composite lead-free relaxation ferroelectric with the A-site occupied by multiple ions of NaE^{+}, KE^{+}, and BiE^{3+} in an ABO3 perovskite structure. The relaxation ferroelectrics have very high dielectric constants , and the relaxation ferroelectrics contain complex dynamic polar nanoregions (PNRs), and the presence of the PNRs makes the polar ferroelectric phase and the nonpolar cis-phase coexist in a wide range of temperatures, generating a diffuse phase transition, which effectively improves the temperature stability and piezoelectric properties of the materials. Based on the above discussion, the introduction of BF-BT as a matrix into the relaxation ferroelectric is based on one point:(1) Wei et al. concluded that the crystal structure of BF-xBT ceramics is an R-phase when x<0.30 and a P c -phase when x>0.30. It has been reported that 0.69BiFeO3-0.31BaTiO3 is located at the R-phase and Pc-phase morphotropic phase boundary (MPB), and 0.8BNT-0.2BKT is located at the R-phase and T-phase MPB. Both compositions exhibit a broadened MPB.. An ultra-high in-situ depolarization temperature of 382 \u2103 was obtained in the sample with x = 0.01, while an ultra-high piezoelectric response of d 33 = 687 pC/N was achieved.
+
+# CONCLUSION
+In summary, this study primarily investigates the piezoelectric properties and thermal stability of quaternary system 0.69BF-0.31BT+x(0.8BNT-0.2BKT) high-temperature lead-free piezoelectric ceramics. X-ray diffraction (XRD) patterns indicate the coexistence of R-phase and Pc-phase structures, with an increase in the Pc-phase content as x increases. Excellent high-temperature piezoelectric properties of d 33 = 687 pC/N and T dr = 382\u2103 are obtained in ceramics with x = 0.01. Transmission electron microscopy (TEM) results indicate the coexistence of nanodomains and polar nanoregions.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "compositions": {
+    "0.69BiFeO3-0.31BaTiO3+0.005(0.8Bi0.5Na0.5TiO3-0.2Bi0.5K0.5TiO3)": 419,
+    "0.69BiFeO3-0.31BaTiO3+0.01(0.8Bi0.5Na0.5TiO3-0.2Bi0.5K0.5TiO3)": 687,
+    "0.69BiFeO3-0.31BaTiO3+0.015(0.8Bi0.5Na0.5TiO3-0.2Bi0.5K0.5TiO3)": 681,
+    "0.69BiFeO3-0.31BaTiO3+0.025(0.8Bi0.5Na0.5TiO3-0.2Bi0.5K0.5TiO3)": 571
+  },
+  "property_unit": "pC/N",
+  "family": "BiFeO3-BaTiO3",
+  "abbreviations": {
+    "BF-BT": "BiFeO3-BaTiO3",
+    "BNT": "Bi0.5Na0.5TiO3",
+    "BKT": "Bi0.5K0.5TiO3"
+  }
+}"

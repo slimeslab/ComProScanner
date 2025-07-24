@@ -1,0 +1,250 @@
+2025-07-10 15:41:21: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Piezoelectric constants calculated for various phase states induced in PMN-0.3PT at 25 \xb0C due to combined effects of hydrostatic pressure and E-field. For details on phase states please refer to the \u03c3-E 111 phase diagram (Fig. 1). Piezoelectric constants greater than 105 pC/N are considered divergent and the exact values are not thus presented. The CEP peak pressure is almost right at the \u03c3 2 R-C of \u22120.9329 GPa reported in Ref. 20.
+| E 111 (MV/m)| \u03c3 (GPa)| d 33 (pC/N)| d 31 (pC/N)| d 15 (pC/N)|Remarks|
+|---|---|---|---|---|---|
+|0.2|\u22120.753|6853|\u22123358|847|R phase, R-MA boundary|
+|\u22120.9062|9648|\u22124300|2643|MA phase, MA-RC boundary|
+|0.213476|\u22120.909655|20,381|\u22129259|4168|R phase at the triple point (TP)|
+|14,344|\u22126495|3064|MA phase at TP|
+|3410|\u2212999|1945|RC phase at TP|
+|0.22|\u22120.908|19,583|\u22129271|3156|peak value, R phase, V-shaped zone|
+|\u22120.912|18,911|\u22128528|4011|peak value, R-RC phase boundary|
+|0.23|\u22120.906|17,860|\u22128500|2779|peak value, R phase, V-shaped zone|
+|\u22120.916|4091|\u22127368|4091|peak value, R-RC boundary|
+|0.25|\u22120.915|15,260|\u22127200|2469|['peak value for R phase', 'above the V-shaped zone']|
+|\u22120.925|5322|\u2212615|5173|peak value, R-RC boundary|
+|0.2694|\u22120.919|13,404|\u22126547|4283|['peak value for R phase', 'above the V-shaped zone']|
+|\u22120.93288|64,810|37,384|divergent|CEP from latent heat data for R-RC transition|
+|0.27|\u22120.91871|13,354|\u22126329|2137|['peak value for R phase', 'above the V-shaped zone']|
+|\u22120.93313|divergent|divergent|divergent|may be more close to the exact CEP|
+|0.28|\u22120.921|12,581|\u22125959|2022|['peak value for R phase', 'above the V-shaped zone']|
+|\u22120.9372|12,322|2953|21,824|R-RC supercritical|
+
+Table 2. A list of d 33 for both stable and metastable phases under certain combined pressure and E 111 conditions where there is an MA potential well (cf. Figs. 3 and 5 for location and depth). It can be seen that: (i) metastable phase (R or MA) could exhibit even higher d 33 compared to that at the TP; (ii) within the V-shaped zone, metastable MA can have ultrahigh d 33 exceeding those achievable for restabilized R phase, while over the zone metastable MA may have a d 33 similar to that for R state; (iii) d 33 for RC only becomes comparable to that for R when approaching CEP.
+| E 111 (MV/m)| \u03c3 (GPa)| d 33 (pC/N)|Remarks|stable|metastable|
+|---|---|---|---|---|---|
+|0.2|\u22120.899|MA: 7058|R: 35,083|Fig. 2(a)|
+|\u22120.901|MA: 7363|['R: 24,526', 'R', ': 4072']|Fig. 2(b)|
+|\u22120.906|MA: 9450|['R: 23,523', 'R', ': 2693']|Fig. 2(c)|
+|\u22120.908|RC: 2580|MA: 11,183|Fig. 2(d)|
+|0.216|\u22120.91|R: 19,780|['M', ': 16,271', 'R', ': 4037']|['', '(a)', 'within V-shaped zone']|
+|0.227|\u22120.914|R: 17,596|['M', ': 68,275', 'R', ': 5021']|['', '(b)', 'within V-shaped zone']|
+|0.266|\u22120.869|R: 10,019|MA: 10,022|['', '(c)', 'over the zone']|
+
+# TITLE
+Giant piezoelectricity due to critical phenomena associated with restabilized rhombohedral phase in Pb(Mg<inf>1/3</inf>Nb<inf>2/3</inf>)O<inf>3</inf>–0.3PbTiO<inf>3</inf>
+
+# ABSTRACT
+Following our previous phenomenological modeling of pressure driven Curie transition and rhombohedral-tetragonal phase boundary in Pb(Mg1/3Nb2/3)O3–0.3PbTiO3, in this work we focus on combined effects of moderate pressure and [111]-oriented E-field and report huge broad peaks of piezoelectric d
+                     33 in restabilized rhombohedral phase region stretching from around near-tricritical triple point (TP) to the regime of critical end point (CEP). TP and CEP exhibit distinctive features in the free energy landscape and pressure dependence of piezoelectric constants. We also find gigantic piezoelectricity in metastable monoclinic state coexisting with the restabilized rhombohedral state over the field level for the TP.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-10 15:41:27: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Piezoelectric constants calculated for various phase states induced in PMN-0.3PT at 25 \xb0C due to combined effects of hydrostatic pressure and E-field. For details on phase states please refer to the \u03c3-E 111 phase diagram (Fig. 1). Piezoelectric constants greater than 105 pC/N are considered divergent and the exact values are not thus presented. The CEP peak pressure is almost right at the \u03c3 2 R-C of \u22120.9329 GPa reported in Ref. 20.
+| E 111 (MV/m)| \u03c3 (GPa)| d 33 (pC/N)| d 31 (pC/N)| d 15 (pC/N)|Remarks|
+|---|---|---|---|---|---|
+|0.2|\u22120.753|6853|\u22123358|847|R phase, R-MA boundary|
+|\u22120.9062|9648|\u22124300|2643|MA phase, MA-RC boundary|
+|0.213476|\u22120.909655|20,381|\u22129259|4168|R phase at the triple point (TP)|
+|14,344|\u22126495|3064|MA phase at TP|
+|3410|\u2212999|1945|RC phase at TP|
+|0.22|\u22120.908|19,583|\u22129271|3156|peak value, R phase, V-shaped zone|
+|\u22120.912|18,911|\u22128528|4011|peak value, R-RC phase boundary|
+|0.23|\u22120.906|17,860|\u22128500|2779|peak value, R phase, V-shaped zone|
+|\u22120.916|4091|\u22127368|4091|peak value, R-RC boundary|
+|0.25|\u22120.915|15,260|\u22127200|2469|['peak value for R phase', 'above the V-shaped zone']|
+|\u22120.925|5322|\u2212615|5173|peak value, R-RC boundary|
+|0.2694|\u22120.919|13,404|\u22126547|4283|['peak value for R phase', 'above the V-shaped zone']|
+|\u22120.93288|64,810|37,384|divergent|CEP from latent heat data for R-RC transition|
+|0.27|\u22120.91871|13,354|\u22126329|2137|['peak value for R phase', 'above the V-shaped zone']|
+|\u22120.93313|divergent|divergent|divergent|may be more close to the exact CEP|
+|0.28|\u22120.921|12,581|\u22125959|2022|['peak value for R phase', 'above the V-shaped zone']|
+|\u22120.9372|12,322|2953|21,824|R-RC supercritical|
+
+Table 2. A list of d 33 for both stable and metastable phases under certain combined pressure and E 111 conditions where there is an MA potential well (cf. Figs. 3 and 5 for location and depth). It can be seen that: (i) metastable phase (R or MA) could exhibit even higher d 33 compared to that at the TP; (ii) within the V-shaped zone, metastable MA can have ultrahigh d 33 exceeding those achievable for restabilized R phase, while over the zone metastable MA may have a d 33 similar to that for R state; (iii) d 33 for RC only becomes comparable to that for R when approaching CEP.
+| E 111 (MV/m)| \u03c3 (GPa)| d 33 (pC/N)|Remarks|stable|metastable|
+|---|---|---|---|---|---|
+|0.2|\u22120.899|MA: 7058|R: 35,083|Fig. 2(a)|
+|\u22120.901|MA: 7363|['R: 24,526', 'R', ': 4072']|Fig. 2(b)|
+|\u22120.906|MA: 9450|['R: 23,523', 'R', ': 2693']|Fig. 2(c)|
+|\u22120.908|RC: 2580|MA: 11,183|Fig. 2(d)|
+|0.216|\u22120.91|R: 19,780|['M', ': 16,271', 'R', ': 4037']|['', '(a)', 'within V-shaped zone']|
+|0.227|\u22120.914|R: 17,596|['M', ': 68,275', 'R', ': 5021']|['', '(b)', 'within V-shaped zone']|
+|0.266|\u22120.869|R: 10,019|MA: 10,022|['', '(c)', 'over the zone']|
+
+# TITLE
+Giant piezoelectricity due to critical phenomena associated with restabilized rhombohedral phase in Pb(Mg<inf>1/3</inf>Nb<inf>2/3</inf>)O<inf>3</inf>–0.3PbTiO<inf>3</inf>
+
+# ABSTRACT
+Following our previous phenomenological modeling of pressure driven Curie transition and rhombohedral-tetragonal phase boundary in Pb(Mg1/3Nb2/3)O3–0.3PbTiO3, in this work we focus on combined effects of moderate pressure and [111]-oriented E-field and report huge broad peaks of piezoelectric d
+                     33 in restabilized rhombohedral phase region stretching from around near-tricritical triple point (TP) to the regime of critical end point (CEP). TP and CEP exhibit distinctive features in the free energy landscape and pressure dependence of piezoelectric constants. We also find gigantic piezoelectricity in metastable monoclinic state coexisting with the restabilized rhombohedral state over the field level for the TP.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="```json
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R": 35083,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-MA": 7058,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R": 24526,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R": 4072,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-MA": 7363,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R": 23523,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R": 2693,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-MA": 9450,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-RC": 2580,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-MA": 11183,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R": 19780,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-M": 16271,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R": 4037,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R": 17596,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-M": 68275,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R": 5021,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R": 10019,
+      "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-MA": 10022,
+      "PMN-0.3PT-R": 6853,
+      "PMN-0.3PT-MA": -4300,
+      "PMN-0.3PT-R": 20381,
+      "PMN-0.3PT-MA": 3064,
+      "PMN-0.3PT-RC": 1945,
+      "PMN-0.3PT-R": 19583,
+      "PMN-0.3PT-R-RC": -8528,
+      "PMN-0.3PT-R": 17860,
+      "PMN-0.3PT-R-RC": -7368,
+      "PMN-0.3PT-R": 15260,
+      "PMN-0.3PT-R-RC": -615,
+      "PMN-0.3PT-R": 13404,
+      "PMN-0.3PT-CEP": 37384,
+      "PMN-0.3PT-R": 13354,
+      "PMN-0.3PT-R": 12581,
+      "PMN-0.3PT-R-RC": 2953
+    },
+    "abbreviations": {
+      "PMN-0.3PT": "Pb(Mg1/3Nb2/3)O3–0.3PbTiO3",
+      "TP": "triple point",
+      "CEP": "critical end point",
+      "MA": "monoclinic",
+      "RC": "rhombohedral"
+    },
+    "property_unit": "pC/N",
+    "family": "Pb(Mg1/3Nb2/3)O3"
+  }
+}
+```"

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PMN-0.26PT":1780},"abbreviations":{"PT":"PbTiO3","PMN":"Pb(Mg1/3Nb2/3)O3"},"property_unit":"pC/N","family":"Relaxor-PbTiO3"}}

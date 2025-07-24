@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"xPMS-(1-x)PZT where x=0.07":306,"xPMS-(1-x)PZT where x=0.075":318,"xPMS-(1-x)PZT where x=0.08":316,"xPMS-(1-x)PZT where x=0.085":312,"0.075Pb(Mn1/3Sb2/3)O3-0.925Pb(Zr0.48Ti0.52)O3":318},"abbreviations":{"PMS":"Pb(Mn1/3Sb2/3)O3","PZT":"Pb(Zr0.48Ti0.52)O3"},"property_unit":"pC/N","family":"PZT"}}

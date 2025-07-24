@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"CLBBN-0.1Ce":21.7,"CLBBN-0Ce":10.85},"abbreviations":{"CLBBN":"Ca0.6(Li0.5Bi0.5)0.4Bi2Nb2O9"},"property_unit":"pC/N","family":"CLBBN"}}

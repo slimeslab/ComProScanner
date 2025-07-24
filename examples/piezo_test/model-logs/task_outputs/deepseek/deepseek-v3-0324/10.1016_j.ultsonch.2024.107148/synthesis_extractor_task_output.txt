@@ -1,0 +1,1 @@
+{"synthesis_extracted_data":{"method":"","precursors":[],"steps":[],"characterization_techniques":["impedance analyzer","LCR meter"]}}

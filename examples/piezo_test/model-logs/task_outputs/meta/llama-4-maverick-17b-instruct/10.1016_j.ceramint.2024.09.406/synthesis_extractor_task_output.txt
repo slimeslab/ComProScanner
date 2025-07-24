@@ -1,0 +1,1 @@
+{"synthesis_extracted_data":{"method":"Compaction and Poling","precursors":["CaCO3","Bi2O3","TiO2","Nb2O5","Mn2O3"],"steps":["Compaction of powder into bulk","Poling along thickness direction"],"characterization_techniques":["SEM","EDS","TEM","HRTEM"]}}

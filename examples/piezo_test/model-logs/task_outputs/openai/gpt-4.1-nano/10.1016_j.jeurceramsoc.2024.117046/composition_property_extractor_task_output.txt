@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BaTiO3":375,"Ba0.98Ca0.02Ti0.78Zr0.22O3":350,"Ba0.97Ca0.03Ti0.88Zr0.12O3":325,"Ba0.96Ca0.04Ti0.98Zr0.02O3":300},"abbreviations":{},"property_unit":"pC/N","family":"BaTiO3"}}

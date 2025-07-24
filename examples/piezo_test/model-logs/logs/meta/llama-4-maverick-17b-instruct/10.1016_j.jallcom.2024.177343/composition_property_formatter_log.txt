@@ -1,0 +1,68 @@
+2025-07-11 12:53:02: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'Bi5Ti3FeO15': 7.1, 'Bi4.98Yb0.02Ti3FeO15': 20.1, 'Bi4.96Yb0.04Ti3FeO15': 21.4, 'Bi4.94Yb0.06Ti3FeO15': 20.4, 'Bi4.92Yb0.08Ti3FeO15': 19.7, 'Bi4.9Yb0.1Ti3FeO15': 21.0, 'Bi4.85Yb0.15Ti3FeO15': 17.0, 'Bi4.8Yb0.2Ti3FeO15': 14.0}, 'abbreviations': {'BTF': 'Bi5Ti3FeO15', 'BTF-2Yb': 'Bi4.98Yb0.02Ti3FeO15', 'BTF-4Yb': 'Bi4.96Yb0.04Ti3FeO15', 'BTF-6Yb': 'Bi4.94Yb0.06Ti3FeO15', 'BTF-8Yb': 'Bi4.92Yb0.08Ti3FeO15', 'BTF-10Yb': 'Bi4.9Yb0.1Ti3FeO15', 'BTF-15Yb': 'Bi4.85Yb0.15Ti3FeO15', 'BTF-20Yb': 'Bi4.8Yb0.2Ti3FeO15'}, 'property_unit': 'pC/N', 'family': 'Bi5Ti3FeO15'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'Bi5Ti3FeO15': 7.1, 'Bi4.98Yb0.02Ti3FeO15': 20.1, 'Bi4.96Yb0.04Ti3FeO15': 21.4, 'Bi4.94Yb0.06Ti3FeO15': 20.4, 'Bi4.92Yb0.08Ti3FeO15': 19.7, 'Bi4.9Yb0.1Ti3FeO15': 21.0, 'Bi4.85Yb0.15Ti3FeO15': 17.0, 'Bi4.8Yb0.2Ti3FeO15': 14.0}, 'abbreviations': {'BTF': 'Bi5Ti3FeO15', 'BTF-2Yb': 'Bi4.98Yb0.02Ti3FeO15', 'BTF-4Yb': 'Bi4.96Yb0.04Ti3FeO15', 'BTF-6Yb': 'Bi4.94Yb0.06Ti3FeO15', 'BTF-8Yb': 'Bi4.92Yb0.08Ti3FeO15', 'BTF-10Yb': 'Bi4.9Yb0.1Ti3FeO15', 'BTF-15Yb': 'Bi4.85Yb0.15Ti3FeO15', 'BTF-20Yb': 'Bi4.8Yb0.2Ti3FeO15'}, 'property_unit': 'pC/N', 'family': 'Bi5Ti3FeO15'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-11 12:53:07: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'Bi5Ti3FeO15': 7.1, 'Bi4.98Yb0.02Ti3FeO15': 20.1, 'Bi4.96Yb0.04Ti3FeO15': 21.4, 'Bi4.94Yb0.06Ti3FeO15': 20.4, 'Bi4.92Yb0.08Ti3FeO15': 19.7, 'Bi4.9Yb0.1Ti3FeO15': 21.0, 'Bi4.85Yb0.15Ti3FeO15': 17.0, 'Bi4.8Yb0.2Ti3FeO15': 14.0}, 'abbreviations': {'BTF': 'Bi5Ti3FeO15', 'BTF-2Yb': 'Bi4.98Yb0.02Ti3FeO15', 'BTF-4Yb': 'Bi4.96Yb0.04Ti3FeO15', 'BTF-6Yb': 'Bi4.94Yb0.06Ti3FeO15', 'BTF-8Yb': 'Bi4.92Yb0.08Ti3FeO15', 'BTF-10Yb': 'Bi4.9Yb0.1Ti3FeO15', 'BTF-15Yb': 'Bi4.85Yb0.15Ti3FeO15', 'BTF-20Yb': 'Bi4.8Yb0.2Ti3FeO15'}, 'property_unit': 'pC/N', 'family': 'Bi5Ti3FeO15'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'Bi5Ti3FeO15': 7.1, 'Bi4.98Yb0.02Ti3FeO15': 20.1, 'Bi4.96Yb0.04Ti3FeO15': 21.4, 'Bi4.94Yb0.06Ti3FeO15': 20.4, 'Bi4.92Yb0.08Ti3FeO15': 19.7, 'Bi4.9Yb0.1Ti3FeO15': 21.0, 'Bi4.85Yb0.15Ti3FeO15': 17.0, 'Bi4.8Yb0.2Ti3FeO15': 14.0}, 'abbreviations': {'BTF': 'Bi5Ti3FeO15', 'BTF-2Yb': 'Bi4.98Yb0.02Ti3FeO15', 'BTF-4Yb': 'Bi4.96Yb0.04Ti3FeO15', 'BTF-6Yb': 'Bi4.94Yb0.06Ti3FeO15', 'BTF-8Yb': 'Bi4.92Yb0.08Ti3FeO15', 'BTF-10Yb': 'Bi4.9Yb0.1Ti3FeO15', 'BTF-15Yb': 'Bi4.85Yb0.15Ti3FeO15', 'BTF-20Yb': 'Bi4.8Yb0.2Ti3FeO15'}, 'property_unit': 'pC/N', 'family': 'Bi5Ti3FeO15'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="{
+  "composition_formatted_data": {
+    "compositions_property_values": {
+      "Bi5Ti3FeO15": 7.1,
+      "Bi4.98Yb0.02Ti3FeO15": 20.1,
+      "Bi4.96Yb0.04Ti3FeO15": 21.4,
+      "Bi4.94Yb0.06Ti3FeO15": 20.4,
+      "Bi4.92Yb0.08Ti3FeO15": 19.7,
+      "Bi4.9Yb0.1Ti3FeO15": 21.0,
+      "Bi4.85Yb0.15Ti3FeO15": 17.0,
+      "Bi4.8Yb0.2Ti3FeO15": 14.0
+    },
+    "property_unit": "pC/N",
+    "family": "BiO15"
+ O15"
+  }
+}"

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Phe-Leu":71,"Phe-Leu (lateral displacement)":-73,"Leu-Phe":87,"Leu-Phe (lateral displacement)":-19,"Phe-Phe (lateral direction)":30,"L,L- and D,D-enantiomers of Phe-Phe":2.5},"abbreviations":{},"property_unit":"pm VE^{-1}","family":"dipeptides"}}

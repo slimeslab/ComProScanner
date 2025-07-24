@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"CaBi2Nb2O9":5.5,"Ca1-2x(NaCe)xBi2Nb2-x(W0.75Mn0.25)xO9 where x=0.03":17.2},"abbreviations":{},"property_unit":"pC/N","family":"CBN"}}

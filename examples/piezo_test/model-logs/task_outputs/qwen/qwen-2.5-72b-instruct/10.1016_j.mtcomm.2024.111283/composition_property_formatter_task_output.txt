@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(0.63)PbTiO3-(0.3725)BiScO3":500,"(0.61)PbTiO3-(0.39)Bi(Ni1/2Hf1/2)O3":425},"property_unit":"pC/N","family":"PbTiO3-based perovskites"}}

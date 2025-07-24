@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi0.85La0.15FeO3":34,"Bi0.9La0.1FeO3":34,"Bi(0.9)La(0.1)Fe(0.99)Zr(0.01)O3 + δ":34,"Bi(0.9)La(0.1)Fe(0.998)Zr(0.002)O3 + δ":34,"BiFe(0.99)Zr(0.01)O3 + δ":34,"BiFe(0.998)Zr(0.002)O3 + δ":34},"property_unit":"pC/N","family":"Bismuth Ferrite"}}

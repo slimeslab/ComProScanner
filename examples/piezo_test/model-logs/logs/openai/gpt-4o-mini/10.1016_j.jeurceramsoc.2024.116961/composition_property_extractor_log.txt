@@ -1,0 +1,398 @@
+2025-07-09 11:47:22: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The XRD patterns of NKBN and NKBC x NW0.02 ceramics are exhibited in (a). The diffraction peaks of all samples are consistent with the standard diffraction spectra (PDF#97\u2013018\u20136933) and exhibit an A21 am orthorhombic structure. The maximum diffraction intensity of NKBN-based ceramics belongs to (115), which follows the (112 m +1) highest diffraction peak of BLSFs. The XRD measurements showed that the doped Ce/W are diffused into the NKBN lattice without secondary phases, and Ce and W entered into the A-site and B-site of NKBN ceramics according to substitutions of ionic radii similarities, respectively. In addition, (b) shows the (115) diffraction maximum shifts vaguely towards a higher angle with increasing Ce addition, indicating that introducing Ce/W ions leads to unit cell shrinkage. This is because the radius of CeE^{3+}/CeE^{4+} ions (CeE^{3+}: 1.143 \xc5, CeE^{4+}: 0.97 \xc5) is smaller than that of BiE^{3+} ions (BiE^{3+}: 1.17 \xc5), and the radius of WE^{6+} ions (WE^{6+}: 0.60 \xc5) is smaller than that of NbE^{5+} ions (NbE^{5+}: 0.64 \xc5). The result is comparable with the previous reports. (a)-(e) shows the natural surface SEM images of the NKBN and NKBC x NW0.02 ceramics. It can be seen that the grains of the NKBN and NKBC x NW0.02 ceramics exhibit a lamellar structure. This is because the surface free energy of BLSF materials was low in the a-b plane, leading to a faster growth rate in this plane than that along other planes. The relative density of all samples is more than 94 %, as shown in (f), indicating that it is suitable to select 1100 \u2103 as the sintering temperature. In addition, the volatilisation of bismuth slows down the kinetics of the diffusion mechanisms, and then grain growth in NKBN-based ceramics will decrease. The grain size of NKBN-based ceramics increases with less bismuth volatilisation and oxygen vacancy. Raman spectrum is a forceful tool for studying the complex structure of ceramics, which can support characteristics of the atom lattice vibrations and the position occupied by the doped ions in the lattice. (a) shows the Raman spectra of NKBN and NKBC x NW0.02 ceramics, and the spectrum could be roughly divided into three regions. There are apparent phonon modes in 62, 83, 112, 178, 216, 267, 432, 561, and 839 cmE^{\u22121}. Due to the vibration of A-site atoms, Raman peaks at 83, 112, 178, and 216 cmE^{\u22121}, in the range of 50 cmE^{\u22121} to 250 cmE^{\u22121}. These frequencies of NKBC x NW0.02 ceramic are shifted slightly toward higher frequencies due to the lower mass of Ce (140.12 g/mol) compared to Bi (208.98 g/mol). The Raman spectra of all samples in the range of 250 cmE^{\u22121}\u223c950 cmE^{\u22121} were decomposed into 8 relatively independent Gauss and Lorentz components labelled as v6\u223cv13 by peak fitting, as shown in (b). The v8 and v9 modes combined with the distortion of the NbO6 octahedron decrease with W substitution. In addition, the v10 and v11 modes get weaker while the v13 mode at 835 cmE^{\u22121} gets stronger with increasing Ce concentration, suggesting that the stretching of the Nb-O bond is also changed. Piezoresponse force microscopy (PFM) could provide helpful information on ferroelectric domain structure and polarisation orientation. PFM amplitude and phase of NKBN and NKBC0.02NW0.02 ceramics are shown in (a) and (b), respectively. The domain structure of the NKBN sample is irregularly shaped and micrometre-sized (mainly greater than 2 \u03bcm). The domain structure of NKBC0.02NW0.02 ceramics changes compared to the NKBN sample. In the case of NKBC0.02NW0.02 ceramics, the proportion of micrometre-sized domains reduces, and the smaller island-shaped domains are present. Considering the inverse relationship between piezoelectric response and domain size, it can be reasonably inferred that small domain sizes and large domain wall density of NKBC0.02NW0.02 samples will conducive to domain switching, and the easy domain switching is propitious to improving of piezoelectric performance. is the varied temperature \u03b5r and tan\u03b4 of the NKBN and NKBC x NW0.02 ceramics at 1 MHz. The \u03b5r of all samples is about 220 at room temperature. A notable decrease of the \u03b5r near the T c is observed. The variety of \u03b5r may be due to the changes in grain size. The T c of all the components is above 650 \u2103 as given in (a), indicating that the Ce/W modified NKBN ceramic maintains a high curie temperature T c. In addition, the dielectric peak broadening of NKBC x NW0.02 ceramics is observed, which may be related to the fluctuations and disorder produced by Ce doping. (b) is the varied temperature tan\u03b4 of NKBN and NKBC x NW0.02 ceramics. The tan\u03b4 of all samples keeps the relative stabilisation within a wide temperature range of 25\u2013500 \xb0C, and the tan\u03b4 of NKBC x NW0.02 ceramics is below 0.06 even at 500 \xb0C. The higher T c and smaller tan\u03b4 of NKBC x NW0.02 ceramics provided a solid foundation for high-temperature applications. (a)-(e) shows the complex impedance spectra of the NKBN and NKBC x NW0.02 ceramics between 450 \xb0C and 550 \xb0C at 50 \xb0C intervals. The relationship between the real and imaginary parts of the impedance curve is an arc between 100 Hz and 10E^{6} Hz. The single R-CPE circuit fitting well suggests that the dominant conduction behaviour may be of grain. The cause of the decrease in resistance may be that Ce replaces BiE^{3+} in the (Bi2O2)E^{2+} layer and changes its environment. But, the dc resistivity of NKBC x NW0.02 ceramics still maintains at about 10E^{6} \u03a9\xb7cm orders of magnitude with temperature as high as 500 \xb0C as shown in (f), which lays a favourable cornerstone for reliable application. Only one peak of each component can be observed in the -Z'' against frequency over the temperature range from 450 \u2103 to 550 \u2103 as shown in (a)-(e), which confirms the rationality of the parallel R-CPE circuit model developed in the previous paper The peak value of the characteristic peak decreases, and the peak shifts to a higher frequency with an increase in temperature. The activation energy of relaxation E rel of the NKBN and NKBC x NW0.02 ceramics is 1.23\u20131.43 eV, calculated by the Arrhenius relationship, as presented in (f). The creation of oxygen vacancies because of bismuth vaporization during sintering and it can be expressed as 2Bi Bi \xd7+ 3O O \xd7= 2V Bi \u2032\u2032\u2032+ 3V O \u2219\u2219+Bi 2 O 3 gas. Piezoelectric coefficient d 33 of the Ce/W co-doped NKBN ceramics is improved obviously, and the d 33 reaches above 24 pC/N when the Ce content is greater than or equal to 0.02, as shown in (a). The enhanced d 33 may be related to the delicate ferroelectric domain structures, which agrees with the previous analysis. The good piezoelectric thermal stability of BLSFs piezoceramics also counts for many practical applications. (b) represents the variation of the d 33 of NKBN and NKBC x NW0.02 ceramics with annealing temperature at 25\u2013750 \xb0C. The d 33 of the NKBN ceramics was decreased to 11.7 pC/N (only 70 % of its initial value) when the temperature rose to 500 \xb0C, while the d 33 of the NKBC0.02NW0.02 ceramic kept 20.5 pC/N (83 % of its beginning value) at the same treatment condition.
+
+# TITLE
+A strategy for improving piezoelectricity and thermal stability of Na<inf>0.25</inf>K<inf>0.25</inf>Bi<inf>2.5</inf>Nb<inf>2</inf>O<inf>9</inf>-based piezoceramics via A/B-site co-doping
+
+# ABSTRACT
+Obviously improved piezoelectricity and thermal stability of Na0.25K0.25Bi2.5Nb2O9-based ceramics have been urgently required for high-temperature piezoelectric applications. In this work, Na0.25K0.25Bi2.5-x
+                     Ce
+                        x
+                     Nb2-y
+                     W
+                        y
+                     O9 (NKBC
+                        x
+                     NW
+                        y
+                     , x = 0.01, 0.02, 0.03, 0.04; y = 0.02) piezoceramics were developed via a traditional solid-state reaction method. An optimum composition of Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9 was achieved, which shows a high curie temperature of 670 ℃, a good piezoelectric coefficient d
+                     33 of 24.4 pC/N. The enhanced d
+                     33 stems from small domain sizes and high domain wall density in NKBC0.02NW0.02 ceramics. More importantly, the maximum d
+                     33 can remain above 80 % of the d
+                     33 (@25 ℃), even if the annealing temperature increases to 500 ℃. This work provides a simple and viable method to obtain high piezoelectric properties and excellent thermal stability in Na0.25K0.25Bi2.5Nb2O9-based ceramics.
+
+# INTRODUCTION
+Among them, the bismuth layer-structured ferroelectrics (BLSFs) possess the advantage of high curie temperature (500 \u2103\u223c950 \u2103), good fatigue endurance, and easy to sinter, making them greatly promising high-temperature piezoelectric materials. The formula of BLSFs is (Bi2O2)E^{2+}(A m-1B m O3m+1)E^{2-}, and the (A m-1B m O3m+1)E^{2-} blocks are interleaved with the (Bi2O2)E^{2+} layers along the c-axis. The A is a mono-, di- or trivalent ion with cuboctahedral coordination, for example, BiE^{3+}, CaE^{2+}, NaE^{+}, and so on, while B is primarily suitable for octahedral coordination transition metal ion. The variable 'm' indicates the number of oxygen octahedral layers between contiguous bismuth oxide layers, ranging from 1 to 5. The BLSFs materials are suitable for various electro-optic/optoelectronic devices for application in extreme environments (piezo-pyroelectric devices, spintronic devices, optical devices, and sensors et al.), and also oxide ion conductors (oxygen pumps, solid oxide fuel cells, and oxygen-permeable membrane catalysts et al.). The piezoelectric property of the BLSFs ceramics is poor due to the spontaneous polarisation P s confined in the a-b plane. The excellent electrical properties can be obtained by rare earth doping in Y2Ti2O7-based ceramics. The piezoelectric properties of BLSFs ceramics could be significantly improved by doping with A-site ions, B-site ions, or A/B-site ions. Sodium potassium bismuth niobate, Na0.25K0.25Bi2.5Nb2O9 (NKBN), a member of BLSFs materials with m = 2, is characterised by high curie temperature (T c \u223c 650 \u2103) and large resistivity (\u03c1 reaches 10E^{6} \u03a9\xb7cm@500 \xb0C), showing fascinating potential applications for high-temperature piezoelectric sensor. The d 33 of NKBN-based ceramics can be increased to 28 pC/N by Ce addition. But its curie temperature T c drops to 580 \u2103, and d 33 drops sharply to below 10 pC/N when the annealing temperature rises to 500 \u2103. The introduction of NdE^{3+} to the A site of NKBN ceramics also leads to the increase of d 33 and Q m and the decrease of tan\u03b4. The Na0.25K0.25Bi2.3Nd0.2Nb2O9 sample has a large d 33 of 24 C/N, a large Q m of 2449, and a small tan\u03b4 of 0.40 %, a high T c of 632 \u2103. Wang et al. reported that the T c remains 659 \u2103 and the d 33 is 23pC/N by the B-site Co2O3 doping in NKBN ceramics. Unfortunately, the d 33 shows a rapid downward trend with an annealing temperature above 400 \u2103. The influence of Mn doping on the structural and electrical properties of NKBN ceramics is also investigated in detail. The optimum component NKBN+3 mol%MnCO3 ceramics possesses a large d 33 of 25 C/N and a high T c of 643 \u2103. So, the piezoelectric coefficient of NKBN-based ceramics has significantly improved, but the high-temperature stability of the piezoelectric performance of NKBN-based ceramics is unsatisfying. To our knowledge, no suitable method exists to obtain NKBN-based ceramics with high piezoelectric coefficients and excellent thermal stability. Donor doping modification at the B-site is an effective way to ameliorate electrical performance while keeping a high T c in BLSFs ceramics. It is reported that W donor-doping in CaBi2Nb2O9 ceramics could restrict the oxygen vacancy hopping and reduce defect dipoles, leading to higher resistance and higher breakdown voltage. The piezoelectric coefficient d 33 of CaBi2Nb2O9 ceramics is increased by about two times by W donor-doping, and it has good thermal depoling properties. The introduction of Nb/Ta co-doping is a valid method of gaining a large piezoelectric constant (d 33 = 25 pC/N), good thermal depoling performance (d 33 maintaining \u223c 90 % @600 \u2103), high curie temperature (T c = 690 \u2103) in Bi4Ti3O12 ceramics. In addition, previous studies have shown that Ce ion is a valid A-site additive for improving the piezoelectric properties of BLSFs ceramics. A large d 33 of 20.2 C/N, good thermal stability, and a high T c of 923 \u2103 in Ce-modified CaBi2Nb2O9-based ceramics is achieved. Ca0.80(Li0.5Bi0.5)0.20Bi2Nb2O9 ceramics doped with Ce at A-site, the d 33 is effectively improved to 17.2 C/N, and the d 33 maintained 89.5 % after annealing temperature at 900 \xb0C. It was found that the introduction of Ce ions enhances the structural distortion of Bi4Ti2.94W0.03Ta0.03O12 ceramics, which results in enhanced polarisation switching and piezoelectricity. The highest d 33 of 17.2 C/N is obtained in Bi3.96Ce0.04Ti2.94W0.03Ta0.03O12 ceramics, which is 25 % stronger than that of Bi4Ti2.94W0.03Ta0.03O12 ceramics. The piezoelectric constant d 33 and resistivity of B-site modified Bi4Ti3O12-based ceramics can be improved due to the introduction of Ce at A-site in our previous work. The optimum component Bi3.97Ce0.03Ti2.98(WNb)0.01O12 ceramics possess high d 33 of 40.2 C/N, large resistivity of 10E^{7} \u03a9\xb7cm order of magnitude at 500 \xb0C, and small dielectric loss. However, there are few reports on information on A/B-site co-doping on the structure, ferroelectric domain, and electrical performance of NKBN ceramics. This work focuses on the effect of A-site Ce doping on the crystal structure, ferroelectric domain, and electrical performance of B-site donor-doped NKBN ceramics. The piezoelectric coefficient and thermal stability of NKBN-based ceramics are enhanced simultaneously via A/B-site co-doping without sacrificing the curie temperature. In the optimum Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9 component, an excellent d 33 of 24.4 pC/N along with good thermal stability (d 33 maintains above 80 % after annealing at 500 \u2103), and high T c of 670 \u2103 is gained. This work offers explicit direction for achieving large d 33 and good thermal stability of Na0.25K0.25Bi2.5Nb2O9 system materials while maintaining a high curie temperature.
+
+# CONCLUSION
+In the work, a brand-new piezoelectric material system of Na0.25K0.25Bi2.5-x Ce x Nb2-yW y O9 (NKBC x NW y , x = 0.01, 0.02, 0.03, 0.04; y = 0.02) was produced. The XRD and SEM results indicate that Ce/W ions entered the NKBN ceramic lattice and induced grain growth. The Raman spectra results show that the vibration and distortion of A-site atoms in the NbO6 octahedron changed obviously due to the introduction of Ce/W ions into the NKBN ceramics. PFM measurement manifests that the ferroelectric domain of the NKBN ceramics could be refined by introducing Ce/W ions. The best performance is obtained in the NKBC0.02NW0.02 ceramic, which possesses a larger d 33 of 24.4 pC/N and exceptional heat stability (the d 33 retains 83 % of its original count after the annealing @ 500 \xb0C) and a higher T c of 670 \u2103. The research outcomes serve as a proposition for capability optimising NKBN ceramics for real-world applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-09 11:47:25: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The XRD patterns of NKBN and NKBC x NW0.02 ceramics are exhibited in (a). The diffraction peaks of all samples are consistent with the standard diffraction spectra (PDF#97\u2013018\u20136933) and exhibit an A21 am orthorhombic structure. The maximum diffraction intensity of NKBN-based ceramics belongs to (115), which follows the (112 m +1) highest diffraction peak of BLSFs. The XRD measurements showed that the doped Ce/W are diffused into the NKBN lattice without secondary phases, and Ce and W entered into the A-site and B-site of NKBN ceramics according to substitutions of ionic radii similarities, respectively. In addition, (b) shows the (115) diffraction maximum shifts vaguely towards a higher angle with increasing Ce addition, indicating that introducing Ce/W ions leads to unit cell shrinkage. This is because the radius of CeE^{3+}/CeE^{4+} ions (CeE^{3+}: 1.143 \xc5, CeE^{4+}: 0.97 \xc5) is smaller than that of BiE^{3+} ions (BiE^{3+}: 1.17 \xc5), and the radius of WE^{6+} ions (WE^{6+}: 0.60 \xc5) is smaller than that of NbE^{5+} ions (NbE^{5+}: 0.64 \xc5). The result is comparable with the previous reports. (a)-(e) shows the natural surface SEM images of the NKBN and NKBC x NW0.02 ceramics. It can be seen that the grains of the NKBN and NKBC x NW0.02 ceramics exhibit a lamellar structure. This is because the surface free energy of BLSF materials was low in the a-b plane, leading to a faster growth rate in this plane than that along other planes. The relative density of all samples is more than 94 %, as shown in (f), indicating that it is suitable to select 1100 \u2103 as the sintering temperature. In addition, the volatilisation of bismuth slows down the kinetics of the diffusion mechanisms, and then grain growth in NKBN-based ceramics will decrease. The grain size of NKBN-based ceramics increases with less bismuth volatilisation and oxygen vacancy. Raman spectrum is a forceful tool for studying the complex structure of ceramics, which can support characteristics of the atom lattice vibrations and the position occupied by the doped ions in the lattice. (a) shows the Raman spectra of NKBN and NKBC x NW0.02 ceramics, and the spectrum could be roughly divided into three regions. There are apparent phonon modes in 62, 83, 112, 178, 216, 267, 432, 561, and 839 cmE^{\u22121}. Due to the vibration of A-site atoms, Raman peaks at 83, 112, 178, and 216 cmE^{\u22121}, in the range of 50 cmE^{\u22121} to 250 cmE^{\u22121}. These frequencies of NKBC x NW0.02 ceramic are shifted slightly toward higher frequencies due to the lower mass of Ce (140.12 g/mol) compared to Bi (208.98 g/mol). The Raman spectra of all samples in the range of 250 cmE^{\u22121}\u223c950 cmE^{\u22121} were decomposed into 8 relatively independent Gauss and Lorentz components labelled as v6\u223cv13 by peak fitting, as shown in (b). The v8 and v9 modes combined with the distortion of the NbO6 octahedron decrease with W substitution. In addition, the v10 and v11 modes get weaker while the v13 mode at 835 cmE^{\u22121} gets stronger with increasing Ce concentration, suggesting that the stretching of the Nb-O bond is also changed. Piezoresponse force microscopy (PFM) could provide helpful information on ferroelectric domain structure and polarisation orientation. PFM amplitude and phase of NKBN and NKBC0.02NW0.02 ceramics are shown in (a) and (b), respectively. The domain structure of the NKBN sample is irregularly shaped and micrometre-sized (mainly greater than 2 \u03bcm). The domain structure of NKBC0.02NW0.02 ceramics changes compared to the NKBN sample. In the case of NKBC0.02NW0.02 ceramics, the proportion of micrometre-sized domains reduces, and the smaller island-shaped domains are present. Considering the inverse relationship between piezoelectric response and domain size, it can be reasonably inferred that small domain sizes and large domain wall density of NKBC0.02NW0.02 samples will conducive to domain switching, and the easy domain switching is propitious to improving of piezoelectric performance. is the varied temperature \u03b5r and tan\u03b4 of the NKBN and NKBC x NW0.02 ceramics at 1 MHz. The \u03b5r of all samples is about 220 at room temperature. A notable decrease of the \u03b5r near the T c is observed. The variety of \u03b5r may be due to the changes in grain size. The T c of all the components is above 650 \u2103 as given in (a), indicating that the Ce/W modified NKBN ceramic maintains a high curie temperature T c. In addition, the dielectric peak broadening of NKBC x NW0.02 ceramics is observed, which may be related to the fluctuations and disorder produced by Ce doping. (b) is the varied temperature tan\u03b4 of NKBN and NKBC x NW0.02 ceramics. The tan\u03b4 of all samples keeps the relative stabilisation within a wide temperature range of 25\u2013500 \xb0C, and the tan\u03b4 of NKBC x NW0.02 ceramics is below 0.06 even at 500 \xb0C. The higher T c and smaller tan\u03b4 of NKBC x NW0.02 ceramics provided a solid foundation for high-temperature applications. (a)-(e) shows the complex impedance spectra of the NKBN and NKBC x NW0.02 ceramics between 450 \xb0C and 550 \xb0C at 50 \xb0C intervals. The relationship between the real and imaginary parts of the impedance curve is an arc between 100 Hz and 10E^{6} Hz. The single R-CPE circuit fitting well suggests that the dominant conduction behaviour may be of grain. The cause of the decrease in resistance may be that Ce replaces BiE^{3+} in the (Bi2O2)E^{2+} layer and changes its environment. But, the dc resistivity of NKBC x NW0.02 ceramics still maintains at about 10E^{6} \u03a9\xb7cm orders of magnitude with temperature as high as 500 \xb0C as shown in (f), which lays a favourable cornerstone for reliable application. Only one peak of each component can be observed in the -Z'' against frequency over the temperature range from 450 \u2103 to 550 \u2103 as shown in (a)-(e), which confirms the rationality of the parallel R-CPE circuit model developed in the previous paper The peak value of the characteristic peak decreases, and the peak shifts to a higher frequency with an increase in temperature. The activation energy of relaxation E rel of the NKBN and NKBC x NW0.02 ceramics is 1.23\u20131.43 eV, calculated by the Arrhenius relationship, as presented in (f). The creation of oxygen vacancies because of bismuth vaporization during sintering and it can be expressed as 2Bi Bi \xd7+ 3O O \xd7= 2V Bi \u2032\u2032\u2032+ 3V O \u2219\u2219+Bi 2 O 3 gas. Piezoelectric coefficient d 33 of the Ce/W co-doped NKBN ceramics is improved obviously, and the d 33 reaches above 24 pC/N when the Ce content is greater than or equal to 0.02, as shown in (a). The enhanced d 33 may be related to the delicate ferroelectric domain structures, which agrees with the previous analysis. The good piezoelectric thermal stability of BLSFs piezoceramics also counts for many practical applications. (b) represents the variation of the d 33 of NKBN and NKBC x NW0.02 ceramics with annealing temperature at 25\u2013750 \xb0C. The d 33 of the NKBN ceramics was decreased to 11.7 pC/N (only 70 % of its initial value) when the temperature rose to 500 \xb0C, while the d 33 of the NKBC0.02NW0.02 ceramic kept 20.5 pC/N (83 % of its beginning value) at the same treatment condition.
+
+# TITLE
+A strategy for improving piezoelectricity and thermal stability of Na<inf>0.25</inf>K<inf>0.25</inf>Bi<inf>2.5</inf>Nb<inf>2</inf>O<inf>9</inf>-based piezoceramics via A/B-site co-doping
+
+# ABSTRACT
+Obviously improved piezoelectricity and thermal stability of Na0.25K0.25Bi2.5Nb2O9-based ceramics have been urgently required for high-temperature piezoelectric applications. In this work, Na0.25K0.25Bi2.5-x
+                     Ce
+                        x
+                     Nb2-y
+                     W
+                        y
+                     O9 (NKBC
+                        x
+                     NW
+                        y
+                     , x = 0.01, 0.02, 0.03, 0.04; y = 0.02) piezoceramics were developed via a traditional solid-state reaction method. An optimum composition of Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9 was achieved, which shows a high curie temperature of 670 ℃, a good piezoelectric coefficient d
+                     33 of 24.4 pC/N. The enhanced d
+                     33 stems from small domain sizes and high domain wall density in NKBC0.02NW0.02 ceramics. More importantly, the maximum d
+                     33 can remain above 80 % of the d
+                     33 (@25 ℃), even if the annealing temperature increases to 500 ℃. This work provides a simple and viable method to obtain high piezoelectric properties and excellent thermal stability in Na0.25K0.25Bi2.5Nb2O9-based ceramics.
+
+# INTRODUCTION
+Among them, the bismuth layer-structured ferroelectrics (BLSFs) possess the advantage of high curie temperature (500 \u2103\u223c950 \u2103), good fatigue endurance, and easy to sinter, making them greatly promising high-temperature piezoelectric materials. The formula of BLSFs is (Bi2O2)E^{2+}(A m-1B m O3m+1)E^{2-}, and the (A m-1B m O3m+1)E^{2-} blocks are interleaved with the (Bi2O2)E^{2+} layers along the c-axis. The A is a mono-, di- or trivalent ion with cuboctahedral coordination, for example, BiE^{3+}, CaE^{2+}, NaE^{+}, and so on, while B is primarily suitable for octahedral coordination transition metal ion. The variable 'm' indicates the number of oxygen octahedral layers between contiguous bismuth oxide layers, ranging from 1 to 5. The BLSFs materials are suitable for various electro-optic/optoelectronic devices for application in extreme environments (piezo-pyroelectric devices, spintronic devices, optical devices, and sensors et al.), and also oxide ion conductors (oxygen pumps, solid oxide fuel cells, and oxygen-permeable membrane catalysts et al.). The piezoelectric property of the BLSFs ceramics is poor due to the spontaneous polarisation P s confined in the a-b plane. The excellent electrical properties can be obtained by rare earth doping in Y2Ti2O7-based ceramics. The piezoelectric properties of BLSFs ceramics could be significantly improved by doping with A-site ions, B-site ions, or A/B-site ions. Sodium potassium bismuth niobate, Na0.25K0.25Bi2.5Nb2O9 (NKBN), a member of BLSFs materials with m = 2, is characterised by high curie temperature (T c \u223c 650 \u2103) and large resistivity (\u03c1 reaches 10E^{6} \u03a9\xb7cm@500 \xb0C), showing fascinating potential applications for high-temperature piezoelectric sensor. The d 33 of NKBN-based ceramics can be increased to 28 pC/N by Ce addition. But its curie temperature T c drops to 580 \u2103, and d 33 drops sharply to below 10 pC/N when the annealing temperature rises to 500 \u2103. The introduction of NdE^{3+} to the A site of NKBN ceramics also leads to the increase of d 33 and Q m and the decrease of tan\u03b4. The Na0.25K0.25Bi2.3Nd0.2Nb2O9 sample has a large d 33 of 24 C/N, a large Q m of 2449, and a small tan\u03b4 of 0.40 %, a high T c of 632 \u2103. Wang et al. reported that the T c remains 659 \u2103 and the d 33 is 23pC/N by the B-site Co2O3 doping in NKBN ceramics. Unfortunately, the d 33 shows a rapid downward trend with an annealing temperature above 400 \u2103. The influence of Mn doping on the structural and electrical properties of NKBN ceramics is also investigated in detail. The optimum component NKBN+3 mol%MnCO3 ceramics possesses a large d 33 of 25 C/N and a high T c of 643 \u2103. So, the piezoelectric coefficient of NKBN-based ceramics has significantly improved, but the high-temperature stability of the piezoelectric performance of NKBN-based ceramics is unsatisfying. To our knowledge, no suitable method exists to obtain NKBN-based ceramics with high piezoelectric coefficients and excellent thermal stability. Donor doping modification at the B-site is an effective way to ameliorate electrical performance while keeping a high T c in BLSFs ceramics. It is reported that W donor-doping in CaBi2Nb2O9 ceramics could restrict the oxygen vacancy hopping and reduce defect dipoles, leading to higher resistance and higher breakdown voltage. The piezoelectric coefficient d 33 of CaBi2Nb2O9 ceramics is increased by about two times by W donor-doping, and it has good thermal depoling properties. The introduction of Nb/Ta co-doping is a valid method of gaining a large piezoelectric constant (d 33 = 25 pC/N), good thermal depoling performance (d 33 maintaining \u223c 90 % @600 \u2103), high curie temperature (T c = 690 \u2103) in Bi4Ti3O12 ceramics. In addition, previous studies have shown that Ce ion is a valid A-site additive for improving the piezoelectric properties of BLSFs ceramics. A large d 33 of 20.2 C/N, good thermal stability, and a high T c of 923 \u2103 in Ce-modified CaBi2Nb2O9-based ceramics is achieved. Ca0.80(Li0.5Bi0.5)0.20Bi2Nb2O9 ceramics doped with Ce at A-site, the d 33 is effectively improved to 17.2 C/N, and the d 33 maintained 89.5 % after annealing temperature at 900 \xb0C. It was found that the introduction of Ce ions enhances the structural distortion of Bi4Ti2.94W0.03Ta0.03O12 ceramics, which results in enhanced polarisation switching and piezoelectricity. The highest d 33 of 17.2 C/N is obtained in Bi3.96Ce0.04Ti2.94W0.03Ta0.03O12 ceramics, which is 25 % stronger than that of Bi4Ti2.94W0.03Ta0.03O12 ceramics. The piezoelectric constant d 33 and resistivity of B-site modified Bi4Ti3O12-based ceramics can be improved due to the introduction of Ce at A-site in our previous work. The optimum component Bi3.97Ce0.03Ti2.98(WNb)0.01O12 ceramics possess high d 33 of 40.2 C/N, large resistivity of 10E^{7} \u03a9\xb7cm order of magnitude at 500 \xb0C, and small dielectric loss. However, there are few reports on information on A/B-site co-doping on the structure, ferroelectric domain, and electrical performance of NKBN ceramics. This work focuses on the effect of A-site Ce doping on the crystal structure, ferroelectric domain, and electrical performance of B-site donor-doped NKBN ceramics. The piezoelectric coefficient and thermal stability of NKBN-based ceramics are enhanced simultaneously via A/B-site co-doping without sacrificing the curie temperature. In the optimum Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9 component, an excellent d 33 of 24.4 pC/N along with good thermal stability (d 33 maintains above 80 % after annealing at 500 \u2103), and high T c of 670 \u2103 is gained. This work offers explicit direction for achieving large d 33 and good thermal stability of Na0.25K0.25Bi2.5Nb2O9 system materials while maintaining a high curie temperature.
+
+# CONCLUSION
+In the work, a brand-new piezoelectric material system of Na0.25K0.25Bi2.5-x Ce x Nb2-yW y O9 (NKBC x NW y , x = 0.01, 0.02, 0.03, 0.04; y = 0.02) was produced. The XRD and SEM results indicate that Ce/W ions entered the NKBN ceramic lattice and induced grain growth. The Raman spectra results show that the vibration and distortion of A-site atoms in the NbO6 octahedron changed obviously due to the introduction of Ce/W ions into the NKBN ceramics. PFM measurement manifests that the ferroelectric domain of the NKBN ceramics could be refined by introducing Ce/W ions. The best performance is obtained in the NKBC0.02NW0.02 ceramic, which possesses a larger d 33 of 24.4 pC/N and exceptional heat stability (the d 33 retains 83 % of its original count after the annealing @ 500 \xb0C) and a higher T c of 670 \u2103. The research outcomes serve as a proposition for capability optimising NKBN ceramics for real-world applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9": 24.4,
+      "NKBC0.02NW0.02": 24.4,
+      "NKBN": 11.7,
+      "NKBC0.02NW0.02": 20.5
+    },
+    "abbreviations": {
+      "NKBC": "Na0.25K0.25Bi2.5-xCe(x)Nb2-yW(y)O9",
+      "NW": "Na0.25K0.25Bi2.5Nb2O9"
+    },
+    "property_unit": "pC/N",
+    "family": "BLSFs"
+  }
+}"
+2025-07-09 12:34:33: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The XRD patterns of NKBN and NKBC x NW0.02 ceramics are exhibited in (a). The diffraction peaks of all samples are consistent with the standard diffraction spectra (PDF#97\u2013018\u20136933) and exhibit an A21 am orthorhombic structure. The maximum diffraction intensity of NKBN-based ceramics belongs to (115), which follows the (112 m +1) highest diffraction peak of BLSFs. The XRD measurements showed that the doped Ce/W are diffused into the NKBN lattice without secondary phases, and Ce and W entered into the A-site and B-site of NKBN ceramics according to substitutions of ionic radii similarities, respectively. In addition, (b) shows the (115) diffraction maximum shifts vaguely towards a higher angle with increasing Ce addition, indicating that introducing Ce/W ions leads to unit cell shrinkage. This is because the radius of CeE^{3+}/CeE^{4+} ions (CeE^{3+}: 1.143 \xc5, CeE^{4+}: 0.97 \xc5) is smaller than that of BiE^{3+} ions (BiE^{3+}: 1.17 \xc5), and the radius of WE^{6+} ions (WE^{6+}: 0.60 \xc5) is smaller than that of NbE^{5+} ions (NbE^{5+}: 0.64 \xc5). The result is comparable with the previous reports. (a)-(e) shows the natural surface SEM images of the NKBN and NKBC x NW0.02 ceramics. It can be seen that the grains of the NKBN and NKBC x NW0.02 ceramics exhibit a lamellar structure. This is because the surface free energy of BLSF materials was low in the a-b plane, leading to a faster growth rate in this plane than that along other planes. The relative density of all samples is more than 94 %, as shown in (f), indicating that it is suitable to select 1100 \u2103 as the sintering temperature. In addition, the volatilisation of bismuth slows down the kinetics of the diffusion mechanisms, and then grain growth in NKBN-based ceramics will decrease. The grain size of NKBN-based ceramics increases with less bismuth volatilisation and oxygen vacancy. Raman spectrum is a forceful tool for studying the complex structure of ceramics, which can support characteristics of the atom lattice vibrations and the position occupied by the doped ions in the lattice. (a) shows the Raman spectra of NKBN and NKBC x NW0.02 ceramics, and the spectrum could be roughly divided into three regions. There are apparent phonon modes in 62, 83, 112, 178, 216, 267, 432, 561, and 839 cmE^{\u22121}. Due to the vibration of A-site atoms, Raman peaks at 83, 112, 178, and 216 cmE^{\u22121}, in the range of 50 cmE^{\u22121} to 250 cmE^{\u22121}. These frequencies of NKBC x NW0.02 ceramic are shifted slightly toward higher frequencies due to the lower mass of Ce (140.12 g/mol) compared to Bi (208.98 g/mol). The Raman spectra of all samples in the range of 250 cmE^{\u22121}\u223c950 cmE^{\u22121} were decomposed into 8 relatively independent Gauss and Lorentz components labelled as v6\u223cv13 by peak fitting, as shown in (b). The v8 and v9 modes combined with the distortion of the NbO6 octahedron decrease with W substitution. In addition, the v10 and v11 modes get weaker while the v13 mode at 835 cmE^{\u22121} gets stronger with increasing Ce concentration, suggesting that the stretching of the Nb-O bond is also changed. Piezoresponse force microscopy (PFM) could provide helpful information on ferroelectric domain structure and polarisation orientation. PFM amplitude and phase of NKBN and NKBC0.02NW0.02 ceramics are shown in (a) and (b), respectively. The domain structure of the NKBN sample is irregularly shaped and micrometre-sized (mainly greater than 2 \u03bcm). The domain structure of NKBC0.02NW0.02 ceramics changes compared to the NKBN sample. In the case of NKBC0.02NW0.02 ceramics, the proportion of micrometre-sized domains reduces, and the smaller island-shaped domains are present. Considering the inverse relationship between piezoelectric response and domain size, it can be reasonably inferred that small domain sizes and large domain wall density of NKBC0.02NW0.02 samples will conducive to domain switching, and the easy domain switching is propitious to improving of piezoelectric performance. is the varied temperature \u03b5r and tan\u03b4 of the NKBN and NKBC x NW0.02 ceramics at 1 MHz. The \u03b5r of all samples is about 220 at room temperature. A notable decrease of the \u03b5r near the T c is observed. The variety of \u03b5r may be due to the changes in grain size. The T c of all the components is above 650 \u2103 as given in (a), indicating that the Ce/W modified NKBN ceramic maintains a high curie temperature T c. In addition, the dielectric peak broadening of NKBC x NW0.02 ceramics is observed, which may be related to the fluctuations and disorder produced by Ce doping. (b) is the varied temperature tan\u03b4 of NKBN and NKBC x NW0.02 ceramics. The tan\u03b4 of all samples keeps the relative stabilisation within a wide temperature range of 25\u2013500 \xb0C, and the tan\u03b4 of NKBC x NW0.02 ceramics is below 0.06 even at 500 \xb0C. The higher T c and smaller tan\u03b4 of NKBC x NW0.02 ceramics provided a solid foundation for high-temperature applications. (a)-(e) shows the complex impedance spectra of the NKBN and NKBC x NW0.02 ceramics between 450 \xb0C and 550 \xb0C at 50 \xb0C intervals. The relationship between the real and imaginary parts of the impedance curve is an arc between 100 Hz and 10E^{6} Hz. The single R-CPE circuit fitting well suggests that the dominant conduction behaviour may be of grain. The cause of the decrease in resistance may be that Ce replaces BiE^{3+} in the (Bi2O2)E^{2+} layer and changes its environment. But, the dc resistivity of NKBC x NW0.02 ceramics still maintains at about 10E^{6} \u03a9\xb7cm orders of magnitude with temperature as high as 500 \xb0C as shown in (f), which lays a favourable cornerstone for reliable application. Only one peak of each component can be observed in the -Z'' against frequency over the temperature range from 450 \u2103 to 550 \u2103 as shown in (a)-(e), which confirms the rationality of the parallel R-CPE circuit model developed in the previous paper The peak value of the characteristic peak decreases, and the peak shifts to a higher frequency with an increase in temperature. The activation energy of relaxation E rel of the NKBN and NKBC x NW0.02 ceramics is 1.23\u20131.43 eV, calculated by the Arrhenius relationship, as presented in (f). The creation of oxygen vacancies because of bismuth vaporization during sintering and it can be expressed as 2Bi Bi \xd7+ 3O O \xd7= 2V Bi \u2032\u2032\u2032+ 3V O \u2219\u2219+Bi 2 O 3 gas. Piezoelectric coefficient d 33 of the Ce/W co-doped NKBN ceramics is improved obviously, and the d 33 reaches above 24 pC/N when the Ce content is greater than or equal to 0.02, as shown in (a). The enhanced d 33 may be related to the delicate ferroelectric domain structures, which agrees with the previous analysis. The good piezoelectric thermal stability of BLSFs piezoceramics also counts for many practical applications. (b) represents the variation of the d 33 of NKBN and NKBC x NW0.02 ceramics with annealing temperature at 25\u2013750 \xb0C. The d 33 of the NKBN ceramics was decreased to 11.7 pC/N (only 70 % of its initial value) when the temperature rose to 500 \xb0C, while the d 33 of the NKBC0.02NW0.02 ceramic kept 20.5 pC/N (83 % of its beginning value) at the same treatment condition.
+
+# TITLE
+A strategy for improving piezoelectricity and thermal stability of Na<inf>0.25</inf>K<inf>0.25</inf>Bi<inf>2.5</inf>Nb<inf>2</inf>O<inf>9</inf>-based piezoceramics via A/B-site co-doping
+
+# ABSTRACT
+Obviously improved piezoelectricity and thermal stability of Na0.25K0.25Bi2.5Nb2O9-based ceramics have been urgently required for high-temperature piezoelectric applications. In this work, Na0.25K0.25Bi2.5-x
+                     Ce
+                        x
+                     Nb2-y
+                     W
+                        y
+                     O9 (NKBC
+                        x
+                     NW
+                        y
+                     , x = 0.01, 0.02, 0.03, 0.04; y = 0.02) piezoceramics were developed via a traditional solid-state reaction method. An optimum composition of Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9 was achieved, which shows a high curie temperature of 670 ℃, a good piezoelectric coefficient d
+                     33 of 24.4 pC/N. The enhanced d
+                     33 stems from small domain sizes and high domain wall density in NKBC0.02NW0.02 ceramics. More importantly, the maximum d
+                     33 can remain above 80 % of the d
+                     33 (@25 ℃), even if the annealing temperature increases to 500 ℃. This work provides a simple and viable method to obtain high piezoelectric properties and excellent thermal stability in Na0.25K0.25Bi2.5Nb2O9-based ceramics.
+
+# INTRODUCTION
+Among them, the bismuth layer-structured ferroelectrics (BLSFs) possess the advantage of high curie temperature (500 \u2103\u223c950 \u2103), good fatigue endurance, and easy to sinter, making them greatly promising high-temperature piezoelectric materials. The formula of BLSFs is (Bi2O2)E^{2+}(A m-1B m O3m+1)E^{2-}, and the (A m-1B m O3m+1)E^{2-} blocks are interleaved with the (Bi2O2)E^{2+} layers along the c-axis. The A is a mono-, di- or trivalent ion with cuboctahedral coordination, for example, BiE^{3+}, CaE^{2+}, NaE^{+}, and so on, while B is primarily suitable for octahedral coordination transition metal ion. The variable 'm' indicates the number of oxygen octahedral layers between contiguous bismuth oxide layers, ranging from 1 to 5. The BLSFs materials are suitable for various electro-optic/optoelectronic devices for application in extreme environments (piezo-pyroelectric devices, spintronic devices, optical devices, and sensors et al.), and also oxide ion conductors (oxygen pumps, solid oxide fuel cells, and oxygen-permeable membrane catalysts et al.). The piezoelectric property of the BLSFs ceramics is poor due to the spontaneous polarisation P s confined in the a-b plane. The excellent electrical properties can be obtained by rare earth doping in Y2Ti2O7-based ceramics. The piezoelectric properties of BLSFs ceramics could be significantly improved by doping with A-site ions, B-site ions, or A/B-site ions. Sodium potassium bismuth niobate, Na0.25K0.25Bi2.5Nb2O9 (NKBN), a member of BLSFs materials with m = 2, is characterised by high curie temperature (T c \u223c 650 \u2103) and large resistivity (\u03c1 reaches 10E^{6} \u03a9\xb7cm@500 \xb0C), showing fascinating potential applications for high-temperature piezoelectric sensor. The d 33 of NKBN-based ceramics can be increased to 28 pC/N by Ce addition. But its curie temperature T c drops to 580 \u2103, and d 33 drops sharply to below 10 pC/N when the annealing temperature rises to 500 \u2103. The introduction of NdE^{3+} to the A site of NKBN ceramics also leads to the increase of d 33 and Q m and the decrease of tan\u03b4. The Na0.25K0.25Bi2.3Nd0.2Nb2O9 sample has a large d 33 of 24 C/N, a large Q m of 2449, and a small tan\u03b4 of 0.40 %, a high T c of 632 \u2103. Wang et al. reported that the T c remains 659 \u2103 and the d 33 is 23pC/N by the B-site Co2O3 doping in NKBN ceramics. Unfortunately, the d 33 shows a rapid downward trend with an annealing temperature above 400 \u2103. The influence of Mn doping on the structural and electrical properties of NKBN ceramics is also investigated in detail. The optimum component NKBN+3 mol%MnCO3 ceramics possesses a large d 33 of 25 C/N and a high T c of 643 \u2103. So, the piezoelectric coefficient of NKBN-based ceramics has significantly improved, but the high-temperature stability of the piezoelectric performance of NKBN-based ceramics is unsatisfying. To our knowledge, no suitable method exists to obtain NKBN-based ceramics with high piezoelectric coefficients and excellent thermal stability. Donor doping modification at the B-site is an effective way to ameliorate electrical performance while keeping a high T c in BLSFs ceramics. It is reported that W donor-doping in CaBi2Nb2O9 ceramics could restrict the oxygen vacancy hopping and reduce defect dipoles, leading to higher resistance and higher breakdown voltage. The piezoelectric coefficient d 33 of CaBi2Nb2O9 ceramics is increased by about two times by W donor-doping, and it has good thermal depoling properties. The introduction of Nb/Ta co-doping is a valid method of gaining a large piezoelectric constant (d 33 = 25 pC/N), good thermal depoling performance (d 33 maintaining \u223c 90 % @600 \u2103), high curie temperature (T c = 690 \u2103) in Bi4Ti3O12 ceramics. In addition, previous studies have shown that Ce ion is a valid A-site additive for improving the piezoelectric properties of BLSFs ceramics. A large d 33 of 20.2 C/N, good thermal stability, and a high T c of 923 \u2103 in Ce-modified CaBi2Nb2O9-based ceramics is achieved. Ca0.80(Li0.5Bi0.5)0.20Bi2Nb2O9 ceramics doped with Ce at A-site, the d 33 is effectively improved to 17.2 C/N, and the d 33 maintained 89.5 % after annealing temperature at 900 \xb0C. It was found that the introduction of Ce ions enhances the structural distortion of Bi4Ti2.94W0.03Ta0.03O12 ceramics, which results in enhanced polarisation switching and piezoelectricity. The highest d 33 of 17.2 C/N is obtained in Bi3.96Ce0.04Ti2.94W0.03Ta0.03O12 ceramics, which is 25 % stronger than that of Bi4Ti2.94W0.03Ta0.03O12 ceramics. The piezoelectric constant d 33 and resistivity of B-site modified Bi4Ti3O12-based ceramics can be improved due to the introduction of Ce at A-site in our previous work. The optimum component Bi3.97Ce0.03Ti2.98(WNb)0.01O12 ceramics possess high d 33 of 40.2 C/N, large resistivity of 10E^{7} \u03a9\xb7cm order of magnitude at 500 \xb0C, and small dielectric loss. However, there are few reports on information on A/B-site co-doping on the structure, ferroelectric domain, and electrical performance of NKBN ceramics. This work focuses on the effect of A-site Ce doping on the crystal structure, ferroelectric domain, and electrical performance of B-site donor-doped NKBN ceramics. The piezoelectric coefficient and thermal stability of NKBN-based ceramics are enhanced simultaneously via A/B-site co-doping without sacrificing the curie temperature. In the optimum Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9 component, an excellent d 33 of 24.4 pC/N along with good thermal stability (d 33 maintains above 80 % after annealing at 500 \u2103), and high T c of 670 \u2103 is gained. This work offers explicit direction for achieving large d 33 and good thermal stability of Na0.25K0.25Bi2.5Nb2O9 system materials while maintaining a high curie temperature.
+
+# CONCLUSION
+In the work, a brand-new piezoelectric material system of Na0.25K0.25Bi2.5-x Ce x Nb2-yW y O9 (NKBC x NW y , x = 0.01, 0.02, 0.03, 0.04; y = 0.02) was produced. The XRD and SEM results indicate that Ce/W ions entered the NKBN ceramic lattice and induced grain growth. The Raman spectra results show that the vibration and distortion of A-site atoms in the NbO6 octahedron changed obviously due to the introduction of Ce/W ions into the NKBN ceramics. PFM measurement manifests that the ferroelectric domain of the NKBN ceramics could be refined by introducing Ce/W ions. The best performance is obtained in the NKBC0.02NW0.02 ceramic, which possesses a larger d 33 of 24.4 pC/N and exceptional heat stability (the d 33 retains 83 % of its original count after the annealing @ 500 \xb0C) and a higher T c of 670 \u2103. The research outcomes serve as a proposition for capability optimising NKBN ceramics for real-world applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-09 12:34:37: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The XRD patterns of NKBN and NKBC x NW0.02 ceramics are exhibited in (a). The diffraction peaks of all samples are consistent with the standard diffraction spectra (PDF#97\u2013018\u20136933) and exhibit an A21 am orthorhombic structure. The maximum diffraction intensity of NKBN-based ceramics belongs to (115), which follows the (112 m +1) highest diffraction peak of BLSFs. The XRD measurements showed that the doped Ce/W are diffused into the NKBN lattice without secondary phases, and Ce and W entered into the A-site and B-site of NKBN ceramics according to substitutions of ionic radii similarities, respectively. In addition, (b) shows the (115) diffraction maximum shifts vaguely towards a higher angle with increasing Ce addition, indicating that introducing Ce/W ions leads to unit cell shrinkage. This is because the radius of CeE^{3+}/CeE^{4+} ions (CeE^{3+}: 1.143 \xc5, CeE^{4+}: 0.97 \xc5) is smaller than that of BiE^{3+} ions (BiE^{3+}: 1.17 \xc5), and the radius of WE^{6+} ions (WE^{6+}: 0.60 \xc5) is smaller than that of NbE^{5+} ions (NbE^{5+}: 0.64 \xc5). The result is comparable with the previous reports. (a)-(e) shows the natural surface SEM images of the NKBN and NKBC x NW0.02 ceramics. It can be seen that the grains of the NKBN and NKBC x NW0.02 ceramics exhibit a lamellar structure. This is because the surface free energy of BLSF materials was low in the a-b plane, leading to a faster growth rate in this plane than that along other planes. The relative density of all samples is more than 94 %, as shown in (f), indicating that it is suitable to select 1100 \u2103 as the sintering temperature. In addition, the volatilisation of bismuth slows down the kinetics of the diffusion mechanisms, and then grain growth in NKBN-based ceramics will decrease. The grain size of NKBN-based ceramics increases with less bismuth volatilisation and oxygen vacancy. Raman spectrum is a forceful tool for studying the complex structure of ceramics, which can support characteristics of the atom lattice vibrations and the position occupied by the doped ions in the lattice. (a) shows the Raman spectra of NKBN and NKBC x NW0.02 ceramics, and the spectrum could be roughly divided into three regions. There are apparent phonon modes in 62, 83, 112, 178, 216, 267, 432, 561, and 839 cmE^{\u22121}. Due to the vibration of A-site atoms, Raman peaks at 83, 112, 178, and 216 cmE^{\u22121}, in the range of 50 cmE^{\u22121} to 250 cmE^{\u22121}. These frequencies of NKBC x NW0.02 ceramic are shifted slightly toward higher frequencies due to the lower mass of Ce (140.12 g/mol) compared to Bi (208.98 g/mol). The Raman spectra of all samples in the range of 250 cmE^{\u22121}\u223c950 cmE^{\u22121} were decomposed into 8 relatively independent Gauss and Lorentz components labelled as v6\u223cv13 by peak fitting, as shown in (b). The v8 and v9 modes combined with the distortion of the NbO6 octahedron decrease with W substitution. In addition, the v10 and v11 modes get weaker while the v13 mode at 835 cmE^{\u22121} gets stronger with increasing Ce concentration, suggesting that the stretching of the Nb-O bond is also changed. Piezoresponse force microscopy (PFM) could provide helpful information on ferroelectric domain structure and polarisation orientation. PFM amplitude and phase of NKBN and NKBC0.02NW0.02 ceramics are shown in (a) and (b), respectively. The domain structure of the NKBN sample is irregularly shaped and micrometre-sized (mainly greater than 2 \u03bcm). The domain structure of NKBC0.02NW0.02 ceramics changes compared to the NKBN sample. In the case of NKBC0.02NW0.02 ceramics, the proportion of micrometre-sized domains reduces, and the smaller island-shaped domains are present. Considering the inverse relationship between piezoelectric response and domain size, it can be reasonably inferred that small domain sizes and large domain wall density of NKBC0.02NW0.02 samples will conducive to domain switching, and the easy domain switching is propitious to improving of piezoelectric performance. is the varied temperature \u03b5r and tan\u03b4 of the NKBN and NKBC x NW0.02 ceramics at 1 MHz. The \u03b5r of all samples is about 220 at room temperature. A notable decrease of the \u03b5r near the T c is observed. The variety of \u03b5r may be due to the changes in grain size. The T c of all the components is above 650 \u2103 as given in (a), indicating that the Ce/W modified NKBN ceramic maintains a high curie temperature T c. In addition, the dielectric peak broadening of NKBC x NW0.02 ceramics is observed, which may be related to the fluctuations and disorder produced by Ce doping. (b) is the varied temperature tan\u03b4 of NKBN and NKBC x NW0.02 ceramics. The tan\u03b4 of all samples keeps the relative stabilisation within a wide temperature range of 25\u2013500 \xb0C, and the tan\u03b4 of NKBC x NW0.02 ceramics is below 0.06 even at 500 \xb0C. The higher T c and smaller tan\u03b4 of NKBC x NW0.02 ceramics provided a solid foundation for high-temperature applications. (a)-(e) shows the complex impedance spectra of the NKBN and NKBC x NW0.02 ceramics between 450 \xb0C and 550 \xb0C at 50 \xb0C intervals. The relationship between the real and imaginary parts of the impedance curve is an arc between 100 Hz and 10E^{6} Hz. The single R-CPE circuit fitting well suggests that the dominant conduction behaviour may be of grain. The cause of the decrease in resistance may be that Ce replaces BiE^{3+} in the (Bi2O2)E^{2+} layer and changes its environment. But, the dc resistivity of NKBC x NW0.02 ceramics still maintains at about 10E^{6} \u03a9\xb7cm orders of magnitude with temperature as high as 500 \xb0C as shown in (f), which lays a favourable cornerstone for reliable application. Only one peak of each component can be observed in the -Z'' against frequency over the temperature range from 450 \u2103 to 550 \u2103 as shown in (a)-(e), which confirms the rationality of the parallel R-CPE circuit model developed in the previous paper The peak value of the characteristic peak decreases, and the peak shifts to a higher frequency with an increase in temperature. The activation energy of relaxation E rel of the NKBN and NKBC x NW0.02 ceramics is 1.23\u20131.43 eV, calculated by the Arrhenius relationship, as presented in (f). The creation of oxygen vacancies because of bismuth vaporization during sintering and it can be expressed as 2Bi Bi \xd7+ 3O O \xd7= 2V Bi \u2032\u2032\u2032+ 3V O \u2219\u2219+Bi 2 O 3 gas. Piezoelectric coefficient d 33 of the Ce/W co-doped NKBN ceramics is improved obviously, and the d 33 reaches above 24 pC/N when the Ce content is greater than or equal to 0.02, as shown in (a). The enhanced d 33 may be related to the delicate ferroelectric domain structures, which agrees with the previous analysis. The good piezoelectric thermal stability of BLSFs piezoceramics also counts for many practical applications. (b) represents the variation of the d 33 of NKBN and NKBC x NW0.02 ceramics with annealing temperature at 25\u2013750 \xb0C. The d 33 of the NKBN ceramics was decreased to 11.7 pC/N (only 70 % of its initial value) when the temperature rose to 500 \xb0C, while the d 33 of the NKBC0.02NW0.02 ceramic kept 20.5 pC/N (83 % of its beginning value) at the same treatment condition.
+
+# TITLE
+A strategy for improving piezoelectricity and thermal stability of Na<inf>0.25</inf>K<inf>0.25</inf>Bi<inf>2.5</inf>Nb<inf>2</inf>O<inf>9</inf>-based piezoceramics via A/B-site co-doping
+
+# ABSTRACT
+Obviously improved piezoelectricity and thermal stability of Na0.25K0.25Bi2.5Nb2O9-based ceramics have been urgently required for high-temperature piezoelectric applications. In this work, Na0.25K0.25Bi2.5-x
+                     Ce
+                        x
+                     Nb2-y
+                     W
+                        y
+                     O9 (NKBC
+                        x
+                     NW
+                        y
+                     , x = 0.01, 0.02, 0.03, 0.04; y = 0.02) piezoceramics were developed via a traditional solid-state reaction method. An optimum composition of Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9 was achieved, which shows a high curie temperature of 670 ℃, a good piezoelectric coefficient d
+                     33 of 24.4 pC/N. The enhanced d
+                     33 stems from small domain sizes and high domain wall density in NKBC0.02NW0.02 ceramics. More importantly, the maximum d
+                     33 can remain above 80 % of the d
+                     33 (@25 ℃), even if the annealing temperature increases to 500 ℃. This work provides a simple and viable method to obtain high piezoelectric properties and excellent thermal stability in Na0.25K0.25Bi2.5Nb2O9-based ceramics.
+
+# INTRODUCTION
+Among them, the bismuth layer-structured ferroelectrics (BLSFs) possess the advantage of high curie temperature (500 \u2103\u223c950 \u2103), good fatigue endurance, and easy to sinter, making them greatly promising high-temperature piezoelectric materials. The formula of BLSFs is (Bi2O2)E^{2+}(A m-1B m O3m+1)E^{2-}, and the (A m-1B m O3m+1)E^{2-} blocks are interleaved with the (Bi2O2)E^{2+} layers along the c-axis. The A is a mono-, di- or trivalent ion with cuboctahedral coordination, for example, BiE^{3+}, CaE^{2+}, NaE^{+}, and so on, while B is primarily suitable for octahedral coordination transition metal ion. The variable 'm' indicates the number of oxygen octahedral layers between contiguous bismuth oxide layers, ranging from 1 to 5. The BLSFs materials are suitable for various electro-optic/optoelectronic devices for application in extreme environments (piezo-pyroelectric devices, spintronic devices, optical devices, and sensors et al.), and also oxide ion conductors (oxygen pumps, solid oxide fuel cells, and oxygen-permeable membrane catalysts et al.). The piezoelectric property of the BLSFs ceramics is poor due to the spontaneous polarisation P s confined in the a-b plane. The excellent electrical properties can be obtained by rare earth doping in Y2Ti2O7-based ceramics. The piezoelectric properties of BLSFs ceramics could be significantly improved by doping with A-site ions, B-site ions, or A/B-site ions. Sodium potassium bismuth niobate, Na0.25K0.25Bi2.5Nb2O9 (NKBN), a member of BLSFs materials with m = 2, is characterised by high curie temperature (T c \u223c 650 \u2103) and large resistivity (\u03c1 reaches 10E^{6} \u03a9\xb7cm@500 \xb0C), showing fascinating potential applications for high-temperature piezoelectric sensor. The d 33 of NKBN-based ceramics can be increased to 28 pC/N by Ce addition. But its curie temperature T c drops to 580 \u2103, and d 33 drops sharply to below 10 pC/N when the annealing temperature rises to 500 \u2103. The introduction of NdE^{3+} to the A site of NKBN ceramics also leads to the increase of d 33 and Q m and the decrease of tan\u03b4. The Na0.25K0.25Bi2.3Nd0.2Nb2O9 sample has a large d 33 of 24 C/N, a large Q m of 2449, and a small tan\u03b4 of 0.40 %, a high T c of 632 \u2103. Wang et al. reported that the T c remains 659 \u2103 and the d 33 is 23pC/N by the B-site Co2O3 doping in NKBN ceramics. Unfortunately, the d 33 shows a rapid downward trend with an annealing temperature above 400 \u2103. The influence of Mn doping on the structural and electrical properties of NKBN ceramics is also investigated in detail. The optimum component NKBN+3 mol%MnCO3 ceramics possesses a large d 33 of 25 C/N and a high T c of 643 \u2103. So, the piezoelectric coefficient of NKBN-based ceramics has significantly improved, but the high-temperature stability of the piezoelectric performance of NKBN-based ceramics is unsatisfying. To our knowledge, no suitable method exists to obtain NKBN-based ceramics with high piezoelectric coefficients and excellent thermal stability. Donor doping modification at the B-site is an effective way to ameliorate electrical performance while keeping a high T c in BLSFs ceramics. It is reported that W donor-doping in CaBi2Nb2O9 ceramics could restrict the oxygen vacancy hopping and reduce defect dipoles, leading to higher resistance and higher breakdown voltage. The piezoelectric coefficient d 33 of CaBi2Nb2O9 ceramics is increased by about two times by W donor-doping, and it has good thermal depoling properties. The introduction of Nb/Ta co-doping is a valid method of gaining a large piezoelectric constant (d 33 = 25 pC/N), good thermal depoling performance (d 33 maintaining \u223c 90 % @600 \u2103), high curie temperature (T c = 690 \u2103) in Bi4Ti3O12 ceramics. In addition, previous studies have shown that Ce ion is a valid A-site additive for improving the piezoelectric properties of BLSFs ceramics. A large d 33 of 20.2 C/N, good thermal stability, and a high T c of 923 \u2103 in Ce-modified CaBi2Nb2O9-based ceramics is achieved. Ca0.80(Li0.5Bi0.5)0.20Bi2Nb2O9 ceramics doped with Ce at A-site, the d 33 is effectively improved to 17.2 C/N, and the d 33 maintained 89.5 % after annealing temperature at 900 \xb0C. It was found that the introduction of Ce ions enhances the structural distortion of Bi4Ti2.94W0.03Ta0.03O12 ceramics, which results in enhanced polarisation switching and piezoelectricity. The highest d 33 of 17.2 C/N is obtained in Bi3.96Ce0.04Ti2.94W0.03Ta0.03O12 ceramics, which is 25 % stronger than that of Bi4Ti2.94W0.03Ta0.03O12 ceramics. The piezoelectric constant d 33 and resistivity of B-site modified Bi4Ti3O12-based ceramics can be improved due to the introduction of Ce at A-site in our previous work. The optimum component Bi3.97Ce0.03Ti2.98(WNb)0.01O12 ceramics possess high d 33 of 40.2 C/N, large resistivity of 10E^{7} \u03a9\xb7cm order of magnitude at 500 \xb0C, and small dielectric loss. However, there are few reports on information on A/B-site co-doping on the structure, ferroelectric domain, and electrical performance of NKBN ceramics. This work focuses on the effect of A-site Ce doping on the crystal structure, ferroelectric domain, and electrical performance of B-site donor-doped NKBN ceramics. The piezoelectric coefficient and thermal stability of NKBN-based ceramics are enhanced simultaneously via A/B-site co-doping without sacrificing the curie temperature. In the optimum Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9 component, an excellent d 33 of 24.4 pC/N along with good thermal stability (d 33 maintains above 80 % after annealing at 500 \u2103), and high T c of 670 \u2103 is gained. This work offers explicit direction for achieving large d 33 and good thermal stability of Na0.25K0.25Bi2.5Nb2O9 system materials while maintaining a high curie temperature.
+
+# CONCLUSION
+In the work, a brand-new piezoelectric material system of Na0.25K0.25Bi2.5-x Ce x Nb2-yW y O9 (NKBC x NW y , x = 0.01, 0.02, 0.03, 0.04; y = 0.02) was produced. The XRD and SEM results indicate that Ce/W ions entered the NKBN ceramic lattice and induced grain growth. The Raman spectra results show that the vibration and distortion of A-site atoms in the NbO6 octahedron changed obviously due to the introduction of Ce/W ions into the NKBN ceramics. PFM measurement manifests that the ferroelectric domain of the NKBN ceramics could be refined by introducing Ce/W ions. The best performance is obtained in the NKBC0.02NW0.02 ceramic, which possesses a larger d 33 of 24.4 pC/N and exceptional heat stability (the d 33 retains 83 % of its original count after the annealing @ 500 \xb0C) and a higher T c of 670 \u2103. The research outcomes serve as a proposition for capability optimising NKBN ceramics for real-world applications.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9": 24.4,
+      "NKBC0.02NW0.02": 24.4,
+      "NKBN": 11.7,
+      "NKBC0.02NW0.02": 20.5
+    },
+    "abbreviations": {
+      "NKBC": "Na0.25K0.25Bi2.5-xCexNb2-yWyO9",
+      "NW": "W"
+    },
+    "property_unit": "pC/N",
+    "family": "BLSFs"
+  }
+}"

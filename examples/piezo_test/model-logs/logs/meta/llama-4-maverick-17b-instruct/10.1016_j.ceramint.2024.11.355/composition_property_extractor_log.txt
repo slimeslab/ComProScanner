@@ -1,0 +1,195 @@
+2025-07-11 13:02:39: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+a shows images of the BNT-6BT-1KNN single crystals, which are earthy yellow, with a maximum size of 5 \xd7 5 \xd7 3 mmE^{3}. The bulk XRD patterns reveal that the single crystals are preferentially oriented along the {001}c plane (b). The {200}c reflection in the unpoled specimen exhibits distinct peak splitting, indicating significant tetragonality in the single crystal with a lattice constant ratio of c T /a T = 1.009. After poling, there is minimal change in the c T /a T ratio, accompanied by an increase in the intensity of the (100)c reflection peak. The powdered XRD patterns before and after poling at room temperature indicate a cubic-like phase, which was also confirmed by the Rietveld refinement analyses (, in the supporting information). For a typical non-ergodic state, the XRD pattern of the poled specimen typically shows an apparent ferroelectric phase. However, in the case of BNT-6BT-1KNN single crystals, no similar characteristics were observed in the powered specimens. Although we did not conduct TEM experiments, based on the results from BNT-6BT-3KNN single crystals, we speculate that there is a coexistence of local P4bm and R3c phases in BNT-6BT-1KNN single crystals. First, the maximum strain of 0.16 % on the positive side of the electric field is significantly larger than that (0.1 %) observed on the negative side. Second, a remnant strain of 0.05 % is detected. Finally, the minimum strain on the negative side of the field, measuring \u22120.04 %, differs from that typically observed in BNT-based non-ergodic relaxor ceramics. To further confirm the electric field-induced ferroelectric properties, local domain polarization experiments were conducted using piezoelectric force microscopy (PFM). The initial phase and amplitude images of the PFM, along with those after applying a 50 V voltage, are shown in b, respectively. In the initial state, the PFM images suggest the presence of polar nano regions. A sequence of \u221250 to 50 V DC voltage was applied to a local area parallel to the specimen surface (b) over a scan area of 3 \xd7 3 \u03bcmE^{2}, with a positive voltage applied to a 1 \xd7 1 \u03bcmE^{2} region within the planned area. The PFM image revealed opposite responses in the inner and outer square regions, indicating a long-range ferroelectric state induced by the electric field (c). These observations were further corroborated by the symmetric amplitude-voltage \u201cButterfly\u201d curves (d). The temperature dependence of relative permittivity and dielectric loss of BNT-6BT-1KNN single crystals is shown in. At room temperature, the unpoled specimen exhibits significant frequency dispersion, suggesting the possible presence of polar nanoregions (PNRs). More importantly, the poled specimen shows a sharp increase in the relative permittivity around 106 \xb0C, accompanied by anomalies the temperature dependence of dielectric loss. Combined with PFM results, this finding suggests a ferroelectric-relaxor phase transition. Above T F-R , the temperature dependence of the imaginary part of the relative permittivity shows a frequency-dependent anomaly ( in the supporting information), giving a freezing temperature (T f ) of 106 \xb0C based on the Vogel-Fulcher law. Above 230 \xb0C, the relative permittivity becomes frequency independent, which may suggest that the change in the behaviors of PNRs. To define the transition temperature (T B ) between the relaxor and paraelectric states, the relationship between the reciprocal of relative permittivity and temperature is fitted using the Curie-Weiss law, giving a T B of 345 \xb0C (d). At room temperature, the BNT-6BT-1KNN single crystals exhibit a piezoelectric coefficient d 33 of 263 pC/N and a thickness longitudinal electromechanical coupling coefficient K t of 0.43. ( a and b). Compared to BNT-6BT-1KNN ceramics or single crystals by the SSCG method , BNT-6BT-1KNN single crystals exhibit a higher piezoelectric coefficient (c). At 65 \xb0C below T F-R , the piezoelectric coefficient reaches a maximum value of 295 pC/N. The d 33 value increases again above T F-R , suggesting the presence of the long-range domains after poling. Notably, the temperature for the disappearance of piezoelectric properties coincides with the transition point (\u223c230 \xb0C) where the frequency-dependent behaviors of the relative permittivity change. a shows the polarization-electric field (P-E) curves and bipolar strain-electric field (S-E) curves of BNT-6BT-1KNN single crystals at various temperatures. As the temperature increases above 75 \xb0C, both the maximum polarization (P max) and remnant polarization (P r ) decrease compared to room temperature, likely due to changes in the polarization process. Additionally, the electrostrain gradually increases with increasing temperature, a common phenomenon in BNT-based materials. At 175 \xb0C, the hysteresis loops exhibit characteristics of a relaxor ferroelectric, with the disappearance of negative electrostrain and a maximum electrostrain of 0.47 %. The inverse piezoelectric coefficient is 940 pm/V. b summarizes the maximum electrostrain S max and P r at various temperatures. Above T F-R , the P r value exhibits a significant decrease from 125 \xb0C to 175 \xb0C, corresponding to a large increase in S max. As shown in , the Raman spectra of the BNT-6BT-1KNN single crystals measured from 25 \xb0C to 500 \xb0C can be divided into three primary regions : (1) Peaks at wavenumbers \u2264200 cmE^{\u22121}, which are primarily attributed to the vibrations of A-site ions (Bi, Na, and K) in the perovskite structure, with the Bi-O bond peak typically observed around 75 cmE^{\u22121}; (2) The peak at approximately 260 cmE^{\u22121} corresponds to the vibrations of B-site B-O bonds; (3) Peaks in the 450 to 700 cmE^{\u22121} range, usually associated with the vibrations of BO6 octahedra. b presents the intensity changes in peaks from regions A, B and C as a function of temperature. As the temperature increases, the intensity of the Bi-O bond vibration peak near 75 cmE^{\u22121} in region A, as well as the relative intensity of the B-O bond vibration peak at wavenumbers above 200 cmE^{\u22121} in region B, gradually decreases. In region C, the BO6 octahedral vibration peaks become narrower and weaker. Above 300 \xb0C, the Raman active mode near 75 cmE^{\u22121} almost disappears, corresponding to the emergence of the paraelectric phase.
+
+# TITLE
+Evolutions of dielectric, ferroelectric, and piezoelectric properties with temperature in a nonergodic BNT-BT-KNN single crystal
+
+# ABSTRACT
+In this study, <001>c-oriented 0.93(Bi0.5Na0.5)TiO3-0.06BaTiO3-0.01(K0.5Na0.5)NbO3 (BNT-6BT-1KNN) single crystals were successfully synthesized using the flux method, achieving crystal dimensions up to 5 × 5 × 3 mm3. At room temperature, these single crystals exhibit an impressive piezoelectric coefficient (d
+                     
+                        33
+                     ) of 264 pC/N, surpassing the performance of equivalent composition in randomly oriented and textured ceramics. Unlike typical (Bi0.5Na0.5)TiO3-based non-ergodic relaxors, the initial strain loop reveals a unique negative minimum strain under a negative electric field, indicating distinct strain characteristics. The application of a poling electric field results in notable changes to both dielectric behaviors and domain structures, signifying a phase transition from polar nanoregions (PNRs) to long-range ferroelectric domains. Within the temperature range from T
+                     
+                        f
+                      to 200 °C, dielectric and piezoelectric responses suggest a coexistence of non-ergodic and ergodic relaxor states. Furthermore, a substantial electrostrain of 0.47 % was observed at 175 °C, corresponding to an inverse piezoelectric coefficient (
+                        
+                           
+                              d
+                              33
+                              ∗
+                           
+                        
+                     ) of 940 pm/V, confirming the high electromechanical responsiveness. These findings underscore the potential of BNT-6BT-1KNN single crystals as high-performance lead-free piezoelectric materials for advanced actuator applications.
+
+# INTRODUCTION
+However, most commercially available piezoelectric materials are lead-based, with lead content often exceeding 70 % of the total mass of raw materials. Among the known lead-free materials, BaTiO3 , K0.5Na0.5NbO3 , Bi0.5Na0.5TiO3 (BNT)  and BiFeO3  have attracted significant attention due to their excellent electrical properties. In particular, BNT-based ceramics has been extensively studied due to their enhanced piezoelectric performance or improved electrostrain. For instance, in Bi0.5Na0.5TiO3-BaTiO3-K0.5Na0.5NbO3 (BNT-BT-KNN) ceramics, a large electrostrain of 0.45 % has been reported as a result of electric-field induced phase transition. In 2014, Park et al.  synthesized BNT-BT-xKNN single crystals via the solid-state method, achieving a high strain of 0.57 %, with contracted hysteresis loops and \u201csprout-shaped\u201d electric-field-induced strain (S-E) curves. In 2016, Chen et al.  obtained [001]c-oriented BNT-6BT-2KNN single crystals with a giant strain of 0.83 % at 28 kV/cm using the top-seeded solution growth method. In 2019, Wang et al.  employed the top-seeded solution growth method to grow BNT-BT-KNN single crystals, achieving a large S max of approximately 0.9 % and a high piezoelectric coefficient d 33 of 840 pC/N at room temperature (T d \u223c 45 \xb0C). Recently, BNT-BT-3KNN single crystals with a large S max of 0.91 % and an exceptionally high d33\u2217 of 4550 pm/V were obtained via the flux method. In BNT-BT-KNN, the large strain originates from a composition-driven transition from a non-ergodic to an ergodic state. In this work, we investigate the evolutions of electrical behaviors in the non-ergodic compositions of BNT-BT-KNN single crystals, with the goal of gaining a deeper understanding of this system.
+
+# CONCLUSION
+In this study, high-quality <001>c-oriented BNT-6BT-1KNN single crystals were successfully grown using the flux method. A piezoelectric coefficient of 263 pC/N was achieved at room temperature. The initial strain loop exhibits a distinct difference with that of typical BNT-based ceramics. In the temperature range of T f and 230 \xb0C, the nonzero d 33 suggests the presence of the long-range ferroelectric ordering. Additionally, at 175 \xb0C, a large electric-field-induced strain of 0.47 % and an inverse piezoelectric coefficient of 940 p.m./V were achieved.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-11 13:02:46: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+a shows images of the BNT-6BT-1KNN single crystals, which are earthy yellow, with a maximum size of 5 \xd7 5 \xd7 3 mmE^{3}. The bulk XRD patterns reveal that the single crystals are preferentially oriented along the {001}c plane (b). The {200}c reflection in the unpoled specimen exhibits distinct peak splitting, indicating significant tetragonality in the single crystal with a lattice constant ratio of c T /a T = 1.009. After poling, there is minimal change in the c T /a T ratio, accompanied by an increase in the intensity of the (100)c reflection peak. The powdered XRD patterns before and after poling at room temperature indicate a cubic-like phase, which was also confirmed by the Rietveld refinement analyses (, in the supporting information). For a typical non-ergodic state, the XRD pattern of the poled specimen typically shows an apparent ferroelectric phase. However, in the case of BNT-6BT-1KNN single crystals, no similar characteristics were observed in the powered specimens. Although we did not conduct TEM experiments, based on the results from BNT-6BT-3KNN single crystals, we speculate that there is a coexistence of local P4bm and R3c phases in BNT-6BT-1KNN single crystals. First, the maximum strain of 0.16 % on the positive side of the electric field is significantly larger than that (0.1 %) observed on the negative side. Second, a remnant strain of 0.05 % is detected. Finally, the minimum strain on the negative side of the field, measuring \u22120.04 %, differs from that typically observed in BNT-based non-ergodic relaxor ceramics. To further confirm the electric field-induced ferroelectric properties, local domain polarization experiments were conducted using piezoelectric force microscopy (PFM). The initial phase and amplitude images of the PFM, along with those after applying a 50 V voltage, are shown in b, respectively. In the initial state, the PFM images suggest the presence of polar nano regions. A sequence of \u221250 to 50 V DC voltage was applied to a local area parallel to the specimen surface (b) over a scan area of 3 \xd7 3 \u03bcmE^{2}, with a positive voltage applied to a 1 \xd7 1 \u03bcmE^{2} region within the planned area. The PFM image revealed opposite responses in the inner and outer square regions, indicating a long-range ferroelectric state induced by the electric field (c). These observations were further corroborated by the symmetric amplitude-voltage \u201cButterfly\u201d curves (d). The temperature dependence of relative permittivity and dielectric loss of BNT-6BT-1KNN single crystals is shown in. At room temperature, the unpoled specimen exhibits significant frequency dispersion, suggesting the possible presence of polar nanoregions (PNRs). More importantly, the poled specimen shows a sharp increase in the relative permittivity around 106 \xb0C, accompanied by anomalies the temperature dependence of dielectric loss. Combined with PFM results, this finding suggests a ferroelectric-relaxor phase transition. Above T F-R , the temperature dependence of the imaginary part of the relative permittivity shows a frequency-dependent anomaly ( in the supporting information), giving a freezing temperature (T f ) of 106 \xb0C based on the Vogel-Fulcher law. Above 230 \xb0C, the relative permittivity becomes frequency independent, which may suggest that the change in the behaviors of PNRs. To define the transition temperature (T B ) between the relaxor and paraelectric states, the relationship between the reciprocal of relative permittivity and temperature is fitted using the Curie-Weiss law, giving a T B of 345 \xb0C (d). At room temperature, the BNT-6BT-1KNN single crystals exhibit a piezoelectric coefficient d 33 of 263 pC/N and a thickness longitudinal electromechanical coupling coefficient K t of 0.43. ( a and b). Compared to BNT-6BT-1KNN ceramics or single crystals by the SSCG method , BNT-6BT-1KNN single crystals exhibit a higher piezoelectric coefficient (c). At 65 \xb0C below T F-R , the piezoelectric coefficient reaches a maximum value of 295 pC/N. The d 33 value increases again above T F-R , suggesting the presence of the long-range domains after poling. Notably, the temperature for the disappearance of piezoelectric properties coincides with the transition point (\u223c230 \xb0C) where the frequency-dependent behaviors of the relative permittivity change. a shows the polarization-electric field (P-E) curves and bipolar strain-electric field (S-E) curves of BNT-6BT-1KNN single crystals at various temperatures. As the temperature increases above 75 \xb0C, both the maximum polarization (P max) and remnant polarization (P r ) decrease compared to room temperature, likely due to changes in the polarization process. Additionally, the electrostrain gradually increases with increasing temperature, a common phenomenon in BNT-based materials. At 175 \xb0C, the hysteresis loops exhibit characteristics of a relaxor ferroelectric, with the disappearance of negative electrostrain and a maximum electrostrain of 0.47 %. The inverse piezoelectric coefficient is 940 pm/V. b summarizes the maximum electrostrain S max and P r at various temperatures. Above T F-R , the P r value exhibits a significant decrease from 125 \xb0C to 175 \xb0C, corresponding to a large increase in S max. As shown in , the Raman spectra of the BNT-6BT-1KNN single crystals measured from 25 \xb0C to 500 \xb0C can be divided into three primary regions : (1) Peaks at wavenumbers \u2264200 cmE^{\u22121}, which are primarily attributed to the vibrations of A-site ions (Bi, Na, and K) in the perovskite structure, with the Bi-O bond peak typically observed around 75 cmE^{\u22121}; (2) The peak at approximately 260 cmE^{\u22121} corresponds to the vibrations of B-site B-O bonds; (3) Peaks in the 450 to 700 cmE^{\u22121} range, usually associated with the vibrations of BO6 octahedra. b presents the intensity changes in peaks from regions A, B and C as a function of temperature. As the temperature increases, the intensity of the Bi-O bond vibration peak near 75 cmE^{\u22121} in region A, as well as the relative intensity of the B-O bond vibration peak at wavenumbers above 200 cmE^{\u22121} in region B, gradually decreases. In region C, the BO6 octahedral vibration peaks become narrower and weaker. Above 300 \xb0C, the Raman active mode near 75 cmE^{\u22121} almost disappears, corresponding to the emergence of the paraelectric phase.
+
+# TITLE
+Evolutions of dielectric, ferroelectric, and piezoelectric properties with temperature in a nonergodic BNT-BT-KNN single crystal
+
+# ABSTRACT
+In this study, <001>c-oriented 0.93(Bi0.5Na0.5)TiO3-0.06BaTiO3-0.01(K0.5Na0.5)NbO3 (BNT-6BT-1KNN) single crystals were successfully synthesized using the flux method, achieving crystal dimensions up to 5 × 5 × 3 mm3. At room temperature, these single crystals exhibit an impressive piezoelectric coefficient (d
+                     
+                        33
+                     ) of 264 pC/N, surpassing the performance of equivalent composition in randomly oriented and textured ceramics. Unlike typical (Bi0.5Na0.5)TiO3-based non-ergodic relaxors, the initial strain loop reveals a unique negative minimum strain under a negative electric field, indicating distinct strain characteristics. The application of a poling electric field results in notable changes to both dielectric behaviors and domain structures, signifying a phase transition from polar nanoregions (PNRs) to long-range ferroelectric domains. Within the temperature range from T
+                     
+                        f
+                      to 200 °C, dielectric and piezoelectric responses suggest a coexistence of non-ergodic and ergodic relaxor states. Furthermore, a substantial electrostrain of 0.47 % was observed at 175 °C, corresponding to an inverse piezoelectric coefficient (
+                        
+                           
+                              d
+                              33
+                              ∗
+                           
+                        
+                     ) of 940 pm/V, confirming the high electromechanical responsiveness. These findings underscore the potential of BNT-6BT-1KNN single crystals as high-performance lead-free piezoelectric materials for advanced actuator applications.
+
+# INTRODUCTION
+However, most commercially available piezoelectric materials are lead-based, with lead content often exceeding 70 % of the total mass of raw materials. Among the known lead-free materials, BaTiO3 , K0.5Na0.5NbO3 , Bi0.5Na0.5TiO3 (BNT)  and BiFeO3  have attracted significant attention due to their excellent electrical properties. In particular, BNT-based ceramics has been extensively studied due to their enhanced piezoelectric performance or improved electrostrain. For instance, in Bi0.5Na0.5TiO3-BaTiO3-K0.5Na0.5NbO3 (BNT-BT-KNN) ceramics, a large electrostrain of 0.45 % has been reported as a result of electric-field induced phase transition. In 2014, Park et al.  synthesized BNT-BT-xKNN single crystals via the solid-state method, achieving a high strain of 0.57 %, with contracted hysteresis loops and \u201csprout-shaped\u201d electric-field-induced strain (S-E) curves. In 2016, Chen et al.  obtained [001]c-oriented BNT-6BT-2KNN single crystals with a giant strain of 0.83 % at 28 kV/cm using the top-seeded solution growth method. In 2019, Wang et al.  employed the top-seeded solution growth method to grow BNT-BT-KNN single crystals, achieving a large S max of approximately 0.9 % and a high piezoelectric coefficient d 33 of 840 pC/N at room temperature (T d \u223c 45 \xb0C). Recently, BNT-BT-3KNN single crystals with a large S max of 0.91 % and an exceptionally high d33\u2217 of 4550 pm/V were obtained via the flux method. In BNT-BT-KNN, the large strain originates from a composition-driven transition from a non-ergodic to an ergodic state. In this work, we investigate the evolutions of electrical behaviors in the non-ergodic compositions of BNT-BT-KNN single crystals, with the goal of gaining a deeper understanding of this system.
+
+# CONCLUSION
+In this study, high-quality <001>c-oriented BNT-6BT-1KNN single crystals were successfully grown using the flux method. A piezoelectric coefficient of 263 pC/N was achieved at room temperature. The initial strain loop exhibits a distinct difference with that of typical BNT-based ceramics. In the temperature range of T f and 230 \xb0C, the nonzero d 33 suggests the presence of the long-range ferroelectric ordering. Additionally, at 175 \xb0C, a large electric-field-induced strain of 0.47 % and an inverse piezoelectric coefficient of 940 p.m./V were achieved.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "0.93(Bi0.5Na0.5)TiO3-0.06BaTiO3-0.01(K0.5Na0.5)NbO3": 263
+    },
+    "abbreviations": {
+      "BNT-6BT-1KNN": "0.93(Bi0.5Na0.5)TiO3-0.06BaTiO3-0.01(K0.5Na0.5)NbO3"
+    },
+    "property_unit": "pC/N",
+    "family": "BNT-BT-KNN"
+  }
+}"

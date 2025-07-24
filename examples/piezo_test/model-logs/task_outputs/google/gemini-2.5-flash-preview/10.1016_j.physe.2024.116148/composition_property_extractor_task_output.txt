@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Ni@Bi-MoS2":43.17,"Pd@Bi-MoS2":11.29,"Pt@Bi-MoS2":8.22,"Ir@Bi-MoS2":5.86},"abbreviations":{"TM":"Transition Metal atoms","BI-MOS2":"Bilayer MoS2"},"property_unit":"pm/V","family":"MoS2"}}

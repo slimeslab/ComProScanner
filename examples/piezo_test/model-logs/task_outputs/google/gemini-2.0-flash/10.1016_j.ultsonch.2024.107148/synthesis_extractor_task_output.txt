@@ -1,0 +1,1 @@
+{"synthesis_extracted_data":{"method":"Combining","precursors":[],"steps":["The damping back cover, piezoelectric ceramic stack, flange plate, amplifying front cover, fixture rod, and tool rod are combined into a whole with a high-strength bolt made of 45-gauge steel."],"characterization_techniques":["Impedance analyzer","LCR meter"]}}

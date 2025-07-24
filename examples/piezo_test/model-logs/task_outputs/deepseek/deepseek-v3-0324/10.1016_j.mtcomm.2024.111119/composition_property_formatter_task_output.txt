@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(1-0.003)[0.997(0.996K0.5Na0.5NbO3-0.004BiAlO3)-0.003MnO2]-0.003CuO":583},"property_unit":"pC/N","family":"KNN-based"}}

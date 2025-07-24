@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Ca0.6(Li0.5Bi0.5)0.4Bi(2-(0.4*0.1))Ce(0.4*0.1)Nb2O9":21.7,"Ca0.6(Li0.5Bi0.5)0.4Bi(2-(0.4*0))Ce(0.4*0)Nb2O9":12.5},"property_unit":"pC/N","family":"CaBi2Nb2O9"}}

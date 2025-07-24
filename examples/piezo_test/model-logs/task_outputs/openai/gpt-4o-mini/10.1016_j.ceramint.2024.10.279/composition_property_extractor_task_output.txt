@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"KNNS-(0.04-0)CZ-0BAZ":447,"KNNS-(0.04-0.01)CZ-0BAZ":447,"KNNS-(0.04-0.02)CZ-0BAZ":447,"KNNS-(0.04-0.03)CZ-0BAZ":511},"abbreviations":{"KNN":"(K,Na)NbO3","CZ":"CaZrO3","BAZ":"(Bi0.5Ag0.5)ZrO3"},"property_unit":"pC/N","family":"KNN-based ceramics"}}

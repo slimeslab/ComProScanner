@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Phe-Leu-vertical displacement":71,"Phe-Leu-lateral displacement":-73,"Leu-Phe-vertical displacement":87,"Leu-Phe-lateral displacement":-19},"abbreviations":{},"property_unit":"pm/V","family":"Dipeptide"}}

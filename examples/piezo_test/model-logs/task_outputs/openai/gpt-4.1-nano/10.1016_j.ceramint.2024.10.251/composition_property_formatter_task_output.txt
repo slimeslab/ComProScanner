@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Na(1-0)Bi0.5TiO3 - 0NaNbO3":350,"Na(1-0.1)Bi0.5TiO3 - 0NaNbO3":325,"Na(1-0.2)Bi0.5TiO3 - 0NaNbO3":375,"Na(1-0.3)Bi0.5TiO3 - 0NaNbO3":425},"property_unit":"pC/N","family":"BaTiO3"}}

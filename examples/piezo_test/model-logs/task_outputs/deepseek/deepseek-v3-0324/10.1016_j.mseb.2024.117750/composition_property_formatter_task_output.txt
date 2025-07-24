@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"CaBi4Ti4O15":8,"Ca0.85(LiCe)0.075Bi4Ti4-xZnxO15":20,"Ca1-x(Li, Ho)x/2Bi4Ti4O15":null,"CaBi4Ti4-x(Nb1/2Fe1/2)xO15":null,"BaBi4Ti4O15":null},"property_unit":"pC/N","family":"Bismuth-layered structure ferroelectrics (BLSFs)"}}

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.6275PbTiO3 - 0.3725BiScO3":500,"0.61PbTiO3 - 0.39Bi(Ni0.5Hf0.5)O3":425},"property_unit":"pC/N","family":"PbTiO3"}}

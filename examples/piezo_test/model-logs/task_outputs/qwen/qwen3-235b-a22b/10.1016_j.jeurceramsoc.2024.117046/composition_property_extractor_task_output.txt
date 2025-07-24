@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"KICET-PZT8 (porosity 0%)":330.0,"KICET-PZT8 (porosity 7%)":320.1,"KICET-PZT8 (porosity 13%)":313.5},"abbreviations":{"PZT":"Lead Zirconate Titanate"},"property_unit":"pC/N","family":"PZT"}}

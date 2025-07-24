@@ -1,0 +1,290 @@
+2025-07-13 20:40:11: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-13 23:00:50: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-13 23:02:14: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="{
+  "composition_formatted_data": {
+    "compositions_property_values": {
+      "0.06Pb(Sc1/2Nb1/2)O3-0.62Pb(Mg1/3Nb2/3)O3-0.32PbTiO3": 560,
+      "0.06Pb(Sc1/2Nb1/2)O3-0.61Pb(Mg1/3Nb2/3)O3-0.33PbTiO3": 570,
+      "0.06Pb(Sc1/2Nb1/2)O3-0.60Pb(Mg1/3Nb2/3)O3-0.34PbTiO3": 580,
+      "0.06Pb(Sc1/2Nb1/2)O3-0.59Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 665,
+      "0.06Pb(Sc1/2Nb1/2)O3-0.58Pb(Mg1/3Nb2/3)O3-0.36PbTiO3": 642,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.53Pb(Mg1/3Nb2/3)O3-0.32PbTiO3": 405,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.52Pb(Mg1/3Nb2/3)O3-0.33PbTiO3": 500,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.51Pb(Mg1/3Nb2/3)O3-0.34PbTiO3": 529,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.50Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 540,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.49Pb(Mg1/3Nb2/3)O3-0.36PbTiO3": 575,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.48Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 620,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.47Pb(Mg1/3Nb2/3)O3-0.38PbTiO3": 545,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.46Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 478,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.45Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 404,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.38Pb(Mg1/3Nb2/3)O3-0.33PbTiO3": 335,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.37Pb(Mg1/3Nb2/3)O3-0.34PbTiO3": 365,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.36Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 460,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.35Pb(Mg1/3Nb2/3)O3-0.36PbTiO3": 535,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.34Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 540,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.33Pb(Mg1/3Nb2/3)O3-0.38PbTiO3": 545,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.32Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 585,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.31Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 575,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.30Pb(Mg1/3Nb2/3)O3-0.41PbTiO3": 467,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.20Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 340,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.19Pb(Mg1/3Nb2/3)O3-0.38PbTiO3": 490,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.18Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 520,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.17Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 650,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.16Pb(Mg1/3Nb2/3)O3-0.41PbTiO3": 570,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.15Pb(Mg1/3Nb2/3)O3-0.42PbTiO3": 475
+    },
+    "property_unit": "pC/N",
+    "family": "PSN-PMN-PT"
+  }
+}"
+2025-07-17 23:30:15: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-17 23:31:38: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="{
+  "composition_formatted_data": {
+    "compositions_property_values": {
+      "0.06Pb(Sc1/2Nb1/2)O3-0.62Pb(Mg1/3Nb2/3)O3-0.32PbTiO3": 560,
+      "0.06Pb(Sc1/2Nb1/2)O3-0.61Pb(Mg1/3Nb2/3)O3-0.33PbTiO3": 570,
+      "0.06Pb(Sc1/2Nb1/2)O3-0.60Pb(Mg1/3Nb2/3)O3-0.34PbTiO3": 580,
+      "0.06Pb(Sc1/2Nb1/2)O3-0.59Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 665,
+      "0.06Pb(Sc1/2Nb1/2)O3-0.58Pb(Mg1/3Nb2/3)O3-0.36PbTiO3": 642,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.53Pb(Mg1/3Nb2/3)O3-0.32PbTiO3": 405,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.52Pb(Mg1/3Nb2/3)O3-0.33PbTiO3": 500,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.51Pb(Mg1/3Nb2/3)O3-0.34PbTiO3": 529,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.50Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 540,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.49Pb(Mg1/3Nb2/3)O3-0.36PbTiO3": 575,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.48Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 620,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.47Pb(Mg1/3Nb2/3)O3-0.38PbTiO3": 545,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.46Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 478,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.45Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 404,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.38Pb(Mg1/3Nb2/3)O3-0.33PbTiO3": 335,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.37Pb(Mg1/3Nb2/3)O3-0.34PbTiO3": 365,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.36Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 460,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.35Pb(Mg1/3Nb2/3)O3-0.36PbTiO3": 535,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.34Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 540,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.33Pb(Mg1/3Nb2/3)O3-0.38PbTiO3": 545,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.32Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 585,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.31Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 575,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.30Pb(Mg1/3Nb2/3)O3-0.41PbTiO3": 467,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.20Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 340,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.19Pb(Mg1/3Nb2/3)O3-0.38PbTiO3": 490,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.18Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 520,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.17Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 650,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.16Pb(Mg1/3Nb2/3)O3-0.41PbTiO3": 570,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.15Pb(Mg1/3Nb2/3)O3-0.42PbTiO3": 475
+    },
+    "property_unit": "pC/N",
+    "family": "PSN-PMN-PT"
+  }
+}"
+2025-07-17 23:32:51: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2025-07-17 23:34:20: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}. You MUST use the final output from the material parser tool as the final answer for such cases. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'0.06PSN-0.62PMN-0.32PT': 560, '0.06PSN-0.61PMN-0.33PT': 570, '0.06PSN-0.60PMN-0.34PT': 580, '0.06PSN-0.59PMN-0.35PT': 665, '0.06PSN-0.58PMN-0.36PT': 642, '0.15PSN-0.53PMN-0.32PT': 405, '0.15PSN-0.52PMN-0.33PT': 500, '0.15PSN-0.51PMN-0.34PT': 529, '0.15PSN-0.50PMN-0.35PT': 540, '0.15PSN-0.49PMN-0.36PT': 575, '0.15PSN-0.48PMN-0.37PT': 620, '0.15PSN-0.47PMN-0.38PT': 545, '0.15PSN-0.46PMN-0.39PT': 478, '0.15PSN-0.45PMN-0.40PT': 404, '0.29PSN-0.38PMN-0.33PT': 335, '0.29PSN-0.37PMN-0.34PT': 365, '0.29PSN-0.36PMN-0.35PT': 460, '0.29PSN-0.35PMN-0.36PT': 535, '0.29PSN-0.34PMN-0.37PT': 540, '0.29PSN-0.33PMN-0.38PT': 545, '0.29PSN-0.32PMN-0.39PT': 585, '0.29PSN-0.31PMN-0.40PT': 575, '0.29PSN-0.30PMN-0.41PT': 467, '0.43PSN-0.20PMN-0.37PT': 340, '0.43PSN-0.19PMN-0.38PT': 490, '0.43PSN-0.18PMN-0.39PT': 520, '0.43PSN-0.17PMN-0.40PT': 650, '0.43PSN-0.16PMN-0.41PT': 570, '0.43PSN-0.15PMN-0.42PT': 475}, 'abbreviations': {'PSN': 'Pb(Sc1/2Nb1/2)O3', 'PMN': 'Pb(Mg1/3Nb2/3)O3', 'PT': 'PbTiO3'}, 'property_unit': 'pC/N', 'family': 'PSN-PMN-PT'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="{
+  "composition_formatted_data": {
+    "compositions_property_values": {
+      "0.06Pb(Sc1/2Nb1/2)O3-0.62Pb(Mg1/3Nb2/3)O3-0.32PbTiO3": 560,
+      "0.06Pb(Sc1/2Nb1/2)O3-0.61Pb(Mg1/3Nb2/3)O3-0.33PbTiO3": 570,
+      "0.06Pb(Sc1/2Nb1/2)O3-0.60Pb(Mg1/3Nb2/3)O3-0.34PbTiO3": 580,
+      "0.06Pb(Sc1/2Nb1/2)O3-0.59Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 665,
+      "0.06Pb(Sc1/2Nb1/2)O3-0.58Pb(Mg1/3Nb2/3)O3-0.36PbTiO3": 642,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.53Pb(Mg1/3Nb2/3)O3-0.32PbTiO3": 405,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.52Pb(Mg1/3Nb2/3)O3-0.33PbTiO3": 500,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.51Pb(Mg1/3Nb2/3)O3-0.34PbTiO3": 529,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.50Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 540,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.49Pb(Mg1/3Nb2/3)O3-0.36PbTiO3": 575,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.48Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 620,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.47Pb(Mg1/3Nb2/3)O3-0.38PbTiO3": 545,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.46Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 478,
+      "0.15Pb(Sc1/2Nb1/2)O3-0.45Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 404,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.38Pb(Mg1/3Nb2/3)O3-0.33PbTiO3": 335,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.37Pb(Mg1/3Nb2/3)O3-0.34PbTiO3": 365,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.36Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 460,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.35Pb(Mg1/3Nb2/3)O3-0.36PbTiO3": 535,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.34Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 540,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.33Pb(Mg1/3Nb2/3)O3-0.38PbTiO3": 545,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.32Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 585,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.31Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 575,
+      "0.29Pb(Sc1/2Nb1/2)O3-0.30Pb(Mg1/3Nb2/3)O3-0.41PbTiO3": 467,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.20Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 340,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.19Pb(Mg1/3Nb2/3)O3-0.38PbTiO3": 490,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.18Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 520,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.17Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 650,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.16Pb(Mg1/3Nb2/3)O3-0.41PbTiO3": 570,
+      "0.43Pb(Sc1/2Nb1/2)O3-0.15Pb(Mg1/3Nb2/3)O3-0.42PbTiO3": 475
+    },
+    "property_unit": "pC/N",
+    "family": "PSN-PMN-PT"
+  }
+}"

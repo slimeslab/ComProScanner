@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.74 Pb(Mg1/3Nb2/3)O3-0.26PbTiO3 - ACP":1780,"0.74 Pb(Mg1/3Nb2/3)O3-0.26PbTiO3 - DCP":1250},"abbreviations":{"PMN-0.26 PT":"0.74 Pb(Mg1/3Nb2/3)O3-0.26PbTiO3"},"property_unit":"pC/N","family":"PMNT"}}

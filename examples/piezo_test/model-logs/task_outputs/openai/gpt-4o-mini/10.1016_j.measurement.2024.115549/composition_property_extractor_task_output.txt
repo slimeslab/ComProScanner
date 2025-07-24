@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PZT":2155},"abbreviations":{"PZT":"Pb(ZrTi)O3"},"property_unit":"pC/N","family":"PZT"}}

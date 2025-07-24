@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"0.96(K0.5Na0.5)(Nb0.96Sb0.04)O3-(0.04-x)CaZrO3-x(Bi0.5Ag0.5)ZrO3 where x=0.03":447,"0.96(K0.5Na0.5)(Nb0.96Sb0.04)O3-(0.04-x)CaZrO3-x(Bi0.5Ag0.5)ZrO3 where x=0.03 at 120 °C":511},"abbreviations":{"KNNS":"(K0.5Na0.5)(Nb0.96Sb0.04)O3","CZ":"CaZrO3","BAZ":"(Bi0.5Ag0.5)ZrO3"},"property_unit":"pC/N","family":"KNN-based"}}

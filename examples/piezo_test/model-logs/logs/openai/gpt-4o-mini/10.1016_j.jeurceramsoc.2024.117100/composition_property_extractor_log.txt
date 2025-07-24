@@ -1,0 +1,509 @@
+2025-07-09 11:25:56: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# ABSTRACT
+High mechanical quality factor (Q
+                     m) and high piezoelectric coefficient (d
+                     33) are desired for high-power applications of piezoelectric ceramics. However, achieving them based on currently known mechanisms has proven challenging because of the tradeoff between Q
+                     m and d
+                     33. Here we report a surprising finding that this tradeoff can be overcome via acceptor-modified invisible-boundary (IB). High Q
+                     m ∼1096 and high d
+                     33 ∼337 pC/N were achieved and superior to those of both lead-free and commercial lead-based piezoceramics. The acceptor-modified IB was demonstrated in Fe-doped BaTi0.89Hf0.11O3 ceramics, where the acceptor doping in the IB composition increases Q
+                     m by ∼8.6 times and d
+                     33 by ∼1.5 times, being different from the acceptor doping effect in morphotropic/polymorphic phase boundary (MPB/PPB) compositions of increasing Q
+                     m but decreasing d
+                     33. We predict that our finding may also be made in other acceptor-modified IB systems and the obtained high-performance BaTiO3-based piezoceramic could provide an alternative to lead-based piezoceramics in underwater applications.
+
+# INTRODUCTION
+For high-power applications, they have to possess large vibration velocity vrms (vrms is proportional to Q m\xb7d) to generate large mechanical power; therefore, a high mechanical quality factor Q m and a high piezoelectric coefficient d (e.g., d 33) are required naturally. However, it is challenging to simultaneously achieve high Q m and high d 33, because these two properties are usually inversely proportional. This trade-off between Q m and d 33 is well demonstrated in commercial Pb(Zr,Ti)O3 (PZT) piezoelectric ceramics, where the hard PZT piezoceramics have high Q m and low d 33 , and the soft PZT piezoceramics have low Q m and high d 33. It is known that the phase boundary engineering of MPB (morphotropic phase boundary) or PPB (polymorphic phase boundary) characterized structurally by multiphase coexistence has become the golden design rule for developing high d 33 piezoelectric materials due to the lower energy barrier for polarization rotations. However, the high d 33 is always accompanied by the low Q m due to the tendency for easy polarization rotations, which in turn leads to a large external field energy loss. Typical examples of such soft piezoceramics include PZT-5A (soft PZT) or (K,Na)NbO3-based ceramics. The high Q m is produced by acceptor dopants, which yet \u201cpin\u201d the ferroelectric domain wall and thus reduce the d 33. Typical examples include PZT-4 and PZT-8 ceramics (hard PZT piezoceramics) with high Q m and low d 33. It should be noted that although commercial PZT piezoceramics failed to overcome the trade-off between Q m and d 33, great efforts on the PZT family have been made due to its high properties in the past several decades. However, the PZT family is currently facing global restrictions due to the toxicity of its Pb to the environment and human health, and alternative lead-free piezoelectric materials have received widespread attention. Therefore, developing lead-free piezoelectric ceramics with both high Q m and high d 33 is in high demand and a great challenge. Our recent studies have shown that an unexpected finding of an electrostrain maximum occurs in the composition corresponding to an \u201cinvisible boundary\u201d in a ferroelectric single-phase regime of phase diagram, which is a vertical boundary starting from the quadruple point (QP) of the system. The invisible boundary (IB) is not a \u201creal\u201d phase boundary, but a range with enhanced electrical properties similar to the MPB. The IB is a vertical line starting from the quadruple point in the phase diagram. At the same measurement temperature, the IB component has enhanced polarization, electrostrain and other properties compared with the neighboring components. The high performance of IB composition is inherited from QP, which theoretically has almost no energy barrier for polarization rotation and polarization extension. Unlike MPB, where ferroelectric domains can easily rotate between different phases, and the high performance of the IB composition is mainly attributed to the effortless extension of ferroelectric domains within a single phase. This ability is inherited from the QP that theoretically has no energy barrier for polarization rotations. Since the IB composition is a single-phase state, it can highly expected to enhance Q m more significantly by acceptor doping and without the deterioration of piezoelectric properties. In this work, we report a design strategy of acceptor-modified IB engineering, which help simultaneously achieve high Q m and high d 33 in a model material of Fe-doped BaTi0.89Hf0.11O3 (BT-11Hf) ceramics. The simultaneous enhancement of Q m and d 33 from acceptor-modified IB engineering is clearly different from previously common observations of an enhancement of Q m and a deterioration of d 33 from currently known mechanisms of acceptor-modified MPB or PPB, as shown in. The obtained combination of high Q m up to 1096 and high d 33 up to 337 pC/N in BT-11Hf-1Fe is superior to that of both lead-free and commercial lead-based piezoceramics, thereby occupying a hitherto inaccessible \u201chigh Q m and high d 33\u201d regime of Q m vs. d 33 plot of. Below, we will first construct the IB in the BaTi1-x Hf x O3 ceramics and demonstrate the enhanced properties of the IB composition BT-11Hf, then show the high performance of acceptor-modified IB ceramics, and final present the understanding of achieving high Q m and high d 33 from the acceptor-modified IB. The materials in this work can maintain d 33 > 300 pC/N and Q m > 1000 in the temperature range of 0\u201340\u2103, which may meet the working requirements for underwater environments. Additionally, the BT system and the materials in this work have a relatively low driving electric field, making them suitable for use as a kind of piezoelectric transducer.
+
+# CONCLUSION
+In this work, we found an unexpected result in model BT-based ceramics: the trade-off between Q m and d 33 can be overcome by acceptor-modified IB. The acceptor-modified IB was demonstrated in BT-xHf-yFe ceramics, where the IB is a vertical boundary starting from the QP of BT-xHf phase diagram and the acceptor of Fe cations is doped into the IB composition BT-11Hf. The obtained BT-11Hf-1Fe ceramic shows both high Q m \u223c1096 and high d 33 \u223c337 pC/N, which is superior to that of both lead-free and commercial lead-based piezoceramics and occupies a hitherto inaccessible \u201chigh Q m and high d 33\u201d region of Q m vs. d 33 plot of piezoceramics. Therefore, our material overcomes the trade-off between Q m and d 33, which can be well understood based on the acceptor-modified IB. Clearly, this acceptor-modified IB engineering is different from previous known acceptor-modified phase boundary engineering that leads to common observations of \u201chigh Q m and low d 33\u201d or \u201clow Q m and high d 33\u201d.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-09 11:25:58: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# ABSTRACT
+High mechanical quality factor (Q
+                     m) and high piezoelectric coefficient (d
+                     33) are desired for high-power applications of piezoelectric ceramics. However, achieving them based on currently known mechanisms has proven challenging because of the tradeoff between Q
+                     m and d
+                     33. Here we report a surprising finding that this tradeoff can be overcome via acceptor-modified invisible-boundary (IB). High Q
+                     m ∼1096 and high d
+                     33 ∼337 pC/N were achieved and superior to those of both lead-free and commercial lead-based piezoceramics. The acceptor-modified IB was demonstrated in Fe-doped BaTi0.89Hf0.11O3 ceramics, where the acceptor doping in the IB composition increases Q
+                     m by ∼8.6 times and d
+                     33 by ∼1.5 times, being different from the acceptor doping effect in morphotropic/polymorphic phase boundary (MPB/PPB) compositions of increasing Q
+                     m but decreasing d
+                     33. We predict that our finding may also be made in other acceptor-modified IB systems and the obtained high-performance BaTiO3-based piezoceramic could provide an alternative to lead-based piezoceramics in underwater applications.
+
+# INTRODUCTION
+For high-power applications, they have to possess large vibration velocity vrms (vrms is proportional to Q m\xb7d) to generate large mechanical power; therefore, a high mechanical quality factor Q m and a high piezoelectric coefficient d (e.g., d 33) are required naturally. However, it is challenging to simultaneously achieve high Q m and high d 33, because these two properties are usually inversely proportional. This trade-off between Q m and d 33 is well demonstrated in commercial Pb(Zr,Ti)O3 (PZT) piezoelectric ceramics, where the hard PZT piezoceramics have high Q m and low d 33 , and the soft PZT piezoceramics have low Q m and high d 33. It is known that the phase boundary engineering of MPB (morphotropic phase boundary) or PPB (polymorphic phase boundary) characterized structurally by multiphase coexistence has become the golden design rule for developing high d 33 piezoelectric materials due to the lower energy barrier for polarization rotations. However, the high d 33 is always accompanied by the low Q m due to the tendency for easy polarization rotations, which in turn leads to a large external field energy loss. Typical examples of such soft piezoceramics include PZT-5A (soft PZT) or (K,Na)NbO3-based ceramics. The high Q m is produced by acceptor dopants, which yet \u201cpin\u201d the ferroelectric domain wall and thus reduce the d 33. Typical examples include PZT-4 and PZT-8 ceramics (hard PZT piezoceramics) with high Q m and low d 33. It should be noted that although commercial PZT piezoceramics failed to overcome the trade-off between Q m and d 33, great efforts on the PZT family have been made due to its high properties in the past several decades. However, the PZT family is currently facing global restrictions due to the toxicity of its Pb to the environment and human health, and alternative lead-free piezoelectric materials have received widespread attention. Therefore, developing lead-free piezoelectric ceramics with both high Q m and high d 33 is in high demand and a great challenge. Our recent studies have shown that an unexpected finding of an electrostrain maximum occurs in the composition corresponding to an \u201cinvisible boundary\u201d in a ferroelectric single-phase regime of phase diagram, which is a vertical boundary starting from the quadruple point (QP) of the system. The invisible boundary (IB) is not a \u201creal\u201d phase boundary, but a range with enhanced electrical properties similar to the MPB. The IB is a vertical line starting from the quadruple point in the phase diagram. At the same measurement temperature, the IB component has enhanced polarization, electrostrain and other properties compared with the neighboring components. The high performance of IB composition is inherited from QP, which theoretically has almost no energy barrier for polarization rotation and polarization extension. Unlike MPB, where ferroelectric domains can easily rotate between different phases, and the high performance of the IB composition is mainly attributed to the effortless extension of ferroelectric domains within a single phase. This ability is inherited from the QP that theoretically has no energy barrier for polarization rotations. Since the IB composition is a single-phase state, it can highly expected to enhance Q m more significantly by acceptor doping and without the deterioration of piezoelectric properties. In this work, we report a design strategy of acceptor-modified IB engineering, which help simultaneously achieve high Q m and high d 33 in a model material of Fe-doped BaTi0.89Hf0.11O3 (BT-11Hf) ceramics. The simultaneous enhancement of Q m and d 33 from acceptor-modified IB engineering is clearly different from previously common observations of an enhancement of Q m and a deterioration of d 33 from currently known mechanisms of acceptor-modified MPB or PPB, as shown in. The obtained combination of high Q m up to 1096 and high d 33 up to 337 pC/N in BT-11Hf-1Fe is superior to that of both lead-free and commercial lead-based piezoceramics, thereby occupying a hitherto inaccessible \u201chigh Q m and high d 33\u201d regime of Q m vs. d 33 plot of. Below, we will first construct the IB in the BaTi1-x Hf x O3 ceramics and demonstrate the enhanced properties of the IB composition BT-11Hf, then show the high performance of acceptor-modified IB ceramics, and final present the understanding of achieving high Q m and high d 33 from the acceptor-modified IB. The materials in this work can maintain d 33 > 300 pC/N and Q m > 1000 in the temperature range of 0\u201340\u2103, which may meet the working requirements for underwater environments. Additionally, the BT system and the materials in this work have a relatively low driving electric field, making them suitable for use as a kind of piezoelectric transducer.
+
+# CONCLUSION
+In this work, we found an unexpected result in model BT-based ceramics: the trade-off between Q m and d 33 can be overcome by acceptor-modified IB. The acceptor-modified IB was demonstrated in BT-xHf-yFe ceramics, where the IB is a vertical boundary starting from the QP of BT-xHf phase diagram and the acceptor of Fe cations is doped into the IB composition BT-11Hf. The obtained BT-11Hf-1Fe ceramic shows both high Q m \u223c1096 and high d 33 \u223c337 pC/N, which is superior to that of both lead-free and commercial lead-based piezoceramics and occupies a hitherto inaccessible \u201chigh Q m and high d 33\u201d region of Q m vs. d 33 plot of piezoceramics. Therefore, our material overcomes the trade-off between Q m and d 33, which can be well understood based on the acceptor-modified IB. Clearly, this acceptor-modified IB engineering is different from previous known acceptor-modified phase boundary engineering that leads to common observations of \u201chigh Q m and low d 33\u201d or \u201clow Q m and high d 33\u201d.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "BaTi0.89Hf0.11O3 + Fe": 337
+    },
+    "abbreviations": {
+      "BT": "BaTiO3",
+      "IB": "Invisible Boundary",
+      "QP": "Quadruple Point"
+    },
+    "property_unit": "pC/N",
+    "family": "BaTiO3"
+  }
+}"
+2025-07-09 11:31:30: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# ABSTRACT
+High mechanical quality factor (Q
+                     m) and high piezoelectric coefficient (d
+                     33) are desired for high-power applications of piezoelectric ceramics. However, achieving them based on currently known mechanisms has proven challenging because of the tradeoff between Q
+                     m and d
+                     33. Here we report a surprising finding that this tradeoff can be overcome via acceptor-modified invisible-boundary (IB). High Q
+                     m ∼1096 and high d
+                     33 ∼337 pC/N were achieved and superior to those of both lead-free and commercial lead-based piezoceramics. The acceptor-modified IB was demonstrated in Fe-doped BaTi0.89Hf0.11O3 ceramics, where the acceptor doping in the IB composition increases Q
+                     m by ∼8.6 times and d
+                     33 by ∼1.5 times, being different from the acceptor doping effect in morphotropic/polymorphic phase boundary (MPB/PPB) compositions of increasing Q
+                     m but decreasing d
+                     33. We predict that our finding may also be made in other acceptor-modified IB systems and the obtained high-performance BaTiO3-based piezoceramic could provide an alternative to lead-based piezoceramics in underwater applications.
+
+# INTRODUCTION
+For high-power applications, they have to possess large vibration velocity vrms (vrms is proportional to Q m\xb7d) to generate large mechanical power; therefore, a high mechanical quality factor Q m and a high piezoelectric coefficient d (e.g., d 33) are required naturally. However, it is challenging to simultaneously achieve high Q m and high d 33, because these two properties are usually inversely proportional. This trade-off between Q m and d 33 is well demonstrated in commercial Pb(Zr,Ti)O3 (PZT) piezoelectric ceramics, where the hard PZT piezoceramics have high Q m and low d 33 , and the soft PZT piezoceramics have low Q m and high d 33. It is known that the phase boundary engineering of MPB (morphotropic phase boundary) or PPB (polymorphic phase boundary) characterized structurally by multiphase coexistence has become the golden design rule for developing high d 33 piezoelectric materials due to the lower energy barrier for polarization rotations. However, the high d 33 is always accompanied by the low Q m due to the tendency for easy polarization rotations, which in turn leads to a large external field energy loss. Typical examples of such soft piezoceramics include PZT-5A (soft PZT) or (K,Na)NbO3-based ceramics. The high Q m is produced by acceptor dopants, which yet \u201cpin\u201d the ferroelectric domain wall and thus reduce the d 33. Typical examples include PZT-4 and PZT-8 ceramics (hard PZT piezoceramics) with high Q m and low d 33. It should be noted that although commercial PZT piezoceramics failed to overcome the trade-off between Q m and d 33, great efforts on the PZT family have been made due to its high properties in the past several decades. However, the PZT family is currently facing global restrictions due to the toxicity of its Pb to the environment and human health, and alternative lead-free piezoelectric materials have received widespread attention. Therefore, developing lead-free piezoelectric ceramics with both high Q m and high d 33 is in high demand and a great challenge. Our recent studies have shown that an unexpected finding of an electrostrain maximum occurs in the composition corresponding to an \u201cinvisible boundary\u201d in a ferroelectric single-phase regime of phase diagram, which is a vertical boundary starting from the quadruple point (QP) of the system. The invisible boundary (IB) is not a \u201creal\u201d phase boundary, but a range with enhanced electrical properties similar to the MPB. The IB is a vertical line starting from the quadruple point in the phase diagram. At the same measurement temperature, the IB component has enhanced polarization, electrostrain and other properties compared with the neighboring components. The high performance of IB composition is inherited from QP, which theoretically has almost no energy barrier for polarization rotation and polarization extension. Unlike MPB, where ferroelectric domains can easily rotate between different phases, and the high performance of the IB composition is mainly attributed to the effortless extension of ferroelectric domains within a single phase. This ability is inherited from the QP that theoretically has no energy barrier for polarization rotations. Since the IB composition is a single-phase state, it can highly expected to enhance Q m more significantly by acceptor doping and without the deterioration of piezoelectric properties. In this work, we report a design strategy of acceptor-modified IB engineering, which help simultaneously achieve high Q m and high d 33 in a model material of Fe-doped BaTi0.89Hf0.11O3 (BT-11Hf) ceramics. The simultaneous enhancement of Q m and d 33 from acceptor-modified IB engineering is clearly different from previously common observations of an enhancement of Q m and a deterioration of d 33 from currently known mechanisms of acceptor-modified MPB or PPB, as shown in. The obtained combination of high Q m up to 1096 and high d 33 up to 337 pC/N in BT-11Hf-1Fe is superior to that of both lead-free and commercial lead-based piezoceramics, thereby occupying a hitherto inaccessible \u201chigh Q m and high d 33\u201d regime of Q m vs. d 33 plot of. Below, we will first construct the IB in the BaTi1-x Hf x O3 ceramics and demonstrate the enhanced properties of the IB composition BT-11Hf, then show the high performance of acceptor-modified IB ceramics, and final present the understanding of achieving high Q m and high d 33 from the acceptor-modified IB. The materials in this work can maintain d 33 > 300 pC/N and Q m > 1000 in the temperature range of 0\u201340\u2103, which may meet the working requirements for underwater environments. Additionally, the BT system and the materials in this work have a relatively low driving electric field, making them suitable for use as a kind of piezoelectric transducer.
+
+# CONCLUSION
+In this work, we found an unexpected result in model BT-based ceramics: the trade-off between Q m and d 33 can be overcome by acceptor-modified IB. The acceptor-modified IB was demonstrated in BT-xHf-yFe ceramics, where the IB is a vertical boundary starting from the QP of BT-xHf phase diagram and the acceptor of Fe cations is doped into the IB composition BT-11Hf. The obtained BT-11Hf-1Fe ceramic shows both high Q m \u223c1096 and high d 33 \u223c337 pC/N, which is superior to that of both lead-free and commercial lead-based piezoceramics and occupies a hitherto inaccessible \u201chigh Q m and high d 33\u201d region of Q m vs. d 33 plot of piezoceramics. Therefore, our material overcomes the trade-off between Q m and d 33, which can be well understood based on the acceptor-modified IB. Clearly, this acceptor-modified IB engineering is different from previous known acceptor-modified phase boundary engineering that leads to common observations of \u201chigh Q m and low d 33\u201d or \u201clow Q m and high d 33\u201d.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-09 11:31:32: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# ABSTRACT
+High mechanical quality factor (Q
+                     m) and high piezoelectric coefficient (d
+                     33) are desired for high-power applications of piezoelectric ceramics. However, achieving them based on currently known mechanisms has proven challenging because of the tradeoff between Q
+                     m and d
+                     33. Here we report a surprising finding that this tradeoff can be overcome via acceptor-modified invisible-boundary (IB). High Q
+                     m ∼1096 and high d
+                     33 ∼337 pC/N were achieved and superior to those of both lead-free and commercial lead-based piezoceramics. The acceptor-modified IB was demonstrated in Fe-doped BaTi0.89Hf0.11O3 ceramics, where the acceptor doping in the IB composition increases Q
+                     m by ∼8.6 times and d
+                     33 by ∼1.5 times, being different from the acceptor doping effect in morphotropic/polymorphic phase boundary (MPB/PPB) compositions of increasing Q
+                     m but decreasing d
+                     33. We predict that our finding may also be made in other acceptor-modified IB systems and the obtained high-performance BaTiO3-based piezoceramic could provide an alternative to lead-based piezoceramics in underwater applications.
+
+# INTRODUCTION
+For high-power applications, they have to possess large vibration velocity vrms (vrms is proportional to Q m\xb7d) to generate large mechanical power; therefore, a high mechanical quality factor Q m and a high piezoelectric coefficient d (e.g., d 33) are required naturally. However, it is challenging to simultaneously achieve high Q m and high d 33, because these two properties are usually inversely proportional. This trade-off between Q m and d 33 is well demonstrated in commercial Pb(Zr,Ti)O3 (PZT) piezoelectric ceramics, where the hard PZT piezoceramics have high Q m and low d 33 , and the soft PZT piezoceramics have low Q m and high d 33. It is known that the phase boundary engineering of MPB (morphotropic phase boundary) or PPB (polymorphic phase boundary) characterized structurally by multiphase coexistence has become the golden design rule for developing high d 33 piezoelectric materials due to the lower energy barrier for polarization rotations. However, the high d 33 is always accompanied by the low Q m due to the tendency for easy polarization rotations, which in turn leads to a large external field energy loss. Typical examples of such soft piezoceramics include PZT-5A (soft PZT) or (K,Na)NbO3-based ceramics. The high Q m is produced by acceptor dopants, which yet \u201cpin\u201d the ferroelectric domain wall and thus reduce the d 33. Typical examples include PZT-4 and PZT-8 ceramics (hard PZT piezoceramics) with high Q m and low d 33. It should be noted that although commercial PZT piezoceramics failed to overcome the trade-off between Q m and d 33, great efforts on the PZT family have been made due to its high properties in the past several decades. However, the PZT family is currently facing global restrictions due to the toxicity of its Pb to the environment and human health, and alternative lead-free piezoelectric materials have received widespread attention. Therefore, developing lead-free piezoelectric ceramics with both high Q m and high d 33 is in high demand and a great challenge. Our recent studies have shown that an unexpected finding of an electrostrain maximum occurs in the composition corresponding to an \u201cinvisible boundary\u201d in a ferroelectric single-phase regime of phase diagram, which is a vertical boundary starting from the quadruple point (QP) of the system. The invisible boundary (IB) is not a \u201creal\u201d phase boundary, but a range with enhanced electrical properties similar to the MPB. The IB is a vertical line starting from the quadruple point in the phase diagram. At the same measurement temperature, the IB component has enhanced polarization, electrostrain and other properties compared with the neighboring components. The high performance of IB composition is inherited from QP, which theoretically has almost no energy barrier for polarization rotation and polarization extension. Unlike MPB, where ferroelectric domains can easily rotate between different phases, and the high performance of the IB composition is mainly attributed to the effortless extension of ferroelectric domains within a single phase. This ability is inherited from the QP that theoretically has no energy barrier for polarization rotations. Since the IB composition is a single-phase state, it can highly expected to enhance Q m more significantly by acceptor doping and without the deterioration of piezoelectric properties. In this work, we report a design strategy of acceptor-modified IB engineering, which help simultaneously achieve high Q m and high d 33 in a model material of Fe-doped BaTi0.89Hf0.11O3 (BT-11Hf) ceramics. The simultaneous enhancement of Q m and d 33 from acceptor-modified IB engineering is clearly different from previously common observations of an enhancement of Q m and a deterioration of d 33 from currently known mechanisms of acceptor-modified MPB or PPB, as shown in. The obtained combination of high Q m up to 1096 and high d 33 up to 337 pC/N in BT-11Hf-1Fe is superior to that of both lead-free and commercial lead-based piezoceramics, thereby occupying a hitherto inaccessible \u201chigh Q m and high d 33\u201d regime of Q m vs. d 33 plot of. Below, we will first construct the IB in the BaTi1-x Hf x O3 ceramics and demonstrate the enhanced properties of the IB composition BT-11Hf, then show the high performance of acceptor-modified IB ceramics, and final present the understanding of achieving high Q m and high d 33 from the acceptor-modified IB. The materials in this work can maintain d 33 > 300 pC/N and Q m > 1000 in the temperature range of 0\u201340\u2103, which may meet the working requirements for underwater environments. Additionally, the BT system and the materials in this work have a relatively low driving electric field, making them suitable for use as a kind of piezoelectric transducer.
+
+# CONCLUSION
+In this work, we found an unexpected result in model BT-based ceramics: the trade-off between Q m and d 33 can be overcome by acceptor-modified IB. The acceptor-modified IB was demonstrated in BT-xHf-yFe ceramics, where the IB is a vertical boundary starting from the QP of BT-xHf phase diagram and the acceptor of Fe cations is doped into the IB composition BT-11Hf. The obtained BT-11Hf-1Fe ceramic shows both high Q m \u223c1096 and high d 33 \u223c337 pC/N, which is superior to that of both lead-free and commercial lead-based piezoceramics and occupies a hitherto inaccessible \u201chigh Q m and high d 33\u201d region of Q m vs. d 33 plot of piezoceramics. Therefore, our material overcomes the trade-off between Q m and d 33, which can be well understood based on the acceptor-modified IB. Clearly, this acceptor-modified IB engineering is different from previous known acceptor-modified phase boundary engineering that leads to common observations of \u201chigh Q m and low d 33\u201d or \u201clow Q m and high d 33\u201d.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "BaTi0.89Hf0.11O3 + Fe": 337
+    },
+    "abbreviations": {
+      "BT": "BaTiO3"
+    },
+    "property_unit": "pC/N",
+    "family": "BaTiO3"
+  }
+}"
+2025-07-09 11:32:36: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# ABSTRACT
+High mechanical quality factor (Q
+                     m) and high piezoelectric coefficient (d
+                     33) are desired for high-power applications of piezoelectric ceramics. However, achieving them based on currently known mechanisms has proven challenging because of the tradeoff between Q
+                     m and d
+                     33. Here we report a surprising finding that this tradeoff can be overcome via acceptor-modified invisible-boundary (IB). High Q
+                     m ∼1096 and high d
+                     33 ∼337 pC/N were achieved and superior to those of both lead-free and commercial lead-based piezoceramics. The acceptor-modified IB was demonstrated in Fe-doped BaTi0.89Hf0.11O3 ceramics, where the acceptor doping in the IB composition increases Q
+                     m by ∼8.6 times and d
+                     33 by ∼1.5 times, being different from the acceptor doping effect in morphotropic/polymorphic phase boundary (MPB/PPB) compositions of increasing Q
+                     m but decreasing d
+                     33. We predict that our finding may also be made in other acceptor-modified IB systems and the obtained high-performance BaTiO3-based piezoceramic could provide an alternative to lead-based piezoceramics in underwater applications.
+
+# INTRODUCTION
+For high-power applications, they have to possess large vibration velocity vrms (vrms is proportional to Q m\xb7d) to generate large mechanical power; therefore, a high mechanical quality factor Q m and a high piezoelectric coefficient d (e.g., d 33) are required naturally. However, it is challenging to simultaneously achieve high Q m and high d 33, because these two properties are usually inversely proportional. This trade-off between Q m and d 33 is well demonstrated in commercial Pb(Zr,Ti)O3 (PZT) piezoelectric ceramics, where the hard PZT piezoceramics have high Q m and low d 33 , and the soft PZT piezoceramics have low Q m and high d 33. It is known that the phase boundary engineering of MPB (morphotropic phase boundary) or PPB (polymorphic phase boundary) characterized structurally by multiphase coexistence has become the golden design rule for developing high d 33 piezoelectric materials due to the lower energy barrier for polarization rotations. However, the high d 33 is always accompanied by the low Q m due to the tendency for easy polarization rotations, which in turn leads to a large external field energy loss. Typical examples of such soft piezoceramics include PZT-5A (soft PZT) or (K,Na)NbO3-based ceramics. The high Q m is produced by acceptor dopants, which yet \u201cpin\u201d the ferroelectric domain wall and thus reduce the d 33. Typical examples include PZT-4 and PZT-8 ceramics (hard PZT piezoceramics) with high Q m and low d 33. It should be noted that although commercial PZT piezoceramics failed to overcome the trade-off between Q m and d 33, great efforts on the PZT family have been made due to its high properties in the past several decades. However, the PZT family is currently facing global restrictions due to the toxicity of its Pb to the environment and human health, and alternative lead-free piezoelectric materials have received widespread attention. Therefore, developing lead-free piezoelectric ceramics with both high Q m and high d 33 is in high demand and a great challenge. Our recent studies have shown that an unexpected finding of an electrostrain maximum occurs in the composition corresponding to an \u201cinvisible boundary\u201d in a ferroelectric single-phase regime of phase diagram, which is a vertical boundary starting from the quadruple point (QP) of the system. The invisible boundary (IB) is not a \u201creal\u201d phase boundary, but a range with enhanced electrical properties similar to the MPB. The IB is a vertical line starting from the quadruple point in the phase diagram. At the same measurement temperature, the IB component has enhanced polarization, electrostrain and other properties compared with the neighboring components. The high performance of IB composition is inherited from QP, which theoretically has almost no energy barrier for polarization rotation and polarization extension. Unlike MPB, where ferroelectric domains can easily rotate between different phases, and the high performance of the IB composition is mainly attributed to the effortless extension of ferroelectric domains within a single phase. This ability is inherited from the QP that theoretically has no energy barrier for polarization rotations. Since the IB composition is a single-phase state, it can highly expected to enhance Q m more significantly by acceptor doping and without the deterioration of piezoelectric properties. In this work, we report a design strategy of acceptor-modified IB engineering, which help simultaneously achieve high Q m and high d 33 in a model material of Fe-doped BaTi0.89Hf0.11O3 (BT-11Hf) ceramics. The simultaneous enhancement of Q m and d 33 from acceptor-modified IB engineering is clearly different from previously common observations of an enhancement of Q m and a deterioration of d 33 from currently known mechanisms of acceptor-modified MPB or PPB, as shown in. The obtained combination of high Q m up to 1096 and high d 33 up to 337 pC/N in BT-11Hf-1Fe is superior to that of both lead-free and commercial lead-based piezoceramics, thereby occupying a hitherto inaccessible \u201chigh Q m and high d 33\u201d regime of Q m vs. d 33 plot of. Below, we will first construct the IB in the BaTi1-x Hf x O3 ceramics and demonstrate the enhanced properties of the IB composition BT-11Hf, then show the high performance of acceptor-modified IB ceramics, and final present the understanding of achieving high Q m and high d 33 from the acceptor-modified IB. The materials in this work can maintain d 33 > 300 pC/N and Q m > 1000 in the temperature range of 0\u201340\u2103, which may meet the working requirements for underwater environments. Additionally, the BT system and the materials in this work have a relatively low driving electric field, making them suitable for use as a kind of piezoelectric transducer.
+
+# CONCLUSION
+In this work, we found an unexpected result in model BT-based ceramics: the trade-off between Q m and d 33 can be overcome by acceptor-modified IB. The acceptor-modified IB was demonstrated in BT-xHf-yFe ceramics, where the IB is a vertical boundary starting from the QP of BT-xHf phase diagram and the acceptor of Fe cations is doped into the IB composition BT-11Hf. The obtained BT-11Hf-1Fe ceramic shows both high Q m \u223c1096 and high d 33 \u223c337 pC/N, which is superior to that of both lead-free and commercial lead-based piezoceramics and occupies a hitherto inaccessible \u201chigh Q m and high d 33\u201d region of Q m vs. d 33 plot of piezoceramics. Therefore, our material overcomes the trade-off between Q m and d 33, which can be well understood based on the acceptor-modified IB. Clearly, this acceptor-modified IB engineering is different from previous known acceptor-modified phase boundary engineering that leads to common observations of \u201chigh Q m and low d 33\u201d or \u201clow Q m and high d 33\u201d.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-09 11:32:38: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# ABSTRACT
+High mechanical quality factor (Q
+                     m) and high piezoelectric coefficient (d
+                     33) are desired for high-power applications of piezoelectric ceramics. However, achieving them based on currently known mechanisms has proven challenging because of the tradeoff between Q
+                     m and d
+                     33. Here we report a surprising finding that this tradeoff can be overcome via acceptor-modified invisible-boundary (IB). High Q
+                     m ∼1096 and high d
+                     33 ∼337 pC/N were achieved and superior to those of both lead-free and commercial lead-based piezoceramics. The acceptor-modified IB was demonstrated in Fe-doped BaTi0.89Hf0.11O3 ceramics, where the acceptor doping in the IB composition increases Q
+                     m by ∼8.6 times and d
+                     33 by ∼1.5 times, being different from the acceptor doping effect in morphotropic/polymorphic phase boundary (MPB/PPB) compositions of increasing Q
+                     m but decreasing d
+                     33. We predict that our finding may also be made in other acceptor-modified IB systems and the obtained high-performance BaTiO3-based piezoceramic could provide an alternative to lead-based piezoceramics in underwater applications.
+
+# INTRODUCTION
+For high-power applications, they have to possess large vibration velocity vrms (vrms is proportional to Q m\xb7d) to generate large mechanical power; therefore, a high mechanical quality factor Q m and a high piezoelectric coefficient d (e.g., d 33) are required naturally. However, it is challenging to simultaneously achieve high Q m and high d 33, because these two properties are usually inversely proportional. This trade-off between Q m and d 33 is well demonstrated in commercial Pb(Zr,Ti)O3 (PZT) piezoelectric ceramics, where the hard PZT piezoceramics have high Q m and low d 33 , and the soft PZT piezoceramics have low Q m and high d 33. It is known that the phase boundary engineering of MPB (morphotropic phase boundary) or PPB (polymorphic phase boundary) characterized structurally by multiphase coexistence has become the golden design rule for developing high d 33 piezoelectric materials due to the lower energy barrier for polarization rotations. However, the high d 33 is always accompanied by the low Q m due to the tendency for easy polarization rotations, which in turn leads to a large external field energy loss. Typical examples of such soft piezoceramics include PZT-5A (soft PZT) or (K,Na)NbO3-based ceramics. The high Q m is produced by acceptor dopants, which yet \u201cpin\u201d the ferroelectric domain wall and thus reduce the d 33. Typical examples include PZT-4 and PZT-8 ceramics (hard PZT piezoceramics) with high Q m and low d 33. It should be noted that although commercial PZT piezoceramics failed to overcome the trade-off between Q m and d 33, great efforts on the PZT family have been made due to its high properties in the past several decades. However, the PZT family is currently facing global restrictions due to the toxicity of its Pb to the environment and human health, and alternative lead-free piezoelectric materials have received widespread attention. Therefore, developing lead-free piezoelectric ceramics with both high Q m and high d 33 is in high demand and a great challenge. Our recent studies have shown that an unexpected finding of an electrostrain maximum occurs in the composition corresponding to an \u201cinvisible boundary\u201d in a ferroelectric single-phase regime of phase diagram, which is a vertical boundary starting from the quadruple point (QP) of the system. The invisible boundary (IB) is not a \u201creal\u201d phase boundary, but a range with enhanced electrical properties similar to the MPB. The IB is a vertical line starting from the quadruple point in the phase diagram. At the same measurement temperature, the IB component has enhanced polarization, electrostrain and other properties compared with the neighboring components. The high performance of IB composition is inherited from QP, which theoretically has almost no energy barrier for polarization rotation and polarization extension. Unlike MPB, where ferroelectric domains can easily rotate between different phases, and the high performance of the IB composition is mainly attributed to the effortless extension of ferroelectric domains within a single phase. This ability is inherited from the QP that theoretically has no energy barrier for polarization rotations. Since the IB composition is a single-phase state, it can highly expected to enhance Q m more significantly by acceptor doping and without the deterioration of piezoelectric properties. In this work, we report a design strategy of acceptor-modified IB engineering, which help simultaneously achieve high Q m and high d 33 in a model material of Fe-doped BaTi0.89Hf0.11O3 (BT-11Hf) ceramics. The simultaneous enhancement of Q m and d 33 from acceptor-modified IB engineering is clearly different from previously common observations of an enhancement of Q m and a deterioration of d 33 from currently known mechanisms of acceptor-modified MPB or PPB, as shown in. The obtained combination of high Q m up to 1096 and high d 33 up to 337 pC/N in BT-11Hf-1Fe is superior to that of both lead-free and commercial lead-based piezoceramics, thereby occupying a hitherto inaccessible \u201chigh Q m and high d 33\u201d regime of Q m vs. d 33 plot of. Below, we will first construct the IB in the BaTi1-x Hf x O3 ceramics and demonstrate the enhanced properties of the IB composition BT-11Hf, then show the high performance of acceptor-modified IB ceramics, and final present the understanding of achieving high Q m and high d 33 from the acceptor-modified IB. The materials in this work can maintain d 33 > 300 pC/N and Q m > 1000 in the temperature range of 0\u201340\u2103, which may meet the working requirements for underwater environments. Additionally, the BT system and the materials in this work have a relatively low driving electric field, making them suitable for use as a kind of piezoelectric transducer.
+
+# CONCLUSION
+In this work, we found an unexpected result in model BT-based ceramics: the trade-off between Q m and d 33 can be overcome by acceptor-modified IB. The acceptor-modified IB was demonstrated in BT-xHf-yFe ceramics, where the IB is a vertical boundary starting from the QP of BT-xHf phase diagram and the acceptor of Fe cations is doped into the IB composition BT-11Hf. The obtained BT-11Hf-1Fe ceramic shows both high Q m \u223c1096 and high d 33 \u223c337 pC/N, which is superior to that of both lead-free and commercial lead-based piezoceramics and occupies a hitherto inaccessible \u201chigh Q m and high d 33\u201d region of Q m vs. d 33 plot of piezoceramics. Therefore, our material overcomes the trade-off between Q m and d 33, which can be well understood based on the acceptor-modified IB. Clearly, this acceptor-modified IB engineering is different from previous known acceptor-modified phase boundary engineering that leads to common observations of \u201chigh Q m and low d 33\u201d or \u201clow Q m and high d 33\u201d.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "BaTi0.89Hf0.11O3 + Fe": 337
+    },
+    "abbreviations": {
+      "BT": "BaTiO3"
+    },
+    "property_unit": "pC/N",
+    "family": "BaTiO3"
+  }
+}"

@@ -1,0 +1,237 @@
+2025-07-11 11:28:42: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Positive strain amplitudes (positive cycle S pos+, negative cycle S pos-) of the lead-free B1-x S x TZ piezoelectric ceramics (x\xa0=\xa00\u20130.2\xa0mol) induced by external fields of 10, 20, and 30\xa0kV/cm.
+|B1-x S x T|10\xa0kV/cm|20\xa0kV/cm|30\xa0kV/cm| S pos+ (%)| S pos- (%)| S pos+ (%)| S pos- (%)| S pos+ (%)| S pos- (%)|
+|---|---|---|---|---|---|---|---|---|---|
+|0|0.042|0.042|0.076|0.073|0.092|0.095|
+|0.04|0.056|0.030|0.096|0.057|0.113|0.069|
+|0.08|0.063|0.058|0.092|0.087|0.109|0.106|
+|0.12|0.057|0.052|0.078|0.086|0.101|0.102|
+|0.16|0.092|0.084|0.110|0.107|0.121|0.120|
+|0.2|0.041|0.035|0.068|0.064|0.074|0.072|
+
+Table 2. The d 33, d 33\u2217, and \u03b5 r for some BT-based piezoelectric ceramics.
+|Material| d 33 (pC/N)| d 33\u2217 (pm/V)| \u03b5 r|Ref.|
+|---|---|---|---|---|
+|Ba0.95Ca0.05Ti0.95Sn0.05O3|431|403|4380|[48]|
+|Ba0.856Ca0.144Ti0.9168Hf0.0832O3|410|424|2889|[49]|
+|Ba0.94Ca0.06Ti0.93Hf0.07O3|355|556|2190|[50]|
+|Ba0.825Ca0.175Ti0.925Zr0.075|225|429|2520|[51]|
+|Ba0.92Ca0.08Ti0.95Hf0.05O3|380|640|4760|[52]|
+|Ba0.85Ca0.15Ti0.92Zr0.08O3|349|463|2358|[53]|
+|Ba0.86Sr0.14Ti0.955Zr0.045O3|450|\u2013|4070|[54]|
+|(Ba0.99Ca0.01)(Zr0.02Ti0.98)O3-0.08\xa0wt%Ga2O3|440|\u2013|1568|[55]|
+|Ba0.84Sr0.16Ti0.92Zr0.08O3|447|895|4649|This work|
+
+# RESULTS AND DISCUSSION
+(a) presents the RT XRD patterns of the lead-free B1-x S x TZ piezoelectric ceramics, covering a 2\u03b8 range of 20\u201370\xb0. Additionally, it displays standard diffraction peaks corresponding to four polymorphs of BT: rhombohedral (R) (PDF#85\u20131797), orthorhombic (O) (PDF#81\u20132200), tetragonal (T) (PDF#05\u20130626), and cubic (C) (PDF#55\u20130212). Notably, all ceramic samples exhibited the typical perovskite structure (ABO3), indicating that SrE^{2+} successfully diffused within the BZT matrix, resulting in a stable compound. As x increased from 0 to 0.2 mol, a minor shift of the diffraction peaks to higher angles was noted. This is attributed to lattice contraction resulting from the smaller radius of SrE^{2+} (1.13 \xc5) replacing the larger radius of BaE^{2+} (1.35 \xc5). According to the Bragg equation (2dSin\u03b8 = n\u03bb), diffraction peaks shifted toward higher angles. (b and c) provides the local enlarged XRD patterns in the 38\u201340\xb0 and 65\u201367\xb0 ranges. The incomplete splitting of diffraction peaks suggested that the ceramics were in a multiphase coexistence state. (d) presents the \u03b5 r-T curves of the B1-x S x TZ piezoelectric ceramics measured at 10 kHz to further elucidate phase evolution. Due to the combined ability of SrE^{2+} and ZrE^{4+} to regulate the phase transition temperature, T R-O (for all samples), T O-T (for x = 0.12, 0.16, and 0.2 mol samples), and T C (for x = 0.2 mol samples) occurred near RT (15\u201348 \xb0C), as displayed in (e). Based on the diffusion characteristics of phase transitions, it could be inferred that all samples indeed exhibited multiphase coexistence near RT. Combining these findings with the XRD Rietveld refinement results shown in (f\u2013k) clarified that B1-x S x TZ ceramics underwent a structural evolution characterized by the transition from R-O to R-O-T and ultimately to R-O-T-C, accompanied by noteworthy changes in phase fractions. The low refinement parameters (i.e., R wp \u2264 9.58 %, R p \u2264 7.13%, and goodness of fit (GOF) \u2264 3.64) demonstrate that the experimental data closely matched the theoretical calculations, thereby verifying the accuracy and reliability of the refinement process. (a\u2013f) presents the surface texture and particle size distribution of lead-free B1-x S x TZ piezoelectric ceramics after thermal corrosion. All samples exhibited irregularly arranged polygonal grains with clear grain boundaries at a scale of 300 \u03bcm. As x increased from 0 to 0.12 mol, the mean grain diameter reduced from 59.93 to 57.56 \u03bcm, accompanied by an increase in the number of pores. For 0.12 \u2264 x \u2264 0.2 mol, the mean grain diameter grew from 57.56 to 63.93 \u03bcm while the number of pores decreased. For 0 \u2264 x \u2264 0.12 mol, the former factor predominated, inhibiting grain growth and resulting in reduced grain size and increased pore density. However, for 0.12 \u2264 x \u2264 0.2 mol, the grain growth promotion by lattice defects became dominant, resulting in larger grain size and reduced pore density. The evolution from discontinuous sections to sharply discontinuous sections (at x = 0.12 mol) to discontinuous sections in (g\u2013l) corresponds to the observed variation in pore density in the surface morphology, further confirming the microstructural evolution induced by doping SrE^{2+}. (a\u2013f) displays the \u03b5 r-T and tan\u03b4-T curves of lead-free B1-x S x TZ piezoelectric ceramics measured at 1, 10, and 100 kHz. The TR-O, T O-T, and T C of the x = 0 mol sample were 48, 67, and 94 \xb0C, respectively. As the SrE^{2+} concentration increased, T R-O decreased to 15 \xb0C, T O-T to 30 \xb0C, and T C to 45 \xb0C. This suggested that SrE^{2+} and ZrE^{4+} played a noteworthy synergistic role in modulating the phase transition temperature, promoting the formation of multi-ferroelectric phase states at RT, and increasing the dielectric constant and piezoelectric response. (g and h) shows the \u03b5 r and the tan\u03b4 at RT of the B1-x S x TZ ceramics. In the range of 0 \u2264 x \u2264 0.16 (mol), the \u03b5 r gradually increased from 1164 to 4649. However, the \u03b5 r decreased to 4431 when the SrE^{2}\u207a doping amount reached 0.2 mol. Meanwhile, at 0 \u2264 x \u2264 0.2 (mol), the tan\u03b4 showed irregular fluctuations between 0.031 (x = 0 mol) and 0.023 (x = 0.16 mol). The trends in \u03b5r and tan\u03b4 could be attributed to the alteration of the multiphase coexisting structure caused by the co-doping of Zr\u2074\u207a and Sr2\u207a, which influenced the dielectric properties of the ceramic. Moreover, across temperatures from 150 to 200 \xb0C, all tested samples showed a discernible increase in dielectric loss tangent. The \u03b5 r of all samples decreased with increasing test frequency, indicating typical dielectric frequency dispersion behavior in the B1-x S x TZ system. Broadening of anomaly peaks was observed in the \u03b5 r-T curves, which could be attributed to ion doping-induced disruption of long-range ferroelectric order and the resulting phase transition relaxation behavior. The degree of phase transition relaxation in the B1-x S x TZ system can be quantitatively studied using Eqs. , which are based on the Curie-Weiss law. In Eq. , T 0 represents the Curie-Weiss temperature, and C is the Curie constant that reflects the characteristics of the ferroelectric transition. In Eq. , T cw represents the temperature where 1/\u03b5 r starts to adhere to the Curie-Weiss law, while T m indicates the temperature at which \u03b5 r reaches its peak value. When T < T cw, the 1/\u03b5 r of the relaxor ferroelectric departs from the Curie-Weiss law, with the magnitude of this departure indicated by \u0394T m. The calculated \u0394T m values are presented in (i). As the SrE^{2+} content increased, \u0394T m exhibited an irregular fluctuation. For samples with x = 0 and 0.12 mol, \u0394T m reached a minimum of 35 \xb0C and a maximum of 49 \xb0C, respectively, indicating a fluctuating phase transition relaxation behavior in the B1-x S x TZ system. The dispersion factor \u03b3 is determined through linear fitting between ln(1/\u03b5 r-1/\u03b5 m) and ln(T-T m). A \u03b3 value of 1 indicates a typical ferroelectric material that follows the Curie-Weiss law, while a \u03b3 value of 2 indicates a ferroelectric material with a highly relaxor phase transition. For the B1-x S x TZ system, the results of the linear fitting are presented in (i). As x increased, the \u03b3 value exhibited a fluctuation consistent with that of \u0394T m.  (a) illustrates the RT polarization-electric field (P-E) hysteresis loops of the B1-x S x TZ ceramics tested at 1 Hz. Specifically, P max decreased from 16.4 to 13.4 \u03bcC/cmE^{2}, while Pr declined to 5.8 \u03bcC/cmE^{2} from its initial value of 9.9 \u03bcC/cmE^{2}. This trend was likely due to the modulation of the phase transition relaxation degree within the B1-x S x TZ system by varying the SrE^{2+} content, with the enhancement of relaxor phase transition behavior accompanying the decline in ferroelectric properties. For instance, the x = 0.12 mol sample exhibited the lowest P max (14.8 \u03bcC/cmE^{2}) and P r (8.1 \u03bcC/cmE^{2}) (except for the x = 0.2 mol sample), alongside the highest \u0394T m (49 \xb0C) and \u03b3 (1.58). As x increased from 0 to 0.16 mol, the particle dimension first expanded and subsequently diminished, following the pattern of P r. Hence, the variation in the ferroelectric properties of the B1-x S x TZ system could be attributed to the combined effect of relaxor phase transition behavior and grain size. Although the x = 0.2 mol sample possessed the largest particle size, its primary crystal phase was non-ferroelectric cubic symmetry, resulting in the weakest response to external fields. Additionally, the lower energy barriers between polarization vectors in the multiphase coexistence region led to an overall small E C (1.531\u20132.91 kV/cm) of the B1-x S x TZ system. As x increased from 0 to 0.2 mol, E C exhibited a pattern of increasing, decreasing, and subsequently increasing, possibly due to alterations in different phase boundaries and phase fractions.  (d\u2013f) depicts the bipolar strain-electric field (S-E) curves of lead-free B1-x S x TZ piezoelectric ceramics induced by external fields of 10, 20, and 30 kV/cm at RT. Furthermore, the strain curve revealed an asymmetric butterfly shape at x = 0.04 mol, which might be attributed to the electric field-induced irreversible lattice contraction or elongation. summarizes the percentage of positive strain amplitude (S pos, positive cycle S pos+, negative cycle S pos-) for B1-x S x TZ piezoelectric ceramics. As x increased from 0 to 0.2 mol, S pos displayed fluctuating changes attributed to variations in the inverse piezoelectric effect stemming from differing the SrE^{2+} content. The variation in x resulted in varying degrees of lattice distortion and multiphase fraction within the B1-x S x TZ system, leading to discrepancies in the inverse piezoelectric effect. In the x = 0.16 mol sample, S pos attained its peak values of 0.09 %, 0.11 %, and 0.12 % under electric fields of 10, 20, and 30 kV/cm, respectively. The calculation of the d 33 can be expressed as d 33 = Q\u03b5 0 \u03b5 r P r , where Q represents the electrostriction coefficient. The enhanced piezoelectric properties of the B1-x S x TZ system appeared unrelated to the gradual decrease in ferroelectric properties but might have been associated with the enhanced dielectric properties. (a) illustrates the \u03b5 r P r of the B1-x S x TZ piezoelectric ceramics. As x grew, the \u03b5 r P r initially rose before declining, reaching a maximum of 40446 at x = 0.16 mol. (b and c) presents the d 33 and k p of the B1-x S x TZ system, with the x = 0.16 mol sample exhibiting the strongest piezoelectric performance, with d 33 = 447 pC/N and k p = 0.49. In perovskite piezoelectric materials, the rhombohedral phase possesses eight polarization orientations, the orthorhombic phase exhibits 12, and the tetragonal phase features six. Additionally, the rhombohedral phase has domain walls at 180\xb0, 71\xb0, and 109\xb0, the orthorhombic phase has domain walls at 180\xb0, 90\xb0, 60\xb0, and 120\xb0, while the tetragonal phase has domain walls at 180\xb0 and 90\xb0. illustrates the polarization directions and domain wall types of the three ferroelectric phases. Since non-180\xb0 domain walls switch more easily, the orthorhombic phase with more types of non-180\xb0 domain walls may be more advantageous for improving piezoelectric performance. According to crystal phase analysis, the fraction of the orthorhombic phase rose sequentially as x increased from 0 to 0.16 mol, consistent with the trend of enhanced piezoelectric performance. Therefore, the enhanced piezoelectric performance of the B1-x S x TZ system is attributed to the improved dielectric response and the optimization of the multiphase coexistence structure. Although the x = 0.2 mol sample exhibited multiphase coexistence and high dielectric response, its primary crystal phase was a non-ferroelectric cubic symmetry, resulting in the weakest piezoelectric performance. The determination of d 33\u2217 can be expressed as d 33\u2217 = S max/E max, with E max signifying the maximum electric field strength and S max denoting the peak strain. (d\u2013f) shows the d 33\u2217 obtained by averaging the results from positive and negative strain cycles. Particularly, the x = 0.16 mol sample achieved a high inverse piezoelectric constant of 895 p.m./V. compares the key performance indices of various BT-based piezoelectric materials. The higher RT d 33, d 33\u2217, and \u03b5 r values observed in this study demonstrate that adjusting the phase structure and multiphase fraction is an effective strategy to enhance the overall performance of the perovskite lead-free piezoelectric ceramics.
+
+# TITLE
+Synergistic enhancement of electrical characteristics in Sr<sup>2+</sup> and Zr<sup>4+</sup> Co-doped BaTiO<inf>3</inf> ceramics through multiphase coexistence regulation at room temperature
+
+# ABSTRACT
+BaTiO3 (BT)-based ceramics have recently become one of the most promising lead-free piezoelectric ceramics. Although phase boundary regulation can enhance the piezoelectric properties, BT ceramics have very separate phase transition temperatures for different phases. This leads to the difficulty of achieving multiphase coexistence at room temperature (RT). In this work, based on doping 0.08 mol Zr4+, the lead-free Ba1-x
+                     Sr
+                        x
+                     Ti0.92Zr0.08O3 [x = 0, 0.04, 0.08, 0.12, 0.16, 0.20 (mol), B1-x
+                     S
+                        x
+                     TZ] piezoelectric ceramics were prepared using the solid-state reaction method, and the effect of the Sr2+ doping level on the multiphase structural evolution and piezoelectric properties was systematically investigated. The results demonstrated that with the increase in the Sr2+ doping content, multiphase coexistence within the B1-x
+                     S
+                        x
+                     TZ ceramics was successfully achieved at RT. At the doping level of about x = 0.16 mol, the key performance metrics of the piezoelectric ceramics were optimal. The d
+                     33 at room temperature reached ∼447 pC/N, k
+                     p ∼0.49, and ε
+                     r ∼4649. Under an applied electric field of 10 kV/cm, S
+                     pos was ∼0.092 %, and d
+                     33∗ was ∼895 p.m./V.
+
+# INTRODUCTION
+For a long time, lead zirconate titanate Pb(Zr, Ti)O3 (PZT) has dominated the market of commercial piezoelectric materials due to its high piezoelectric constant (d 33), electromechanical coupling coefficient (k p), and Curie temperature (T C). Among the various lead-free piezoelectric ceramics, such as (K0.5Na0.5)NbO3 (KNN), BaTiO3 (BT), BiFeO3 (BFO), (Bi0.5Na0.5)TiO3 (BNT), etc. , BT-based ceramics have been one of the most promising choices, owing to their relatively outstanding piezoelectric and dielectric characteristics. Unfortunately, the BT ceramics have R-O (T R-O), O-T (T O-T), and T-C (T C) phase transition temperatures of \u221290, 0, and 120 \xb0C, respectively, which leads to the difficulty in achieving multiphase coexistence at room temperature (RT). Introducing ions that disrupt long-range ferroelectric ordering have the ability to shift the polymorphic phase transition temperatures to RT, forming multiphase coexistence. It has been demonstrated that ZrE^{4+} is frequently employed as a B-site dopant ion for BT materials to elevate T R-O and T O-T while lowering T C. For example, introducing 0.08 mol of ZrE^{4+} into pure BT ceramics could adjust T R-O, T O-T, and T C to 40, 71, and 100 \xb0C, respectively. Additionally, ZrE^{4+} substitution for TiE^{4+} also enhanced lattice stability, preventing the formation of intermediate phases during phase transitions. However, its phase transition temperatures are still much higher than the RT. It has been reported that CaE^{2}\u207a and SrE^{2}\u207a are also often used to replace BaE^{2}\u207a in BT materials, as SrE^{2}\u207a could lead to the simultaneous reduction of T R-O, T O-T, and T C. On the other hand, the ionic radius of SrE^{2}\u207a is more similar to that of BaE^{2}\u207a, and the modification is more effective and positively impacts the dielectric and strain properties of the resultant materials. In this regard, it is speculated that the T R-O, T O-T, and T C of BT-based ceramics can potentially shift toward RT by precisely controlling the SrE^{2+} doping level and its synergy with ZrE^{4+}. To verify this, in this work, based on doping 0.08 mol ZrE^{4+}, the lead-free Ba1-x Sr x Ti0.92Zr0.08O3 [x = 0, 0.04, 0.08, 0.12, 0.16, 0.20 (mol), B1-x S x TZ] piezoelectric ceramics were prepared using the solid-state reaction method. Moreover, the effect of the SrE^{2+} doping level on the phase structural evolution and piezoelectric properties was systematically investigated. The results demonstrated that with increasing the SrE^{2+} doping content, the multiphase coexistence structures and enhanced piezoelectric response of the B1-x S x TZ ceramics were successfully attained at RT. At the doping level of about x = 0.16 mol, the key performance metrics of the piezoelectric ceramics were optimal, which showed significant synergistic improvements in piezoelectric, dielectric, and electric-field-induced strain properties. This study not only considerably enhanced the key performance metrics of the BT-based ceramics but also elucidated the complex relationships among composition, structure, and performance in the B1-x S x TZ system.
+
+# CONCLUSION
+BT-based lead-free piezoelectric ceramics with multiphase coexistence states were successfully prepared by precisely controlling the SrE^{2+} doping level and its synergy with ZrE^{4+} at RT. Moreover, the piezoelectric, dielectric, and electric-field-induced strain properties of the B1-x S x TZ system were synergistically enhanced. Based on doping 0.08 mol ZrE^{4+}, the performances became optimal when the SrE^{2+}doping level was about x = 0.16 mol. Specifically, the high values of the piezoelectric coefficient (d 33 \u223c 447 pC/N), electromechanical coupling coefficient (k p \u223c 0.49), relative dielectric constant (\u03b5 r \u223c 4649), converse piezoelectric coefficient (d 33\u2217 \u223c 895 p.m./V), and strain value (S pos \u223c 0.092 %, induced by 10 kV/cm electric field) were achieved simultaneously. This study not only considerably enhanced the key performance metrics of the BT-based ceramics but also elucidated the complex relationships among composition, structure, and performance in the B1-x S x TZ system.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2025-07-11 11:28:48: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Positive strain amplitudes (positive cycle S pos+, negative cycle S pos-) of the lead-free B1-x S x TZ piezoelectric ceramics (x\xa0=\xa00\u20130.2\xa0mol) induced by external fields of 10, 20, and 30\xa0kV/cm.
+|B1-x S x T|10\xa0kV/cm|20\xa0kV/cm|30\xa0kV/cm| S pos+ (%)| S pos- (%)| S pos+ (%)| S pos- (%)| S pos+ (%)| S pos- (%)|
+|---|---|---|---|---|---|---|---|---|---|
+|0|0.042|0.042|0.076|0.073|0.092|0.095|
+|0.04|0.056|0.030|0.096|0.057|0.113|0.069|
+|0.08|0.063|0.058|0.092|0.087|0.109|0.106|
+|0.12|0.057|0.052|0.078|0.086|0.101|0.102|
+|0.16|0.092|0.084|0.110|0.107|0.121|0.120|
+|0.2|0.041|0.035|0.068|0.064|0.074|0.072|
+
+Table 2. The d 33, d 33\u2217, and \u03b5 r for some BT-based piezoelectric ceramics.
+|Material| d 33 (pC/N)| d 33\u2217 (pm/V)| \u03b5 r|Ref.|
+|---|---|---|---|---|
+|Ba0.95Ca0.05Ti0.95Sn0.05O3|431|403|4380|[48]|
+|Ba0.856Ca0.144Ti0.9168Hf0.0832O3|410|424|2889|[49]|
+|Ba0.94Ca0.06Ti0.93Hf0.07O3|355|556|2190|[50]|
+|Ba0.825Ca0.175Ti0.925Zr0.075|225|429|2520|[51]|
+|Ba0.92Ca0.08Ti0.95Hf0.05O3|380|640|4760|[52]|
+|Ba0.85Ca0.15Ti0.92Zr0.08O3|349|463|2358|[53]|
+|Ba0.86Sr0.14Ti0.955Zr0.045O3|450|\u2013|4070|[54]|
+|(Ba0.99Ca0.01)(Zr0.02Ti0.98)O3-0.08\xa0wt%Ga2O3|440|\u2013|1568|[55]|
+|Ba0.84Sr0.16Ti0.92Zr0.08O3|447|895|4649|This work|
+
+# RESULTS AND DISCUSSION
+(a) presents the RT XRD patterns of the lead-free B1-x S x TZ piezoelectric ceramics, covering a 2\u03b8 range of 20\u201370\xb0. Additionally, it displays standard diffraction peaks corresponding to four polymorphs of BT: rhombohedral (R) (PDF#85\u20131797), orthorhombic (O) (PDF#81\u20132200), tetragonal (T) (PDF#05\u20130626), and cubic (C) (PDF#55\u20130212). Notably, all ceramic samples exhibited the typical perovskite structure (ABO3), indicating that SrE^{2+} successfully diffused within the BZT matrix, resulting in a stable compound. As x increased from 0 to 0.2 mol, a minor shift of the diffraction peaks to higher angles was noted. This is attributed to lattice contraction resulting from the smaller radius of SrE^{2+} (1.13 \xc5) replacing the larger radius of BaE^{2+} (1.35 \xc5). According to the Bragg equation (2dSin\u03b8 = n\u03bb), diffraction peaks shifted toward higher angles. (b and c) provides the local enlarged XRD patterns in the 38\u201340\xb0 and 65\u201367\xb0 ranges. The incomplete splitting of diffraction peaks suggested that the ceramics were in a multiphase coexistence state. (d) presents the \u03b5 r-T curves of the B1-x S x TZ piezoelectric ceramics measured at 10 kHz to further elucidate phase evolution. Due to the combined ability of SrE^{2+} and ZrE^{4+} to regulate the phase transition temperature, T R-O (for all samples), T O-T (for x = 0.12, 0.16, and 0.2 mol samples), and T C (for x = 0.2 mol samples) occurred near RT (15\u201348 \xb0C), as displayed in (e). Based on the diffusion characteristics of phase transitions, it could be inferred that all samples indeed exhibited multiphase coexistence near RT. Combining these findings with the XRD Rietveld refinement results shown in (f\u2013k) clarified that B1-x S x TZ ceramics underwent a structural evolution characterized by the transition from R-O to R-O-T and ultimately to R-O-T-C, accompanied by noteworthy changes in phase fractions. The low refinement parameters (i.e., R wp \u2264 9.58 %, R p \u2264 7.13%, and goodness of fit (GOF) \u2264 3.64) demonstrate that the experimental data closely matched the theoretical calculations, thereby verifying the accuracy and reliability of the refinement process. (a\u2013f) presents the surface texture and particle size distribution of lead-free B1-x S x TZ piezoelectric ceramics after thermal corrosion. All samples exhibited irregularly arranged polygonal grains with clear grain boundaries at a scale of 300 \u03bcm. As x increased from 0 to 0.12 mol, the mean grain diameter reduced from 59.93 to 57.56 \u03bcm, accompanied by an increase in the number of pores. For 0.12 \u2264 x \u2264 0.2 mol, the mean grain diameter grew from 57.56 to 63.93 \u03bcm while the number of pores decreased. For 0 \u2264 x \u2264 0.12 mol, the former factor predominated, inhibiting grain growth and resulting in reduced grain size and increased pore density. However, for 0.12 \u2264 x \u2264 0.2 mol, the grain growth promotion by lattice defects became dominant, resulting in larger grain size and reduced pore density. The evolution from discontinuous sections to sharply discontinuous sections (at x = 0.12 mol) to discontinuous sections in (g\u2013l) corresponds to the observed variation in pore density in the surface morphology, further confirming the microstructural evolution induced by doping SrE^{2+}. (a\u2013f) displays the \u03b5 r-T and tan\u03b4-T curves of lead-free B1-x S x TZ piezoelectric ceramics measured at 1, 10, and 100 kHz. The TR-O, T O-T, and T C of the x = 0 mol sample were 48, 67, and 94 \xb0C, respectively. As the SrE^{2+} concentration increased, T R-O decreased to 15 \xb0C, T O-T to 30 \xb0C, and T C to 45 \xb0C. This suggested that SrE^{2+} and ZrE^{4+} played a noteworthy synergistic role in modulating the phase transition temperature, promoting the formation of multi-ferroelectric phase states at RT, and increasing the dielectric constant and piezoelectric response. (g and h) shows the \u03b5 r and the tan\u03b4 at RT of the B1-x S x TZ ceramics. In the range of 0 \u2264 x \u2264 0.16 (mol), the \u03b5 r gradually increased from 1164 to 4649. However, the \u03b5 r decreased to 4431 when the SrE^{2}\u207a doping amount reached 0.2 mol. Meanwhile, at 0 \u2264 x \u2264 0.2 (mol), the tan\u03b4 showed irregular fluctuations between 0.031 (x = 0 mol) and 0.023 (x = 0.16 mol). The trends in \u03b5r and tan\u03b4 could be attributed to the alteration of the multiphase coexisting structure caused by the co-doping of Zr\u2074\u207a and Sr2\u207a, which influenced the dielectric properties of the ceramic. Moreover, across temperatures from 150 to 200 \xb0C, all tested samples showed a discernible increase in dielectric loss tangent. The \u03b5 r of all samples decreased with increasing test frequency, indicating typical dielectric frequency dispersion behavior in the B1-x S x TZ system. Broadening of anomaly peaks was observed in the \u03b5 r-T curves, which could be attributed to ion doping-induced disruption of long-range ferroelectric order and the resulting phase transition relaxation behavior. The degree of phase transition relaxation in the B1-x S x TZ system can be quantitatively studied using Eqs. , which are based on the Curie-Weiss law. In Eq. , T 0 represents the Curie-Weiss temperature, and C is the Curie constant that reflects the characteristics of the ferroelectric transition. In Eq. , T cw represents the temperature where 1/\u03b5 r starts to adhere to the Curie-Weiss law, while T m indicates the temperature at which \u03b5 r reaches its peak value. When T < T cw, the 1/\u03b5 r of the relaxor ferroelectric departs from the Curie-Weiss law, with the magnitude of this departure indicated by \u0394T m. The calculated \u0394T m values are presented in (i). As the SrE^{2+} content increased, \u0394T m exhibited an irregular fluctuation. For samples with x = 0 and 0.12 mol, \u0394T m reached a minimum of 35 \xb0C and a maximum of 49 \xb0C, respectively, indicating a fluctuating phase transition relaxation behavior in the B1-x S x TZ system. The dispersion factor \u03b3 is determined through linear fitting between ln(1/\u03b5 r-1/\u03b5 m) and ln(T-T m). A \u03b3 value of 1 indicates a typical ferroelectric material that follows the Curie-Weiss law, while a \u03b3 value of 2 indicates a ferroelectric material with a highly relaxor phase transition. For the B1-x S x TZ system, the results of the linear fitting are presented in (i). As x increased, the \u03b3 value exhibited a fluctuation consistent with that of \u0394T m.  (a) illustrates the RT polarization-electric field (P-E) hysteresis loops of the B1-x S x TZ ceramics tested at 1 Hz. Specifically, P max decreased from 16.4 to 13.4 \u03bcC/cmE^{2}, while Pr declined to 5.8 \u03bcC/cmE^{2} from its initial value of 9.9 \u03bcC/cmE^{2}. This trend was likely due to the modulation of the phase transition relaxation degree within the B1-x S x TZ system by varying the SrE^{2+} content, with the enhancement of relaxor phase transition behavior accompanying the decline in ferroelectric properties. For instance, the x = 0.12 mol sample exhibited the lowest P max (14.8 \u03bcC/cmE^{2}) and P r (8.1 \u03bcC/cmE^{2}) (except for the x = 0.2 mol sample), alongside the highest \u0394T m (49 \xb0C) and \u03b3 (1.58). As x increased from 0 to 0.16 mol, the particle dimension first expanded and subsequently diminished, following the pattern of P r. Hence, the variation in the ferroelectric properties of the B1-x S x TZ system could be attributed to the combined effect of relaxor phase transition behavior and grain size. Although the x = 0.2 mol sample possessed the largest particle size, its primary crystal phase was non-ferroelectric cubic symmetry, resulting in the weakest response to external fields. Additionally, the lower energy barriers between polarization vectors in the multiphase coexistence region led to an overall small E C (1.531\u20132.91 kV/cm) of the B1-x S x TZ system. As x increased from 0 to 0.2 mol, E C exhibited a pattern of increasing, decreasing, and subsequently increasing, possibly due to alterations in different phase boundaries and phase fractions.  (d\u2013f) depicts the bipolar strain-electric field (S-E) curves of lead-free B1-x S x TZ piezoelectric ceramics induced by external fields of 10, 20, and 30 kV/cm at RT. Furthermore, the strain curve revealed an asymmetric butterfly shape at x = 0.04 mol, which might be attributed to the electric field-induced irreversible lattice contraction or elongation. summarizes the percentage of positive strain amplitude (S pos, positive cycle S pos+, negative cycle S pos-) for B1-x S x TZ piezoelectric ceramics. As x increased from 0 to 0.2 mol, S pos displayed fluctuating changes attributed to variations in the inverse piezoelectric effect stemming from differing the SrE^{2+} content. The variation in x resulted in varying degrees of lattice distortion and multiphase fraction within the B1-x S x TZ system, leading to discrepancies in the inverse piezoelectric effect. In the x = 0.16 mol sample, S pos attained its peak values of 0.09 %, 0.11 %, and 0.12 % under electric fields of 10, 20, and 30 kV/cm, respectively. The calculation of the d 33 can be expressed as d 33 = Q\u03b5 0 \u03b5 r P r , where Q represents the electrostriction coefficient. The enhanced piezoelectric properties of the B1-x S x TZ system appeared unrelated to the gradual decrease in ferroelectric properties but might have been associated with the enhanced dielectric properties. (a) illustrates the \u03b5 r P r of the B1-x S x TZ piezoelectric ceramics. As x grew, the \u03b5 r P r initially rose before declining, reaching a maximum of 40446 at x = 0.16 mol. (b and c) presents the d 33 and k p of the B1-x S x TZ system, with the x = 0.16 mol sample exhibiting the strongest piezoelectric performance, with d 33 = 447 pC/N and k p = 0.49. In perovskite piezoelectric materials, the rhombohedral phase possesses eight polarization orientations, the orthorhombic phase exhibits 12, and the tetragonal phase features six. Additionally, the rhombohedral phase has domain walls at 180\xb0, 71\xb0, and 109\xb0, the orthorhombic phase has domain walls at 180\xb0, 90\xb0, 60\xb0, and 120\xb0, while the tetragonal phase has domain walls at 180\xb0 and 90\xb0. illustrates the polarization directions and domain wall types of the three ferroelectric phases. Since non-180\xb0 domain walls switch more easily, the orthorhombic phase with more types of non-180\xb0 domain walls may be more advantageous for improving piezoelectric performance. According to crystal phase analysis, the fraction of the orthorhombic phase rose sequentially as x increased from 0 to 0.16 mol, consistent with the trend of enhanced piezoelectric performance. Therefore, the enhanced piezoelectric performance of the B1-x S x TZ system is attributed to the improved dielectric response and the optimization of the multiphase coexistence structure. Although the x = 0.2 mol sample exhibited multiphase coexistence and high dielectric response, its primary crystal phase was a non-ferroelectric cubic symmetry, resulting in the weakest piezoelectric performance. The determination of d 33\u2217 can be expressed as d 33\u2217 = S max/E max, with E max signifying the maximum electric field strength and S max denoting the peak strain. (d\u2013f) shows the d 33\u2217 obtained by averaging the results from positive and negative strain cycles. Particularly, the x = 0.16 mol sample achieved a high inverse piezoelectric constant of 895 p.m./V. compares the key performance indices of various BT-based piezoelectric materials. The higher RT d 33, d 33\u2217, and \u03b5 r values observed in this study demonstrate that adjusting the phase structure and multiphase fraction is an effective strategy to enhance the overall performance of the perovskite lead-free piezoelectric ceramics.
+
+# TITLE
+Synergistic enhancement of electrical characteristics in Sr<sup>2+</sup> and Zr<sup>4+</sup> Co-doped BaTiO<inf>3</inf> ceramics through multiphase coexistence regulation at room temperature
+
+# ABSTRACT
+BaTiO3 (BT)-based ceramics have recently become one of the most promising lead-free piezoelectric ceramics. Although phase boundary regulation can enhance the piezoelectric properties, BT ceramics have very separate phase transition temperatures for different phases. This leads to the difficulty of achieving multiphase coexistence at room temperature (RT). In this work, based on doping 0.08 mol Zr4+, the lead-free Ba1-x
+                     Sr
+                        x
+                     Ti0.92Zr0.08O3 [x = 0, 0.04, 0.08, 0.12, 0.16, 0.20 (mol), B1-x
+                     S
+                        x
+                     TZ] piezoelectric ceramics were prepared using the solid-state reaction method, and the effect of the Sr2+ doping level on the multiphase structural evolution and piezoelectric properties was systematically investigated. The results demonstrated that with the increase in the Sr2+ doping content, multiphase coexistence within the B1-x
+                     S
+                        x
+                     TZ ceramics was successfully achieved at RT. At the doping level of about x = 0.16 mol, the key performance metrics of the piezoelectric ceramics were optimal. The d
+                     33 at room temperature reached ∼447 pC/N, k
+                     p ∼0.49, and ε
+                     r ∼4649. Under an applied electric field of 10 kV/cm, S
+                     pos was ∼0.092 %, and d
+                     33∗ was ∼895 p.m./V.
+
+# INTRODUCTION
+For a long time, lead zirconate titanate Pb(Zr, Ti)O3 (PZT) has dominated the market of commercial piezoelectric materials due to its high piezoelectric constant (d 33), electromechanical coupling coefficient (k p), and Curie temperature (T C). Among the various lead-free piezoelectric ceramics, such as (K0.5Na0.5)NbO3 (KNN), BaTiO3 (BT), BiFeO3 (BFO), (Bi0.5Na0.5)TiO3 (BNT), etc. , BT-based ceramics have been one of the most promising choices, owing to their relatively outstanding piezoelectric and dielectric characteristics. Unfortunately, the BT ceramics have R-O (T R-O), O-T (T O-T), and T-C (T C) phase transition temperatures of \u221290, 0, and 120 \xb0C, respectively, which leads to the difficulty in achieving multiphase coexistence at room temperature (RT). Introducing ions that disrupt long-range ferroelectric ordering have the ability to shift the polymorphic phase transition temperatures to RT, forming multiphase coexistence. It has been demonstrated that ZrE^{4+} is frequently employed as a B-site dopant ion for BT materials to elevate T R-O and T O-T while lowering T C. For example, introducing 0.08 mol of ZrE^{4+} into pure BT ceramics could adjust T R-O, T O-T, and T C to 40, 71, and 100 \xb0C, respectively. Additionally, ZrE^{4+} substitution for TiE^{4+} also enhanced lattice stability, preventing the formation of intermediate phases during phase transitions. However, its phase transition temperatures are still much higher than the RT. It has been reported that CaE^{2}\u207a and SrE^{2}\u207a are also often used to replace BaE^{2}\u207a in BT materials, as SrE^{2}\u207a could lead to the simultaneous reduction of T R-O, T O-T, and T C. On the other hand, the ionic radius of SrE^{2}\u207a is more similar to that of BaE^{2}\u207a, and the modification is more effective and positively impacts the dielectric and strain properties of the resultant materials. In this regard, it is speculated that the T R-O, T O-T, and T C of BT-based ceramics can potentially shift toward RT by precisely controlling the SrE^{2+} doping level and its synergy with ZrE^{4+}. To verify this, in this work, based on doping 0.08 mol ZrE^{4+}, the lead-free Ba1-x Sr x Ti0.92Zr0.08O3 [x = 0, 0.04, 0.08, 0.12, 0.16, 0.20 (mol), B1-x S x TZ] piezoelectric ceramics were prepared using the solid-state reaction method. Moreover, the effect of the SrE^{2+} doping level on the phase structural evolution and piezoelectric properties was systematically investigated. The results demonstrated that with increasing the SrE^{2+} doping content, the multiphase coexistence structures and enhanced piezoelectric response of the B1-x S x TZ ceramics were successfully attained at RT. At the doping level of about x = 0.16 mol, the key performance metrics of the piezoelectric ceramics were optimal, which showed significant synergistic improvements in piezoelectric, dielectric, and electric-field-induced strain properties. This study not only considerably enhanced the key performance metrics of the BT-based ceramics but also elucidated the complex relationships among composition, structure, and performance in the B1-x S x TZ system.
+
+# CONCLUSION
+BT-based lead-free piezoelectric ceramics with multiphase coexistence states were successfully prepared by precisely controlling the SrE^{2+} doping level and its synergy with ZrE^{4+} at RT. Moreover, the piezoelectric, dielectric, and electric-field-induced strain properties of the B1-x S x TZ system were synergistically enhanced. Based on doping 0.08 mol ZrE^{4+}, the performances became optimal when the SrE^{2+}doping level was about x = 0.16 mol. Specifically, the high values of the piezoelectric coefficient (d 33 \u223c 447 pC/N), electromechanical coupling coefficient (k p \u223c 0.49), relative dielectric constant (\u03b5 r \u223c 4649), converse piezoelectric coefficient (d 33\u2217 \u223c 895 p.m./V), and strain value (S pos \u223c 0.092 %, induced by 10 kV/cm electric field) were achieved simultaneously. This study not only considerably enhanced the key performance metrics of the BT-based ceramics but also elucidated the complex relationships among composition, structure, and performance in the B1-x S x TZ system.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Include if there is any doping in the composition using '+' sign with the composition, e.g. 'LiNbO3 + 2%wt Mg'
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "compositions": {
+    "(Ba1-xSrx)Ti0.92Zr0.08O3 where x=0": null, 
+    "(Ba1-xSrx)Ti0.92Zr0.08O3 where x=0.04": null, 
+    "(Ba1-xSrx)Ti0.92Zr0.08O3 where x=0.08": null, 
+    "(Ba1-xSrx)Ti0.92Zr0.08O3 where x=0.12": null, 
+    "(Ba1-xSrx)Ti0.92Zr0.08O3 where x=0.16": 447, 
+    "(Ba1-xSrx)Ti0.92Zr0.08O3 where x=0.2": null
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}"

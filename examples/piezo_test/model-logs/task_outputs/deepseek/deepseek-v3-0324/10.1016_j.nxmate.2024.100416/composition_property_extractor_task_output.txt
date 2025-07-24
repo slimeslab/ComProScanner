@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"P(VDF-TrFE)-NBT0.6CeO2":49,"NBT-0.6 CeO2":90,"P(VDF-TrFE)":-38},"abbreviations":{"NBT":"Na0.5Bi0.5TiO3","P(VDF-TrFE)":"poly(vinylidene fluoride-trifluoroethylene)"},"property_unit":"pC/N","family":"P(VDF-TrFE)-based composites"}}

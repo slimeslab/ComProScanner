@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"K(1-0)Na(0.5)NbO3":69.3,"(1-0.1)K(0.1)Na(0.4)NbO3":69.3,"(1-0.2)K(0.2)Na(0.3)NbO3":69.3,"(1-0.3)K(0.3)Na(0.1)NbO3":69.3,"potassium sodium niobate":94,"potassium sodium niobate-Air":94,"potassium sodium niobate-Vacuum":69.3},"property_unit":"pC/N","family":"piezoelectric materials"}}

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BiFeO3":17.04,"CdS":20.24,"BC10":26.48,"BC20":35.2,"BC30":29.5},"abbreviations":{},"property_unit":"pC/N","family":"Perovskite"}}

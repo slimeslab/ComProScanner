@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Mg":1.0,"Plasma Electrolytic Oxidation":1.0,"Plasma Electrolytic Oxidation-BTO2":1.9,"Plasma Electrolytic Oxidation-BTO5":2.5},"property_unit":"pC/N","family":"BaTiO3"}}

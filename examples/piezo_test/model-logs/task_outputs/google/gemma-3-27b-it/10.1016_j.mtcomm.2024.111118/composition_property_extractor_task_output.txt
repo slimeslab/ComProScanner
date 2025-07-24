@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi5Ti3FeO15":7.1,"BTF-2Ho":21.8,"BTF-3Ho":21.1,"BTF-4Ho":23.1,"BTF-5Ho":20.0,"BTF-8Ho":18.6},"abbreviations":{},"property_unit":"pC/N","family":"BLSFs"}}

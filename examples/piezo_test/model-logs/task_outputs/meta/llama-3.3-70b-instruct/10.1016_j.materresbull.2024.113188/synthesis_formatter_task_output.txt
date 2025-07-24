@@ -1,0 +1,1 @@
+{"synthesis_formatted_data":{"method":"Solid-state synthesis","precursors":["BaCO3","TiO2","ZrO2","SnO2","HfO2"],"steps":["Ball milling","Drying","Calcination","Ball milling","Drying","Debinding","Sintering"],"characterization_techniques":["XRD","Raman Spectroscopy","SEM","EIS","XPS","UV spectrophotometer","UV diffuse reflectance spectrometer"]}}

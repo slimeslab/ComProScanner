@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(1-x)PbTiO3-(x)BiScO3 where x=0.3725":500,"(1-x)PbTiO3-(x)Bi(Ni1/2Hf1/2)O3 where x=0.39":425},"property_unit":"pC/N","family":"PbTiO3"}}

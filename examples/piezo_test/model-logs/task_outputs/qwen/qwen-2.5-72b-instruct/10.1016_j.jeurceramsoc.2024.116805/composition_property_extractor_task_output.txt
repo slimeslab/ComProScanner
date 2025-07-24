@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi0.5(Na0.8K0.2)0.5Ti0.99Ta0.01O3":180,"Bi0.5(Na0.8K0.2)0.5Ti0.97Zr0.03O3":180,"Bi0.5(Na0.8K0.2)0.5Ti0.99Sb0.01O3":180,"Bi0.5(Na0.8K0.2)0.5Ti0.97Hf0.03O3":180,"Bi0.5(Na0.8K0.2)0.5TiO3":180},"abbreviations":{"BNKT":"Bi0.5(Na0.8K0.2)0.5TiO3"},"property_unit":"pC/N","family":"BNT-based materials"}}

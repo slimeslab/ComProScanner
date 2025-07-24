@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"CdS@SnS2 (CdS@SnS2-2)":3.11,"CdS@SnS2 (CdS@SnS2)":2.24},"property_unit":"p.m./V","family":"CdS@SnS2"}}

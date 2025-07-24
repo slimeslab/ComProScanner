@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"CaBi2Nb2O9":5},"abbreviations":{"CBN":"CaBi2Nb2O9"},"property_unit":"pC/N","family":"BLSFs"}}

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(0.78)Bi1/2Na1/2TiO3-0.2SrTiO3-(0.02)BaTiO3":43.0,"(0.76)Bi1/2Na1/2TiO3-0.2SrTiO3-(0.04)BaTiO3":35.2,"(0.74)Bi1/2Na1/2TiO3-0.2SrTiO3-(0.06)BaTiO3":39.5,"(0.72)Bi1/2Na1/2TiO3-0.2SrTiO3-(0.08)BaTiO3":37.3,"(0.69)Bi1/2Na1/2TiO3-0.2SrTiO3-(0.11)BaTiO3":35.5},"property_unit":"pm/V","family":"Bi1/2Na1/2TiO3"}}

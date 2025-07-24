@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"P(VDF-TrFE)-Air":181,"P(VDF-TrFE)-Air_ES1A-2800 min":233,"P(VDF-TrFE)-Air_ES2A-115 °C":357,"P(VDF-TrFE)-Air_ES1A2A-125 °C":551,"P(VDF-TrFE)-Water_ES1A2A":1044},"abbreviations":{"P(VDF-TrFE)":"Poly(vinylidene fluoride-co-trifluoroethylene)"},"property_unit":"pC/N","family":"PVDF"}}

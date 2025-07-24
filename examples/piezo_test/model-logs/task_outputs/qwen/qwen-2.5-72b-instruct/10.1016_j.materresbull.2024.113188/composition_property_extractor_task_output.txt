@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BaTiO3":100,"BaTi(1-x)(Zr1/3Sn1/3Hf1/3)xO3 where x=0.04":350},"abbreviations":{},"property_unit":"pC/N","family":"BaTiO3"}}

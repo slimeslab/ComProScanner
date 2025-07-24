@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Pb(Zn1/3Nb2/3)0.1(Hf0.49Ti0.51)0.9O3":550,"P(ZN)(x)(HT)(1-x) where x = 0.100":550},"abbreviations":{"PZNHT":"Pb(Zn1/3Nb2/3)0.1(Hf0.49Ti0.51)0.9O3","P(ZN)(x)(HT)(1-x)":"Pb(Zn1/3Nb2/3)(x)(Hf0.49Ti0.51)(1-x)O3","PZT":"Pb(Zr,Ti)O3","PEH":"Piezoelectric energy harvester"},"property_unit":"pC/N","family":"Perovskite"}}

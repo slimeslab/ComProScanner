@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R":12581,"Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-MA":3064,"Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-RC":1945,"Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-M":68275,"Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R-RC":2953,"Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-CEP":37384},"property_unit":"pC/N","family":"Pb(Mg1/3Nb2/3)O3"}}

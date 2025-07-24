@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BFO":17.04,"CdS":20.24,"BC10":26.48,"BC20":35.2,"BC30":29.5},"property_unit":"pC/N","family":"BiFeO3/CdS"}}

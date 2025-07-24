@@ -1,0 +1,1 @@
+{"synthesis_formatted_data":{"method":"DC reactive magnetron sputtering","precursors":["Al","N2","Ar"],"steps":["Substrate cleaning in ultrasonic cleaning system","Target cleaning in pure Ar","Deposition in reactive atmosphere","Drying under N2 flow"],"characterization_techniques":["Profilometry","SEM","EDX","XRD","TEM","STEM","Berlincourt method"]}}

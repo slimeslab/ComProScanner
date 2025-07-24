@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"KNNS-0.01CZ-0.03BAZ":447,"KNNS-(0.04-x)CZ-xBAZ where x=0.03":447},"abbreviations":{"CZ":"CaZrO3","BAZ":"(Bi0.5Ag0.5)ZrO3"},"property_unit":"pC/N","family":"KNN"}}

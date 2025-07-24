@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"0.96 K0.48Na0.52Nb0.96Sb0.04O3-0.04Bi0.5Na0.5ZrO3 + CaZrO3":435,"0.96 K0.48Na0.52Nb0.96Sb0.04O3-0.04Bi0.5Na0.5ZrO3 + LaFeO3":398},"property_unit":"pC/N","family":"KNN"}}

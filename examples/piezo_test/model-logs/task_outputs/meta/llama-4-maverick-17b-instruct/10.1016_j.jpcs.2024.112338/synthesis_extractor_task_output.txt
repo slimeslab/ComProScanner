@@ -1,0 +1,1 @@
+{"synthesis_extracted_data":{"method":"solid-state reaction","precursors":["PbO","ZrO2","TiO2","MoO3","In2O3","ZnO","Sb2O3","Sm2O3"],"steps":["calcination","sintering"],"characterization_techniques":["EDS","FT-IR","X-ray diffraction","d33-m","LCR meter","Photonic sensor","ferroelectric tester"]}}

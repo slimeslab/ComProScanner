@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PZT-AsReceived":250,"PZT-AfterDiffusionBondingAt275C":110,"PZT-After1stThermalCycle":110,"PZT-After10thThermalCycle":110},"abbreviations":{"PZT":"Pb(Zr,Ti)O3"},"property_unit":"pC/N","family":"PZT"}}

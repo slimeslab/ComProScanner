@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"PbTiO3–PbZrO3–(Bi0.3La0.7)(Zn0.5Ti0.5)O3–5(La2O3+Nb2O5)":585},"property_unit":"pC/N","family":"PZT"}}

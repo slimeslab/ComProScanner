@@ -1,0 +1,1 @@
+{"synthesis_extracted_data":{"method":"columbite precursor","precursors":["ZnO","Nb2O5","Pb3O4","HfO2","TiO2"],"steps":["Synthesis of ZnNb2O6 at 1000 °C","Ball milling","Calcination at 850 °C for 2 h","Pressing","Sintering at 1050 °C for 2 h"],"characterization_techniques":["SEM","XRD","quasi-static d33 tester","digital bridge","ferroelectric test system","impedance analyzer"]}}

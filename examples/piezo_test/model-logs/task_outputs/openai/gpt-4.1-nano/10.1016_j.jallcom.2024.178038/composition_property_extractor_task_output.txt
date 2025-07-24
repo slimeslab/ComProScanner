@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PbZr0.52Ti0.48O3":null,"PbZr0.52Ti0.48O3 on Pt":null,"PbZr0.52Ti0.48O3 on TiO":null,"PbZr0.52Ti0.48O3 on LaNiO3":null,"PbZr0.52Ti0.48O3 on LaNiO3/TiO":null,"(4.01)a":null,"(3.86)a":null,"(3.80)a":null},"abbreviations":{},"property_unit":"pC/N","family":"PbZrTiO3"}}

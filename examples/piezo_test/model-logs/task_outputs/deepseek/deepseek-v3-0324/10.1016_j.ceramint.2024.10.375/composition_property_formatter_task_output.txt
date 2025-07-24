@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(0.71)Bi1.02FeO3 - (0.29)BaTiO3":null,"(0.7)Bi1.02FeO3 - (0.3)BaTiO3":null,"(0.69)Bi1.02FeO3 - (0.31)BaTiO3":191,"(0.68)Bi1.02FeO3 - (0.32)BaTiO3":null},"property_unit":"pC/N","family":"BiFeO3-BaTiO3"}}

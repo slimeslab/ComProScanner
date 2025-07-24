@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"CBN":28.67,"Ce/Bi":39.8},"property_unit":"μC/cmE^{2}","family":"Aurivillius ferroelectrics"}}
