@@ -672,7 +672,6 @@ def plot_multiple_performance_heatmaps(
 
 
 def plot_multiple_confusion_matrices_combined(
-    self,
     result_sources: Union[List[str], List[Dict], str] = None,
     folder_path: Optional[str] = None,
     output_file: Optional[str] = None,
