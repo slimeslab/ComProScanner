@@ -32,7 +32,7 @@ class TestAgentEvaluationState:
         assert state.ground_truth_file == ""
         assert state.test_data_file == ""
         assert state.output_file == "agentic_evaluation_result.json"
-        assert state.used_agent_model_name == "gpt-4o-mini"
+        assert state.extraction_agent_model_name == "gpt-4o-mini"
         assert state.is_synthesis_evaluation is True
         assert state.ground_truth_data == {}
         assert state.test_data == {}
@@ -49,7 +49,7 @@ class TestAgentEvaluationState:
         state = AgentEvaluationState(
             ground_truth_file="test_gt.json",
             test_data_file="test_data.json",
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
             llm=mock_llm,
             weights=weights,
             processed_count=5,
@@ -57,7 +57,7 @@ class TestAgentEvaluationState:
 
         assert state.ground_truth_file == "test_gt.json"
         assert state.test_data_file == "test_data.json"
-        assert state.used_agent_model_name == "test-model"
+        assert state.extraction_agent_model_name == "test-model"
         assert state.llm == mock_llm
         assert state.weights == weights
         assert state.processed_count == 5
@@ -164,7 +164,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
                 MaterialsDataAgenticEvaluatorFlow(
                     ground_truth_file=None,
                     test_data_file="test.json",
-                    used_agent_model_name="test-model",
+                    extraction_agent_model_name="test-model",
                 )
 
     def test_init_missing_test_data_file(self):
@@ -176,7 +176,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
                 MaterialsDataAgenticEvaluatorFlow(
                     ground_truth_file="gt.json",
                     test_data_file=None,
-                    used_agent_model_name="test-model",
+                    extraction_agent_model_name="test-model",
                 )
 
     def test_init_missing_agent_model_name(self):
@@ -188,7 +188,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
                 MaterialsDataAgenticEvaluatorFlow(
                     ground_truth_file="gt.json",
                     test_data_file="test.json",
-                    used_agent_model_name=None,
+                    extraction_agent_model_name=None,
                 )
 
     def test_init_nonexistent_ground_truth_file(self, temp_files):
@@ -200,7 +200,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
                 MaterialsDataAgenticEvaluatorFlow(
                     ground_truth_file="nonexistent.json",
                     test_data_file=test_file,
-                    used_agent_model_name="test-model",
+                    extraction_agent_model_name="test-model",
                 )
 
     def test_init_nonexistent_test_data_file(self, temp_files):
@@ -212,7 +212,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
                 MaterialsDataAgenticEvaluatorFlow(
                     ground_truth_file=gt_file,
                     test_data_file="nonexistent.json",
-                    used_agent_model_name="test-model",
+                    extraction_agent_model_name="test-model",
                 )
 
     def test_init_successful(self, temp_files):
@@ -225,7 +225,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
             ground_truth_file=gt_file,
             test_data_file=test_file,
             output_file=output_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
             is_synthesis_evaluation=False,
             weights=custom_weights,
             llm=mock_llm,
@@ -234,7 +234,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         assert flow.state.ground_truth_file == gt_file
         assert flow.state.test_data_file == test_file
         assert flow.state.output_file == output_file
-        assert flow.state.used_agent_model_name == "test-model"
+        assert flow.state.extraction_agent_model_name == "test-model"
         assert flow.state.is_synthesis_evaluation is False
         assert flow.state.llm == mock_llm
         assert flow.state.weights["compositions_property_values"] == 0.4
@@ -246,7 +246,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         expected_weights = {
@@ -268,7 +268,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         details = {
@@ -309,7 +309,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         details = {
@@ -361,7 +361,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         metrics = {"true_positives": 8, "false_positives": 2, "false_negatives": 3}
@@ -388,7 +388,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         # Test case: no predictions made
@@ -406,7 +406,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         weights = flow.state.weights
@@ -445,7 +445,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         weights = flow.state.weights
@@ -490,7 +490,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
             ground_truth_file=gt_file,
             test_data_file=test_file,
             output_file=output_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         result = flow._load_existing_results()
@@ -504,7 +504,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
             ground_truth_file=gt_file,
             test_data_file=test_file,
             output_file=output_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         result = flow._load_existing_results()
@@ -518,7 +518,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
             ground_truth_file=gt_file,
             test_data_file=test_file,
             output_file=output_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         test_results = {"test": "data", "metrics": {"accuracy": 0.85}}
@@ -539,7 +539,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         normalized = flow._normalize_weights()
@@ -561,7 +561,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         # Test empty cases
@@ -583,7 +583,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         item = {
@@ -612,7 +612,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         item = {"composition_data": None, "synthesis_data": None}
@@ -634,7 +634,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
             ground_truth_file=gt_file,
             test_data_file=test_file,
             output_file=output_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         result = flow.load_data()
@@ -662,7 +662,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
             ground_truth_file=gt_file,
             test_data_file=test_file,
             output_file=output_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         with patch.object(BaseError, "exit_program", lambda self: None):
@@ -686,7 +686,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
             ground_truth_file=gt_file,
             test_data_file=test_file,
             output_file=output_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         # Set up state as if all items are already processed
@@ -709,7 +709,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         details = {
@@ -748,7 +748,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         # Test with empty dict
@@ -770,7 +770,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         details = {
@@ -876,7 +876,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
             ground_truth_file=gt_file,
             test_data_file=test_file,
             output_file=output_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         # Manually trigger the flow steps
@@ -927,7 +927,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
             weights=custom_weights,
         )
 
@@ -944,7 +944,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
             ground_truth_file=gt_file,
             test_data_file=test_file,
             output_file=output_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
             is_synthesis_evaluation=is_synthesis_evaluation,
         )
 
@@ -957,7 +957,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         flow = MaterialsDataAgenticEvaluatorFlow(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         # Create mock combined results with some item results
@@ -1047,7 +1047,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
             ground_truth_file=gt_file,
             test_data_file=test_file,
             output_file=nested_output,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         test_results = {"test": "data"}
@@ -1075,7 +1075,7 @@ class TestMaterialsDataAgenticEvaluatorFlow:
             ground_truth_file=gt_file,
             test_data_file=test_file,
             output_file=output_file,
-            used_agent_model_name="test-model",
+            extraction_agent_model_name="test-model",
         )
 
         # Load data to set up state

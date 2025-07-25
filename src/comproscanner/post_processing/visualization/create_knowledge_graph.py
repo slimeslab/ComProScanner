@@ -309,6 +309,8 @@ class CreateKG:
         self.method_clusters = {}
         self.technique_clusters = {}
         self.keyword_clusters = {}
+        self.family_clusters = {}
+        self.precursor_clusters = {}
 
         try:
             uri = os.getenv("NEO4J_URI")
@@ -367,6 +369,64 @@ class CreateKG:
             # If clustering is disabled, return the item as-is
             return item
         return self.semantic_matcher.get_canonical_name(item, clusters)
+
+    def build_family_clusters(self, results, similarity_threshold):
+        """
+        Build clusters of semantically similar material families
+
+        Args:
+            results (dict): Dictionary containing results data
+            similarity_threshold (float): Minimum similarity to consider two families as similar
+
+        Returns:
+            dict: Dictionary mapping canonical families to similar families
+        """
+        # Extract all families from results
+        all_families = []
+        for _, paper_data in results.items():
+            if (
+                "composition_data" in paper_data
+                and "family" in paper_data["composition_data"]
+            ):
+                family = paper_data["composition_data"]["family"]
+                if family and family.strip().lower() != "unknown_family":
+                    all_families.append(family)
+
+        # Cluster families
+        family_clusters = self.semantic_matcher.cluster_items(
+            all_families, similarity_threshold
+        )
+
+        return family_clusters
+
+    def build_precursor_clusters(self, results, similarity_threshold):
+        """
+        Build clusters of semantically similar precursors
+
+        Args:
+            results (dict): Dictionary containing results data
+            similarity_threshold (float): Minimum similarity to consider two precursors as similar
+
+        Returns:
+            dict: Dictionary mapping canonical precursors to similar precursors
+        """
+        # Extract all precursors from results
+        all_precursors = []
+        for _, paper_data in results.items():
+            if (
+                "synthesis_data" in paper_data
+                and "precursors" in paper_data["synthesis_data"]
+            ):
+                precursors = paper_data["synthesis_data"]["precursors"]
+                if precursors:
+                    all_precursors.extend(precursors)
+
+        # Cluster precursors
+        precursor_clusters = self.semantic_matcher.cluster_items(
+            all_precursors, similarity_threshold
+        )
+
+        return precursor_clusters
 
     def build_method_clusters(self, results, similarity_threshold):
         """
@@ -473,8 +533,16 @@ class CreateKG:
         """
         try:
             with self.driver.session(database=self.database) as session:
-                # Use empty strings instead of None for properties used in MERGE
-                family_name = composition_data.get("family", "UNKNOWN_FAMILY")
+                # Get original family name and use semantic matcher to find canonical name
+                original_family_name = composition_data.get("family", "UNKNOWN_FAMILY")
+                family_name = self.get_canonical_name_safe(
+                    original_family_name, self.family_clusters
+                )
+
+                if original_family_name != family_name:
+                    logger.info(
+                        f"Mapped family '{original_family_name}' to canonical '{family_name}'"
+                    )
 
                 # Get original method name and use semantic matcher to find canonical name
                 original_method_name = synthesis_data.get("method", "UNKNOWN_METHOD")
@@ -486,6 +554,20 @@ class CreateKG:
                     logger.info(
                         f"Mapped method '{original_method_name}' to canonical '{method_name}'"
                     )
+
+                # Get original precursors and use semantic matcher to find canonical names
+                original_precursors = synthesis_data.get("precursors", [])
+                canonical_precursors = []
+
+                for precursor in original_precursors:
+                    canonical = self.get_canonical_name_safe(
+                        precursor, self.precursor_clusters
+                    )
+                    canonical_precursors.append(canonical)
+                    if canonical != precursor:
+                        logger.debug(
+                            f"Mapped precursor '{precursor}' to canonical '{canonical}'"
+                        )
 
                 synthesis_steps = (
                     "\n".join(f"- {step}" for step in synthesis_data.get("steps", []))
@@ -554,7 +636,7 @@ class CreateKG:
                         "compositions_property_values", {}
                     ),
                     "property_unit": composition_data.get("property_unit"),
-                    "precursors": synthesis_data.get("precursors", []),
+                    "precursors": canonical_precursors,
                     "characterization_techniques": canonical_techniques,
                     "keywords": canonical_keywords,
                 }
@@ -729,7 +811,9 @@ class CreateKG:
         self,
         result_file: str = None,
         is_semantic_clustering_enabled: bool = True,
+        family_clustering_similarity_threshold: float = 0.9,
         method_clustering_similarity_threshold: float = 0.8,
+        precursor_clustering_similarity_threshold: float = 0.9,
         technique_clustering_similarity_threshold: float = 0.8,
         keyword_clustering_similarity_threshold: float = 0.85,
     ):
@@ -739,7 +823,9 @@ class CreateKG:
         Args:
             result_file (str, required): Path to the JSON file containing extracted results.
             is_semantic_clustering_enabled (bool, optional): Whether to enable clustering of similar compositions (Default: True)
+            family_clustering_similarity_threshold (float, optional): Similarity threshold for family clustering (Default: 0.9)
             method_clustering_similarity_threshold (float, optional): Similarity threshold for method clustering (Default: 0.8)
+            precursor_clustering_similarity_threshold (float, optional): Similarity threshold for precursor clustering (Default: 0.9)
             technique_clustering_similarity_threshold (float, optional): Similarity threshold for technique clustering (Default: 0.8)
             keyword_clustering_similarity_threshold (float, optional): Similarity threshold for keyword clustering (Default: 0.85)
         """
@@ -788,6 +874,13 @@ class CreateKG:
                     results,
                     similarity_threshold=keyword_clustering_similarity_threshold,
                 )
+                self.family_clusters = self.build_family_clusters(
+                    results, similarity_threshold=family_clustering_similarity_threshold
+                )
+                self.precursor_clusters = self.build_precursor_clusters(
+                    results,
+                    similarity_threshold=precursor_clustering_similarity_threshold,
+                )
                 logger.debug("Semantic clustering completed.")
             else:
                 logger.debug(
@@ -797,6 +890,8 @@ class CreateKG:
                 self.method_clusters = {}
                 self.technique_clusters = {}
                 self.keyword_clusters = {}
+                self.family_clusters = {}
+                self.precursor_clusters = {}
 
             # Initialize the paper metadata extractor
             paper_metadata_extractor = PaperMetadataExtractor()
@@ -865,10 +960,22 @@ class CreateKG:
                 db_paper_count = result.single()["paper_count"]
                 logger.info(f"  Total papers in database: {db_paper_count}")
 
+                # Count unique families after semantic clustering
+                result = session.run("MATCH (f:Family) RETURN count(f) as family_count")
+                family_count = result.single()["family_count"]
+                logger.info(f"  Total unique families in database: {family_count}")
+
                 # Count unique methods after semantic clustering
                 result = session.run("MATCH (m:Method) RETURN count(m) as method_count")
                 method_count = result.single()["method_count"]
                 logger.info(f"  Total unique methods in database: {method_count}")
+
+                # Count unique precursors after semantic clustering
+                result = session.run(
+                    "MATCH (pre:Precursor) RETURN count(pre) as precursor_count"
+                )
+                precursor_count = result.single()["precursor_count"]
+                logger.info(f"  Total unique precursors in database: {precursor_count}")
 
                 # Count unique characterization techniques after semantic clustering
                 result = session.run(

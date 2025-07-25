@@ -315,7 +315,7 @@ from comproscanner import evaluate_semantic
 results = evaluate_semantic(
     ground_truth_file="ground_truth.json",
     test_data_file="test_results.json",
-    used_agent_model_name="gpt-4o-mini"
+    extraction_agent_model_name="gpt-4o-mini"
 )
 ```
 
@@ -351,7 +351,7 @@ from comproscanner import evaluate_agentic
 results = evaluate_agentic(
     ground_truth_file="ground_truth.json",
     test_data_file="test_results.json",
-    used_agent_model_name="gpt-4o-mini"
+    extraction_agent_model_name="gpt-4o-mini"
 )
 ```
 
@@ -545,6 +545,12 @@ data_visualizer.create_knowledge_graph(result_file="results.json")
    **_Parameters_**:
 
    - `result_file` (str, required): Path to the JSON file containing extracted results
+   - `is_semantic_clustering_enabled` (bool, optional): Whether to use semantic similarity for clustering similar synthesis methods, characterisation techniques, and article keywords (default: True)
+   - `family_clustering_similarity_threshold` (float, optional): Similarity threshold for clustering material families (default: 0.9)
+   - `method_clustering_similarity_threshold` (float, optional): Similarity threshold for clustering methods (default: 0.8)
+   - `precursor_clustering_similarity_threshold` (float, optional): Similarity threshold for clustering precursors (default: 0.9)
+   - `technique_clustering_similarity_threshold` (float, optional): Similarity threshold for clustering characterization techniques (default: 0.8)
+   - `keyword_clustering_similarity_threshold` (float, optional): Similarity threshold for clustering article keywords (default: 0.85)
 
    **_Requirements_**:
 
@@ -1006,7 +1012,7 @@ Data Extraction - using LLMs to extract structured data
 Post Processing - evaluation, cleaning and data visualization
 
 <div align="center">
-  <img src="assets/overall_workflow.png" alt="ComProScanner Logo" width="750"/>
+  <img src="assets/overall_workflow.jpg" alt="ComProScanner Overview Workflow" width="750"/>
   <p>Overall Workflow Diagram</p>
 </div>
 

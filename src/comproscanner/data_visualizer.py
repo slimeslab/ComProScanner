@@ -450,7 +450,9 @@ def plot_characterization_techniques_histogram(
 def create_knowledge_graph(
     result_file: str = None,
     is_semantic_clustering_enabled: bool = True,
+    family_clustering_similarity_threshold: float = 0.9,
     method_clustering_similarity_threshold: float = 0.8,
+    precursor_clustering_similarity_threshold: float = 0.9,
     technique_clustering_similarity_threshold: float = 0.8,
     keyword_clustering_similarity_threshold: float = 0.85,
 ):
@@ -460,7 +462,9 @@ def create_knowledge_graph(
     Args:
         result_file (str, required): Path to the JSON file containing extracted results.
         is_semantic_clustering_enabled (bool, optional): Whether to enable clustering of similar compositions (Default: True)
+        family_clustering_similarity_threshold (float, optional): Similarity threshold for family clustering (Default: 0.9)
         method_clustering_similarity_threshold (float, optional): Similarity threshold for method clustering (Default: 0.8)
+        precursor_clustering_similarity_threshold (float, optional): Similarity threshold for precursor clustering (Default: 0.9)
         technique_clustering_similarity_threshold (float, optional): Similarity threshold for technique clustering (Default: 0.8)
         keyword_clustering_similarity_threshold (float, optional): Similarity threshold for keyword clustering (Default: 0.85)
 
@@ -486,6 +490,8 @@ def create_knowledge_graph(
                 method_clustering_similarity_threshold=method_clustering_similarity_threshold,
                 technique_clustering_similarity_threshold=technique_clustering_similarity_threshold,
                 keyword_clustering_similarity_threshold=keyword_clustering_similarity_threshold,
+                family_clustering_similarity_threshold=family_clustering_similarity_threshold,
+                precursor_clustering_similarity_threshold=precursor_clustering_similarity_threshold,
             )
     except Exception as e:
         logger.error(f"Error creating knowledge graph: {e}")

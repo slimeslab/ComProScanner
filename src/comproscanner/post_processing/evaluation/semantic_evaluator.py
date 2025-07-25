@@ -1168,7 +1168,7 @@ class MaterialsDataSemanticEvaluator:
         self,
         ground_truth_file=None,
         test_data_file=None,
-        used_used_agent_model_name=None,
+        extraction_agent_model_name=None,
         weights=None,
         output_file="detailed_evaluation.json",
         is_synthesis_evaluation=True,
@@ -1180,7 +1180,7 @@ class MaterialsDataSemanticEvaluator:
         Args:
             ground_truth_file (str): Path to the ground truth JSON file
             test_data_file (str): Path to the test data JSON file
-            used_used_agent_model_name (str): Name of the agent model used in data extraction
+            extraction_agent_model_name (str): Name of the agent model used in data extraction
             weights (dict, optional): Custom weights for different components
             output_file (str, optional): Path to save the detailed evaluation results
             is_synthesis_evaluation (bool, optional): Whether to evaluate synthesis data
@@ -1193,7 +1193,7 @@ class MaterialsDataSemanticEvaluator:
                 "Both ground truth and test data files are required"
             )
 
-        if not used_used_agent_model_name:
+        if not extraction_agent_model_name:
             raise ValueErrorHandler("Used agent model name is required")
 
         if weights is None:
@@ -1208,7 +1208,7 @@ class MaterialsDataSemanticEvaluator:
 
         # Initialize results
         accumulated_results = {
-            "used_used_agent_model_name": used_used_agent_model_name,
+            "extraction_agent_model_name": extraction_agent_model_name,
             "overall_accuracy": 0.0,
             "overall_composition_accuracy": 0.0,
             "overall_synthesis_accuracy": 0.0,

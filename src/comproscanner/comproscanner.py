@@ -538,7 +538,7 @@ class ComProScanner:
         self,
         ground_truth_file: str = None,
         test_data_file: str = None,
-        used_agent_model_name: str = None,
+        extraction_agent_model_name: str = None,
         weights: dict[str, float] = None,
         output_file: str = "semantic_evaluation_result.json",
         is_synthesis_evaluation: bool = True,
@@ -552,7 +552,7 @@ class ComProScanner:
         Args:
             ground_truth_file (str, required): Path to the ground truth file
             test_data_file (str, required): Path to the test data file.
-            used_agent_model_name (str, required): Name of the agent model used for extraction.
+            extraction_agent_model_name (str, required): Name of the agent model used for extraction.
             weights (dict, optional): Weights for evaluation metrics. If not provided, uses default weights: {"compositions_property_values": 0.3, "property_unit": 0.1, "family": 0.1, "method": 0.1, "precursors": 0.15, "characterization_techniques": 0.15, "steps": 0.1}
             output_file (str, optional): Path to the output file for saving the evaluation results. Defaults to "semantic_evaluation_result.json".
             is_synthesis_evaluation (bool, optional): A flag to indicate if synthesis evaluation is required. Defaults to True.
@@ -583,7 +583,7 @@ class ComProScanner:
             test_data_file=test_data_file,
             weights=weights,
             output_file=output_file,
-            used_agent_model_name=used_agent_model_name,
+            extraction_agent_model_name=extraction_agent_model_name,
             is_synthesis_evaluation=is_synthesis_evaluation,
         )
         return results
@@ -592,7 +592,7 @@ class ComProScanner:
         self,
         ground_truth_file: str = None,
         test_data_file: str = None,
-        used_agent_model_name: str = None,
+        extraction_agent_model_name: str = None,
         weights: dict[str, float] = None,
         output_file: str = "agentic_evaluation_result.json",
         is_synthesis_evaluation: bool = True,
@@ -603,7 +603,7 @@ class ComProScanner:
         Args:
             ground_truth_file (str, required): Path to the ground truth file.
             test_data_file (str, required): Path to the test data file.
-            used_agent_model_name (str, required): Name of the agent model for evaluation.
+            extraction_agent_model_name (str, required): Name of the agent model for evaluation.
             weights (dict, optional): Weights for the evaluation metrics. Defaults to None.
             output_file (str, optional): Path to the output file for saving the evaluation results. Defaults to "agentic_evaluation_result.json".
             is_synthesis_evaluation (bool, optional): A flag to indicate if synthesis evaluation is required. Defaults to True.
@@ -625,7 +625,7 @@ class ComProScanner:
             ground_truth_file=ground_truth_file,
             test_data_file=test_data_file,
             output_file=output_file,
-            used_agent_model_name=used_agent_model_name,
+            extraction_agent_model_name=extraction_agent_model_name,
             is_synthesis_evaluation=is_synthesis_evaluation,
             weights=weights,
             llm=llm,

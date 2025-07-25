@@ -44,7 +44,7 @@ class AgentEvaluationState(BaseModel):
     output_file: str = "agentic_evaluation_result.json"
 
     # Evaluation parameters
-    used_agent_model_name: str = "gpt-4o-mini"
+    extraction_agent_model_name: str = "gpt-4o-mini"
     is_synthesis_evaluation: bool = True
 
     # Data storage
@@ -79,7 +79,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
         ground_truth_file (str): Path to the ground truth JSON file
         test_data_file (str): Path to the test data JSON file
         output_file (str, optional): Path to save the evaluation results. Default: "agentic_evaluation_result.json"
-        used_agent_model_name (str, optional): Name of the agent model used in data extraction (default: "gpt-4o-mini")
+        extraction_agent_model_name (str, optional): Name of the agent model used in data extraction (default: "gpt-4o-mini")
         is_synthesis_evaluation (bool, optional): Whether to evaluate synthesis data. Default: True
         weights (Dict[str, float], optional): Custom weights for different components. Default: None
         llm (LLM, optional): LLM instance for the agents. Default: None
@@ -92,7 +92,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
         self,
         ground_truth_file: str = None,
         test_data_file: str = None,
-        used_agent_model_name: str = None,
+        extraction_agent_model_name: str = None,
         output_file: str = "agentic_evaluation_result.json",
         is_synthesis_evaluation: bool = True,
         weights: Dict[str, float] = None,
@@ -105,7 +105,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
             raise ValueErrorHandler("Ground truth file path is required")
         if not test_data_file:
             raise ValueErrorHandler("Test data file path is required")
-        if not used_agent_model_name:
+        if not extraction_agent_model_name:
             raise ValueErrorHandler("Used agent model name is required")
 
         # Validate file existence
@@ -118,7 +118,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
         self.state.ground_truth_file = ground_truth_file
         self.state.test_data_file = test_data_file
         self.state.output_file = output_file
-        self.state.used_agent_model_name = used_agent_model_name
+        self.state.extraction_agent_model_name = extraction_agent_model_name
         self.state.is_synthesis_evaluation = is_synthesis_evaluation
         self.state.llm = llm
 
@@ -1024,7 +1024,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
 
         # Initialize the combined results with existing data
         combined_results = {
-            "used_agent_model_name": self.state.used_agent_model_name,
+            "extraction_agent_model_name": self.state.extraction_agent_model_name,
             "overall_accuracy": 0.0,
             "overall_composition_accuracy": 0.0,
             "overall_synthesis_accuracy": 0.0,
@@ -1492,7 +1492,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
 
         # Calculate final combined metrics
         combined_results = {
-            "used_agent_model_name": self.state.used_agent_model_name,
+            "extraction_agent_model_name": self.state.extraction_agent_model_name,
             "overall_accuracy": 0.0,
             "overall_composition_accuracy": 0.0,
             "overall_synthesis_accuracy": 0.0,

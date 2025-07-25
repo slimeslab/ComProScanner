@@ -307,7 +307,7 @@ class TestMaterialsDataSemanticEvaluator:
                 evaluator_no_model.evaluate(
                     ground_truth_file=gt_file,
                     test_data_file=test_file,
-                    used_used_agent_model_name=None,
+                    extraction_agent_model_name=None,
                 )
 
     def test_evaluate_successful_run(self, evaluator_no_model, temp_json_files):
@@ -317,13 +317,13 @@ class TestMaterialsDataSemanticEvaluator:
         results = evaluator_no_model.evaluate(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_used_agent_model_name="test_model",
+            extraction_agent_model_name="test_model",
             output_file=output_file,
             is_synthesis_evaluation=True,
         )
 
         # Check basic structure of results
-        assert "used_used_agent_model_name" in results
+        assert "extraction_agent_model_name" in results
         assert "overall_accuracy" in results
         assert "overall_composition_accuracy" in results
         assert "overall_synthesis_accuracy" in results
@@ -337,7 +337,7 @@ class TestMaterialsDataSemanticEvaluator:
         # Verify file contents
         with open(output_file, "r") as f:
             saved_results = json.load(f)
-        assert saved_results["used_used_agent_model_name"] == "test_model"
+        assert saved_results["extraction_agent_model_name"] == "test_model"
 
     def test_evaluate_composition_only(self, evaluator_no_model, temp_json_files):
         """Test evaluation with composition data only"""
@@ -346,7 +346,7 @@ class TestMaterialsDataSemanticEvaluator:
         results = evaluator_no_model.evaluate(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_used_agent_model_name="test_model",
+            extraction_agent_model_name="test_model",
             output_file=output_file,
             is_synthesis_evaluation=False,
         )
@@ -373,7 +373,7 @@ class TestMaterialsDataSemanticEvaluator:
         results = evaluator_no_model.evaluate(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_used_agent_model_name="test_model",
+            extraction_agent_model_name="test_model",
             weights=custom_weights,
             output_file=output_file,
         )
@@ -398,7 +398,7 @@ class TestMaterialsDataSemanticEvaluator:
         results = evaluator_no_model.evaluate(
             ground_truth_file=gt_file,
             test_data_file=test_file,
-            used_used_agent_model_name="test_model",
+            extraction_agent_model_name="test_model",
             weights=invalid_weights,
             output_file=output_file,
         )
@@ -442,7 +442,7 @@ class TestMaterialsDataSemanticEvaluator:
             results = evaluator_no_model.evaluate(
                 ground_truth_file=gt_file,
                 test_data_file=test_file,
-                used_used_agent_model_name="test_model",
+                extraction_agent_model_name="test_model",
                 output_file=output_file,
             )
 
@@ -520,7 +520,7 @@ class TestMaterialsDataSemanticEvaluator:
             results = evaluator_no_model.evaluate(
                 ground_truth_file=gt_file,
                 test_data_file=test_file,
-                used_used_agent_model_name="test_model",
+                extraction_agent_model_name="test_model",
                 output_file=output_file,
             )
 
