@@ -4,7 +4,7 @@
 
 ## ComProScanner: A python package for extracting composition-property data from scientific articles for building databases
 
-[![Python Version](https://img.shields.io/badge/python-3.12-red.svg)](https://www.python.org/downloads/) [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Python Version](https://img.shields.io/badge/python-3.12-red.svg)](https://www.python.org/downloads/) [![License: CC BY 4.0](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Overview
 
