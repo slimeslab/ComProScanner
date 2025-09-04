@@ -1,8 +1,8 @@
 from comproscanner import eval_visualizer
 
 eval_visualizer.plot_multiple_confusion_matrices_combined(
-    folder_path="../piezo_test/eval-results/agentic-evaluation",
-    output_file="plots-raw/model_comparison_confusion_matrix_agentic.png",
+    folder_path="../../../piezo_test/eval-results/agentic-evaluation",
+    output_file="../plots-raw/model_comparison_confusion_matrix_agentic.png",
     model_names=[
         "DeepSeek-V3-0324",
         "Gemini-2.0-Flash",

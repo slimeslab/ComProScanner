@@ -247,9 +247,9 @@ def plot_evaluation_comparison(
 
 if __name__ == "__main__":
     # Example usage
-    semantic_file_path = "../piezo_test/eval-results/semantic-evaluation/llama-3.3-70b-instruct-semantic-evaluation-results.json"
-    agentic_file_path = "../piezo_test/eval-results/agentic-evaluation/llama-3.3-70b-instruct-agentic-evaluation-results.json"
-    output_file = "plots-raw/single_semantic_vs_agentic_comparison.png"
+    semantic_file_path = "../../../piezo_test/eval-results/semantic-evaluation/llama-3.3-70b-instruct-semantic-evaluation-results.json"
+    agentic_file_path = "../../../piezo_test/eval-results/agentic-evaluation/llama-3.3-70b-instruct-agentic-evaluation-results.json"
+    output_file = "../plots-raw/single_semantic_vs_agentic_comparison.png"
 
     # Create the comparison plot
     fig = plot_evaluation_comparison(

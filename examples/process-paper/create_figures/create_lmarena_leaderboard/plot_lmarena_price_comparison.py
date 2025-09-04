@@ -292,7 +292,7 @@ try:
 
     # Save the plot with proper settings
     plt.savefig(
-        "plots-raw/lmarena_leaderboard.png",
+        "../plots-raw/lmarena_leaderboard.png",
         dpi=300,
         bbox_inches="tight",
         facecolor="white",

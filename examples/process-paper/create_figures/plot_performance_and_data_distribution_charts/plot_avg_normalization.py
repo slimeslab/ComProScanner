@@ -554,10 +554,14 @@ def plot_multiple_bar_charts(
 
 if __name__ == "__main__":
     # Example usage
-    semantic_evaluation_folder_path = "../piezo_test/eval-results/semantic-evaluation"
-    agentic_evaluation_folder_path = "../piezo_test/eval-results/agentic-evaluation"
-    semantic_output_file = "plots-raw/overall_comparison_semantic.png"
-    agentic_output_file = "plots-raw/overall_comparison_agentic.png"
+    semantic_evaluation_folder_path = (
+        "../../../piezo_test/eval-results/semantic-evaluation"
+    )
+    agentic_evaluation_folder_path = (
+        "../../../piezo_test/eval-results/agentic-evaluation"
+    )
+    semantic_output_file = "../plots-raw/overall_comparison_semantic.png"
+    agentic_output_file = "../plots-raw/overall_comparison_agentic.png"
     plot_multiple_bar_charts(
         folder_path=semantic_evaluation_folder_path,
         metrics_to_include=[

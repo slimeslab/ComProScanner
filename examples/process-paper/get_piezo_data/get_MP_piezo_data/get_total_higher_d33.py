@@ -1,13 +1,10 @@
 """
-simplified_piezo_analysis.py
+get_total_higher_d33.py
 
 Author: Aritra Roy
-Maintainer: Aritra Roy
 Email: contact@aritraroy.live
 Website: https://aritraroy.live
 Date: 11-08-2025
-
-Simplified script to count piezoelectric materials with d33 > 10
 """
 
 import requests

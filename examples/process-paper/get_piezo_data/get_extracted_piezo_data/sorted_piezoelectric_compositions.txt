@@ -1,0 +1,1379 @@
+Piezoelectric Ceramic Compositions Sorted by Property Value (High to Low)
+===========================================================================
+
+ 1. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-M: 68275 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+ 2. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R-RC transition: 64810 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+ 3. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R phase at the triple point (TP): 20381 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+ 4. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R-RC phase boundary: 18911 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+ 5. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R phase, V-shaped zone: 17860 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+ 6. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-MA phase at TP: 14344 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+ 7. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R phase, above the V-shaped zone: 12581 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+ 8. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R-RC supercritical: 12322 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+ 9. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-MA: 10022 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+10. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R: 10019 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+11. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-MA phase, MA-RC boundary: 9648 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+12. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R phase, R-MA boundary: 6853 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+13. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-R-RC boundary: 5322 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+14. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-RC phase at TP: 3410 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+15. Pb(Mg1/3Nb2/3)O3–0.3PbTiO3-RC: 2580 pC/N
+    Family: Pb(Mg1/3Nb2/3)O3–PbTiO3
+    DOI: 10.1016/j.physleta.2024.130165
+
+16. Pb(In1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3: 2090 pC/N
+    Family: PZT
+    DOI: 10.1016/j.sna.2024.116149
+
+17. 0.74Pb(Mg1/3Nb2/3)O3-0.26PbTiO3: 1780 pC/N
+    Family: PMNT
+    DOI: 10.1016/j.ssc.2024.115714
+
+18. 0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 2.0%Sm,0.5%Pr: 1547 pC/N
+    Family: PMN-PT
+    DOI: 10.1016/j.jallcom.2024.177640
+
+19. 0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 2.5%Sm,0.0%Pr: 1532 pC/N
+    Family: PMN-PT
+    DOI: 10.1016/j.jallcom.2024.177640
+
+20. 0.5Pb(Ni1/3Nb2/3)O3-0.16PbZrO3-0.34PbTiO3: 1334 pC/N
+    Family: Pb(Ni1/3Nb2/3)O3-PbZrO3-PbTiO3
+    DOI: 10.1016/j.ceramint.2024.12.350
+
+21. 0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 1.5%Sm,1.0%Pr: 1318 pC/N
+    Family: PMN-PT
+    DOI: 10.1016/j.jallcom.2024.177640
+
+22. 0.5Pb(Ni1/3Nb2/3)O3-0.16PbZrO3-0.34PbTiO3 + Li2CO3: 1295 pC/N
+    Family: Pb(Ni1/3Nb2/3)O3-PbZrO3-PbTiO3
+    DOI: 10.1016/j.ceramint.2024.12.350
+
+23. 0.74Pb(Mg1/3Nb2/3)O3-0.26PbTiO3 (DCP): 1250 pC/N
+    Family: PMNT
+    DOI: 10.1016/j.ssc.2024.115714
+
+24. Ba1.0Sr0Ti0.92Zr0.08O3: 1164 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.314
+
+25. 1.0 mol% Mn-doped 0.28Pb(In1/2Nb1/2)O3-0.42Pb(Mg1/3Nb2/3)O3-0.30PbTiO3: 1161 pC/N
+    Family: PbTiO3
+    DOI: 10.1016/j.jallcom.2024.178034
+
+26. 0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 1.0%Sm,1.5%Pr: 1014 pC/N
+    Family: PMN-PT
+    DOI: 10.1016/j.jallcom.2024.177640
+
+27. 0.72Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 + 0.5%Sm,2.0%Pr: 819 pC/N
+    Family: PMN-PT
+    DOI: 10.1016/j.jallcom.2024.177640
+
+28. 0.67BiFeO3-0.33BaTiO3-0.02Bi(Zn0.5Ti0.5)O3-0.01BiAlO3: 801 pC/N
+    Family: BiFeO3-BaTiO3
+    DOI: 10.1016/j.mssp.2024.108948
+
+29. Ba0.95Ca0.05Sn0.09Ti0.91O3: 720 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.jallcom.2024.176519
+
+30. 0.15Pb(Sc1/2Nb1/2)O3-0.57Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 with 3 vol% BaTiO3: 718 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.ceramint.2025.01.105
+
+31. Pb0.94Sr0.06(Mg1/3Nb2/3)0.2(Zr0.388Ti0.412)O3–0.4Mn: 708 pC/N
+    Family: PZT
+    DOI: 10.1016/j.ceramint.2025.01.274
+
+32. 0.69BiFeO3-0.31BaTiO3+0.01(0.8Bi0.5Na0.5TiO3-0.2Bi0.5K0.5TiO3): 687 pC/N
+    Family: BF-BT
+    DOI: 10.1016/j.jallcom.2024.177342
+
+33. 0.69BiFeO3-0.31BaTiO3+0.015(0.8Bi0.5Na0.5TiO3-0.2Bi0.5K0.5TiO3): 681 pC/N
+    Family: BF-BT
+    DOI: 10.1016/j.jallcom.2024.177342
+
+34. 0.15Pb(Sc1/2Nb1/2)O3-0.57Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 sintered at 1260 °C for 9 h: 675 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.ceramint.2025.01.105
+
+35. 0.15Pb(Sc1/2Nb1/2)O3-0.57Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 with 9 h holding time: 675 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.ceramint.2025.01.105
+
+36. 0.06Pb(Sc1/2Nb1/2)O3-0.59Pb(Mg1/3Nb2/3)O3-0.35PbTiO3: 665 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+37. 0.15Pb(Sc1/2Nb1/2)O3-0.57Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 with 11 h holding time: 660 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.ceramint.2025.01.105
+
+38. 0.43Pb(Sc1/2Nb1/2)O3-0.17Pb(Mg1/3Nb2/3)O3-0.40PbTiO3: 650 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+39. 0.06Pb(Sc1/2Nb1/2)O3-0.58Pb(Mg1/3Nb2/3)O3-0.36PbTiO3: 642 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+40. 0.15Pb(Sc1/2Nb1/2)O3-0.48Pb(Mg1/3Nb2/3)O3-0.37PbTiO3: 620 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+41. Pb0.94Sr0.06(Mg1/3Nb2/3)0.2(Zr0.388Ti0.412)O3–0.2Mn: 620 pC/N
+    Family: PZT
+    DOI: 10.1016/j.ceramint.2025.01.274
+
+42. 0.15Pb(Sc1/2Nb1/2)O3-0.57Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 with 5 vol% BaTiO3: 614 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.ceramint.2025.01.105
+
+43. 0.15Pb(Sc1/2Nb1/2)O3-0.57Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 with 6 h holding time: 612 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.ceramint.2025.01.105
+
+44. Ba0.92Ca0.08Zr0.09Ti0.91O3: 609 p.m. V−1
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.09.358
+
+45. Mn-doped Pb(Yn1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (textured): 607 pC/N
+    Family: PYN-PMN-PT
+    DOI: 10.1016/j.ceramint.2024.11.138
+
+46. Ba0.85Ca0.15Zr0.1Ti0.9O3: 596 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.nanoen.2024.110254
+
+47. 0.29Pb(Sc1/2Nb1/2)O3-0.32Pb(Mg1/3Nb2/3)O3-0.39PbTiO3: 585 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+48. 0.08Bi(Zn1/2Ti1/2)O3-(0.42)BiScO2.42PbTiO3: 585 pC/N
+    Family: BiScO3-PbTiO3
+    DOI: 10.1016/j.jeurceramsoc.2024.116945
+
+49. 0.3PbTiO3–0.65PbZrO3–0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3–5 wt% (La2O3+Nb2O5): 585 pC/N
+    Family: Pb(Zr,Ti)O3
+    DOI: 10.1016/j.jallcom.2024.177560
+
+50. 0.15Pb(Sc1/2Nb1/2)O3-0.57Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 with 2 vol% BaTiO3: 585 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.ceramint.2025.01.105
+
+51. 0.997[0.997(0.996K0.5Na0.5NbO3-0.004BiAlO3)-0.003MnO2]-0.003CuO: 583 pC/N
+    Family: KNN-based
+    DOI: 10.1016/j.mtcomm.2024.111119
+
+52. 0.06Pb(Sc1/2Nb1/2)O3-0.60Pb(Mg1/3Nb2/3)O3-0.34PbTiO3: 580 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+53. Pb0.94Sr0.06(Mg1/3Nb2/3)0.2(Zr0.388Ti0.412)O3–0.0Mn: 580 pC/N
+    Family: PZT
+    DOI: 10.1016/j.ceramint.2025.01.274
+
+54. 0.15Pb(Sc1/2Nb1/2)O3-0.49Pb(Mg1/3Nb2/3)O3-0.36PbTiO3: 575 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+55. 0.29Pb(Sc1/2Nb1/2)O3-0.31Pb(Mg1/3Nb2/3)O3-0.40PbTiO3: 575 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+56. 0.69BiFeO3-0.31BaTiO3+0.025(0.8Bi0.5Na0.5TiO3-0.2Bi0.5K0.5TiO3): 571 pC/N
+    Family: BF-BT
+    DOI: 10.1016/j.jallcom.2024.177342
+
+57. 0.06Pb(Sc1/2Nb1/2)O3-0.61Pb(Mg1/3Nb2/3)O3-0.33PbTiO3: 570 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+58. 0.43Pb(Sc1/2Nb1/2)O3-0.16Pb(Mg1/3Nb2/3)O3-0.41PbTiO3: 570 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+59. 0.06Pb(Sc1/2Nb1/2)O3-0.62Pb(Mg1/3Nb2/3)O3-0.32PbTiO3: 560 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+60. Pb(Zn1/3Nb2/3)0.1(Hf0.49Ti0.51)0.9O3: 550 pC/N
+    Family: PbTiO3
+    DOI: 10.1016/j.jallcom.2024.177378
+
+61. Pb0.94Sr0.06(Mg1/3Nb2/3)0.2(Zr0.388Ti0.412)O3–0.6Mn: 550 pC/N
+    Family: PZT
+    DOI: 10.1016/j.ceramint.2025.01.274
+
+62. 0.02Nd-doped BiScO3-0.64PbTiO3: 550 pC/N
+    Family: BiScO3-PbTiO3
+    DOI: 10.1016/j.jallcom.2024.177019
+
+63. 0.08Bi(Zn1/2Ti1/2)O3-(0.41)BiScO2.41PbTiO3: 546 pC/N
+    Family: BiScO3-PbTiO3
+    DOI: 10.1016/j.jeurceramsoc.2024.116945
+
+64. 0.15Pb(Sc1/2Nb1/2)O3-0.47Pb(Mg1/3Nb2/3)O3-0.38PbTiO3: 545 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+65. 0.29Pb(Sc1/2Nb1/2)O3-0.33Pb(Mg1/3Nb2/3)O3-0.38PbTiO3: 545 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+66. 0.15Pb(Sc1/2Nb1/2)O3-0.50Pb(Mg1/3Nb2/3)O3-0.35PbTiO3: 540 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+67. 0.29Pb(Sc1/2Nb1/2)O3-0.34Pb(Mg1/3Nb2/3)O3-0.37PbTiO3: 540 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+68. 0.29Pb(Sc1/2Nb1/2)O3-0.35Pb(Mg1/3Nb2/3)O3-0.36PbTiO3: 535 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+69. 0.01Ta-0.01Sm-PbZr0.54Ti0.46O3: 530 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jallcom.2024.177686
+
+70. 0.15Pb(Sc1/2Nb1/2)O3-0.51Pb(Mg1/3Nb2/3)O3-0.34PbTiO3: 529 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+71. Ba0.85Ca0.15Zr0.10Ti0.90O3: 524.7 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.jallcom.2025.178777
+
+72. 0.43Pb(Sc1/2Nb1/2)O3-0.18Pb(Mg1/3Nb2/3)O3-0.39PbTiO3: 520 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+73. Ba0.85Ca0.15Zr0.1Ti0.9O3: 520 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.matchemphys.2024.129999
+
+74. (Ba0.85Ca0.15)(Zr0.1Ti0.9)O3: 513 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.jeurceramsoc.2024.116934
+
+75. 0.00Ta-0.01Sm-PbZr0.54Ti0.46O3: 513 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jallcom.2024.177686
+
+76. 0.15Pb(Sc1/2Nb1/2)O3-0.57Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 with 1 vol% BaTiO3: 512 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.ceramint.2025.01.105
+
+77. 0.67BiFeO3-0.33BaTiO3-0.02Bi(Zn0.5Ti0.5)O3-0.03BiAlO3: 509 pC/N
+    Family: BiFeO3-BaTiO3
+    DOI: 10.1016/j.mssp.2024.108948
+
+78. 0.15Pb(Sc1/2Nb1/2)O3-0.52Pb(Mg1/3Nb2/3)O3-0.33PbTiO3: 500 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+79. 0.6275PbTiO3-0.3725BiScO3: 500 pC/N
+    Family: PbTiO3
+    DOI: 10.1016/j.mtcomm.2024.111283
+
+80. 0.43Pb(Sc1/2Nb1/2)O3-0.19Pb(Mg1/3Nb2/3)O3-0.38PbTiO3: 490 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+81. 0.06Pb(Mn1/3Nb2/3)O3-0.94Pb(Zr0.48Ti0.52)O3: 484 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jeurceramsoc.2024.116951
+
+82. 0.15Pb(Sc1/2Nb1/2)O3-0.46Pb(Mg1/3Nb2/3)O3-0.39PbTiO3: 478 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+83. 0.43Pb(Sc1/2Nb1/2)O3-0.15Pb(Mg1/3Nb2/3)O3-0.42PbTiO3: 475 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+84. 0.15Pb(Sc1/2Nb1/2)O3-0.57Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 sintered at 1270 °C for 9 h: 472 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.ceramint.2025.01.105
+
+85. 0.29Pb(Sc1/2Nb1/2)O3-0.30Pb(Mg1/3Nb2/3)O3-0.41PbTiO3: 467 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+86. Ba0.85Ca0.15Zr0.1Ti0.9O3 (dense): 467 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.nanoen.2024.110254
+
+87. Pb0.94Sr0.06(Mg1/3Nb2/3)0.2(Zr0.388Ti0.412)O3–0.8Mn: 461 pC/N
+    Family: PZT
+    DOI: 10.1016/j.ceramint.2025.01.274
+
+88. 0.29Pb(Sc1/2Nb1/2)O3-0.36Pb(Mg1/3Nb2/3)O3-0.35PbTiO3: 460 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+89. (Ba0.94Ca0.064)(Sn0.096Ti0.9)O3: 452 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.sna.2024.115932
+
+90. 0.96(K0.5Na0.5)(Nb0.96Sb0.04)O3-0.01CaZrO3-0.03(Bi0.5Ag0.5)ZrO3: 447 pC/N
+    Family: KNN-based
+    DOI: 10.1016/j.ceramint.2024.10.279
+
+91. Ba0.84Sr0.16Ti0.92Zr0.08O3: 447 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.314
+
+92. 0.96K0.48Na0.52Nb0.96Sb0.04O3-0.04Bi0.5Na0.5ZrO3-CaZrO3: 435 pC/N
+    Family: KNN-based
+    DOI: 10.1016/j.jeurceramsoc.2024.116874
+
+93. 0.61PbTiO3-0.39Bi(Ni1/2Hf1/2)O3: 425 pC/N
+    Family: PbTiO3
+    DOI: 10.1016/j.mtcomm.2024.111283
+
+94. 0.95(Bi0.5Na0.5)TiO3-0.05BaTiO3: 420 pC/N
+    Family: BNT-BT
+    DOI: 10.1016/j.jeurceramsoc.2024.117043
+
+95. 0.69BiFeO3-0.31BaTiO3+0.005(0.8Bi0.5Na0.5TiO3-0.2Bi0.5K0.5TiO3): 419 pC/N
+    Family: BF-BT
+    DOI: 10.1016/j.jallcom.2024.177342
+
+96. 0.08Bi(Zn1/2Ti1/2)O3-(0.4)BiScO2.4PbTiO3: 406 pC/N
+    Family: BiScO3-PbTiO3
+    DOI: 10.1016/j.jeurceramsoc.2024.116945
+
+97. 0.15Pb(Sc1/2Nb1/2)O3-0.53Pb(Mg1/3Nb2/3)O3-0.32PbTiO3: 405 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+98. 0.15Pb(Sc1/2Nb1/2)O3-0.45Pb(Mg1/3Nb2/3)O3-0.40PbTiO3: 404 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+99. 0.12Pb(Ni1/3Ta2/3)O3-0.43PbZrO3-0.45PbTiO3 + 2% MnO2: 400 pC/N
+    Family: PZT-based
+    DOI: 10.1016/j.jallcom.2024.176609
+
+100. 0.96K0.48Na0.52Nb0.96Sb0.04O3-0.04Bi0.5Na0.5ZrO3-LaFeO3: 398 pC/N
+    Family: KNN-based
+    DOI: 10.1016/j.jeurceramsoc.2024.116874
+
+101. 0.15Pb(Sc1/2Nb1/2)O3-0.57Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 sintered at 1200 °C for 9 h: 383 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.ceramint.2025.01.105
+
+102. 0.08Bi(Zn1/2Ti1/2)O3-(0.43)BiScO2.43PbTiO3: 372 pC/N
+    Family: BiScO3-PbTiO3
+    DOI: 10.1016/j.jeurceramsoc.2024.116945
+
+103. 0.957K0.48Na0.52Nb0.96Sb0.04O3-0.04Bi0.5Na0.5ZrO3-0.003CaZrO3: 368 pC/N
+    Family: KNN-based
+    DOI: 10.1016/j.ceramint.2024.10.374
+
+104. 0.12Pb(Ni1/3Ta2/3)O3-0.42PbZrO3-0.46PbTiO3 + 2% MnO2: 368 pC/N
+    Family: PZT-based
+    DOI: 10.1016/j.jallcom.2024.176609
+
+105. 0.29Pb(Sc1/2Nb1/2)O3-0.37Pb(Mg1/3Nb2/3)O3-0.34PbTiO3: 365 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+106. 0.94(Bi0.5Na0.5)TiO3-0.06BaTiO3: 360 pC/N
+    Family: BNT-BT
+    DOI: 10.1016/j.jeurceramsoc.2024.117043
+
+107. K0.5Na0.5NbO3-BiFeO3-0.03Bi0.5Na0.5ZrO3: 358 pC/N
+    Family: KNNS-based
+    DOI: 10.1016/j.jallcom.2024.177681
+
+108. Ba0.92Ca0.08Sn0.09Ti0.91O3: 358 p.m. V−1
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.09.358
+
+109. 0.96K0.48Na0.52Nb0.96Sb0.04O3-0.04Bi0.5Na0.5ZrO3: 353 pC/N
+    Family: KNN
+    DOI: 10.1016/j.ceramint.2024.10.312
+
+110. 0.96K0.48Na0.52Nb0.97Sb0.03O3-0.01Bi0.5K0.5ZrO3-0.03Bi0.5Na0.5ZrO3: 353 pC/N
+    Family: KNN
+    DOI: 10.1016/j.ceramint.2024.10.312
+
+111. BaTi0.96(Zr1/3Sn1/3Hf1/3)0.04O3: 350 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.materresbull.2024.113188
+
+112. Ba(Ti0.98Zr0.02)O3: 350 pC/N
+    Family: NBT-BZT
+    DOI: 10.1016/j.jallcom.2025.178523
+
+113. 0.43Pb(Sc1/2Nb1/2)O3-0.20Pb(Mg1/3Nb2/3)O3-0.37PbTiO3: 340 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+114. (Ba0.95Ca0.048)(Sn0.072Ti0.93)O3: 340 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.sna.2024.115932
+
+115. BaTi0.89Hf0.11O3: 337 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.jeurceramsoc.2024.117100
+
+116. BaTiO3-11Hf-1Fe: 337 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.jeurceramsoc.2024.117100
+
+117. 0.29Pb(Sc1/2Nb1/2)O3-0.38Pb(Mg1/3Nb2/3)O3-0.33PbTiO3: 335 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.jallcom.2025.178686
+
+118. KICET-PZT8 with 0% porosity: 330.0 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jeurceramsoc.2024.117046
+
+119. 0.96K0.48Na0.52Nb0.97Sb0.03O3-0.04Bi0.5Na0.5ZrO3: 328 pC/N
+    Family: KNN
+    DOI: 10.1016/j.ceramint.2024.10.312
+
+120. KICET-PZT8 with 7% porosity: 320.1 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jeurceramsoc.2024.117046
+
+121. 0.15Pb(Sc1/2Nb1/2)O3-0.57Pb(Mg1/3Nb2/3)O3-0.28PbTiO3 with 0 vol% BaTiO3: 320 pC/N
+    Family: PSN-PMN-PT
+    DOI: 10.1016/j.ceramint.2025.01.105
+
+122. 0.075Pb(Mn1/3Sb2/3)O3-(0.93)Pb(Zr0.48Ti0.52)O3: 318 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jallcom.2024.176362
+
+123. 0.08Pb(Mn1/3Sb2/3)O3-(0.92)Pb(Zr0.48Ti0.52)O3: 316 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jallcom.2024.176362
+
+124. 0.93Pb(Zr0.48Ti0.52)O3-0.05Pb(Mn(1/3)Sb(2/3))O3-0.02Pb(Sc(1/2)Nb(1/2))O3: 315 pC/N
+    Family: PZT
+    DOI: 10.1016/j.ceramint.2024.09.287
+
+125. KICET-PZT8 with 13% porosity: 313.5 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jeurceramsoc.2024.117046
+
+126. 0.085Pb(Mn1/3Sb2/3)O3-(0.92)Pb(Zr0.48Ti0.52)O3: 312 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jallcom.2024.176362
+
+127. (Ba0.97Ca0.032)(Sn0.048Ti0.95)O3: 312 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.sna.2024.115932
+
+128. Pb0.98Sm0.02[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3: 310 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jpcs.2024.112338
+
+129. 0.12Pb(Ni1/3Ta2/3)O3-0.41PbZrO3-0.47PbTiO3 + 2% MnO2: 310 pC/N
+    Family: PZT-based
+    DOI: 10.1016/j.jallcom.2024.176609
+
+130. Mn-doped Pb(Yn1/2Nb1/2)O3-Pb(Mg1/3Nb2/3)O3-PbTiO3 (random): 306 pC/N
+    Family: PYN-PMN-PT
+    DOI: 10.1016/j.ceramint.2024.11.138
+
+131. 0.07Pb(Mn1/3Sb2/3)O3-(0.93)Pb(Zr0.48Ti0.52)O3: 306 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jallcom.2024.176362
+
+132. (Ba0.98Ca0.016)(Sn0.024Ti0.98)O3: 300 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.sna.2024.115932
+
+133. 0.8(Bi0.5Na0.5)TiO3–0.2(Bi0.5K0.5)TiO3 + 3 mol% Mn: 295 pC/N
+    Family: BNT-based
+    DOI: 10.1016/j.ceramint.2025.01.144
+
+134. 0.93(Bi0.5Na0.5)TiO3-0.06BaTiO3-0.01(K0.5Na0.5)NbO3 at 65°C below T_F-R: 295 pC/N
+    Family: BNT-BT-KNN
+    DOI: 10.1016/j.ceramint.2024.11.355
+
+135. 0.96K0.48Na0.52Nb0.96Sb0.04O3-0.01BaZrO3-0.03Bi0.5Na0.5ZrO3: 294 pC/N
+    Family: KNN
+    DOI: 10.1016/j.ceramint.2024.10.312
+
+136. K0.5Na0.5NbO3-BiFeO3-0Bi0.5Na0.5ZrO3: 293 pC/N
+    Family: KNNS-based
+    DOI: 10.1016/j.jallcom.2024.177681
+
+137. 0.93Pb(Zr0.50Ti0.50)O3-0.05Pb(Mn(1/3)Sb(2/3))O3-0.02Pb(Sc(1/2)Nb(1/2))O3: 265 pC/N
+    Family: PZT
+    DOI: 10.1016/j.ceramint.2024.09.287
+
+138. 0.93(Bi0.5Na0.5)TiO3-0.06BaTiO3-0.01(K0.5Na0.5)NbO3: 263 pC/N
+    Family: BNT-BT-KNN
+    DOI: 10.1016/j.ceramint.2024.11.355
+
+139. PbZr0.52Ti0.48O3 on Pt/LaNiO3/TiO2: 260 pm/V
+    Family: PZT
+    DOI: 10.1016/j.jallcom.2024.178038
+
+140. 0.96K0.46Na0.5Li0.04Nb0.93Sb0.07O3-0.04BaZrO3: 258 pC/N
+    Family: KNN
+    DOI: 10.1016/j.ceramint.2024.10.312
+
+141. (Ba0.92Ca0.08)(Sn0.12Ti0.88)O3: 252 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.sna.2024.115932
+
+142. 0.95K0.46Na0.54Nb0.96Sb0.04O3-0.01BaZrO3-0.01CaZrO3-0.01Bi0.5K0.5ZrO3-0.02Bi0.5Na0.5ZrO3: 251 pC/N
+    Family: KNN
+    DOI: 10.1016/j.ceramint.2024.10.312
+
+143. Pb[ZrxTi1-x]O3: 250 pC/N
+    Family: PZT
+    DOI: 10.1016/j.nucengdes.2025.113832
+
+144. Pb[ZrxTi1-x]O3 after repoling: 250 pC/N
+    Family: PZT
+    DOI: 10.1016/j.nucengdes.2025.113832
+
+145. 0.94K0.45Na0.55Nb0.95Sb0.05O3-0.02CaZrO3-0.01Bi0.5K0.5ZrO3-0.02Bi0.5Na0.5ZrO3-0.01Bi0.5Li0.5ZrO3: 238 pC/N
+    Family: KNN
+    DOI: 10.1016/j.ceramint.2024.10.312
+
+146. 0.12Pb(Ni1/3Ta2/3)O3-0.44PbZrO3-0.44PbTiO3 + 2% MnO2: 238 pC/N
+    Family: PZT-based
+    DOI: 10.1016/j.jallcom.2024.176609
+
+147. Pb0.56Ba0.35Nd0.06Nb2O6: 236 pC/N
+    Family: Lead Barium Niobate
+    DOI: 10.1016/j.heliyon.2024.e40471
+
+148. Pure BaZrxTi1-xO3: 235 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.251
+
+149. (Ba0.95Ca0.05)(Ti0.89Sn0.11)O3: 232 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.09.282
+
+150. Pb(Zr0.2Ti0.8)O3: 225 pC/N
+    Family: PZT
+    DOI: 10.1016/j.sna.2024.116149
+
+151. 0.93Pb(Zr0.54Ti0.46)O3-0.05Pb(Mn(1/3)Sb(2/3))O3-0.02Pb(Sc(1/2)Nb(1/2))O3: 225 pC/N
+    Family: PZT
+    DOI: 10.1016/j.ceramint.2024.09.287
+
+152. PZT-8: 218 eE^{-12}C/N
+    Family: PZT
+    DOI: 10.1016/j.ultsonch.2024.107148
+
+153. 0.93Pb(Zr0.52Ti0.48)O3-0.05Pb(Mn(1/3)Sb(2/3))O3-0.02Pb(Sc(1/2)Nb(1/2))O3: 214 pC/N
+    Family: PZT
+    DOI: 10.1016/j.ceramint.2024.09.287
+
+154. Pb1.0Sm0.00[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3: 213 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jpcs.2024.112338
+
+155. Bi-modified 0.94Na0.5Bi0.5TiO3 - 0.06BaTiO3 where x=0.02: 207 pC/N
+    Family: Na0.5Bi0.5TiO3-BaTiO3
+    DOI: 10.1016/j.materresbull.2024.113231
+
+156. 0.999(0.7BiFeO3-0.3BaTiO3)-0.001(Bi0.5Na0.5)TiO3-5 mol%Bi2O3: 202 pC/N
+    Family: BiFeO3-BaTiO3
+    DOI: 10.1016/j.jallcom.2024.178322
+
+157. Sr-modified 0.94Na0.5Bi0.5TiO3 - 0.06BaTiO3 where x=0.03: 201 pC/N
+    Family: Na0.5Bi0.5TiO3-BaTiO3
+    DOI: 10.1016/j.materresbull.2024.113231
+
+158. 0.69Bi1.02FeO3 - 0.31BaTiO3: 191 pC/N
+    Family: BiFeO3-BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.375
+
+159. 0.68Bi0.997La0.003FeO3-0.32BaTiO3: 190 pC/N
+    Family: BiFeO3-BaTiO3
+    DOI: 10.1016/j.ceramint.2024.11.054
+
+160. Pb0.59Ba0.35Nd0.04Nb2O6: 190 pC/N
+    Family: Lead Barium Niobate
+    DOI: 10.1016/j.heliyon.2024.e40471
+
+161. BaTiO3: 190 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.jmbbm.2024.106758
+
+162. (Ba0.95Ca0.05)(Ti0.89Sn0.11)O3 - (0.1)BiFeO3: 188 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.09.282
+
+163. Fluorinated-Aluminum Nitridane27.8: 182 pm/V
+    Family: Nitridanes
+    DOI: 10.1016/j.commatsci.2024.113589
+
+164. Ba0.92Ca0.08Zr0.05Ti0.95O3 + 0.8%La + 0.7%Tm: 181 pC/N
+    Family: BCZT
+    DOI: 10.1016/j.mtcomm.2025.111645
+
+165. Bi0.5(Na0.8K0.2)0.5TiO3: 180 pC/N
+    Family: BNT-based
+    DOI: 10.1016/j.jeurceramsoc.2024.116805
+
+166. 0.705Bi0.997La0.003FeO3-0.295BaTiO3: 179 pC/N
+    Family: BiFeO3-BaTiO3
+    DOI: 10.1016/j.ceramint.2024.11.054
+
+167. Pb0.62Ba0.35Nd0.02Nb2O6: 178 pC/N
+    Family: Lead Barium Niobate
+    DOI: 10.1016/j.heliyon.2024.e40471
+
+168. 0.88(Na0.5Bi0.5)TiO3 - 0.12Ba(Ti0.98Zr0.02)O3: 175 pC/N
+    Family: NBT-BZT
+    DOI: 10.1016/j.jallcom.2025.178523
+
+169. 0.94(Bi0.5Na0.5)TiO3-0.06BaTiO3 + 1 mol% B3+: 171 pC/N
+    Family: BNT-BT
+    DOI: 10.1016/j.ceramint.2024.11.085
+
+170. Pb0.65Ba0.35Nb2O6: 170 pC/N
+    Family: Lead Barium Niobate
+    DOI: 10.1016/j.heliyon.2024.e40471
+
+171. 0.725BiFe0.99Sc0.01O3-0.275BaTiO3: 163 pC/N
+    Family: BiFeO3-BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.103
+
+172. PbZr0.52Ti0.48O3 on Pt/LaNiO3: 156 pm/V
+    Family: PZT
+    DOI: 10.1016/j.jallcom.2024.178038
+
+173. 0.93Pb(Zr0.56Ti0.44)O3-0.05Pb(Mn(1/3)Sb(2/3))O3-0.02Pb(Sc(1/2)Nb(1/2))O3: 156 pC/N
+    Family: PZT
+    DOI: 10.1016/j.ceramint.2024.09.287
+
+174. PbZr0.52Ti0.48O3 on Pt/TiO2: 153 pm/V
+    Family: PZT
+    DOI: 10.1016/j.jallcom.2024.178038
+
+175. 0.94(Bi0.5Na0.5)TiO3-0.06BaTiO3 + 1 mol% B3+ + 1 mol% Mn3+: 150 pC/N
+    Family: BNT-BT
+    DOI: 10.1016/j.ceramint.2024.11.085
+
+176. Pb0.8K0.4[Nb0.96Ta0.04]2O6: 141 pC/N
+    Family: PbNb2O6-based
+    DOI: 10.1016/j.jeurceramsoc.2025.117193
+
+177. 0.94(Bi0.5Na0.5)TiO3-0.06BaTiO3: 137 pC/N
+    Family: BNT-BT
+    DOI: 10.1016/j.ceramint.2024.11.085
+
+178. (K0.5Na0.5)1.00Eu0.01NbO3: 135 pC/N
+    Family: KNN
+    DOI: 10.1016/j.jallcom.2024.177690
+
+179. Pb0.96Sm0.04[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3: 135 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jpcs.2024.112338
+
+180. Pb0.94Sm0.06[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3: 130 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jpcs.2024.112338
+
+181. K0.5Na0.5NbO3: 120 pC/N
+    Family: KNN
+    DOI: 10.1016/j.jeurceramsoc.2024.116815
+
+182. K0.5Na0.5NbO3-875: 120 pC/N
+    Family: KNN
+    DOI: 10.1016/j.jeurceramsoc.2024.116815
+
+183. 0.85(Bi0.5Na0.5)TiO3-0.15BaTiO3: 118 pC/N
+    Family: BNT-BT
+    DOI: 10.1016/j.jeurceramsoc.2024.117043
+
+184. 0.85(Bi0.5Na0.5)TiO3-0.15BaTiO3 + 0 wt%MnO2: 118 pC/N
+    Family: BNT-BT
+    DOI: 10.1016/j.jeurceramsoc.2024.117043
+
+185. 0.85(Bi0.5Na0.5)TiO3-0.15BaTiO3 + 0.05 wt%MnO2: 118 pC/N
+    Family: BNT-BT
+    DOI: 10.1016/j.jeurceramsoc.2024.117043
+
+186. 0.85(Bi0.5Na0.5)TiO3-0.15BaTiO3 + 0.1 wt%MnO2: 118 pC/N
+    Family: BNT-BT
+    DOI: 10.1016/j.jeurceramsoc.2024.117043
+
+187. Pb[ZrxTi1-x]O3 after diffusion bonding at 275 °C: 110 pC/N
+    Family: PZT
+    DOI: 10.1016/j.nucengdes.2025.113832
+
+188. Pb[ZrxTi1-x]O3 after 1st thermal cycle between 250 °C and room temperature: 110 pC/N
+    Family: PZT
+    DOI: 10.1016/j.nucengdes.2025.113832
+
+189. Pb[ZrxTi1-x]O3 after 10th thermal cycle between 250 °C and room temperature: 110 pC/N
+    Family: PZT
+    DOI: 10.1016/j.nucengdes.2025.113832
+
+190. Ba0.92Ca0.08TiO3: 110 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.materresbull.2024.113116
+
+191. Ba0.97Ca0.03TiO3: 105 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.materresbull.2024.113116
+
+192. BaTi1.0(Zr1/3Sn1/3Hf1/3)0.00O3: 100 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.materresbull.2024.113188
+
+193. BaTiO3: 97 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.materresbull.2024.113116
+
+194. K0.5Na0.5NbO3: 94 pC/N
+    Family: KNN
+    DOI: 10.1016/j.mtcomm.2024.110948
+
+195. Pb0.85K0.3[Nb0.96Ta0.04]2O6: 93 pC/N
+    Family: PbNb2O6-based
+    DOI: 10.1016/j.jeurceramsoc.2025.117193
+
+196. 1-3 BaZrxTi1-xO3-cement composite with 60 vol% BaZrxTi1-xO3 and 7 vol% epoxy resin: 93 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.251
+
+197. Na0.5Bi0.5TiO3-0.6 CeO2: 90 pC/N
+    Family: P(VDF-TrFE)-based composites
+    DOI: 10.1016/j.nxmate.2024.100416
+
+198. Ba0.95Ca0.05TiO3: 88 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.materresbull.2024.113116
+
+199. Leu-Phe: 87 pm/V
+    Family: dipeptides
+    DOI: 10.1016/j.apmt.2024.102564
+
+200. Pb0.92Sm0.08[(Zr0.52Ti0.48)0.9(Mo1/3In2/3)0.05(Zn1/3Sb2/3)0.05]O3: 84 pC/N
+    Family: PZT
+    DOI: 10.1016/j.jpcs.2024.112338
+
+201. 1-3 BaZrxTi1-xO3-cement composite with 50 vol% BaZrxTi1-xO3 and 7 vol% epoxy resin: 83 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.251
+
+202. 1-3 BaZrxTi1-xO3-cement composite with 50 vol% BaZrxTi1-xO3 and 5 vol% epoxy resin: 82 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.251
+
+203. 1-3 BaZrxTi1-xO3-cement composite with 50 vol% BaZrxTi1-xO3 and 3 vol% epoxy resin: 81 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.251
+
+204. PbZr0.52Ti0.48O3 on Pt: 80 pm/V
+    Family: PZT
+    DOI: 10.1016/j.jallcom.2024.178038
+
+205. 1-3 BaZrxTi1-xO3-cement composite with 50 vol% BaZrxTi1-xO3 and 0 vol% epoxy resin: 79 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.251
+
+206. 1-3 BaZrxTi1-xO3-cement composite with 40 vol% BaZrxTi1-xO3 and 0 vol% epoxy resin: 76.2 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.251
+
+207. 1-3 BaZrxTi1-xO3-cement composite with 40 vol% BaZrxTi1-xO3 and 7 vol% epoxy resin: 76.2 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.251
+
+208. 1-3 BaZrxTi1-xO3-cement composite with 40 vol% BaZrxTi1-xO3 and 5 vol% epoxy resin: 75 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.10.251
+
+209. Phe-Leu: 71 pm/V
+    Family: dipeptides
+    DOI: 10.1016/j.apmt.2024.102564
+
+210. K0.5Na0.5NbO3 (converse measurement): 69.3 pC/N
+    Family: KNN
+    DOI: 10.1016/j.mtcomm.2024.110948
+
+211. Ba0.92Ca0.08Zr0.05Ti0.95O3 - 0.016La: 58 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.matchemphys.2024.129965
+
+212. Pb0.9K0.2[Nb0.96Ta0.04]2O6: 54 pC/N
+    Family: PbNb2O6-based
+    DOI: 10.1016/j.jeurceramsoc.2025.117193
+
+213. poly(vinylidene fluoride-trifluoroethylene)-Na0.5Bi0.5TiO30.6CeO2: 49 pC/N
+    Family: P(VDF-TrFE)-based composites
+    DOI: 10.1016/j.nxmate.2024.100416
+
+214. Ba0.92Ca0.08Zr0.05Ti0.95O3 - 0.012La: 45 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.matchemphys.2024.129965
+
+215. Pb0.95K0.1[Nb0.96Ta0.04]2O6: 44 pC/N
+    Family: PbNb2O6-based
+    DOI: 10.1016/j.jeurceramsoc.2025.117193
+
+216. Ba0.92Ca0.08Zr0.05Ti0.95O3 - 0.020La: 44 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.matchemphys.2024.129965
+
+217. Ni@Bi-MoS2: 43.17 pm/V
+    Family: MoS2
+    DOI: 10.1016/j.physe.2024.116148
+
+218. 0.78Bi0.5Na0.5TiO3-0.2SrTiO3-0.02BaTiO3: 43.0 pm/V
+    Family: BNT-based
+    DOI: 10.1016/j.jallcom.2024.176514
+
+219. Ba0.92Ca0.08Zr0.05Ti0.95O3 - 0La: 42 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.matchemphys.2024.129965
+
+220. Ba0.92Ca0.08Zr0.05Ti0.95O3 - 0.004La: 42 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.matchemphys.2024.129965
+
+221. Ba0.92Ca0.08Zr0.05Ti0.95O3 - 0.024La: 41 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.matchemphys.2024.129965
+
+222. 0.74Bi0.5Na0.5TiO3-0.2SrTiO3-0.06BaTiO3: 39.5 pm/V
+    Family: BNT-based
+    DOI: 10.1016/j.jallcom.2024.176514
+
+223. 0.72Bi0.5Na0.5TiO3-0.2SrTiO3-0.08BaTiO3: 37.3 pm/V
+    Family: BNT-based
+    DOI: 10.1016/j.jallcom.2024.176514
+
+224. 0.69Bi0.5Na0.5TiO3-0.2SrTiO3-0.11BaTiO3: 35.5 pm/V
+    Family: BNT-based
+    DOI: 10.1016/j.jallcom.2024.176514
+
+225. BiFeO3/CdS (20 wt% CdS): 35.2 pC·N⁻¹
+    Family: Perovskite
+    DOI: 10.1016/j.jece.2024.115049
+
+226. 0.76Bi0.5Na0.5TiO3-0.2SrTiO3-0.04BaTiO3: 35.2 pm/V
+    Family: BNT-based
+    DOI: 10.1016/j.jallcom.2024.176514
+
+227. Ba0.92Ca0.08Zr0.05Ti0.95O3 - 0.008La: 35 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.matchemphys.2024.129965
+
+228. K0.5Na0.5NbO3-700: 34.5 pC/N
+    Family: KNN
+    DOI: 10.1016/j.jeurceramsoc.2024.116815
+
+229. Bi0.85La0.15FeO3: 34 pC/N
+    Family: BiFeO3
+    DOI: 10.1016/j.jallcom.2024.176901
+
+230. BiFeO3/CdS (30 wt% CdS): 29.5 pC·N⁻¹
+    Family: Perovskite
+    DOI: 10.1016/j.jece.2024.115049
+
+231. Bi4Ti3O12/Chitosan/reduced graphene oxide where ceramic weight percentage=50%, graphene weight percentage=0.5%: 28.21 pC/N
+    Family: Bi4Ti3O12
+    DOI: 10.1016/j.ceramint.2024.11.249
+
+232. 0.5(0.94Bi0.5Na0.5TiO3-0.06BaTiO3)-0.5BiFe0.8Mn0.2O3: 27.6 pC/N
+    Family: bismuth-based perovskites
+    DOI: 10.1016/j.matdes.2024.113498
+
+233. Nb/Mn co-doped CaBi4Ti4O15 (CBTNM-12): 26.8 pC/N
+    Family: Bismuth layer-structured ferroelectrics
+    DOI: 10.1016/j.ceramint.2024.09.406
+
+234. BiFeO3/CdS (10 wt% CdS): 26.48 pC·N⁻¹
+    Family: Perovskite
+    DOI: 10.1016/j.jece.2024.115049
+
+235. CaBi2Nb2O9-2Tm: 25.2 pC/N
+    Family: CaBi2Nb2O9
+    DOI: 10.1016/j.jeurceramsoc.2024.117065
+
+236. Bi4Ti3O12/Chitosan/reduced graphene oxide where ceramic weight percentage=42.6777%, graphene weight percentage=0.853553%: 24.82 pC/N
+    Family: Bi4Ti3O12
+    DOI: 10.1016/j.ceramint.2024.11.249
+
+237. Nb/Mn co-doped CaBi4Ti4O15 (CBTNM-8): 24.8 pC/N
+    Family: Bismuth layer-structured ferroelectrics
+    DOI: 10.1016/j.ceramint.2024.09.406
+
+238. Nb/Mn co-doped CaBi4Ti4O15 (CBTNM-20): 24.7 pC/N
+    Family: Bismuth layer-structured ferroelectrics
+    DOI: 10.1016/j.ceramint.2024.09.406
+
+239. Na0.25K0.25Bi2.48Ce0.02Nb1.98W0.02O9: 24.4 pC/N
+    Family: Bismuth Layer-Structured Ferroelectrics (BLSFs)
+    DOI: 10.1016/j.jeurceramsoc.2024.116961
+
+240. Na0.25K0.25Bi2.4.98Ce0.02Nb1.98W0.02O9: 24.4 pC/N
+    Family: Bismuth Layer-Structured Ferroelectrics (BLSFs)
+    DOI: 10.1016/j.jeurceramsoc.2024.116961
+
+241. CaBi2Nb2O9-3Tm: 23.5 pC/N
+    Family: CaBi2Nb2O9
+    DOI: 10.1016/j.jeurceramsoc.2024.117065
+
+242. Bi4.96Ho0.04Ti3FeO15: 23.1 pC/N
+    Family: Bismuth layer-structured ferroelectrics (BLSFs)
+    DOI: 10.1016/j.mtcomm.2024.111118
+
+243. Bi5Ti3Fe0.96Mn0.04O15: 23.0 pC/N
+    Family: Aurivillius-type bismuth layer-structured ferroelectric
+    DOI: 10.1016/j.jallcom.2024.177343
+
+244. Ca0.9(Na0.5Pr0.25Ce0.25)0.1Bi4Ti4O15 + 0.2 wt% MnO2: 22.3 pC/N
+    Family: Bismuth-layer structured ferroelectrics (BLSFs)
+    DOI: 10.1016/j.ceramint.2025.01.250
+
+245. K0.5Na0.5NbO3-750: 22.2 pC/N
+    Family: KNN
+    DOI: 10.1016/j.jeurceramsoc.2024.116815
+
+246. La-doped CaBi2Nb2O9: 21.8 pC/N
+    Family: Aurivillius ferroelectrics
+    DOI: 10.1016/j.ssc.2024.115705
+
+247. Bi4.98Ho0.02Ti3FeO15: 21.8 pC/N
+    Family: Bismuth layer-structured ferroelectrics (BLSFs)
+    DOI: 10.1016/j.mtcomm.2024.111118
+
+248. Ca0.6(Li0.5Bi0.5)0.4Bi2-0.40.1Ce0.40.1Nb2O9: 21.7 pC/N
+    Family: CaBi2Nb2O9
+    DOI: 10.1016/j.jeurceramsoc.2024.116955
+
+249. Bi4.96Yb0.04Ti3FeO15: 21.4 pC/N
+    Family: Aurivillius-type bismuth layer-structured ferroelectric
+    DOI: 10.1016/j.jallcom.2024.177343
+
+250. Nb/Mn co-doped CaBi4Ti4O15 (CBTNM-4): 21.4 pC/N
+    Family: Bismuth layer-structured ferroelectrics
+    DOI: 10.1016/j.ceramint.2024.09.406
+
+251. Bi4.97Ho0.03Ti3FeO15: 21.1 pC/N
+    Family: Bismuth layer-structured ferroelectrics (BLSFs)
+    DOI: 10.1016/j.mtcomm.2024.111118
+
+252. CdS: 20.24 pC·N⁻¹
+    Family: Perovskite
+    DOI: 10.1016/j.jece.2024.115049
+
+253. Na0.25K0.25Bi2.45Nb2O8.925: 20 pC/N
+    Family: BLSFs
+    DOI: 10.1016/j.mtcomm.2024.111203
+
+254. Na0.25K0.25Bi2.5+-0.05Nb2O9+3-0.05/2: 20 pC/N
+    Family: BLSFs
+    DOI: 10.1016/j.mtcomm.2024.111203
+
+255. Bi4.95Ho0.05Ti3FeO15: 20.0 pC/N
+    Family: Bismuth layer-structured ferroelectrics (BLSFs)
+    DOI: 10.1016/j.mtcomm.2024.111118
+
+256. Ca0.85(LiCe)0.075Bi4Ti4-xZnxO15: 20 pC/N
+    Family: Bismuth-layered structure ferroelectrics (BLSFs)
+    DOI: 10.1016/j.mseb.2024.117750
+
+257. (Ba0.95Ca0.05)(Ti0.89Sn0.11)O3 - (0.5)BiFeO3: 20 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.09.282
+
+258. Bi4Ti3O12 textured ceramics (Bi4Ti3O12(∥)): 19 pC/N
+    Family: Aurivillius
+    DOI: 10.1016/j.ceramint.2025.01.301
+
+259. 0.75Bi5Ti3FeO15-0.25CaBi4Ti4O15: 18.6 pC/N
+    Family: Aurivillius-type bismuth layer-structured ferroelectric
+    DOI: 10.1016/j.jallcom.2024.177343
+
+260. Bi4.92Ho0.08Ti3FeO15: 18.6 pC/N
+    Family: Bismuth layer-structured ferroelectrics (BLSFs)
+    DOI: 10.1016/j.mtcomm.2024.111118
+
+261. Bi4Ti3O12/Chitosan/reduced graphene oxide where ceramic weight percentage=42.6777%, graphene weight percentage=0.146447%: 18.57 pC/N
+    Family: Bi4Ti3O12
+    DOI: 10.1016/j.ceramint.2024.11.249
+
+262. (Li, Ce)-doped CaBi2Nb2O9: 18.5 pC/N
+    Family: Aurivillius ferroelectrics
+    DOI: 10.1016/j.ssc.2024.115705
+
+263. CaBi2Nb2O9-5Tm: 18.0 pC/N
+    Family: CaBi2Nb2O9
+    DOI: 10.1016/j.jeurceramsoc.2024.117065
+
+264. Ca0.94(NaCe)0.03Bi2Nb1.97(W0.75Mn0.25)0.03O9: 17.2 pC/N
+    Family: CaBi2Nb2O9
+    DOI: 10.1016/j.ceramint.2024.11.449
+
+265. Bi2.93Ce0.07TiNbO9: 17.1 pC/N
+    Family: Aurivillius
+    DOI: 10.1016/j.ceramint.2024.09.364
+
+266. BiFeO3: 17.04 pC·N⁻¹
+    Family: Perovskite
+    DOI: 10.1016/j.jece.2024.115049
+
+267. Fluorinated-Gallium Nitridane27.8: 16.7 pm/V
+    Family: Nitridanes
+    DOI: 10.1016/j.commatsci.2024.113589
+
+268. Bi4Ti3O12/Chitosan/reduced graphene oxide where ceramic weight percentage=25%, graphene weight percentage=1%: 16.3 pC/N
+    Family: Bi4Ti3O12
+    DOI: 10.1016/j.ceramint.2024.11.249
+
+269. Ca0.92(Li0.5Ce0.5)0.08Bi2Nb1.97(W2/3Mo1/3)0.03O9: 16.1 pC/N
+    Family: Aurivillius-type
+    DOI: 10.1016/j.jeurceramsoc.2024.117101
+
+270. Bi2.91Ce0.09TiNbO9: 15.7 pC/N
+    Family: Aurivillius
+    DOI: 10.1016/j.ceramint.2024.09.364
+
+271. Bi4Ti3O12/Chitosan/reduced graphene oxide where ceramic weight percentage=25%, graphene weight percentage=0.5%: 15.67 pC/N
+    Family: Bi4Ti3O12
+    DOI: 10.1016/j.ceramint.2024.11.249
+
+272. Ca0.96(Li0.5Bi0.5)0.04Bi2Nb1.98Mn0.02O9: 15.2 pC/N
+    Family: CaBi2Nb2O9
+    DOI: 10.1016/j.mtphys.2024.101598
+
+273. Bi2.95Ce0.05TiNbO9: 15.1 pC/N
+    Family: Aurivillius
+    DOI: 10.1016/j.ceramint.2024.09.364
+
+274. Ca1Bi4Ti4O15 + 0.2 wt% MnO2: 14.8 pC/N
+    Family: Bismuth-layer structured ferroelectrics (BLSFs)
+    DOI: 10.1016/j.ceramint.2025.01.250
+
+275. Bi4Ti3O12/Chitosan/reduced graphene oxide where ceramic weight percentage=25%, graphene weight percentage=0%: 14.04 pC/N
+    Family: Bi4Ti3O12
+    DOI: 10.1016/j.ceramint.2024.11.249
+
+276. Na0.25K0.25Bi2.5Nb2O9: 14 pC/N
+    Family: BLSFs
+    DOI: 10.1016/j.mtcomm.2024.111203
+
+277. Na0.25K0.25Bi2.5+0Nb2O9+30/2: 14 pC/N
+    Family: BLSFs
+    DOI: 10.1016/j.mtcomm.2024.111203
+
+278. In2Se3@SnSe-3: 13.8 pm/V
+    Family: In2Se3@SnSe
+    DOI: 10.1016/j.jece.2024.114304
+
+279. Bi4.8(NaCe)0.1Ti3FeO15: 13.4 pC/N
+    Family: Aurivillius-type bismuth layer-structured ferroelectric
+    DOI: 10.1016/j.jallcom.2024.177343
+
+280. Bi3Ti1.48Nb0.02W0.5O9: 13 pC/N
+    Family: Bismuth layered structured ferroelectric oxides
+    DOI: 10.1016/j.jallcom.2024.177021
+
+281. Bi2.89Ce0.11TiNbO9: 12.5 pC/N
+    Family: Aurivillius
+    DOI: 10.1016/j.ceramint.2024.09.364
+
+282. Bi2.97Ce0.03TiNbO9: 12.4 pC/N
+    Family: Aurivillius
+    DOI: 10.1016/j.ceramint.2024.09.364
+
+283. Na0.25K0.25Bi2.5Nb2O9: 11.7 pC/N
+    Family: Bismuth Layer-Structured Ferroelectrics (BLSFs)
+    DOI: 10.1016/j.jeurceramsoc.2024.116961
+
+284. Bi3La1Ti3O12: 11.57 pm/V
+    Family: Bi4Ti3O12
+    DOI: 10.1016/j.ceramint.2024.11.360
+
+285. Pd@Bi-MoS2: 11.29 pm/V
+    Family: MoS2
+    DOI: 10.1016/j.physe.2024.116148
+
+286. CaBi2Nb2O9-4Tm: 10.8 pC/N
+    Family: CaBi2Nb2O9
+    DOI: 10.1016/j.jeurceramsoc.2024.117065
+
+287. Ce-doped CaBi2Nb2O9: 10.3 pC/N
+    Family: Aurivillius ferroelectrics
+    DOI: 10.1016/j.ssc.2024.115705
+
+288. Bi5Ti2.2Fe1.4Nb0.4O15: 10.0 pC/N
+    Family: Aurivillius-type bismuth layer-structured ferroelectric
+    DOI: 10.1016/j.jallcom.2024.177343
+
+289. Bi4Ti3O12 non-textured ceramics: 9 pC/N
+    Family: Aurivillius
+    DOI: 10.1016/j.ceramint.2025.01.301
+
+290. CaBi2Nb2O9-1Tm: 8.8 pC/N
+    Family: CaBi2Nb2O9
+    DOI: 10.1016/j.jeurceramsoc.2024.117065
+
+291. Bi4Ti3O12/Chitosan/reduced graphene oxide where ceramic weight percentage=7.32233%, graphene weight percentage=0.853553%: 8.38 pC/N
+    Family: Bi4Ti3O12
+    DOI: 10.1016/j.ceramint.2024.11.249
+
+292. Pt@Bi-MoS2: 8.22 pm/V
+    Family: MoS2
+    DOI: 10.1016/j.physe.2024.116148
+
+293. LiTaO3: 8 pC/N
+    Family: LiTaO3
+    DOI: 10.1016/j.jelechem.2025.118929
+
+294. CaBi4Ti4O15: 8 pC/N
+    Family: Bismuth-layered structure ferroelectrics (BLSFs)
+    DOI: 10.1016/j.mseb.2024.117750
+
+295. Bi4Ti3O12 (molten salt method): 7.75 pm/V
+    Family: Bi4Ti3O12
+    DOI: 10.1016/j.ceramint.2024.11.360
+
+296. Bi3Ti1.5Nb0.00W0.5O9: 7.5 pC/N
+    Family: Bismuth layered structured ferroelectric oxides
+    DOI: 10.1016/j.jallcom.2024.177021
+
+297. CaBi4Ti4O15: 7.5 pC/N
+    Family: Bismuth layer-structured ferroelectrics
+    DOI: 10.1016/j.ceramint.2024.09.406
+
+298. Nb/Mn co-doped CaBi4Ti4O15 (CBTNM-0): 7.2 pC/N
+    Family: Bismuth layer-structured ferroelectrics
+    DOI: 10.1016/j.ceramint.2024.09.406
+
+299. Bi5Ti3FeO15: 7.1 pC/N
+    Family: Aurivillius-type bismuth layer-structured ferroelectric
+    DOI: 10.1016/j.jallcom.2024.177343
+
+300. Bi5Ti3FeO15: 7.1 pC/N
+    Family: Bismuth layer-structured ferroelectrics (BLSFs)
+    DOI: 10.1016/j.mtcomm.2024.111118
+
+301. CaBi2Nb2O9: 6.5 pC/N
+    Family: Aurivillius-type
+    DOI: 10.1016/j.jeurceramsoc.2024.117101
+
+302. CaBi2Nb2O9: 6.0 pC/N
+    Family: CaBi2Nb2O9
+    DOI: 10.1016/j.jeurceramsoc.2024.117065
+
+303. CaBi2Nb2O9: 6 pC/N
+    Family: CaBi2Nb2O9
+    DOI: 10.1016/j.mtphys.2024.101598
+
+304. Ir@Bi-MoS2: 5.86 pm/V
+    Family: MoS2
+    DOI: 10.1016/j.physe.2024.116148
+
+305. CaBi2Nb2O9: 5.5 pC/N
+    Family: CaBi2Nb2O9
+    DOI: 10.1016/j.ceramint.2024.11.449
+
+306. Bi4Ti3O12/Chitosan/reduced graphene oxide where ceramic weight percentage=7.32233%, graphene weight percentage=0.146447%: 5.21 pC/N
+    Family: Bi4Ti3O12
+    DOI: 10.1016/j.ceramint.2024.11.249
+
+307. AlN (S1: 400 W, 20:40 Ar:N2): 5.0 pC/N
+    Family: AlN
+    DOI: 10.1016/j.jallcom.2024.176723
+
+308. CaBi2Nb2O9: 5 pC/N
+    Family: Aurivillius ferroelectrics
+    DOI: 10.1016/j.ssc.2024.115705
+
+309. Bi2.99Ce0.01TiNbO9: 5 pC/N
+    Family: Aurivillius
+    DOI: 10.1016/j.ceramint.2024.09.364
+
+310. AlN (S2: 400 W, 40:20 Ar:N2): 4.5 pC/N
+    Family: AlN
+    DOI: 10.1016/j.jallcom.2024.176723
+
+311. AlN (S3: 400 W, 40:40 Ar:N2): 4.5 pC/N
+    Family: AlN
+    DOI: 10.1016/j.jallcom.2024.176723
+
+312. Bi4Ti3O12: 4.25 pm/V
+    Family: Bi4Ti3O12
+    DOI: 10.1016/j.ceramint.2024.11.360
+
+313. CdS@SnS2 (CdS@SnS2-2): 3.11 p.m./V
+    Family: CdS@SnS2
+    DOI: 10.1016/j.compositesb.2024.112108
+
+314. Bi3TiNbO9: 3.1 pC/N
+    Family: Aurivillius
+    DOI: 10.1016/j.ceramint.2024.09.364
+
+315. Plasma Electrolytic Oxidation-BaTiO35: 2.5 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.11.033
+
+316. CdS@SnS2 (CdS@SnS2): 2.24 p.m./V
+    Family: CdS@SnS2
+    DOI: 10.1016/j.compositesb.2024.112108
+
+317. (Ba0.95Ca0.05)(Ti0.89Sn0.11)O3 - (0.9)BiFeO3: 2 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.09.282
+
+318. Plasma Electrolytic Oxidation-BaTiO32: 1.9 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.11.033
+
+319. Plasma Electrolytic Oxidation: 1.0 pC/N
+    Family: BaTiO3
+    DOI: 10.1016/j.ceramint.2024.11.033
+
+320. Eu1.90Dy0.10Ge2O7: 0.66 pC/N
+    Family: RE2B2O7
+    DOI: 10.1016/j.apradiso.2024.111655
+
+321. Eu1.90Ho0.10Ge2O7: 0.62 pC/N
+    Family: RE2B2O7
+    DOI: 10.1016/j.apradiso.2024.111655
+
+322. Gallium Nitridane27.8: 0.43 pm/V
+    Family: Nitridanes
+    DOI: 10.1016/j.commatsci.2024.113589
+
+323. Hydrogenated/Fluorinated-Boron Nitridane21.8: 0.4 pm/V
+    Family: Nitridanes
+    DOI: 10.1016/j.commatsci.2024.113589
+
+324. Eu1.90La0.10Ge2O7: 0.36 pC/N
+    Family: RE2B2O7
+    DOI: 10.1016/j.apradiso.2024.111655
+
+325. β-TeO2: 0.00021 pm/V
+    Family: TeO2
+    DOI: 10.1016/j.cplett.2024.141669
+
+326. Bi4Ti3O12/Chitosan/reduced graphene oxide where ceramic weight percentage=0%, graphene weight percentage=0.5%: 0 pC/N
+    Family: Bi4Ti3O12
+    DOI: 10.1016/j.ceramint.2024.11.249
+
+327. α-TeO2: -0.00699 pm/V
+    Family: TeO2
+    DOI: 10.1016/j.cplett.2024.141669
+
+328. Hydrogenated/Fluorinated-Boron Nitridane27.8: -0.08 pm/V
+    Family: Nitridanes
+    DOI: 10.1016/j.commatsci.2024.113589
+
+329. Boron Nitridane21.8: -0.11 pm/V
+    Family: Nitridanes
+    DOI: 10.1016/j.commatsci.2024.113589
+
+330. Fluorinated-Boron Nitridane21.8: -0.21 pm/V
+    Family: Nitridanes
+    DOI: 10.1016/j.commatsci.2024.113589
+
+331. Aluminum Nitridane27.8: -0.32 pm/V
+    Family: Nitridanes
+    DOI: 10.1016/j.commatsci.2024.113589
+
+332. Fluorinated-Boron Nitridane27.8: -0.58 pm/V
+    Family: Nitridanes
+    DOI: 10.1016/j.commatsci.2024.113589
+
+333. Hydrogenated/Fluorinated-Gallium Nitridane27.8: -2.76 pm/V
+    Family: Nitridanes
+    DOI: 10.1016/j.commatsci.2024.113589
+
+334. Hydrogenated/Fluorinated-Aluminum Nitridane27.8: -31.6 pm/V
+    Family: Nitridanes
+    DOI: 10.1016/j.commatsci.2024.113589
+
+335. poly(vinylidene fluoride-trifluoroethylene): -38 pC/N
+    Family: P(VDF-TrFE)-based composites
+    DOI: 10.1016/j.nxmate.2024.100416
+
+336. poly(vinylidene fluoride-co-trifluoroethylene) 80/20 - as-electrospun: -75 pC/N
+    Family: PVDF-based copolymers
+    DOI: 10.1016/j.cej.2024.157756
+
+337. Y2CO2: -134.79 pm/V
+    Family: MXene
+    DOI: 10.1016/j.surfin.2025.105834
+
+338. poly(vinylidene fluoride-co-trifluoroethylene) 80/20 - electrospun and corona-poled in air: -181 pC/N
+    Family: PVDF-based copolymers
+    DOI: 10.1016/j.cej.2024.157756
+
+339. poly(vinylidene fluoride-co-trifluoroethylene) 80/20 - electrospun, first annealed, and corona-poled in air: -233 pC/N
+    Family: PVDF-based copolymers
+    DOI: 10.1016/j.cej.2024.157756
+
+340. Y2COSe: -311.76 pm/V
+    Family: MXene
+    DOI: 10.1016/j.surfin.2025.105834
+
+341. poly(vinylidene fluoride-co-trifluoroethylene) 80/20 - electrospun, second annealed, and corona-poled in air: -357 pC/N
+    Family: PVDF-based copolymers
+    DOI: 10.1016/j.cej.2024.157756
+
+342. Y2COS: -398.49 pm/V
+    Family: MXene
+    DOI: 10.1016/j.surfin.2025.105834
+
+343. poly(vinylidene fluoride-co-trifluoroethylene) 80/20 - electrospun, first and second annealed, and corona-poled in air: -551 pC/N
+    Family: PVDF-based copolymers
+    DOI: 10.1016/j.cej.2024.157756
+
+344. poly(vinylidene fluoride-co-trifluoroethylene) 80/20 - electrospun, first and second annealed, and corona-poled in water: -1044 pC/N
+    Family: PVDF-based copolymers
+    DOI: 10.1016/j.cej.2024.157756
+

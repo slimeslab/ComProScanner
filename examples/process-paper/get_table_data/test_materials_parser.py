@@ -81,6 +81,8 @@ def main():
         "10.1016/j.jallcom.2024.176609": "The 0.12Pb(Ni1/3Ta2/3)O3-xPbZrO3-(0.88-x)PbTiO3 piezoelectric ceramics with 2 mol% MnO2 (abbreviated as PNT-xPZ-PT-Mn, x = 0.41, 0.42, 0.43, 0.44) were fabricated by the conventional solid-state reaction method",
         "10.1016/j.jeurceramsoc.2025.117193": "In this study, dense Pb(1-x)K2x[Nb0.96Ta0.04]2O6 (PKxNT, x = 0.05, 0.10, 0.15, 0.20) ceramics were prepared via the solid-state reaction method.",
         "10.1016/j.ceramint.2024.09.282": "BaCO3 (99.8 %, Aladdin), TiO2 (99.0 %, McLean, Shanghai, China), SnO2 (99.9 %, Aladdin), CaCO3 (99.0 %, Sinopharm), Bi2O3 (99.9 %, McLean), Fe2O3 (99.0 %, Sinopharm) are used as raw materials, which were accurately weighed according to a composition of (1-x) (Ba0.95Ca0.05) (Ti0.89Sn0.11)O3-xBiFeO3 (BCTSO-xBFO, x = 0, 0.1, 0.5, 0.9 mol%) and milled with ethanol for 16 h.",
+        "10.1016/j.ceramint.2024.10.314": "Lead-free piezoelectric ceramics with the formula Ba1-xSrxTi0.92Zr0.08O3 [x = 0, 0.04, 0.08, 0.12, 0.16, 0.2 (mol)] were prepared using the solid-state reaction technique.",
+        "10.1016/j.jeurceramsoc.2024.117065": "Pure CaBi2Nb2O9 and rare-earth thulium-substituted CaBi2Nb2O9 powders with nominal compositions of Ca1-xTmxBi2Nb2O9 (CBN-100xTm) were prepared through a solid-phase reaction method. To characterize the phase transition in detail, a composition range of x = 0.01–0.05 was selected.",
     }
 
     print("Sending texts to material parser API...")
