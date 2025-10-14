@@ -179,3 +179,5 @@ cython_debug/
 # Remove example directory primarily
 examples/db/10.*
 tests example/
+
+applications

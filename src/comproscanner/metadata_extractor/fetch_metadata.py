@@ -13,6 +13,7 @@ import time
 import xml.etree.ElementTree as ET
 import sys
 import os
+import urllib.parse
 
 # Third party imports
 import requests
@@ -99,18 +100,22 @@ class FetchMetadata:
         }
         self.is_exceeded = False
 
-    def _construct_url(self, start, year, query, special_query):
+    def _construct_url(self, cursor, year, query, special_query):
         """
-        Construct the URL for the request
-        params: start: int: The start index for the request
-        params: year: int: The year for the request
-        params: query: str: The query for the request
-        params: special_query: str: The special query for the request
+        Construct the URL for the request with cursor-based pagination
+
+        Args:
+            cursor (str): The cursor value ('*' for first request, or next cursor from previous response)
+            year (int): The year for the request
+            query (str): The query for the request
+            special_query (str): The special query for the request
+
+        Returns:
+            str: The constructed URL
         """
         base = f"{self.base_url}PUBYEAR+%3D+{year}+{query}"
         url = base + (f"+{special_query}" if special_query else "") + "&count=200"
-        if start != 1:
-            url += f"&start={start}"
+        url += f"&cursor={cursor}"
         return url
 
     def _send_request(self, url):
@@ -139,10 +144,50 @@ class FetchMetadata:
             "default": "http://www.w3.org/2005/Atom",
             "prism": "http://prismstandard.org/namespaces/basic/2.0/",
             "dc": "http://purl.org/dc/elements/1.1/",
+            "opensearch": "http://a9.com/-/spec/opensearch/1.1/",
         }
         root = ET.fromstring(response_text)
         entry_elements = root.findall("default:entry", namespaces)
         return root, entry_elements, namespaces
+
+    def _get_next_cursor(self, root, namespaces):
+        """
+        Extract the next cursor from the 'next' link in the XML response
+
+        Args:
+            root: The XML root element
+            namespaces (dict): The XML namespaces
+
+        Returns:
+            str or None: The next cursor value (URL-encoded), or None if no more pages
+        """
+        # Find the 'next' link
+        links = root.findall("default:link", namespaces)
+        for link in links:
+            if link.get("ref") == "next":
+                next_url = link.get("href")
+                if next_url and "cursor=" in next_url:
+                    # Extract cursor parameter from URL (it's already URL-encoded)
+                    cursor_param = next_url.split("cursor=")[1].split("&")[0]
+                    return cursor_param
+
+        return None
+
+    def _get_total_results(self, root, namespaces):
+        """
+        Extract the total number of results from the response
+
+        Args:
+            root: The XML root element
+            namespaces (dict): The XML namespaces
+
+        Returns:
+            int: Total number of results
+        """
+        total_elem = root.find("opensearch:totalResults", namespaces)
+        if total_elem is not None:
+            return int(total_elem.text)
+        return 0
 
     def _process_entry_elements(self, entry_elements, namespaces, data):
         """
@@ -238,57 +283,63 @@ class FetchMetadata:
 
     def fetch_and_process_data(
         self,
-        start,
+        cursor,
         year,
         query,
         data: dict,
         total_results: int,
         special_query: str,
+        page_number: int,
     ):
         """
-        Fetch and process the data for a given page number
+        Fetch and process the data for a given cursor
 
         Args:
-            start (int): The start index for the request
+            cursor (str): The cursor for the request
             year (int): The year for the request
             query (str): The query for the request
             data (dict): The dictionary to store the data
             total_results (int): The total number of results for the request
             special_query (str): The special query for the request
+            page_number (int): The current page number
 
         Returns:
-            tuple: The data, total_results, and a boolean indicating if the API limit is exceeded
+            tuple: The data, total_results, next_cursor, and a boolean indicating if the API limit is exceeded
 
         Raises:
             CustomErrorHandler: If an error occurs during the request
         """
-        url = self._construct_url(start, year, query, special_query)
+        url = self._construct_url(cursor, year, query, special_query)
+        next_cursor = None
+
         try:
             logger.debug(f"Sending request to URL: {url}")
             response = self._send_request(url)
             if response.status_code == 200:
                 # process the response and add the data to the dictionary
                 logger.info(
-                    f"Received response for page {start // 200 + 1},adding data to dictionary..."
+                    f"Received response for page {page_number}, adding data to dictionary..."
                 )
                 root, entry_elements, namespaces = self.parse_xml_data(response.text)
                 logger.info(
-                    f"Found {len(entry_elements)} entry elements for year {year}, page {start // 200 + 1}\n"
+                    f"Found {len(entry_elements)} entry elements for year {year}, page {page_number}\n"
                 )
                 data = self._process_entry_elements(entry_elements, namespaces, data)
-                if start == 1:
-                    namespace_opensearch = {
-                        "opensearch": "http://a9.com/-/spec/opensearch/1.1/"
-                    }
-                    total_results = int(
-                        root.find("opensearch:totalResults", namespace_opensearch).text
-                    )
+
+                # Get total results on first page
+                if total_results == 0:
+                    total_results = self._get_total_results(root, namespaces)
+                    logger.info(f"Total results available: {total_results}")
+
+                # Get next cursor
+                next_cursor = self._get_next_cursor(root, namespaces)
+
             elif response.status_code == 429:
                 self._write_error_logs(
                     year,
                     query,
                     special_query,
-                    start // 200 + 1,
+                    page_number,
                     status_code=response.status_code,
                 )
                 self.is_exceeded = True
@@ -297,7 +348,7 @@ class FetchMetadata:
                     year,
                     query,
                     special_query,
-                    start // 200 + 1,
+                    page_number,
                     status_code=response.status_code,
                 )
         except ValueError as ve:
@@ -306,11 +357,12 @@ class FetchMetadata:
             logger.error(f"KeyError while processing the data: {ke}")
         except Exception as e:
             logger.error(f"Exception while processing the data: {e}")
-        return data, total_results
+
+        return data, total_results, next_cursor
 
     def _fetch_paginated_data(self, year, query, special_query, data):
         """
-        Handle the pagination of the data for a given year, query, and special query
+        Handle the cursor-based pagination of the data for a given year, query, and special query
 
         Args:
             year (int): The year for the request
@@ -321,33 +373,48 @@ class FetchMetadata:
         Returns:
             dict: The dictionary with the processed data
         """
-        start = 1
-        total_results = 1
+        cursor = "*"  # Start with asterisk for first request
+        total_results = 0
+        page_number = 1
 
-        while True:
-            logger.debug(f"Processing page {start // 200 + 1}")
+        while cursor:
+            logger.debug(f"Processing page {page_number}")
             try:
-                data, total_results = self.fetch_and_process_data(
-                    start, year, query, data, total_results, special_query
+                data, total_results, next_cursor = self.fetch_and_process_data(
+                    cursor, year, query, data, total_results, special_query, page_number
                 )
+
+                # Log progress
+                logger.info(
+                    f"Progress: Fetched {len(data['doi'])} / {total_results} results"
+                )
+
             except Exception as e:
                 self._write_error_logs(
-                    year, query, special_query, start // 200 + 1, exception=e
+                    year, query, special_query, page_number, exception=e
                 )
                 logger.error(f"Exception while fetching the data: {e}")
+                break
 
             if self.is_exceeded:
                 self._write_error_logs(
-                    year, query, special_query, start // 200 + 1, status_code=429
+                    year, query, special_query, page_number, status_code=429
                 )
                 logger.critical("Exceeded API limit. Exiting the program...")
                 sys.exit(1)
 
-            if start // 200 + 1 == total_results // 200 + 1 or start // 200 + 1 >= 24:
+            # Check if there's a next cursor
+            if not next_cursor:
+                logger.info(
+                    f"No more pages to fetch. Total results fetched: {len(data['doi'])}"
+                )
                 break
 
-            start += 200
-            time.sleep(0.2)
+            cursor = next_cursor
+            page_number += 1
+
+            # Rate limiting: respect 9 requests per second limit
+            time.sleep(0.12)  # ~8 requests per second to stay safely under 9/sec limit
 
         return data
 
@@ -371,7 +438,7 @@ class FetchMetadata:
         logger.info("Done...!!!\n")
 
     def main_fetch(self):
-        """Main function to fetch metadata from Scopus using the Scopus API
+        """Main function to fetch metadata from Scopus using the Scopus API with cursor-based pagination
 
         Raises:
             CustomErrorHandler: If an error occurs during the request
