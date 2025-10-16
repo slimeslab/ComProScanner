@@ -1012,8 +1012,7 @@ Data Extraction - using LLMs to extract structured data
 Post Processing - evaluation, cleaning and data visualization
 
 <div align="center">
-  <img src="assets/overall_workflow.jpg" alt="ComProScanner Overview Workflow" width="750"/>
-  <p>Overall Workflow Diagram</p>
+  <img src="assets/overall_workflow.png" alt="ComProScanner Overview Workflow" width="750"/>
 </div>
 
 ### Data Extraction Flow
