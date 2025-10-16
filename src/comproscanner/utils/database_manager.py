@@ -42,17 +42,18 @@ logger = setup_logger("comproscanner.log", module_name="database_manager")
 
 
 class MySQLDatabaseManager:
-    def __init__(self, main_keyword: str):
-        try:
-            is_sql_db = True
-            self.main_keyword = main_keyword
-            self.db_config = DatabaseConfig(self.main_keyword, is_sql_db)
-            self.sql_db_url = self.db_config.DATABASE_CONNECTION_URL
-            self.sql_engine = create_engine(self.sql_db_url)
-            self.inspector = inspect(self.sql_engine)
-            self.metadata = MetaData()
-        except Exception as e:
-            logger.error(f"Error: {e}...")
+    def __init__(self, main_keyword: str, is_sql_db: bool = False):
+        if is_sql_db:
+            try:
+                is_sql_db = True
+                self.main_keyword = main_keyword
+                self.db_config = DatabaseConfig(self.main_keyword, is_sql_db)
+                self.sql_db_url = self.db_config.DATABASE_CONNECTION_URL
+                self.sql_engine = create_engine(self.sql_db_url)
+                self.inspector = inspect(self.sql_engine)
+                self.metadata = MetaData()
+            except Exception as e:
+                logger.error(f"Error: {e}...")
 
     def table_exists(self, table_name):
         try:

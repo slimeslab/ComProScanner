@@ -129,7 +129,7 @@ class IOPArticleProcessor:
             f"{self.csv_path}/{self.source}_{self.keyword}_paragraphs.csv"
         )
 
-        self.sql_db_manager = MySQLDatabaseManager(self.keyword)
+        self.sql_db_manager = MySQLDatabaseManager(self.keyword, self.is_sql_db)
         self.csv_db_manager = CSVDatabaseManager()
         self.vector_db_manager = VectorDatabaseManager(rag_config=self.rag_config)
 
