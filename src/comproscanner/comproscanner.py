@@ -119,7 +119,7 @@ class ComProScanner:
         rag_db_path: str = "db",
         chunk_size: int = 1000,
         chunk_overlap: int = 25,
-        embedding_model: str = "thellert/physbert_cased",
+        embedding_model: str = "huggingface:thellert/physbert_cased",
     ):
         """Process articles for the main property keyword.
 

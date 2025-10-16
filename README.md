@@ -339,7 +339,7 @@ results = evaluate_semantic(
 - `extraction_agent_model_name` (str, optional): Name of the agent model used for extraction (default: "gpt-4o-mini")
 - `is_synthesis_evaluation` (bool, optional): Whether to evaluate synthesis extraction (default: True)
 - `use_semantic_model` (bool, optional): Whether to use semantic model for evaluation. If False, will use the fallback SequenceMatcher class from difflib library (default: True)
-- `primary_model_name` (str, optional): Primary semantic model (default: "thellert/physbert_cased")
+- `primary_model_name` (str, optional): Primary semantic model (default: "huggingface:thellert/physbert_cased")
 - `fallback_model_name` (str, optional): (str, optional): Name of the fallback model for semantic evaluation (default: "all-mpnet-base-v2")
 - `similarity_thresholds` (dict, optional): Similarity thresholds for evaluation (default: 0.8 for each metric)
 
