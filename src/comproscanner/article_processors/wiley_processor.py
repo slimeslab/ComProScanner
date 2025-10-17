@@ -15,6 +15,7 @@ import tempfile
 
 # third-party library imports
 import requests
+from requests.exceptions import RequestException, Timeout, ConnectionError
 import pandas as pd
 from sqlalchemy import create_engine
 from tqdm import tqdm
@@ -213,52 +214,154 @@ class WileyArticleProcessor:
             doi (str: Required): The DOI of the article.
 
         Returns:
-            tmp_path (str): The path of the temporary PDF file.
+            tmp_path (str): The path of the temporary PDF file, or None if failed
+
+        Raises:
+            KeyboardInterruptHandler: If user interrupts the retry process
+
+        Note:
+            This method will retry indefinitely for connection errors until successful connection or KeyboardInterrupt
         """
+        retry_delay = 60  # seconds
+        retry_count = 0
         url = f"{BaseUrls.WILEY_ARTICLE_BASE_URL}{doi}"
         headers = {"Wiley-TDM-Client-Token": os.getenv("WILEY_API_KEY")}
-        try:
-            response = requests.get(url, headers=headers)
-            if response.status_code == 200:
-                if self.is_save_pdf:
-                    filepath = self._save_pdf(doi, response)
-                    return filepath
+
+        while True:
+            try:
+                # If we had retries before and now succeeded, log the success
+                if retry_count > 0:
+                    logger.info(
+                        f"Connection restored successfully after {retry_count} attempts for DOI {doi}"
+                    )
+
+                response = requests.get(url, headers=headers, timeout=30)
+
+                if response.status_code == 200:
+                    if self.is_save_pdf:
+                        filepath = self._save_pdf(doi, response)
+                        return filepath
+                    else:
+                        with tempfile.NamedTemporaryFile(
+                            suffix=".pdf", delete=False
+                        ) as tmp_file:
+                            tmp_file.write(response.content)
+                            tmp_file.flush()
+                            tmp_path = tmp_file.name
+                            return tmp_path
+
+                elif response.status_code == 429:
+                    logger.critical(
+                        f"API rate limit exceeded. Please try again later. DOI: {doi}"
+                    )
+                    self.is_exceeded = True
+                    return None
+
+                elif response.status_code == 400:
+                    logger.error(f"Bad request for DOI: {doi}")
+                    return None
+
+                elif response.status_code == 404:
+                    logger.warning(f"Article not found for DOI: {doi}")
+                    return None
+
                 else:
-                    with tempfile.NamedTemporaryFile(
-                        suffix=".pdf", delete=False
-                    ) as tmp_file:
-                        tmp_file.write(response.content)
-                        tmp_file.flush()
-                        tmp_path = tmp_file.name
-                        return tmp_path
-            elif response.status_code == 429:
-                logger.critical(
-                    f"API rate limit exceeded. Please try again later. DOI: {doi}"
-                )
-                self.is_exceeded = True
-                return None
-            elif response.status_code == 400:
-                logger.error(f"Bad request for DOI: {doi}")
-                return None
-            elif response.status_code == 404:
-                logger.warning(f"Article not found for DOI: {doi}")
-                return None
-            else:
+                    logger.warning(
+                        f"Request failed with status code {response.status_code} for DOI: {doi}"
+                    )
+                    return None
+
+            except (ConnectionError, Timeout) as e:
+                retry_count += 1
                 logger.warning(
-                    f"Request failed with status code {response.status_code}"
+                    f"Connection error occurred while fetching DOI {doi}: {type(e).__name__}: {str(e)}"
+                )
+                logger.info(
+                    f"Retrying in {retry_delay} seconds... (Attempt #{retry_count})"
+                )
+                logger.info(
+                    f"Waiting for connection to restore. Press Ctrl+C to cancel."
+                )
+
+                try:
+                    time.sleep(retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except requests.exceptions.ReadTimeout as e:
+                retry_count += 1
+                logger.warning(f"Read timeout error for DOI: {doi}")
+                logger.info(
+                    f"Retrying in {retry_delay} seconds... (Attempt #{retry_count})"
+                )
+                logger.info(
+                    f"Waiting for connection to restore. Press Ctrl+C to cancel."
+                )
+
+                # Write to timeout file for tracking
+                write_timeout_file(doi, self.timeout_file)
+
+                try:
+                    time.sleep(retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except RequestException as e:
+                retry_count += 1
+
+                # Check if we have a response object with status code
+                if hasattr(e, "response") and e.response is not None:
+                    response = e.response
+                    if response.status_code == 429:
+                        logger.critical(f"API rate limit exceeded for DOI: {doi}")
+                        self.is_exceeded = True
+                        return None
+                    elif response.status_code == 400:
+                        logger.error(f"Bad request for DOI: {doi}")
+                        return None
+                    elif response.status_code == 404:
+                        logger.warning(f"Article not found for DOI: {doi}")
+                        return None
+                    else:
+                        logger.warning(
+                            f"Request failed with status code {response.status_code} for DOI: {doi}"
+                        )
+                        # For other HTTP errors, retry
+                        logger.info(
+                            f"Retrying in {retry_delay} seconds... (Attempt #{retry_count})"
+                        )
+                        try:
+                            time.sleep(retry_delay)
+                        except KeyboardInterrupt:
+                            logger.warning("User interrupted the retry process.")
+                            raise KeyboardInterruptHandler()
+                else:
+                    # No response object, it's a connection issue
+                    logger.error(
+                        f"Request exception occurred while fetching DOI {doi}: {type(e).__name__}: {str(e)}"
+                    )
+                    logger.info(
+                        f"Retrying in {retry_delay} seconds... (Attempt #{retry_count})"
+                    )
+
+                    try:
+                        time.sleep(retry_delay)
+                    except KeyboardInterrupt:
+                        logger.warning("User interrupted the retry process.")
+                        raise KeyboardInterruptHandler()
+
+            except KeyboardInterrupt:
+                logger.warning("User interrupted the connection attempt.")
+                raise KeyboardInterruptHandler()
+
+            except Exception as e:
+                # For other unexpected errors, log and return None (don't retry)
+                logger.error(
+                    f"Unexpected error for DOI {doi}: {type(e).__name__}: {str(e)}"
                 )
                 return None
-        except requests.exceptions.RequestException as e:
-            if isinstance(e, requests.exceptions.Timeout):
-                logger.warning(f"Request timed out for DOI {doi}")
-                write_timeout_file(doi, self.timeout_file)
-                return None
-            else:
-                logger.error(f"An request exception error occurred: {e}")
-                return None
-        except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
-            return None
 
     def _save_pdf(self, doi, response):
         """
@@ -313,16 +416,40 @@ class WileyArticleProcessor:
                         )
                         continue
                     row = matching_rows.iloc[0]
+
                 logger.debug(f"\n\nProcessing Wiley article DOI: {row['doi']}")
+
+                # Download PDF
                 file_path = self._send_request(row["doi"])
                 if file_path is None:
                     logger.warning(f"Failed to download PDF for DOI {row['doi']}")
                     continue
+
+                # Get metadata
                 title, journal_name, publisher = get_paper_metadata_from_oaworks(
                     row["doi"]
                 )
+
+                # Convert PDF to Markdown
                 pdf_to_md = PDFToMarkdownText(file_path)
                 md_text = pdf_to_md.convert_to_markdown()
+
+                # Check if conversion was successful
+                if md_text is None:
+                    logger.error(
+                        f"Failed to convert PDF to markdown for DOI {row['doi']}"
+                    )
+                    # Clean up temporary file if it exists
+                    if not self.is_save_pdf and os.path.exists(file_path):
+                        try:
+                            os.remove(file_path)
+                        except Exception as e:
+                            logger.warning(
+                                f"Failed to remove temp file {file_path}: {e}"
+                            )
+                    continue
+
+                # Process the markdown text
                 all_sections = pdf_to_md.clean_text(md_text)
                 row = pdf_to_md.append_section_to_df(
                     all_sections,
@@ -338,40 +465,57 @@ class WileyArticleProcessor:
 
                 if row["is_property_mentioned"].iloc[0] == "1":
                     self.valid_property_articles += 1
+
+                # Clean up temporary file if not saving PDFs
+                if not self.is_save_pdf and os.path.exists(file_path):
+                    try:
+                        os.remove(file_path)
+                    except Exception as e:
+                        logger.warning(f"Failed to remove temp file {file_path}: {e}")
+
+                # Write to SQL database when batch is full
                 if len(dataframes) == self.sql_batch_size:
                     final_df = pd.concat(dataframes, ignore_index=True)
                     if self.is_sql_db:
                         self.sql_db_manager.write_to_sql_db(
                             self.paperdata_table_name, final_df
                         )
+
+                # Write to CSV when batch is full
                 if len(dataframes) == self.csv_batch_size:
+                    final_df = pd.concat(dataframes, ignore_index=True)
                     self.csv_db_manager.write_to_csv(
-                        final_df, self.csv_path, self.keyword, self.source
+                        final_df,
+                        self.csv_path,
+                        self.keyword,
+                        self.source,
+                        self.csv_batch_size,
                     )
                     dataframes = []
                     time.sleep(5)
+
                 time.sleep(0.2)
 
             except KeyboardInterrupt as kie:
                 logger.error(f"Keyboard Interruption Detected. {kie}")
                 raise KeyboardInterruptHandler()
             except Exception as e:
-                logger.error(f"Error processing article with DOI {row["doi"]}: {e}")
+                logger.error(f"Error processing article with DOI {row['doi']}: {e}")
                 continue
 
-            # Append any remaining dataframes at the end
-            try:
-                if dataframes:
-                    remaining_df = pd.concat(dataframes, ignore_index=True)
-                    if self.is_sql_db:
-                        self.sql_db_manager.write_to_sql_db(
-                            self.paperdata_table_name, remaining_df
-                        )
-                    self.csv_db_manager.write_to_csv(
-                        remaining_df, self.csv_path, self.keyword, self.source
+        # Append any remaining dataframes at the end
+        try:
+            if dataframes:
+                remaining_df = pd.concat(dataframes, ignore_index=True)
+                if self.is_sql_db:
+                    self.sql_db_manager.write_to_sql_db(
+                        self.paperdata_table_name, remaining_df
                     )
-            except Exception as e:
-                logger.error(f"Error writing remaining dataframes: {e}")
+                self.csv_db_manager.write_to_csv(
+                    remaining_df, self.csv_path, self.keyword, self.source
+                )
+        except Exception as e:
+            logger.error(f"Error writing remaining dataframes: {e}")
 
     def _process_with_timeout_handling(self):
         """Process articles and handle any timeouts"""

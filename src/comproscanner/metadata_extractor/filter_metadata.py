@@ -18,6 +18,7 @@ from lxml import etree
 from tqdm import tqdm
 import pandas as pd
 import requests
+from requests.exceptions import ConnectionError, Timeout, RequestException
 
 # Local imports
 from ..utils.configs import (
@@ -28,6 +29,7 @@ from ..utils.error_handler import (
     FileNotFoundErrorHandler,
     ValueErrorHandler,
     CustomErrorHandler,
+    KeyboardInterruptHandler,
 )
 from ..utils.logger import setup_logger
 
@@ -225,78 +227,207 @@ class FilterMetadata:
         except Exception as e:
             logger.error(f"An error occurred. {e}")
 
-    def _get_publisher_from_issn(self, issn, df):
+    def _get_publisher_from_issn(self, issn):
         """Fetches publisher information using ISSN and updates CSV
 
         Args:
             issn (str): ISSN of the publication
-            df (pd.DataFrame): DataFrame containing metadata
 
         Returns:
             bool: True if successful, False otherwise
 
         Raises:
-            Exception: If any error occurs
-        """
-        try:
-            response = requests.get(f"{self.issn_base_url}{issn}", headers=self.headers)
-            if response.status_code == 200:
-                self._add_publisher_to_df_and_save(response, issn=issn)
-            elif response.status_code == 404:
-                return False
-            elif response.status_code == 429:
-                self.is_exceeded = True
-                raise CustomErrorHandler(
-                    message="API rate limit exceeded. Please try again later or use a different API key.",
-                    status_code=429,
-                )
-            else:
-                logger.error(f"ISSN API Error: {response.status_code}")
-                return False
-        except CustomErrorHandler:
-            raise
-        except Exception as e:
-            logger.error(f"Error processing ISSN {issn}: {e}")
-            return False
-        return True
+            CustomErrorHandler: If API rate limit exceeded
+            KeyboardInterruptHandler: If user interrupts the retry process
 
-    def _get_publisher_from_scopus_id(self, scopus_id, df):
+        Note:
+            This method will retry indefinitely for connection errors until successful connection or KeyboardInterrupt
+        """
+        retry_count = 0
+        retry_delay = 60  # seconds
+
+        while True:
+            try:
+                response = requests.get(
+                    f"{self.issn_base_url}{issn}", headers=self.headers, timeout=30
+                )
+
+                # If we had retries before and now succeeded, log the success
+                if retry_count > 0:
+                    logger.info(
+                        f"Connection restored successfully after {retry_count} attempts for ISSN {issn}"
+                    )
+
+                if response.status_code == 200:
+                    self._add_publisher_to_df_and_save(response, issn=issn)
+                    return True
+
+                elif response.status_code == 404:
+                    logger.warning(f"ISSN {issn} not found (404)")
+                    return False
+
+                elif response.status_code == 429:
+                    self.is_exceeded = True
+                    raise CustomErrorHandler(
+                        message="API rate limit exceeded. Please try again later or use a different API key.",
+                        status_code=429,
+                    )
+                else:
+                    logger.error(
+                        f"ISSN API Error: {response.status_code} for ISSN {issn}"
+                    )
+                    return False
+
+            except CustomErrorHandler:
+                # Re-raise rate limit errors immediately without retry
+                raise
+
+            except (ConnectionError, Timeout) as e:
+                retry_count += 1
+                logger.warning(
+                    f"Connection error occurred while fetching ISSN {issn}: {type(e).__name__}: {str(e)}"
+                )
+                logger.info(
+                    f"Retrying in {retry_delay} seconds... (Attempt #{retry_count})"
+                )
+                logger.info(
+                    f"Waiting for connection to restore. Press Ctrl+C to cancel."
+                )
+
+                try:
+                    time.sleep(retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except RequestException as e:
+                retry_count += 1
+                logger.error(
+                    f"Request exception occurred while fetching ISSN {issn}: {type(e).__name__}: {str(e)}"
+                )
+                logger.info(
+                    f"Retrying in {retry_delay} seconds... (Attempt #{retry_count})"
+                )
+
+                try:
+                    time.sleep(retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except KeyboardInterrupt:
+                logger.warning("User interrupted the connection attempt.")
+                raise KeyboardInterruptHandler()
+
+            except Exception as e:
+                # For other unexpected errors, log and return False (don't retry)
+                logger.error(
+                    f"Unexpected error processing ISSN {issn}: {type(e).__name__}: {str(e)}"
+                )
+                return False
+
+    def _get_publisher_from_scopus_id(self, scopus_id):
         """Fetches publisher information using Scopus ID and updates CSV
 
         Args:
             scopus_id (str): Scopus ID of the publication
-            df (pd.DataFrame): DataFrame containing metadata
 
         Returns:
             bool: True if successful, False otherwise
 
         Raises:
-            Exception: If any error occurs
+            CustomErrorHandler: If API rate limit exceeded
+            KeyboardInterruptHandler: If user interrupts the retry process
+
+        Note:
+            This method will retry indefinitely for connection errors until successful connection or KeyboardInterrupt
         """
-        try:
-            scopus_url = f"{self.scopusid_base_url}{scopus_id}?APIKey={self.api_key}"
-            response = requests.get(scopus_url)
-            if response.status_code == 200:
-                self._add_publisher_to_df_and_save(response, scopus_id=scopus_id)
-            elif response.status_code == 404:
-                logger.error(f"URL not found for Scopus ID: {scopus_id}")
-                return False
-            elif response.status_code == 429:
-                self.is_exceeded = True
-                logger.critical(
-                    f"API rate limit exceeded. Please try again later or use a different API key."
+        retry_count = 0
+        retry_delay = 60  # seconds
+
+        while True:
+            try:
+                scopus_url = (
+                    f"{self.scopusid_base_url}{scopus_id}?APIKey={self.api_key}"
                 )
-                raise CustomErrorHandler(
-                    message="API rate limit exceeded. Please try again later or use a different API key.",
-                    status_code=429,
+                response = requests.get(scopus_url, timeout=30)
+
+                # If we had retries before and now succeeded, log the success
+                if retry_count > 0:
+                    logger.info(
+                        f"Connection restored successfully after {retry_count} attempts for Scopus ID {scopus_id}"
+                    )
+
+                if response.status_code == 200:
+                    self._add_publisher_to_df_and_save(response, scopus_id=scopus_id)
+                    return True
+
+                elif response.status_code == 404:
+                    logger.error(f"URL not found for Scopus ID: {scopus_id}")
+                    return False
+
+                elif response.status_code == 429:
+                    self.is_exceeded = True
+                    logger.critical(
+                        f"API rate limit exceeded. Please try again later or use a different API key."
+                    )
+                    raise CustomErrorHandler(
+                        message="API rate limit exceeded. Please try again later or use a different API key.",
+                        status_code=429,
+                    )
+                else:
+                    logger.error(
+                        f"Scopus ID API Error: {response.status_code} for Scopus ID {scopus_id}"
+                    )
+                    return False
+
+            except CustomErrorHandler:
+                # Re-raise rate limit errors immediately without retry
+                raise
+
+            except (ConnectionError, Timeout) as e:
+                retry_count += 1
+                logger.warning(
+                    f"Connection error occurred while fetching Scopus ID {scopus_id}: {type(e).__name__}: {str(e)}"
                 )
-            else:
-                logger.error(f"Scopus ID API Error: {response.status_code}")
+                logger.info(
+                    f"Retrying in {retry_delay} seconds... (Attempt #{retry_count})"
+                )
+                logger.info(
+                    f"Waiting for connection to restore. Press Ctrl+C to cancel."
+                )
+
+                try:
+                    time.sleep(retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except RequestException as e:
+                retry_count += 1
+                logger.error(
+                    f"Request exception occurred while fetching Scopus ID {scopus_id}: {type(e).__name__}: {str(e)}"
+                )
+                logger.info(
+                    f"Retrying in {retry_delay} seconds... (Attempt #{retry_count})"
+                )
+
+                try:
+                    time.sleep(retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except KeyboardInterrupt:
+                logger.warning("User interrupted the connection attempt.")
+                raise KeyboardInterruptHandler()
+
+            except Exception as e:
+                # For other unexpected errors, log and return False (don't retry)
+                logger.error(
+                    f"Unexpected error processing Scopus ID {scopus_id}: {type(e).__name__}: {str(e)}"
+                )
                 return False
-        except Exception as e:
-            logger.error(f"Error processing Scopus ID {scopus_id}: {e}")
-            return False
-        return True
 
     def _process_journal(self, issn, scopus_id, df, publication_name):
         """Processes journal information, retrieves publisher, and handles API errors
@@ -313,10 +444,10 @@ class FilterMetadata:
         logger.debug(f"\nISSN: {issn}, Scopus ID: {scopus_id}\n")
         logger.debug(f"Processing journal: {publication_name}. ISSN: {issn}")
         try:
-            if not self._get_publisher_from_issn(issn, df):
+            if not self._get_publisher_from_issn(issn):
                 if self.is_exceeded:
                     sys.exit("API rate limit exceeded. Exiting the program...")
-                if not self._get_publisher_from_scopus_id(scopus_id, df):
+                if not self._get_publisher_from_scopus_id(scopus_id):
                     if self.is_exceeded:
                         logger.critical(
                             f"API rate limit exceeded. Exiting the program..."

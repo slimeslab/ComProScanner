@@ -12,6 +12,7 @@ import os
 import time
 import re
 import requests
+from requests.exceptions import RequestException, ConnectionError, Timeout
 
 # Third-party imports
 import pandas as pd
@@ -242,17 +243,33 @@ class ElsevierArticleProcessor:
             doi (str): DOI of the article.
 
         Returns:
-            response (Response): Response object from the API call.
+            response (Response): Response object from the API call, or None if failed
+
+        Raises:
+            KeyboardInterruptHandler: If user interrupts the retry process
+
+        Note:
+            This method will retry indefinitely for connection errors until successful connection or KeyboardInterrupt
         """
         url = f"{BaseUrls.ELSEVIER_ARTICLE_BASE_URL}{doi}"
-        response = None
-        try:
-            response = requests.get(url, headers=self.headers, timeout=10)
-            return response
-        except requests.exceptions.RequestException as e:
-            if response is not None:
-                if response.status_code == 429:
-                    logger.critical(f"API rate limit exceeded...")
+        retry_count = 0
+        retry_delay = 60  # seconds
+
+        while True:
+            try:
+                response = requests.get(url, headers=self.headers, timeout=10)
+
+                # If we had retries before and now succeeded, log the success
+                if retry_count > 0:
+                    logger.info(
+                        f"Connection restored successfully after {retry_count} attempts for DOI {doi}"
+                    )
+
+                # Handle different status codes
+                if response.status_code == 200:
+                    return response
+                elif response.status_code == 429:
+                    logger.critical(f"API rate limit exceeded for DOI: {doi}")
                     self.is_exceeded = True
                     return None
                 elif response.status_code == 400:
@@ -262,16 +279,73 @@ class ElsevierArticleProcessor:
                     logger.error(f"Article not found for DOI: {doi}")
                     return None
                 else:
-                    if response.status_code:
-                        logger.error(
-                            f"Request failed with status code {response.status_code} for DOI: {doi}"
-                        )
-            elif isinstance(e, requests.exceptions.ReadTimeout):
-                logger.error(f"Timeout error for DOI: {doi}")
+                    logger.error(
+                        f"Request failed with status code {response.status_code} for DOI: {doi}"
+                    )
+                    return None
+
+            except (ConnectionError, Timeout) as e:
+                retry_count += 1
+                logger.warning(
+                    f"Connection error occurred while fetching DOI {doi}: {type(e).__name__}: {str(e)}"
+                )
+                logger.info(
+                    f"Retrying in {retry_delay} seconds... (Attempt #{retry_count})"
+                )
+                logger.info(
+                    f"Waiting for connection to restore. Press Ctrl+C to cancel."
+                )
+
+                try:
+                    time.sleep(retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except requests.exceptions.ReadTimeout as e:
+                retry_count += 1
+                logger.warning(f"Read timeout error for DOI: {doi}")
+                logger.info(
+                    f"Retrying in {retry_delay} seconds... (Attempt #{retry_count})"
+                )
+                logger.info(
+                    f"Waiting for connection to restore. Press Ctrl+C to cancel."
+                )
+
+                # Write to timeout file for tracking
                 write_timeout_file(doi, self.timeout_file)
+
+                try:
+                    time.sleep(retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except RequestException as e:
+                retry_count += 1
+                logger.error(
+                    f"Request exception occurred while fetching DOI {doi}: {type(e).__name__}: {str(e)}"
+                )
+                logger.info(
+                    f"Retrying in {self.retry_delay} seconds... (Attempt #{retry_count})"
+                )
+
+                try:
+                    time.sleep(self.retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except KeyboardInterrupt:
+                logger.warning("User interrupted the connection attempt.")
+                raise KeyboardInterruptHandler()
+
+            except Exception as e:
+                # For other unexpected errors, log and return None (don't retry)
+                logger.error(
+                    f"Unexpected error for DOI {doi}: {type(e).__name__}: {str(e)}"
+                )
                 return None
-            logger.error(f"Error: {e} for DOI: {doi}")
-            return None
 
     def _modify_specific_element(self, sections, element_name):
         """

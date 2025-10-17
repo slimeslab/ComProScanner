@@ -17,6 +17,7 @@ import urllib.parse
 
 # Third party imports
 import requests
+from requests.exceptions import ConnectionError, Timeout, RequestException
 from dotenv import load_dotenv
 
 # Local imports
@@ -64,6 +65,7 @@ class FetchMetadata:
     ):
         self.start_year = start_year
         self.end_year = end_year
+
         if self.start_year < self.end_year:
             raise ValueErrorHandler(
                 message="Start year should be greater than the end year."
@@ -120,15 +122,68 @@ class FetchMetadata:
 
     def _send_request(self, url):
         """
-        Send a request to the Scopus API and return the response
+        Send a request to the Scopus API and return the response with infinite retry logic
 
         Args:
             url (str): The URL for the request
 
         Returns:
             requests.models.Response: The response from the request
+
+        Note:
+            This method will retry indefinitely until successful connection or KeyboardInterrupt
         """
-        return requests.get(url, headers=self.headers)
+        retry_count = 0
+        retry_delay = 60  # seconds
+
+        while True:
+            try:
+                response = requests.get(url, headers=self.headers, timeout=30)
+
+                # If we had retries before and now succeeded, log the success
+                if retry_count > 0:
+                    logger.info(
+                        f"Connection restored successfully after {retry_count} attempts!"
+                    )
+
+                return response
+
+            except (ConnectionError, Timeout) as e:
+                retry_count += 1
+                logger.warning(
+                    f"Connection error occurred: {type(e).__name__}: {str(e)}"
+                )
+                logger.info(
+                    f"Retrying in {retry_delay} seconds... (Attempt #{retry_count})"
+                )
+                logger.info(
+                    f"Waiting for connection to restore. Press Ctrl+C to cancel."
+                )
+
+                try:
+                    time.sleep(retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except RequestException as e:
+                retry_count += 1
+                logger.error(
+                    f"Request exception occurred: {type(e).__name__}: {str(e)}"
+                )
+                logger.info(
+                    f"Retrying in {retry_delay} seconds... (Attempt #{retry_count})"
+                )
+
+                try:
+                    time.sleep(retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except KeyboardInterrupt:
+                logger.warning("User interrupted the connection attempt.")
+                raise KeyboardInterruptHandler()
 
     def parse_xml_data(self, response_text):
         """
@@ -304,7 +359,7 @@ class FetchMetadata:
             page_number (int): The current page number
 
         Returns:
-            tuple: The data, total_results, next_cursor, and a boolean indicating if the API limit is exceeded
+            tuple: The data, total_results, next_cursor
 
         Raises:
             CustomErrorHandler: If an error occurs during the request
@@ -314,7 +369,8 @@ class FetchMetadata:
 
         try:
             logger.debug(f"Sending request to URL: {url}")
-            response = self._send_request(url)
+            response = self._send_request(url)  # Infinite retry logic built-in
+
             if response.status_code == 200:
                 # process the response and add the data to the dictionary
                 logger.info(
@@ -344,6 +400,8 @@ class FetchMetadata:
                 )
                 self.is_exceeded = True
             else:
+                logger.error(f"Error status code: {response.status_code}")
+                logger.error(f"Response text: {response.text}")
                 self._write_error_logs(
                     year,
                     query,
@@ -351,6 +409,7 @@ class FetchMetadata:
                     page_number,
                     status_code=response.status_code,
                 )
+
         except ValueError as ve:
             logger.error(f"ValueError while processing the data: {ve}")
         except KeyError as ke:
@@ -378,7 +437,7 @@ class FetchMetadata:
         page_number = 1
 
         while cursor:
-            logger.debug(f"Processing page {page_number}")
+            logger.debug(f"Processing page {page_number} with cursor")
             try:
                 data, total_results, next_cursor = self.fetch_and_process_data(
                     cursor, year, query, data, total_results, special_query, page_number
@@ -406,7 +465,7 @@ class FetchMetadata:
             # Check if there's a next cursor
             if not next_cursor:
                 logger.info(
-                    f"No more pages to fetch. Total results fetched: {len(data['doi'])}"
+                    f"Successfully fetched all results! Total: {len(data['doi'])}"
                 )
                 break
 

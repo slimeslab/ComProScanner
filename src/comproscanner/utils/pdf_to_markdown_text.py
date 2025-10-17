@@ -10,6 +10,7 @@ Date: 21-03-2025
 # Standard library imports
 import re
 import os
+import time
 import pandas as pd
 import torch
 from docling.document_converter import DocumentConverter, PdfFormatOption
@@ -20,9 +21,10 @@ from docling.datamodel.pipeline_options import (
     PdfPipelineOptions,
 )
 from docling.datamodel.settings import settings
+from requests.exceptions import Timeout, RequestException
 
 # Custom imports
-from .error_handler import ValueErrorHandler
+from .error_handler import ValueErrorHandler, KeyboardInterruptHandler
 from .configs import ArticleRelatedKeywords
 from .logger import setup_logger
 
@@ -44,6 +46,7 @@ class PDFToMarkdownText:
             raise ValueErrorHandler(f"Source cannot be empty...")
         self.article_keywords = ArticleRelatedKeywords()
         self.num_threads = num_threads
+        self.retry_delay = 60
         self.converter = self._setup_converter()
 
     def _setup_converter(self):
@@ -92,16 +95,104 @@ class PDFToMarkdownText:
         return converter
 
     def convert_to_markdown(self):
-        """Function to convert PDF to Markdown text.
+        """Function to convert PDF to Markdown text with infinite retry on connection errors.
 
         Returns:
-            str: Markdown text.
+            str: Markdown text, or None if conversion fails
+
+        Raises:
+            KeyboardInterruptHandler: If user interrupts the retry process
+
+        Note:
+            This method will retry indefinitely for connection errors until successful connection or KeyboardInterrupt
         """
-        try:
-            result = self.converter.convert(self.source)
-            return result.document.export_to_markdown()
-        except Exception as e:
-            logger.error(f"Error converting PDF to Markdown: {e}")
+        retry_count = 0
+
+        while True:
+            try:
+                # If we had retries before and now succeeded, log the success
+                if retry_count > 0:
+                    logger.info(
+                        f"Connection restored successfully after {retry_count} attempts for source: {self.source}"
+                    )
+
+                result = self.converter.convert(self.source)
+                return result.document.export_to_markdown()
+
+            except (ConnectionError, Timeout) as e:
+                retry_count += 1
+                logger.warning(
+                    f"Connection error during PDF conversion for {self.source}: {type(e).__name__}: {str(e)}"
+                )
+                logger.info(
+                    f"Retrying in {self.retry_delay} seconds... (Attempt #{retry_count})"
+                )
+                logger.info(
+                    f"Waiting for connection to restore. Press Ctrl+C to cancel."
+                )
+
+                try:
+                    time.sleep(self.retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except RequestException as e:
+                retry_count += 1
+                logger.error(
+                    f"Request exception during PDF conversion for {self.source}: {type(e).__name__}: {str(e)}"
+                )
+                logger.info(
+                    f"Retrying in {self.retry_delay} seconds... (Attempt #{retry_count})"
+                )
+
+                try:
+                    time.sleep(self.retry_delay)
+                except KeyboardInterrupt:
+                    logger.warning("User interrupted the retry process.")
+                    raise KeyboardInterruptHandler()
+
+            except Exception as e:
+                # Check if it's a connection-related error (like RapidOCR download failures)
+                error_str = str(e).lower()
+                if any(
+                    keyword in error_str
+                    for keyword in [
+                        "failed to download",
+                        "failed to resolve",
+                        "nameresolutionerror",
+                        "connection",
+                        "max retries exceeded",
+                        "gaierror",
+                        "connectionerror",
+                    ]
+                ):
+                    retry_count += 1
+                    logger.warning(
+                        f"Connection-related error during PDF conversion for {self.source}: {str(e)}"
+                    )
+                    logger.info(
+                        f"Retrying in {self.retry_delay} seconds... (Attempt #{retry_count})"
+                    )
+                    logger.info(
+                        f"Waiting for connection to restore. Press Ctrl+C to cancel."
+                    )
+
+                    try:
+                        time.sleep(self.retry_delay)
+                    except KeyboardInterrupt:
+                        logger.warning("User interrupted the retry process.")
+                        raise KeyboardInterruptHandler()
+                else:
+                    # For other errors, log and return None (don't retry)
+                    logger.error(
+                        f"Error converting PDF to Markdown for {self.source}: {e}"
+                    )
+                    return None
+
+            except KeyboardInterrupt:
+                logger.warning("User interrupted the conversion process.")
+                raise KeyboardInterruptHandler()
 
     @staticmethod
     def clean_text(text: str):
