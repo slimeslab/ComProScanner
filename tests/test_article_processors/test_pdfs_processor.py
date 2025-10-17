@@ -151,7 +151,9 @@ def test_database_selection(is_sql_db):
                         MySQLDatabaseManager,
                     )
 
-                    self.sql_db_manager = MySQLDatabaseManager(self.keyword)
+                    self.sql_db_manager = MySQLDatabaseManager(
+                        self.keyword, self.is_sql_db
+                    )
 
                 from comproscanner.utils.database_manager import (
                     CSVDatabaseManager,

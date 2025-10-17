@@ -59,7 +59,7 @@ def mysql_db_manager():
                 mock_inspector = MagicMock()
                 mock_inspect.return_value = mock_inspector
 
-                manager = MySQLDatabaseManager(main_keyword="test")
+                manager = MySQLDatabaseManager(main_keyword="test", is_sql_db=True)
                 manager.sql_engine = mock_engine
                 manager.inspector = mock_inspector
                 yield manager
@@ -99,7 +99,7 @@ class TestMySQLDatabaseManager:
                 mock_db_config.return_value.DATABASE_CONNECTION_URL = (
                     "mysql://user:pass@localhost/test"
                 )
-                manager = MySQLDatabaseManager(main_keyword="test")
+                manager = MySQLDatabaseManager(main_keyword="test", is_sql_db=True)
                 assert manager.main_keyword == "test"
                 assert (
                     mock_create_engine.call_args[0][0]
