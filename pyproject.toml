@@ -11,26 +11,26 @@ authors = [{ name = "Aritra Roy", email = "contact@aritraroy.live" }]
 license = { text = "MIT" }
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "requests>=2.32.3",
-    "python-dotenv>=1.0.1",
+    "requests>=2.32.5",
+    "python-dotenv>=1.1.1",
     "tqdm>=4.67.1",
-    "lxml>=5.3.1",
-    "pandas>=2.2.3",
-    "torch>=2.6.0",
-    "langchain>=0.3.19",
-    "transformers==4.46.3",                                        # chromadb 0.5.23 requires tokenizers<=0.20.3,>=0.13.2 which is incompatible with transformers>=4.46.3
-    "tokenizers==0.20.3",
+    "lxml>=5.4.0",
+    "pandas>=2.3.3",
+    "torch>=2.9.0",
+    "langchain>=0.3.27",
+    "transformers>=4.57.1",
+    "tokenizers>=0.22.1",
     "mysql>=0.0.3",
     "mysql-connector>=2.2.9",
-    "langchain_community>=0.3.18",
-    "crewai>=0.108.0",
-    "crewai-tools>=0.25.8",
-    "chromadb==0.5.23",                                            # embedchain  0.1.128 (required by crewai-tools) requires chromadb<0.6.0,>=0.5.10
+    "langchain_community>=0.3.31",
+    "crewai>=0.203.1",
+    "crewai-tools>=0.76.0",
+    "chromadb>=1.1.1",
     "pdf2doi @ git+https://github.com/MicheleCotrufo/pdf2doi.git", # pdfminer.six>=20231228 is needed for CrewAI, it is updated in the repo but not released yet by pdf2doi as a package
-    "docling>=2.28.0",
-    "sentence-transformers>=3.3.1",
-    "neo4j>=5.28.1",
-    "pymatgen>=2025.3.10",
+    "docling>=2.57.0",
+    "sentence-transformers>=5.1.1",
+    "neo4j>=6.0.2",
+    "pymatgen>=2025.10.7",
     "seaborn>=0.13.2",
 ]
 classifiers = [
@@ -49,10 +49,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Visualization",
 ]
 [project.optional-dependencies]
-dev = ["pytest>=8.3.4", "pytest-mock>=3.14.0"]
-cuda = [
-    "torchaudio>=2.6.0; platform_system=='Linux' or platform_system=='Windows'",
-]
+dev = ["pytest>=8.4.2", "pytest-mock>=3.15.1"]
 [project.urls]
 "Homepage" = "https://github.com/aritraroy24/comproscanner"
 "Bug Tracker" = "https://github.com/aritraroy24/comproscanner/issues"
