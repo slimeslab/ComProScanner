@@ -184,7 +184,7 @@ scanner.process_articles(
 - `property_keywords` (dict, required): Dictionary of keywords for filtering sentences
   - `exact_keywords`: List of keywords to match exactly
   - `substring_keywords`: List of keywords to match as substrings
-- `source_list` (list, optional): List of sources to process (default: ["elsevier", "wiley", "iop", "springer", "pdfs"])
+- `source_list` (list, optional): List of sources to process (default: ["elsevier", "wiley", "iop", "springer"])
 - `folder_path` (str, optional): Path to folder containing PDFs (required for "pdfs" source)
 - `sql_batch_size` (int, optional): Batch size for SQL operations (default: 500)
 - `csv_batch_size` (int, optional): Batch size for CSV operations (default: 1)

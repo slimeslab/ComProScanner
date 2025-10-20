@@ -106,7 +106,7 @@ class ComProScanner:
     def process_articles(
         self,
         property_keywords: dict = None,
-        source_list: list = ["elsevier", "wiley", "iop", "springer", "pdfs"],
+        source_list: list = ["elsevier", "wiley", "iop", "springer"],
         folder_path: str = None,
         sql_batch_size: int = 500,
         csv_batch_size: int = 1,
@@ -129,7 +129,7 @@ class ComProScanner:
                 "exact_keywords": ["example1", "example2"],
                 "substring_keywords": [" example 1 ", " example 2 "],
             }
-            source_list (list, optional): List of sources to process the articles from. Defaults to ["elsevier", "wiley", "iop", "springer", "pdfs"] - currently supported sources.
+            source_list (list, optional): List of sources to process the articles from. Defaults to ["elsevier", "wiley", "iop", "springer"] - currently supported publishers.
             folder_path (str, optional): Path to the folder containing PDFs. Defaults to None.
             sql_batch_size (int, optional): The number of rows to write to the database at once (Applicable only if is_sql_db is True). Defaults to 500.
             csv_batch_size (int, optional): The number of rows to write to the CSV file at once. Defaults to 1.
