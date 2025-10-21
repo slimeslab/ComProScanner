@@ -9,7 +9,7 @@ description = "Multi-agent system for extracting and processing structured compo
 readme = "README.md"
 authors = [{ name = "Aritra Roy", email = "contact@aritraroy.live" }]
 license = { text = "MIT" }
-requires-python = ">=3.12,<3.13"
+requires-python = ">=3.12,<3.14"
 dependencies = [
     "requests>=2.32.5",
     "python-dotenv>=1.1.1",
@@ -50,9 +50,10 @@ classifiers = [
 ]
 [project.optional-dependencies]
 dev = ["pytest>=8.4.2", "pytest-mock>=3.15.1"]
+docs = ["mkdocs-material>=9.6.22", "mkdocs-minify-plugin>=0.8.0"]
 [project.urls]
-"Homepage" = "https://github.com/aritraroy24/comproscanner"
-"Bug Tracker" = "https://github.com/aritraroy24/comproscanner/issues"
+"Homepage" = "https://github.com/slimeslab/comproscanner"
+"Bug Tracker" = "https://github.com/slimeslab/comproscanner/issues"
 [tool.setuptools]
 package-dir = { "" = "src" }
 

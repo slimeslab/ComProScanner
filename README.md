@@ -38,7 +38,7 @@ pip install comproscanner
 Or install from source:
 
 ```bash
-git clone https://github.com/aritraroy24/comproscanner.git
+git clone https://github.com/slimeslab/comproscanner.git
 cd comproscanner
 pip install -e .
 ```
@@ -1122,7 +1122,6 @@ from comproscanner.utils.configs.rag_config import RAGConfig
 openai_config = RAGConfig(
     rag_db_path="vector_db",
     rag_chat_model="gpt-4o-mini",  # No prefix needed for OpenAI models
-    temperature=0.1,
     streaming=False,
     rag_max_tokens=512,
     rag_top_k=3
@@ -1137,7 +1136,6 @@ from comproscanner.utils.configs.rag_config import RAGConfig
 gemini_config = RAGConfig(
     rag_db_path="vector_db",
     rag_chat_model="gemini-2.0-flash-thinking-exp",  # 'gemini' prefix indicates Google provided model
-    temperature=0.2,
     streaming=True,
     rag_max_tokens=1024,
     rag_top_k=5
@@ -1152,8 +1150,6 @@ from comproscanner.utils.configs.rag_config import RAGConfig
 claude_config = RAGConfig(
     rag_db_path="vector_db",
     rag_chat_model="claude-3-5-haiku-20241022",  # 'claude' prefix indicates Anthropic provided model
-    temperature=0.0,
-    streaming=False,
     rag_max_tokens=2048,
     rag_top_k=3
 )
@@ -1168,8 +1164,6 @@ ollama_config = RAGConfig(
     rag_db_path="vector_db",
     rag_chat_model="ollama/llama3",  # 'ollama/' prefix indicates Ollama provided model
     rag_base_url="http://localhost:11434",  # Custom Ollama server URL
-    temperature=0.5,
-    streaming=True,
     rag_max_tokens=512,
     rag_top_k=3
 )
@@ -1183,8 +1177,6 @@ from comproscanner.utils.configs.rag_config import RAGConfig
 together_config = RAGConfig(
     rag_db_path="vector_db",
     rag_chat_model="together/mistral-7b-instruct",  # 'together/' prefix indicates Together AI provided model
-    temperature=0.7,
-    streaming=False,
     rag_max_tokens=1024,
     rag_top_k=3
 )
@@ -1198,8 +1190,6 @@ from comproscanner.utils.configs.rag_config import RAGConfig
 openrouter_config = RAGConfig(
     rag_db_path="vector_db",
     rag_chat_model="openrouter/meta-llama/llama-3-70b-instruct",  # 'openrouter/ ' prefix indicates OpenRouter provided model
-    temperature=0.2,
-    streaming=False,
     rag_max_tokens=512,
     rag_top_k=3
 )
@@ -1213,8 +1203,6 @@ from comproscanner.utils.configs.rag_config import RAGConfig
 cohere_config = RAGConfig(
     rag_db_path="vector_db",
     rag_chat_model="cohere/command-r",  # 'cohere/' prefix indicates Cohere provided model
-    temperature=0.3,
-    streaming=False,
     rag_max_tokens=512,
     rag_top_k=3
 )
@@ -1228,8 +1216,6 @@ from comproscanner.utils.configs.rag_config import RAGConfig
 fireworks_config = RAGConfig(
     rag_db_path="vector_db",
     rag_chat_model="fireworks/llama-v3-8b",  # 'fireworks/' prefix indicates Fireworks provided model
-    temperature=0.1,
-    streaming=False,
     rag_max_tokens=512,
     rag_top_k=3
 )
