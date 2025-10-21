@@ -255,4 +255,4 @@ Now that you understand the basics, explore:
 - Try passing additional instructions to the extraction agents for better context
 
 !!! question "Need Help?"
-If you encounter issues, check the [GitHub Issues](https://github.com/slimeslab/comproscanner/issues) or contact [Aritra Roy](mailto:contact@aritraroy.live).
+If you encounter issues, check the [GitHub Issues](https://github.com/slimeslab/ComProScanner/issues) or contact [Aritra Roy](mailto:contact@aritraroy.live).

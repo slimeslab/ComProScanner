@@ -52,7 +52,7 @@ There are several ways to contribute to ComProScanner:
 2. Clone your fork locally:
 
    ```bash
-   git clone https://github.com/slimeslab/comproscanner.git
+   git clone https://github.com/slimeslab/ComProScanner.git
    cd comproscanner
    ```
 
@@ -264,6 +264,6 @@ If you have questions about contributing, feel free to:
 
 - Open an issue for discussion
 - Contact [Aritra Roy](mailto:contact@aritraroy.live)
-- Check the [documentation](https://slimeslab.github.io/comproscanner)
+- Check the [documentation](https://slimeslab.github.io/ComProScanner/)
 
 Thank you for contributing to ComProScanner!

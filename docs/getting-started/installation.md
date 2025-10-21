@@ -24,7 +24,7 @@ If you want to install from source or contribute to development:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/slimeslab/comproscanner.git
+git clone https://github.com/slimeslab/ComProScanner.git
 cd comproscanner
 ```
 

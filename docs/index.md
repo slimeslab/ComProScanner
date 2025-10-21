@@ -136,9 +136,9 @@ graph LR
 
 ## Community & Support
 
-- **GitHub**: [slimeslab/comproscanner](https://github.com/slimeslab/comproscanner)
+- **GitHub**: [slimeslab/ComProScanner](https://github.com/slimeslab/ComProScanner)
 - **PyPI**: [comproscanner](https://pypi.org/project/comproscanner/)
-- **Issues**: [Report a bug](https://github.com/slimeslab/comproscanner/issues)
+- **Issues**: [Report a bug](https://github.com/slimeslab/ComProScanner/issues)
 - **Email**: [contact@aritraroy.live](mailto:contact@aritraroy.live)
 
 ## License

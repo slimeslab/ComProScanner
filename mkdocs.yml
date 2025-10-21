@@ -1,10 +1,10 @@
 site_name: ComProScanner Documentation
 site_description: A comprehensive Python package for extracting composition-property data from scientific articles for building databases
 site_author: Aritra Roy
-site_url: https://slimeslab.github.io/comproscanner
+site_url: https://slimeslab.github.io/ComProScanner/
 
-repo_name: slimeslab/comproscanner
-repo_url: https://github.com/slimeslab/comproscanner
+repo_name: slimeslab/ComProScanner
+repo_url: https://github.com/slimeslab/ComProScanner
 edit_uri: edit/main/docs/
 
 copyright: Copyright &copy; 2025 SLIMES Lab - Licensed under MIT
@@ -125,7 +125,7 @@ extra:
           data: 0
           note: >-
             Thanks for your feedback! Help us improve by
-            <a href="https://github.com/slimeslab/comproscanner/issues/new" target="_blank" rel="noopener">opening an issue</a>.
+            <a href="https://github.com/slimeslab/ComProScanner/issues/new" target="_blank" rel="noopener">opening an issue</a>.
 
 extra_css:
   - stylesheets/extra.css
