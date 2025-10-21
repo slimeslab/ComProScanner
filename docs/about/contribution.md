@@ -250,6 +250,6 @@ If you have questions about contributing, feel free to:
 
 - Open an issue for discussion
 - Contact [Aritra Roy](mailto:contact@aritraroy.live)
-- Check the [documentation](https://slimeslab.github.io/comproscanner)
+- Check the [documentation](https://slimeslab.github.io/ComProScanner/) for more information
 
 Thank you for contributing to ComProScanner!
