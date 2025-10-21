@@ -1,0 +1,161 @@
+site_name: ComProScanner Documentation
+site_description: A comprehensive Python package for extracting composition-property data from scientific articles for building databases
+site_author: Aritra Roy
+site_url: https://slimeslab.github.io/comproscanner
+
+repo_name: slimeslab/comproscanner
+repo_url: https://github.com/slimeslab/comproscanner
+edit_uri: edit/main/docs/
+
+copyright: Copyright &copy; 2025 SLIMES Lab - Licensed under MIT
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: assets/comproscanner_logo_small.png
+  favicon: assets/comproscanner_logo_small.ico
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: teal
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: teal
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - toc.follow
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - search.share
+    - header.autohide
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.tooltips
+
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+  - minify:
+      minify_html: true
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      title: On this page
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/slimeslab
+      name: GitHub Profile
+    - icon: fontawesome/solid/globe
+      link: https://slimeslab.github.io
+      name: Personal Website
+  version:
+    provider: mike
+  analytics:
+    provider: google
+    property:
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thanks for your feedback! Help us improve by
+            <a href="https://github.com/slimeslab/comproscanner/issues/new" target="_blank" rel="noopener">opening an issue</a>.
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quick-start.md
+  - User Guide:
+      - Metadata Collection: usage/metadata-collection.md
+      - Article Processing: usage/article-processing.md
+      - Data Extraction: usage/data-extraction.md
+      - Evaluation:
+          - Overview: usage/evaluation/overview.md
+          - Semantic Evaluation: usage/evaluation/semantic.md
+          - Agentic Evaluation: usage/evaluation/agentic.md
+      - Visualization:
+          - Overview: usage/visualization/overview.md
+          - Data Visualization: usage/visualization/data-viz.md
+          - Evaluation Visualization: usage/visualization/eval-viz.md
+  - RAG Configuration: rag-config.md
+  - About:
+      - Project Structure: about/project-structure.md
+      - License: about/license.md
+      - Contribution: about/contribution.md
+      - Citation: about/citation.md
+      - Contact: about/contact.md
