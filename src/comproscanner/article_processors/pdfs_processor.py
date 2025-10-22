@@ -8,14 +8,14 @@ Date: 21-03-2025
 """
 
 # Importing required libraries
-import pdf2doi
 import logging
 import time
 import json
 import pandas as pd
 from tqdm import tqdm
-import feedparser
 import glob
+import re
+import os
 
 # Custom imports
 from ..utils.configs import (
@@ -127,19 +127,31 @@ class PDFsProcessor:
         self.csv_db_manager = CSVDatabaseManager()
         self.vector_db_manager = VectorDatabaseManager(rag_config=self.rag_config)
 
-    def _get_paper_metadata_from_pdf(self, results: dict):
+    def _extract_doi_from_text(self, text: str):
+        """Extract DOI from text using regex pattern matching.
+
+        Args:
+            text (str): The text to extract DOI from.
+
+        Returns:
+            str: The extracted DOI or empty string if not found.
+        """
         try:
-            if "validation_info" not in results:
-                logger.error(f"Validation info not found in the results...")
-                return "", "", ""
-            validation_dict = json.loads(results["validation_info"])
-            title = validation_dict.get("title", "")
-            journal_name = validation_dict.get("container-title", "")
-            publisher = validation_dict.get("publisher", "")
-            return title, journal_name, publisher
-        except json.JSONDecodeError:
-            logger.error(f"Error decoding JSON validation info...")
-            return "", "", ""
+            # Standard DOI pattern: 10.xxxx/xxxxx
+            doi_pattern = r'10\.\d{4,9}/[-._;()/:a-zA-Z0-9]+'
+            matches = re.findall(doi_pattern, text)
+
+            if matches:
+                # Return the first match, clean up common trailing characters
+                doi = matches[0].rstrip('.,;)]')
+                logger.debug(f"DOI extracted: {doi}")
+                return doi
+            else:
+                logger.debug("No DOI found in text")
+                return ""
+        except Exception as e:
+            logger.error(f"Error extracting DOI from text: {e}")
+            return ""
 
     def process_pdfs(self):
         """
@@ -154,31 +166,34 @@ class PDFsProcessor:
             pdf_files, desc="Processing PDFs", total=total_files, colour="#d6adff"
         ):
             try:
-                # Suppress pdf2doi logs and get data from the PDF file
-                logging.getLogger("pdf2doi").setLevel(logging.ERROR)
-                result = pdf2doi.pdf2doi(pdf_file)
-                if isinstance(result, feedparser.FeedParserDict):
-                    result = dict(result)
-                if result and result.get("identifier"):
-                    self.identifier = result["identifier"]
-                    if self.identifier.startswith("10."):
-                        self.doi = self.identifier
-                else:
-                    logger.warning(
-                        f"DOI not found for {pdf_file}. Using filename as identifier."
-                    )
-                    self.identifier = pdf_file.split(".pdf")[0]
-                title, journal_name, publisher = self._get_paper_metadata_from_pdf(
-                    result
-                )
-                if title == "" or journal_name == "" or publisher == "" and self.doi:
-                    title, journal_name, publisher = get_paper_metadata_from_oaworks(
-                        self.doi
-                    )
-
                 # Convert PDF to Markdown text
                 pdf_to_md = PDFToMarkdownText(source=pdf_file)
                 md_text = pdf_to_md.convert_to_markdown()
+
+                # Extract DOI from the converted markdown text
+                self.doi = self._extract_doi_from_text(md_text)
+
+                if self.doi:
+                    self.identifier = self.doi
+                    logger.debug(f"DOI found: {self.doi}")
+                else:
+                    # Use filename as identifier if DOI not found
+                    logger.warning(
+                        f"DOI not found for {pdf_file}. Using filename as identifier."
+                    )
+                    filename = os.path.basename(pdf_file)
+                    self.identifier = filename.replace(".pdf", "")
+
+                # Get metadata from external API using DOI
+                title, journal_name, publisher = "", "", ""
+                if self.doi:
+                    title, journal_name, publisher = get_paper_metadata_from_oaworks(
+                        self.doi
+                    )
+                    if not title:
+                        logger.warning(f"Metadata not found for DOI: {self.doi}")
+
+                # Process sections
                 all_sections = pdf_to_md.clean_text(md_text)
                 row = pdf_to_md.append_section_to_df(
                     all_sections,

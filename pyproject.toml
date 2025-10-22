@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "wheel>=0.45.1"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -11,27 +11,26 @@ authors = [{ name = "Aritra Roy", email = "contact@aritraroy.live" }]
 license = { text = "MIT" }
 requires-python = ">=3.12,<3.14"
 dependencies = [
-    "requests>=2.32.5",
-    "python-dotenv>=1.1.1",
-    "tqdm>=4.67.1",
-    "lxml>=5.4.0",
-    "pandas>=2.3.3",
-    "torch>=2.9.0",
-    "langchain>=0.3.27",
-    "transformers>=4.57.1",
-    "tokenizers>=0.22.1",
-    "mysql>=0.0.3",
-    "mysql-connector>=2.2.9",
-    "langchain_community>=0.3.31",
-    "crewai>=0.203.1",
-    "crewai-tools>=0.76.0",
-    "chromadb>=1.1.1",
-    "pdf2doi @ git+https://github.com/MicheleCotrufo/pdf2doi.git", # pdfminer.six>=20231228 is needed for CrewAI, it is updated in the repo but not released yet by pdf2doi as a package
-    "docling>=2.57.0",
-    "sentence-transformers>=5.1.1",
-    "neo4j>=6.0.2",
-    "pymatgen>=2025.10.7",
-    "seaborn>=0.13.2",
+    "requests",
+    "python-dotenv",
+    "tqdm",
+    "lxml",
+    "pandas",
+    "torch",
+    "langchain",
+    "transformers",
+    "tokenizers",
+    "mysql",
+    "mysql-connector",
+    "langchain_community",
+    "crewai",
+    "crewai-tools",
+    "chromadb",
+    "docling",
+    "sentence-transformers",
+    "neo4j",
+    "pymatgen",
+    "seaborn",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -49,8 +48,8 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Visualization",
 ]
 [project.optional-dependencies]
-dev = ["pytest>=8.4.2", "pytest-mock>=3.15.1"]
-docs = ["mkdocs-material>=9.6.22", "mkdocs-minify-plugin>=0.8.0"]
+dev = ["pytest", "pytest-mock"]
+docs = ["mkdocs-material", "mkdocs-minify-plugin"]
 [project.urls]
 "Homepage" = "https://github.com/slimeslab/ComProScanner"
 "Bug Tracker" = "https://github.com/slimeslab/ComProScanner/issues"
