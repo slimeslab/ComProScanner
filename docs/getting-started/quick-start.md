@@ -236,7 +236,6 @@ The extraction produces JSON files with structured data similar to the following
 Now that you understand the basics, explore:
 
 - **[User Guide](../usage/metadata-collection.md)** - Detailed documentation for each module and functions
-- **[Workflow Details](../workflow/overview.md)** - Understand the overall workflow and extraction flow in details
 - **[Advanced Configuration](../rag-config.md)** - Configure RAG and custom flows
 
 ## Troubleshooting

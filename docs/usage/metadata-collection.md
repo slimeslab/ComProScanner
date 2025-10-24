@@ -93,5 +93,4 @@ doi,publication_name,issn,scopus_id,article_title,article_type,metadata_publishe
 ## Next Steps
 
 - Learn about [Article Processing](article-processing.md)
-- Understand the [complete workflow](../workflow/overview.md)
 - Explore [RAG configuration](../rag-config.md)

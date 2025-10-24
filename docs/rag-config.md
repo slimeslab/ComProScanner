@@ -278,5 +278,5 @@ pip install sentence-transformers
 
 ## Next Steps
 
-- Explore [Data Extraction](../usage/data-extraction.md)
-- Review [Evaluation Methods](../usage/evaluation/agentic.md)
+- Explore [Data Extraction](usage/data-extraction.md)
+- Review [Evaluation Methods](usage/evaluation/agentic.md)
