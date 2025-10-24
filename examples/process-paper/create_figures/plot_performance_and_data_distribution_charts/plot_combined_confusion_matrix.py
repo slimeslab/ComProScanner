@@ -15,7 +15,7 @@ eval_visualizer.plot_multiple_confusion_matrices_combined(
         "Qwen-2.5-72B-Instruct",
         "Qwen3-235B-A22B",
     ],
-    colormap="RdYlGn",
+    colormap="Blues",
     label_fontsize=35,
     colorbar_fontsize=24,
     annotation_fontsize=24,
