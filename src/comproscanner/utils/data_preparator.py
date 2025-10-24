@@ -298,7 +298,7 @@ class MatPropDataPreparator:
         Process materials data extracted from the CSV database and run CrewAI Workflow.
         """
         all_files = glob.glob(self.extracted_folderpath + "/*.csv")
-        dfs = [pd.read_csv(f) for f in all_files]
+        dfs = [pd.read_csv(f, dtype=str) for f in all_files]
         if not dfs:
             logger.error(f"No files found in the folder: {self.extracted_folderpath}")
             raise FileNotFoundErrorHandler(

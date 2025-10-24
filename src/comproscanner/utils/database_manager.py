@@ -158,7 +158,8 @@ class CSVDatabaseManager:
             output_file = f"{filepath}/{source}_{keyword}_paragraphs.csv"
 
             if os.path.exists(output_file):
-                existing_df = pd.read_csv(output_file)
+                # Read all columns as strings to avoid mixed type issues
+                existing_df = pd.read_csv(output_file, dtype=str)
                 final_df = final_df[~final_df["doi"].isin(existing_df["doi"])]
                 if not final_df.empty:
                     combined_df = pd.concat([existing_df, final_df], ignore_index=True)

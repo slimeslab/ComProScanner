@@ -56,7 +56,7 @@ Both methods provide:
 - **Classification Metrics**: Standard Precision/Recall/F1 metrics for detailed performance analysis
 - **Normalized Classification Metrics**: Classification metrics normalized to ensure an equitable comparison between articles with significant disparities in the quantity of extractable information.
 
-To read more about the evaluation metrics, please refer the journal article [here](https://arxiv.org/abs/example).
+To read more about the evaluation metrics, please refer the journal article [here](https://arxiv.org/abs/2510.20362).
 
 ## Quick Start
 
