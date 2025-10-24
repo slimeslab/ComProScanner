@@ -8,6 +8,7 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PyPI](https://img.shields.io/pypi/v/comproscanner)](https://pypi.org/project/comproscanner/)
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://slimeslab.github.io/ComProScanner/)
 
 ## Overview
