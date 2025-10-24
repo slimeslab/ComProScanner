@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://i.ibb.co/whHSbGvT/comproscanner-logo.png" alt="ComProScanner Logo" width="500"/>
+  <img src="assets/comproscanner_logo.png" alt="ComProScanner Logo" width="500"/>
 </p>
 
 # ComProScanner
@@ -76,7 +76,7 @@ scanner.extract_composition_property_data(
 ## Workflow
 
 <div align="center">
-  <img src="https://i.ibb.co/QWd2qd3/overall-workflow.png" alt="ComProScanner Workflow" width="750"/>
+  <img src="assets/overall_workflow.png" alt="ComProScanner Workflow" width="750"/>
 </div>
 
 The ComProScanner workflow consists of four main stages:
