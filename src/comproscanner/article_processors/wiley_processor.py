@@ -63,7 +63,7 @@ class WileyArticleProcessor:
             "substring_keywords": [" example 1 ", " example 2 "],
         }
         sql_batch_size (int): The number of rows to write to the database at once (Applicable only if is_sql_db is True) (default: 500)
-        csv_batch_size (int): The number of rows to write to the CSV file at once (default: 2000)
+        csv_batch_size (int): The number of rows to write to the CSV file at once (default: 1)
         start_row (int): The row number to start processing from (default: None)
         end_row (int): The row number to end processing at (default: None)
         doi_list (list): A list of DOIs to process (default: None)
@@ -76,7 +76,7 @@ class WileyArticleProcessor:
         main_property_keyword: str = None,
         property_keywords: dict = None,
         sql_batch_size: int = 500,
-        csv_batch_size: int = 2000,
+        csv_batch_size: int = 1,
         start_row: int = None,
         end_row: int = None,
         doi_list: list = None,
@@ -106,10 +106,7 @@ class WileyArticleProcessor:
         self.metadata_csv_filename = self.all_paths.METADATA_CSV_FILENAME
         self.csv_path = self.db_configs.EXTRACTED_CSV_FOLDERPATH
         self.paperdata_table_name = self.db_configs.PAPERDATA_TABLE_NAME
-        if is_sql_db:
-            self.sql_batch_size = sql_batch_size
-        else:
-            self.sql_batch_size = csv_batch_size
+        self.sql_batch_size = sql_batch_size
         self.csv_batch_size = csv_batch_size
         # Optional parameters
         self.start_row = start_row
@@ -214,7 +211,7 @@ class WileyArticleProcessor:
             doi (str: Required): The DOI of the article.
 
         Returns:
-            tmp_path (str): The path of the temporary PDF file, or None if failed
+            tmp_path (str): The path of the temporary PDF file, or "Not Found" if the article is not found, or None if there was an error.
 
         Raises:
             KeyboardInterruptHandler: If user interrupts the retry process
@@ -263,7 +260,7 @@ class WileyArticleProcessor:
 
                 elif response.status_code == 404:
                     logger.warning(f"Article not found for DOI: {doi}")
-                    return None
+                    return "Not Found"
 
                 else:
                     logger.warning(
@@ -386,7 +383,8 @@ class WileyArticleProcessor:
         """
         logger.debug(f"\nProcessing articles for the first time...")
         self._load_and_preprocess_data()
-        dataframes = []
+        sql_dataframes = []
+        csv_dataframes = []
 
         if self.doi_list is None:
             iterable = self.df.iterrows()
@@ -425,6 +423,45 @@ class WileyArticleProcessor:
                     logger.warning(f"Failed to download PDF for DOI {row['doi']}")
                     continue
 
+                # Handle "Not Found" articles
+                if file_path == "Not Found":
+                    empty_data = {
+                        "doi": row["doi"],
+                        "article_title": row["article_title"],
+                        "publication_name": row["publication_name"],
+                        "publisher": row["metadata_publisher"],
+                        "abstract": "",
+                        "introduction": "",
+                        "exp_methods": "",
+                        "comp_methods": "",
+                        "results_discussion": "",
+                        "conclusion": "",
+                        "is_property_mentioned": "0",
+                    }
+                    empty_row = pd.DataFrame([empty_data])
+                    sql_dataframes.append(empty_row)
+                    csv_dataframes.append(empty_row)
+                    if len(sql_dataframes) == self.sql_batch_size:
+                        final_sql_df = pd.concat(sql_dataframes, ignore_index=True)
+                        if self.is_sql_db:
+                            self.sql_db_manager.write_to_sql_db(
+                                self.paperdata_table_name, final_sql_df
+                            )
+                        sql_dataframes = []
+                        time.sleep(5)
+                    if len(csv_dataframes) == self.csv_batch_size:
+                        final_csv_df = pd.concat(csv_dataframes, ignore_index=True)
+                        self.csv_db_manager.write_to_csv(
+                            final_csv_df,
+                            self.csv_path,
+                            self.keyword,
+                            self.source,
+                            self.csv_batch_size,
+                        )
+                        csv_dataframes = []
+                        time.sleep(5)
+                    continue
+
                 # Get metadata
                 title, journal_name, publisher = get_paper_metadata_from_oaworks(
                     row["doi"]
@@ -461,7 +498,8 @@ class WileyArticleProcessor:
                     self.vector_db_manager,
                     logger,
                 )
-                dataframes.append(row)
+                sql_dataframes.append(row)
+                csv_dataframes.append(row)
 
                 if row["is_property_mentioned"].iloc[0] == "1":
                     self.valid_property_articles += 1
@@ -474,16 +512,18 @@ class WileyArticleProcessor:
                         logger.warning(f"Failed to remove temp file {file_path}: {e}")
 
                 # Write to SQL database when batch is full
-                if len(dataframes) == self.sql_batch_size:
-                    final_df = pd.concat(dataframes, ignore_index=True)
+                if len(sql_dataframes) == self.sql_batch_size:
+                    final_df = pd.concat(sql_dataframes, ignore_index=True)
                     if self.is_sql_db:
                         self.sql_db_manager.write_to_sql_db(
                             self.paperdata_table_name, final_df
                         )
+                    sql_dataframes = []
+                    time.sleep(5)
 
                 # Write to CSV when batch is full
-                if len(dataframes) == self.csv_batch_size:
-                    final_df = pd.concat(dataframes, ignore_index=True)
+                if len(csv_dataframes) == self.csv_batch_size:
+                    final_df = pd.concat(csv_dataframes, ignore_index=True)
                     self.csv_db_manager.write_to_csv(
                         final_df,
                         self.csv_path,
@@ -491,7 +531,7 @@ class WileyArticleProcessor:
                         self.source,
                         self.csv_batch_size,
                     )
-                    dataframes = []
+                    csv_dataframes = []
                     time.sleep(5)
 
                 time.sleep(0.2)
@@ -505,14 +545,16 @@ class WileyArticleProcessor:
 
         # Append any remaining dataframes at the end
         try:
-            if dataframes:
-                remaining_df = pd.concat(dataframes, ignore_index=True)
+            if sql_dataframes:
+                remaining_sql_df = pd.concat(sql_dataframes, ignore_index=True)
                 if self.is_sql_db:
                     self.sql_db_manager.write_to_sql_db(
-                        self.paperdata_table_name, remaining_df
+                        self.paperdata_table_name, remaining_sql_df
                     )
+            if csv_dataframes:
+                remaining_csv_df = pd.concat(csv_dataframes, ignore_index=True)
                 self.csv_db_manager.write_to_csv(
-                    remaining_df, self.csv_path, self.keyword, self.source
+                    remaining_csv_df, self.csv_path, self.keyword, self.source
                 )
         except Exception as e:
             logger.error(f"Error writing remaining dataframes: {e}")

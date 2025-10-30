@@ -50,7 +50,7 @@ class PDFsProcessor:
         main_property_keyword: str = None,
         property_keywords: list = None,
         sql_batch_size: int = 500,
-        csv_batch_size: int = 2000,
+        csv_batch_size: int = 1,
         is_sql_db: bool = False,
         rag_config: RAGConfig = RAGConfig(),
     ):
@@ -65,7 +65,7 @@ class PDFsProcessor:
                 "substring_keywords": [" example 1 ", " example 2 "],
             }
             sql_batch_size (int): The number of rows to write to the database at once (Applicable only if is_sql_db is True) (default: 500)
-            csv_batch_size (int): The number of rows to write to the CSV file at once (default: 2000)
+            csv_batch_size (int): The number of rows to write to the CSV file at once (default: 1)
             is_sql_db (bool): A flag to indicate if the data should be written to the database (default: False)
             rag_config (RAGConfig): An instance of the RAGConfig class (default: RAGConfig())
 
@@ -94,10 +94,7 @@ class PDFsProcessor:
         self.db_configs = DatabaseConfig(self.keyword, self.is_sql_db)
         self.csv_path = self.db_configs.EXTRACTED_CSV_FOLDERPATH
         self.paperdata_table_name = self.db_configs.PAPERDATA_TABLE_NAME
-        if self.is_sql_db:
-            self.sql_batch_size = sql_batch_size
-        else:
-            self.sql_batch_size = csv_batch_size
+        self.sql_batch_size = sql_batch_size
         self.csv_batch_size = csv_batch_size
         self.rag_config = rag_config
         self.timeout_file = self.all_paths.TIMEOUT_DOI_LOG_FILENAME
@@ -138,12 +135,12 @@ class PDFsProcessor:
         """
         try:
             # Standard DOI pattern: 10.xxxx/xxxxx
-            doi_pattern = r'10\.\d{4,9}/[-._;()/:a-zA-Z0-9]+'
+            doi_pattern = r"10\.\d{4,9}/[-._;()/:a-zA-Z0-9]+"
             matches = re.findall(doi_pattern, text)
 
             if matches:
                 # Return the first match, clean up common trailing characters
-                doi = matches[0].rstrip('.,;)]')
+                doi = matches[0].rstrip(".,;)]")
                 logger.debug(f"DOI extracted: {doi}")
                 return doi
             else:
@@ -157,7 +154,8 @@ class PDFsProcessor:
         """
         Main function to process the PDFs in the folder. It reads the PDFs, extracts the text, and writes the data to CSV file, to the SQL database (if set), and creates a vector database if the keyword is found in the text.
         """
-        dataframes = []
+        sql_dataframes = []
+        csv_dataframes = []
         pdf_files = glob.glob(f"{self.folder_path}/*.pdf")
         total_files = len(pdf_files)
         logger.verbose(f"\n\nParsing of PDFs started...")
@@ -205,21 +203,24 @@ class PDFsProcessor:
                     self.vector_db_manager,
                     logger,
                 )
-                dataframes.append(row)
+                sql_dataframes.append(row)
+                csv_dataframes.append(row)
 
                 if row["is_property_mentioned"].iloc[0] == "1":
                     self.valid_property_articles += 1
-                if len(dataframes) == self.sql_batch_size:
-                    final_df = pd.concat(dataframes, ignore_index=True)
+                if len(sql_dataframes) == self.sql_batch_size:
+                    final_df = pd.concat(sql_dataframes, ignore_index=True)
                     if self.is_sql_db:
                         self.sql_db_manager.write_to_sql_db(
                             self.paperdata_table_name, final_df
                         )
-                if len(dataframes) == self.csv_batch_size:
+                    sql_dataframes = []
+                    time.sleep(5)
+                if len(csv_dataframes) == self.csv_batch_size:
                     self.csv_db_manager.write_to_csv(
                         final_df, self.csv_path, self.keyword, self.source
                     )
-                    dataframes = []
+                    csv_dataframes = []
                     time.sleep(5)
                 time.sleep(0.2)
 
@@ -232,14 +233,16 @@ class PDFsProcessor:
 
             # Append any remaining dataframes at the end
             try:
-                if dataframes:
-                    remaining_df = pd.concat(dataframes, ignore_index=True)
+                if sql_dataframes:
+                    remaining_sql_df = pd.concat(sql_dataframes, ignore_index=True)
                     if self.is_sql_db:
                         self.sql_db_manager.write_to_sql_db(
-                            self.paperdata_table_name, remaining_df
+                            self.paperdata_table_name, remaining_sql_df
                         )
+                if csv_dataframes:
+                    remaining_csv_df = pd.concat(csv_dataframes, ignore_index=True)
                     self.csv_db_manager.write_to_csv(
-                        remaining_df, self.csv_path, self.keyword, self.source
+                        remaining_csv_df, self.csv_path, self.keyword, self.source
                     )
             except Exception as e:
                 logger.error(f"Error writing remaining dataframes: {e}")

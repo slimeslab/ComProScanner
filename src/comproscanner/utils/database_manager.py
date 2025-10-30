@@ -9,6 +9,7 @@ Date: 23-02-2025
 
 # Standard library imports
 import os
+import gc
 from pathlib import Path
 from typing import List
 
@@ -30,6 +31,7 @@ from mysql.connector import Error as MySQLInterfaceError
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 from langchain_community.vectorstores import Chroma
+from chromadb import PersistentClient
 
 # Custom imports
 from .configs import DatabaseConfig, RAGConfig
@@ -172,78 +174,67 @@ class CSVDatabaseManager:
 
 
 class VectorDatabaseManager:
-    """Class for vector storage operations with support for multiple embedding models"""
+    """Leak-safe, auto-persisting ChromaDB handler for multiple vector databases."""
 
-    def __init__(self, rag_config: RAGConfig = RAGConfig()):
-        """Initialize the vector storage"""
+    def __init__(self, rag_config):
         self.rag_config = rag_config
-        self.embeddings = MultiModelEmbeddings(self.rag_config)
-        self.rag_db_path = self.rag_config.rag_db_path
-        self.chunk_size = self.rag_config.chunk_size
-        self.chunk_overlap = self.rag_config.chunk_overlap
+        self.embeddings = MultiModelEmbeddings(rag_config)
+        self.rag_db_path = Path(rag_config.rag_db_path)
+        self.chunk_size = rag_config.chunk_size
+        self.chunk_overlap = rag_config.chunk_overlap
+        self.client = PersistentClient(path=str(self.rag_db_path))
 
-    def create_database(
-        self,
-        db_name: str = None,
-        article_text: str = None,
-    ) -> None:
-        """
-        Create a new vector database from documents with configurable embedding model.
-
-        Args:
-            db_name (str): Name of the database to create
-            article_text (str): Text of the article
-        """
-
+    def create_database(self, db_name: str, article_text: str):
+        """Create a new persistent ChromaDB database (auto‑persisted)."""
         if not db_name:
-            raise ValueErrorHandler("Database name is required")
+            raise ValueError("Database name is required")
         if not article_text:
-            raise ValueErrorHandler("Article text is required")
+            raise ValueError("Article text is required")
 
-        # Set database location as rag_db_path/db_name and create the directory if it does not exist
-        db_location = Path(self.rag_db_path) / db_name
-        if not db_location.exists():
-            db_location.mkdir(parents=True)
+        db_location = self.rag_db_path / db_name
+        db_location.mkdir(parents=True, exist_ok=True)
 
-        # Split text into chunks and create documents
-        text_splitter = RecursiveCharacterTextSplitter(
+        splitter = RecursiveCharacterTextSplitter(
             chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap
         )
-        texts = text_splitter.split_text(article_text)
+        texts = splitter.split_text(article_text)
         docs = [Document(page_content=t) for t in texts]
 
-        # Create vector store
-        Chroma.from_documents(
+        # Automatic persistence of the vector database
+        vectordb = Chroma.from_documents(
             documents=docs,
             embedding=self.embeddings,
             persist_directory=str(db_location),
         )
 
-        logger.info(f"Vector database created successfully at {db_location}")
+        # Clear cache and release handles to avoid leaks
+        self.client.clear_system_cache()
+        del vectordb
+        gc.collect()
 
-    def query_database(self, db_name: str, query: str, top_k: int = 5) -> List:
-        """
-        Query the vector database using the model from config.
+        logger.info(f"Vector database auto-persisted at {db_location}")
 
-        Args:
-            db_name (str): Name of the database to query
-            query (str): Query text
-            top_k (int): Number of results to return
-
-        Returns:
-            list: List of document results with similarity scores
-        """
-        db_location = Path(self.rag_db_path) / db_name
+    def query_database(self, db_name: str, query: str, top_k: int = 5):
+        """Query the persisted ChromaDB database."""
+        db_location = self.rag_db_path / db_name
         if not db_location.exists():
-            raise ValueErrorHandler(f"Database {db_name} not found at {db_location}")
+            raise ValueError(f"Database {db_name} not found at {db_location}")
 
-        # Load the vector store with embeddings from config
         vectordb = Chroma(
-            persist_directory=str(db_location), embedding_function=self.embeddings
+            persist_directory=str(db_location),
+            embedding_function=self.embeddings,
         )
-
-        # Query the vector store
         results = vectordb.similarity_search_with_score(query, k=top_k)
-        logger.info(f"Retrieved {len(results)} results from {db_name}")
 
+        # Clear cache and release handles to avoid leaks
+        self.client.clear_system_cache()
+        del vectordb
+        gc.collect()
+
+        logger.info(f"Retrieved {len(results)} results from {db_name}")
         return results
+
+    def database_exists(self, db_name: str) -> bool:
+        """Check if a vector database exists."""
+        db_location = self.rag_db_path / db_name
+        return db_location.exists()

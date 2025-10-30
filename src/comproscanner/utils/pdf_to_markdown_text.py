@@ -296,15 +296,6 @@ class PDFToMarkdownText:
                     other_paragraphs += paragraph
             return other_paragraphs, comp_paragraphs
 
-        def _get_folder_names(path="db"):
-            # check if the db folder exists
-            if not os.path.exists(path):
-                return []
-            else:
-                return [
-                    d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))
-                ]
-
         def _get_section_type(section_title: str, keywords_dict: dict):
             """
             Function to determine the type of section based on its title and a list of keywords
@@ -416,17 +407,16 @@ class PDFToMarkdownText:
                 if keyword in total_text:
                     all_req_data["is_property_mentioned"] = "1"
                     modified_doi = doi.replace("/", "_")
-                    created_db_names = _get_folder_names()
-                    if modified_doi not in created_db_names:
+                    if vector_db_manager.database_exists(modified_doi):
+                        logger.warning(f"Database already exists for {doi}...")
+                    else:
                         logger.info(
                             f"Target property is mentioned in {doi}...Creating vector database..."
                         )
                         vector_db_manager.create_database(
                             db_name=modified_doi, article_text=total_text
                         )
-                        break
-                    else:
-                        logger.warning(f"Database already exists for {doi}...")
+                    break
         if all_req_data["is_property_mentioned"] == "0":
             all_req_data["abstract"] = ""
             all_req_data["introduction"] = ""

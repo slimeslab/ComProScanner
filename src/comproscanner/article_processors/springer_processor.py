@@ -104,10 +104,7 @@ class SpringerArticleProcessor:
         self.metadata_csv_filename = self.all_paths.METADATA_CSV_FILENAME
         self.csv_path = self.db_configs.EXTRACTED_CSV_FOLDERPATH
         self.paperdata_table_name = self.db_configs.PAPERDATA_TABLE_NAME
-        if is_sql_db:
-            self.sql_batch_size = sql_batch_size
-        else:
-            self.sql_batch_size = csv_batch_size
+        self.sql_batch_size = sql_batch_size
         self.csv_batch_size = csv_batch_size
         # Optional parameters
         self.start_row = start_row
@@ -242,7 +239,7 @@ class SpringerArticleProcessor:
             doi (str): DOI of the article.
 
         Returns:
-            response (Response): Response object from the API call, or None if failed
+            response (Response): Response object from the API call, or "Not Found" if the article is not found, or None if there was an error.
 
         Raises:
             KeyboardInterruptHandler: If user interrupts the retry process
@@ -350,7 +347,7 @@ class SpringerArticleProcessor:
                         return None
                     elif response.status_code == 404:
                         logger.error(f"Article not found for DOI: {doi}")
-                        return None
+                        return "Not Found"
                     else:
                         logger.error(
                             f"Request failed with status code {response.status_code} for DOI: {doi}"
@@ -574,15 +571,6 @@ class SpringerArticleProcessor:
             encoded_comp_section = comp_section.encode("unicode_escape").decode("utf-8")
             return encoded_other_section, encoded_comp_section
 
-        def _get_folder_names(path="db"):
-            # check if the db folder exists
-            if not os.path.exists(path):
-                return []
-            else:
-                return [
-                    d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))
-                ]
-
         all_req_data = {
             "doi": doi,
             "article_title": article_title,
@@ -675,19 +663,19 @@ class SpringerArticleProcessor:
                 if keyword in total_text:
                     all_req_data["is_property_mentioned"] = "1"
                     modified_doi = doi.replace("/", "_")
-                    created_db_names = _get_folder_names()
-                    if modified_doi not in created_db_names:
+                    if self.vector_db_manager.database_exists(modified_doi):
+                        logger.warning(
+                            f"Vector Database already exists for {doi}...Skipping..."
+                        )
+                    else:
+
                         logger.info(
                             f"Target property is mentioned in {doi}...Creating vector database..."
                         )
                         self.vector_db_manager.create_database(
                             db_name=modified_doi, article_text=total_text
                         )
-                        break
-                    else:
-                        logger.warning(
-                            f"Vector Database already exists for {doi}...Skipping..."
-                        )
+                    break
         if all_req_data["is_property_mentioned"] == "0":
             all_req_data["abstract"] = ""
             all_req_data["introduction"] = ""
@@ -862,7 +850,8 @@ class SpringerArticleProcessor:
         """
         logger.debug(f"\nProcessing new articles...")
         self._load_and_preprocess_data()
-        dataframes = []
+        sql_dataframes = []
+        csv_dataframes = []
 
         if self.doi_list is None:
             iterable = self.df.iterrows()
@@ -901,6 +890,45 @@ class SpringerArticleProcessor:
                     )
                     continue
 
+                # Handle "Not Found" articles
+                if response == "Not Found":
+                    empty_data = {
+                        "doi": row["doi"],
+                        "article_title": row["article_title"],
+                        "publication_name": row["publication_name"],
+                        "publisher": row["metadata_publisher"],
+                        "abstract": "",
+                        "introduction": "",
+                        "exp_methods": "",
+                        "comp_methods": "",
+                        "results_discussion": "",
+                        "conclusion": "",
+                        "is_property_mentioned": "0",
+                    }
+                    empty_row = pd.DataFrame([empty_data])
+                    sql_dataframes.append(empty_row)
+                    csv_dataframes.append(empty_row)
+                    if len(sql_dataframes) == self.sql_batch_size:
+                        final_sql_df = pd.concat(sql_dataframes, ignore_index=True)
+                        if self.is_sql_db:
+                            self.sql_db_manager.write_to_sql_db(
+                                self.paperdata_table_name, final_sql_df
+                            )
+                        sql_dataframes = []
+                        time.sleep(5)
+                    if len(csv_dataframes) == self.csv_batch_size:
+                        final_csv_df = pd.concat(csv_dataframes, ignore_index=True)
+                        self.csv_db_manager.write_to_csv(
+                            final_csv_df,
+                            self.csv_path,
+                            self.keyword,
+                            self.source,
+                            self.csv_batch_size,
+                        )
+                        csv_dataframes = []
+                        time.sleep(5)
+                    continue
+
                 root = self._parse_response(response)
                 if root is None:
                     logger.error(f"Failed to parse XML...skipping {row["doi"]}...")
@@ -928,17 +956,20 @@ class SpringerArticleProcessor:
                     row["metadata_publisher"],
                 )
 
-                dataframes.append(row)
+                sql_dataframes.append(row)
+                csv_dataframes.append(row)
                 if row["is_property_mentioned"].iloc[0] == "1":
                     self.valid_property_articles += 1
-                if len(dataframes) == self.sql_batch_size:
-                    final_sql_df = pd.concat(dataframes, ignore_index=True)
+                if len(sql_dataframes) == self.sql_batch_size:
+                    final_sql_df = pd.concat(sql_dataframes, ignore_index=True)
                     if self.is_sql_db:
                         self.sql_db_manager.write_to_sql_db(
                             self.paperdata_table_name, final_sql_df
                         )
-                if len(dataframes) == self.csv_batch_size:
-                    final_csv_df = pd.concat(dataframes, ignore_index=True)
+                    sql_dataframes = []
+                    time.sleep(5)
+                if len(csv_dataframes) == self.csv_batch_size:
+                    final_csv_df = pd.concat(csv_dataframes, ignore_index=True)
                     self.csv_db_manager.write_to_csv(
                         final_csv_df,
                         self.csv_path,
@@ -946,7 +977,7 @@ class SpringerArticleProcessor:
                         self.source,
                         self.csv_batch_size,
                     )
-                    dataframes = []
+                    csv_dataframes = []
                     time.sleep(5)
 
                 time.sleep(0.2)
@@ -961,14 +992,16 @@ class SpringerArticleProcessor:
                 continue
 
         # Append any remaining dataframes at the last
-        if dataframes:
-            remaining_df = pd.concat(dataframes, ignore_index=True)
+        if sql_dataframes:
+            remaining_sql_df = pd.concat(sql_dataframes, ignore_index=True)
             if self.is_sql_db:
                 self.sql_db_manager.write_to_sql_db(
-                    self.paperdata_table_name, remaining_df
+                    self.paperdata_table_name, remaining_sql_df
                 )
+        if csv_dataframes:
+            remaining_csv_df = pd.concat(csv_dataframes, ignore_index=True)
             self.csv_db_manager.write_to_csv(
-                remaining_df,
+                remaining_csv_df,
                 self.csv_path,
                 self.keyword,
                 self.source,

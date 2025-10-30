@@ -98,7 +98,7 @@ def setup_logger(log_filename, module_name=None, log_level=logging.DEBUG):
     )
 
     if not has_file_handler:
-        file_handler = logging.FileHandler(log_filename)
+        file_handler = logging.FileHandler(log_filename, encoding="utf-8")
         file_formatter = logging.Formatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
             datefmt="%d-%m-%Y %H:%M:%S",
