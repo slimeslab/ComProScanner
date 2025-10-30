@@ -1,0 +1,174 @@
+/* Custom CSS for ComProScanner Documentation */
+
+:root {
+  --md-primary-fg-color: #3f51b5;
+  --md-primary-fg-color--light: #5c6bc0;
+  --md-primary-fg-color--dark: #303f9f;
+  --md-accent-fg-color: #2196f3;
+}
+
+/* Improve code block styling */
+.highlight pre {
+  border-radius: 0.5em;
+  padding: 1em;
+}
+
+/* Better admonition styling */
+.md-typeset .admonition {
+  border-left: 0.4rem solid;
+  border-radius: 0.4rem;
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, .05);
+}
+
+/* Improve table styling */
+.md-typeset table:not([class]) {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.3em;
+}
+
+/* Navigation improvements */
+.md-nav__title {
+  font-weight: 700;
+}
+
+/* Custom button styling */
+.md-button {
+  border-radius: 0.3em;
+  transition: all 0.3s ease;
+}
+
+.md-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Improve footer */
+.md-footer-meta {
+  background-color: var(--md-footer-bg-color);
+}
+
+/* Code copy button styling */
+.md-clipboard {
+  transition: opacity 0.3s ease;
+}
+
+.md-clipboard:hover {
+  opacity: 1;
+}
+
+/* Search box improvements */
+.md-search__input {
+  border-radius: 0.3em;
+}
+
+/* Custom heading anchors */
+.md-typeset h2 .headerlink,
+.md-typeset h3 .headerlink {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.md-typeset h2:hover .headerlink,
+.md-typeset h3:hover .headerlink {
+  opacity: 1;
+}
+
+/* Improve tabs */
+.tabbed-set {
+  border-radius: 0.4rem;
+}
+
+/* Custom color for inline code */
+.md-typeset code {
+  background-color: var(--md-code-bg-color);
+  border-radius: 0.2em;
+  padding: 0.1em 0.3em;
+}
+
+/* Logo styling */
+.md-header__button.md-logo img {
+  height: 2.4rem;
+  width: auto;
+}
+
+/* Full-width grid cards - all cards stacked vertically, each taking full width */
+.md-typeset .grid.cards {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* Custom three-column footer layout */
+.md-footer-meta__inner {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.md-footer-copyright {
+  flex: 1;
+  text-align: left;
+  min-width: 200px;
+  font-size: smaller;
+  color: #bdbdbd;
+}
+
+.md-footer-custom-text {
+  flex: 1;
+  text-align: center;
+  font-size: 0.7rem;
+  color: #bdbdbd;
+}
+
+.md-footer-custom-text a {
+  color: var(--md-primary-fg-color) !important;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.md-footer-custom-text a:hover {
+  color: var(--md-accent-fg-color) !important;
+}
+
+.md-footer-social {
+  flex: 1;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.md-footer-social__link {
+  display: inline-block;
+  color: var(--md-default-fg-color--light);
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.md-footer-social__link:hover {
+  color: var(--md-primary-fg-color);
+  transform: scale(1.1);
+}
+
+.md-footer-social__link svg {
+  padding-top: 0.2rem;
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+
+/* Responsive footer for smaller screens */
+@media screen and (max-width: 76.1875em) {
+  .md-footer-meta__inner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .md-footer-copyright,
+  .md-footer-custom-text,
+  .md-footer-social {
+    text-align: center;
+    justify-content: center;
+  }
+}
