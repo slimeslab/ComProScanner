@@ -884,14 +884,7 @@ class SpringerArticleProcessor:
                 logger.debug(f"\n\nProcessing DOI: {row["doi"]}")
                 response = self._send_request(row["doi"])
 
-                if response is None:
-                    logger.warning(
-                        f"Failed to download article...skipping {row["doi"]}..."
-                    )
-                    continue
-
-                # Handle "Not Found" articles
-                if response == "Not Found":
+                if response is None or response == "Not Found":
                     empty_data = {
                         "doi": row["doi"],
                         "article_title": row["article_title"],
