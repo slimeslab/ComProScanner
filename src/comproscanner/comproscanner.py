@@ -387,6 +387,16 @@ class ComProScanner:
 
         paper_metadata_extractor = PaperMetadataExtractor()
 
+        def _has_composition_data(comp_data):
+            """Check if composition data contains actual values"""
+            if not comp_data or not isinstance(comp_data, dict):
+                return False
+
+            comp_values = comp_data.get("compositions_property_values", {})
+            return bool(
+                comp_values and isinstance(comp_values, dict) and len(comp_values) > 0
+            )
+
         test_dois_with_data = []
         if is_test_data_preparation:
             if os.path.exists(test_doi_list_file):
@@ -458,7 +468,7 @@ class ComProScanner:
 
                 # Determine if the paper should be saved or not
                 should_save = True
-                if composition_data == {}:
+                if not _has_composition_data(composition_data):
                     if is_test_data_preparation:
                         should_save = False
                         logger.debug(
@@ -504,11 +514,23 @@ class ComProScanner:
                     dir_path = os.path.dirname(checked_doi_list_file)
                     if dir_path:
                         os.makedirs(dir_path, exist_ok=True)
-                    with open(checked_doi_list_file, "a") as f:
-                        logger.info(f"Adding DOI to checked list: {paper_data['doi']}")
-                        if paper_data["doi"] not in f.read():
-                            # Write the DOI only if it is not already present
+                    # Read existing DOIs first
+                    existing_dois = set()
+                    if os.path.exists(checked_doi_list_file):
+                        with open(checked_doi_list_file, "r") as f:
+                            existing_dois = set(line.strip() for line in f)
+
+                    # Append only if DOI is not already present
+                    if paper_data["doi"] not in existing_dois:
+                        with open(checked_doi_list_file, "a") as f:
+                            logger.info(
+                                f"Adding DOI to checked list: {paper_data['doi']}"
+                            )
                             f.write(f"{paper_data['doi']}\n")
+                    else:
+                        logger.debug(
+                            f"DOI already in checked list: {paper_data['doi']}"
+                        )
                 except Exception as e:
                     logger.error(
                         f"Error writing to checked DOIs file {checked_doi_list_file}: {str(e)}"

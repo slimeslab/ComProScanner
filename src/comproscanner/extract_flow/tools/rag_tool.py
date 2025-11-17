@@ -88,6 +88,13 @@ class RAGTool(BaseTool):
 
             return ChatOpenAI(model=model, request_timeout=1000, **common_params)
 
+        # Deepseek models
+        if model.startswith("deepseek"):
+            self._check_package_exists("langchain_deepseek", model)
+            from langchain_deepseek import ChatDeepSeek
+
+            return ChatDeepSeek(model=model, request_timeout=1000, **common_params)
+
         # Google Gemini models
         elif model.startswith("gemini-"):
             self._check_package_exists("langchain_google_genai", model)

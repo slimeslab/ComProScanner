@@ -114,6 +114,7 @@ class MaterialsDataIdentifierCrew:
     def identify_materials_data(self) -> Task:
         if self.task_output_folder:
             return Task(
+                expected_output='A JSON object in this exact format: {{"answer": "yes"}} or {{"answer": "no"}}',
                 config=self.tasks_config["identify_materials_data"],
                 output_pydantic=YesNoResponse,
                 output_file=self.task_output_file,

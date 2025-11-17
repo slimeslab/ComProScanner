@@ -281,14 +281,24 @@ class DataExtractionFlow(Flow[MaterialsState]):
             allowed_characterization_techniques
         )
 
-    def _parse_json_output(self, raw_output, default_value=None, log_prefix=""):
+    def _parse_json_output(
+        self, raw_output, default_value=None, log_prefix="", expected_keys=None
+    ):
         """
-        Parses JSON output from LLM responses, handling different output formats including Python escape sequences.
+        Parses JSON output from LLM responses, handling different output formats and nested schemas.
+
+        Handles:
+        - Already parsed dictionaries/lists (returns as-is)
+        - JSON strings with markdown code blocks (```json...```)
+        - Standard JSON strings
+        - Python-style literals with escape sequences
+        - Nested JSON schemas (crawls to find actual data)
 
         Args:
-            raw_output: The raw output from the LLM
+            raw_output: The raw output from the LLM (can be dict, list, or string)
             default_value: The default value to return if parsing fails
             log_prefix: Prefix for log messages
+            expected_keys: List of keys expected in the final data (for schema extraction)
 
         Returns:
             Parsed data or default_value if parsing fails
@@ -296,55 +306,191 @@ class DataExtractionFlow(Flow[MaterialsState]):
         if default_value is None:
             default_value = {}
 
+        def crawl_and_extract(data, depth=0, max_depth=10):
+            """Recursively search for actual data in nested structures."""
+            if depth > max_depth or not isinstance(data, dict):
+                return None
+
+            # If expected_keys provided, check if current level has all expected keys
+            if expected_keys:
+                if all(key in data for key in expected_keys):
+                    logger.debug(f"{log_prefix} - Found actual data at depth {depth}")
+                    return {key: data[key] for key in expected_keys if key in data}
+
+                # Check for partial match (at least 50% of expected keys)
+                found_keys = [key for key in expected_keys if key in data]
+                if found_keys and len(found_keys) >= len(expected_keys) * 0.5:
+                    logger.debug(
+                        f"{log_prefix} - Found partial data at depth {depth} with keys: {found_keys}"
+                    )
+                    result = {key: data[key] for key in found_keys}
+                    # Try to find remaining keys in nested structures
+                    for key, value in data.items():
+                        if key not in expected_keys and isinstance(value, dict):
+                            nested_result = crawl_and_extract(
+                                value, depth + 1, max_depth
+                            )
+                            if nested_result:
+                                result.update(nested_result)
+                    return result if len(result) > 0 else None
+
+            # Search in common nested locations
+            search_locations = [
+                "properties",
+                "data",
+                "result",
+                "output",
+                "content",
+                "value",
+                "composition_formatted_data",
+                "synthesis_formatted_data",
+            ]
+
+            for location in search_locations:
+                if location in data and isinstance(data[location], dict):
+                    result = crawl_and_extract(data[location], depth + 1, max_depth)
+                    if result:
+                        return result
+
+            # If not found in common locations, search all nested dicts
+            for key, value in data.items():
+                if isinstance(value, dict):
+                    result = crawl_and_extract(value, depth + 1, max_depth)
+                    if result:
+                        return result
+
+            return None
+
         try:
-            # Handle non-string input
-            if not isinstance(raw_output, str):
+            # Case 1: Already a valid dict or list
+            if isinstance(raw_output, (dict, list)):
+                logger.debug(
+                    f"{log_prefix} - Already parsed as {type(raw_output).__name__}"
+                )
+
+                # If it's a dict and expected_keys provided, check if we need to extract from schema
+                if isinstance(raw_output, dict) and expected_keys:
+                    # Check if this looks like a schema (has "type", "properties", etc.)
+                    if "type" in raw_output or "properties" in raw_output:
+                        logger.warning(
+                            f"{log_prefix} - Detected schema structure, extracting actual data"
+                        )
+                        extracted = crawl_and_extract(raw_output)
+                        if extracted:
+                            return extracted
+                        else:
+                            logger.error(
+                                f"{log_prefix} - Failed to extract data from schema"
+                            )
+                            return default_value
+
+                    # Check if data is directly accessible with expected keys
+                    if all(key in raw_output for key in expected_keys):
+                        return raw_output
+
+                    # Try crawling to find the data
+                    extracted = crawl_and_extract(raw_output)
+                    if extracted:
+                        return extracted
+
                 return raw_output
 
-            # Clean up markdown code blocks
+            # Case 2: Not a string - unexpected type
+            if not isinstance(raw_output, str):
+                logger.warning(
+                    f"{log_prefix} - Unexpected type: {type(raw_output)}, returning default"
+                )
+                return default_value
+
+            # Case 3: Empty or whitespace-only string
+            if not raw_output or not raw_output.strip():
+                logger.warning(f"{log_prefix} - Empty string, returning default")
+                return default_value
+
+            # Clean up the string
             cleaned_output = raw_output.strip()
-            if "```json" in cleaned_output:
+
+            # Case 4: Remove markdown code blocks (```json ... ``` or ``` ... ```)
+            if "```" in cleaned_output:
+                # Try to extract content from ```json...```
                 json_match = re.search(
                     r"```json\s*(.*?)\s*```", cleaned_output, re.DOTALL
                 )
                 if json_match:
-                    cleaned_output = json_match.group(1)
+                    cleaned_output = json_match.group(1).strip()
+                    logger.debug(f"{log_prefix} - Extracted from ```json block")
                 else:
+                    # Try to extract from generic ```...```
                     json_match = re.search(
                         r"```\s*(.*?)\s*```", cleaned_output, re.DOTALL
                     )
                     if json_match:
-                        cleaned_output = json_match.group(1)
+                        cleaned_output = json_match.group(1).strip()
+                        logger.debug(f"{log_prefix} - Extracted from ``` block")
 
-            # Attempt 1: Standard JSON parsing
+            parsed_output = None
+
+            # Case 5: Try standard JSON parsing
             try:
                 parsed_output = json.loads(cleaned_output)
-                logger.debug(f"{log_prefix} parsed successfully using standard JSON")
-                return parsed_output
+                logger.debug(f"{log_prefix} - Successfully parsed with json.loads()")
             except json.JSONDecodeError as e:
-                logger.debug(
-                    f"Standard JSON parsing failed: {e}, trying ast.literal_eval"
-                )
+                logger.debug(f"{log_prefix} - json.loads() failed: {str(e)[:100]}")
 
-            # Attempt 2: Use ast.literal_eval to handle Python-style string with escape sequences
-            try:
-                # Convert JSON booleans/null to Python format
-                python_literal = (
-                    cleaned_output.replace("true", "True")
-                    .replace("false", "False")
-                    .replace("null", "None")
-                )
-                evaluated_dict = ast.literal_eval(python_literal)
-                logger.debug(f"{log_prefix} parsed successfully using ast.literal_eval")
-                return evaluated_dict
-            except (ValueError, SyntaxError) as e:
-                logger.error(
-                    f"Failed to parse {log_prefix} using ast.literal_eval: {e}"
-                )
-                return default_value
+            # Case 6: Try Python literal evaluation (handles escape sequences)
+            if parsed_output is None:
+                try:
+                    # Convert JSON booleans/null to Python equivalents
+                    python_literal = (
+                        cleaned_output.replace("true", "True")
+                        .replace("false", "False")
+                        .replace("null", "None")
+                    )
+                    parsed_output = ast.literal_eval(python_literal)
+                    logger.debug(
+                        f"{log_prefix} - Successfully parsed with ast.literal_eval()"
+                    )
+                except (ValueError, SyntaxError) as e:
+                    logger.debug(
+                        f"{log_prefix} - ast.literal_eval() failed: {str(e)[:100]}"
+                    )
+
+            # Case 7: Parsing successful, now check if we need to extract from schema
+            if parsed_output is not None:
+                if isinstance(parsed_output, dict) and expected_keys:
+                    # Check if this looks like a schema
+                    if "type" in parsed_output or "properties" in parsed_output:
+                        logger.warning(
+                            f"{log_prefix} - Detected schema structure, extracting actual data"
+                        )
+                        extracted = crawl_and_extract(parsed_output)
+                        if extracted:
+                            return extracted
+                        else:
+                            logger.error(
+                                f"{log_prefix} - Failed to extract data from schema"
+                            )
+                            return default_value
+
+                    # Check if data is directly accessible
+                    if all(key in parsed_output for key in expected_keys):
+                        return parsed_output
+
+                    # Try crawling
+                    extracted = crawl_and_extract(parsed_output)
+                    if extracted:
+                        return extracted
+
+                return parsed_output
+
+            # Case 8: All parsing methods failed
+            logger.error(f"{log_prefix} - All parsing methods failed")
+            logger.error(f"{log_prefix} - First 300 chars: {cleaned_output[:300]}")
+            return default_value
 
         except Exception as e:
-            logger.error(f"Error processing {log_prefix} data: {e}")
+            logger.error(f"{log_prefix} - Unexpected error: {e}")
+            logger.exception(f"{log_prefix} - Full traceback:")
             return default_value
 
     @start()
@@ -377,17 +523,40 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 "main_extraction_keyword": self.state.main_extraction_keyword,
             }
         )
-        # Store the raw result and clean it
+        # Store the raw result
         raw_result = result.raw if hasattr(result, "raw") else str(result)
 
-        # Clean the result by removing common formatting
-        cleaned_result = raw_result.strip()
-        if cleaned_result.startswith('"') and cleaned_result.endswith('"'):
-            cleaned_result = cleaned_result[1:-1]
-
-        self.state.is_materials_mentioned = cleaned_result
         logger.debug(f"Raw materials identification result: '{raw_result}'")
-        logger.debug(f"Cleaned materials identification result: '{cleaned_result}'")
+
+        # Parse the result using the centralized parser
+        parsed_result = self._parse_json_output(
+            raw_output=raw_result,
+            log_prefix="Materials Identifier",
+            expected_keys=["answer"],
+            default_value={"answer": "no"},
+        )
+
+        # Extract the answer value - handle both direct string and nested dict
+        answer_value = parsed_result.get("answer", "no")
+
+        # Handle case where answer might be a dict itself
+        if isinstance(answer_value, dict):
+            answer = str(answer_value.get("value", answer_value.get("answer", "no")))
+        elif isinstance(answer_value, str):
+            answer = answer_value
+        else:
+            answer = str(answer_value)
+
+        # Normalize the answer
+        answer = answer.lower().strip()
+
+        # Validate the answer
+        if answer not in ["yes", "no"]:
+            logger.warning(f"Invalid answer value: '{answer}', defaulting to 'no'")
+            answer = "no"
+
+        self.state.is_materials_mentioned = answer
+        logger.info(f"Materials identification result: '{answer}'")
 
         return self.state.is_materials_mentioned
 
@@ -468,15 +637,17 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 "expected_composition_property_example": self.state.expected_composition_property_example,
             }
         )
-
-        parsed_data = self._parse_json_output(
+        composition_expected_keys = [
+            "compositions_property_values",
+            "property_unit",
+            "family",
+        ]
+        parsed_composition_data = self._parse_json_output(
             result.raw,
-            default_value={"composition_formatted_data": {}},
             log_prefix="Composition formatting",
+            expected_keys=composition_expected_keys,
         )
-        self.state.composition_formatted_data = parsed_data.get(
-            "composition_formatted_data", {}
-        )
+        self.state.composition_formatted_data = parsed_composition_data
 
     @listen(extract_final_composition_property_data)
     def extract_synthesis_data(self):
@@ -592,14 +763,17 @@ class DataExtractionFlow(Flow[MaterialsState]):
             }
         )
 
-        parsed_data = self._parse_json_output(
+        parsed_synthesis_data = self._parse_json_output(
             result.raw,
-            default_value={"synthesis_formatted_data": {}},
             log_prefix="Synthesis formatting",
+            expected_keys=[
+                "method",
+                "precursors",
+                "steps",
+                "characterization_techniques",
+            ],
         )
-        self.state.synthesis_formatted_data = parsed_data.get(
-            "synthesis_formatted_data", {}
-        )
+        self.state.synthesis_formatted_data = parsed_synthesis_data
 
     @listen(extract_final_synthesis_data)
     def finalize_results(self):

@@ -23,6 +23,7 @@ dependencies = [
     "mysql",
     "mysql-connector",
     "langchain_community",
+    "litellm",
     "crewai",
     "crewai-tools",
     "chromadb",

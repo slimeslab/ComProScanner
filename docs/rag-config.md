@@ -115,6 +115,20 @@ scanner.extract_composition_property_data(
 )
 ```
 
+### Using DeepSeek
+
+**API Key Required:** Set `DEEPSEEK_API_KEY` in your `.env` file.
+
+```python
+scanner.extract_composition_property_data(
+    main_extraction_keyword="d33",
+    rag_db_path="embeddings/piezo",
+    rag_chat_model="deepseek-chat",
+    rag_max_tokens=1024,
+    rag_top_k=4,
+)
+```
+
 ### Using Google Gemini
 
 **API Key Required:** Set `GEMINI_API_KEY` in your `.env` file.
@@ -240,6 +254,12 @@ Install required packages based on your chosen providers:
 
 ```bash
 pip install langchain-openai
+```
+
+### DeepSeek
+
+```bash
+pip install langchain-deepseek
 ```
 
 ### Google Gemini
