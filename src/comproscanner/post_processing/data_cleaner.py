@@ -128,7 +128,60 @@ class DataCleaner:
             final_dict.update(d)
         return final_dict
 
-    def _clean_data_based_on_elements(self) -> List[Any]:
+    def _get_useful_data(self) -> Dict[str, Any]:
+        """Get only the useful information from all the data passed by the extraction agents based on key searching."""
+        result = {}
+
+        # Define the expected structure with default empty values
+        expected_structure = {
+            "composition_data": {
+                "compositions_property_values": {},
+                "property_unit": "",
+                "family": "",
+            },
+            "synthesis_data": {
+                "method": "",
+                "precursors": [],
+                "steps": [],
+                "characterization_techniques": [],
+            },
+            "article_metadata": {
+                "doi": "",
+                "title": "",
+                "journal": "",
+                "year": "",
+                "isOpenAccess": False,
+                "authors": [],
+                "keywords": [],
+            },
+        }
+
+        for doi, article_data in self.all_data.items():
+            cleaned_article = {}
+
+            for main_key, sub_keys_defaults in expected_structure.items():
+                cleaned_section = {}
+
+                for sub_key, default_value in sub_keys_defaults.items():
+                    if main_key in article_data and sub_key in article_data[main_key]:
+                        value = article_data[main_key][sub_key]
+
+                        # If the value is a dict with 'default' key, extract only the default value
+                        if isinstance(value, dict) and "default" in value:
+                            cleaned_section[sub_key] = value["default"]
+                        else:
+                            cleaned_section[sub_key] = value
+                    else:
+                        # Use the default empty value if key doesn't exist
+                        cleaned_section[sub_key] = default_value
+
+                cleaned_article[main_key] = cleaned_section
+
+            result[doi] = cleaned_article
+
+        return result
+
+    def clean_data_based_on_elements(self) -> Dict[str, Any]:
         """Run complete composition analysis with element validation."""
         result = {}
         for key, value in self.all_data.items():
@@ -172,12 +225,13 @@ class DataCleaner:
         Returns:
             Dict[str, Any]: Cleaned data based on selected strategy
         """
+        self.all_data = self._get_useful_data()
         if strategy == CleaningStrategy.BASIC:
             # Clean without element validation
             return self.clean_data_without_element_filtering()
         else:
             # Full cleaning with element validation (default)
-            return self._clean_data_based_on_elements()
+            return self.clean_data_based_on_elements()
 
 
 def calculate_resolved_compositions(composition_data):
