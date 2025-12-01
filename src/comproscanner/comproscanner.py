@@ -29,7 +29,6 @@ from .extract_flow.main_extraction_flow import DataExtractionFlow
 from .utils.get_paper_data import PaperMetadataExtractor
 from .utils.save_results import SaveResults
 from .post_processing.data_cleaner import (
-    calculate_resolved_compositions,
     CleaningStrategy,
     DataCleaner,
 )
@@ -260,8 +259,6 @@ class ComProScanner:
         is_extract_synthesis_data: bool = True,
         is_save_csv: bool = False,
         is_save_relevant: bool = True,
-        is_data_clean: bool = False,
-        cleaning_strategy: str = "full",
         materials_data_identifier_query: str = None,  # Will be set based on the main_property_keyword if not provided
         model: str = "gpt-4o-mini",
         api_base: Optional[str] = None,
@@ -301,8 +298,6 @@ class ComProScanner:
             is_extract_synthesis_data (bool, optional): A flag to indicate if the synthesis data should be extracted. Defaults to True.
             is_save_csv (bool, optional): A flag to indicate if the results should be saved in the CSV file. Defaults to False.
             is_save_relevant (bool, optional): A flag to indicate if only papers with composition-property data should be saved. If True, only saves papers with composition data. If False, saves all processed papers. Defaults to True.
-            is_data_clean (bool, optional): A flag to indicate if the data should be cleaned. Defaults to False.
-            cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
             llm (LLM, optional): An instance of the LLM class. Defaults to None.
             materials_data_identifier_query (str, optional): Query to identify the materials data. Must be an 'yes/no' answer. Defaults to "Is there any material chemical composition and corresponding {main_property_keyword} value mentioned in the paper? GIVE ONE WORD ANSWER. Either yes or no."
             model (str: optional): The model to use (defaults to "gpt-4o-mini")
@@ -462,10 +457,6 @@ class ComProScanner:
                     )
                     continue
 
-                # Calculate resolved compositions
-                composition_data = calculate_resolved_compositions(composition_data)
-                result_dict["composition_data"] = composition_data
-
                 # Determine if the paper should be saved or not
                 should_save = True
                 if not _has_composition_data(composition_data):
@@ -548,13 +539,74 @@ class ComProScanner:
                 logger.error(f"Error processing DOI: {paper_data['doi']}. {e}")
                 continue
 
-        if is_data_clean:
-            strategy_map = {
-                "basic": CleaningStrategy.BASIC,
-                "full": CleaningStrategy.FULL,
-            }
-            data_cleaner = DataCleaner(results_file=json_results_file)
-            data_cleaner.clean_data(strategy=strategy_map[cleaning_strategy])
+        data_cleaner = DataCleaner(results_file=json_results_file)
+        final_data = data_cleaner.get_useful_data()
+        # Save back to the JSON file
+        with open(json_results_file, "w", encoding="utf-8") as file:
+            json.dump(final_data, file, indent=2, default=str)
+
+    def clean_data(
+        self,
+        json_results_file: str = "results.json",
+        is_save_separate_results: bool = True,
+        cleaned_json_results_file: str = "cleaned_results.json",
+        is_save_composition_property_file: bool = True,
+        composition_property_file: str = "composition_property.json",
+        cleaning_strategy: str = "full",
+    ):
+        """
+        Removes extra information (key-value pairs) provided by extracted agents. Finally, cleans the composition-property data based on periodic elements, abbreviations and resolves arithmetic calculations, fractions etc.
+
+        Args:
+            json_results_file (str, optional): Path to the JSON results file. Defaults to "results.json".
+            is_save_separate_results (bool, optional): Whether to save separate results file after cleaning. Defaults to True.
+            cleaned_json_results_file (str, optional): Path to the cleaned JSON results file with articles having relevant composition-property data. Defaults to "cleaned_results.json".
+            is_save_composition_property_file (bool, optional): Whether to save composition-property values to a separate file. Defaults to True.
+            composition_property_file (str, optional): Path to the composition-property file containing a dictionary of composition-property data. Defaults to "composition_property.json".
+            cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
+
+        Returns:
+            Dict[str, Any]: Cleaned data based on selected strategy with relevant composition-property data.
+            Dict[str, Any]: All composition-property values collected from the cleaned data. (Returned only if is_save_composition_property_file is True)
+        """
+        if os.path.exists(json_results_file) is False:
+            logger.error(
+                f"JSON results file {json_results_file} does not exist. Cannot proceed with data cleaning."
+            )
+            raise ValueErrorHandler(
+                message=f"JSON results file {json_results_file} does not exist. Cannot proceed with data cleaning."
+            )
+        data_cleaner = DataCleaner(results_file=json_results_file)
+        final_data = data_cleaner.clean_data_with_relevant_compositions(
+            strategy=cleaning_strategy
+        )
+        # Save the cleaned data back to the cleaned JSON file
+        if is_save_separate_results:
+            result_file = cleaned_json_results_file
+        else:
+            result_file = json_results_file
+        with open(result_file, "w", encoding="utf-8") as file:
+            json.dump(final_data, file, indent=2, default=str)
+        logger.info(
+            f"Cleaned data saved to {result_file} with relevant composition-property data."
+        )
+        # Collect all composition-property values from all DOIs
+        if is_save_composition_property_file:
+            all_composition_property_values = {}
+            for _, article_data in final_data.items():
+                if "composition_data" in article_data:
+                    compositions_property_values = article_data["composition_data"].get(
+                        "compositions_property_values", {}
+                    )
+                    all_composition_property_values.update(compositions_property_values)
+            # Save all composition-property values to a separate JSON file
+            with open(composition_property_file, "w", encoding="utf-8") as file:
+                json.dump(all_composition_property_values, file, indent=2, default=str)
+            logger.info(
+                f"All composition-property values saved to {composition_property_file}."
+            )
+            return final_data, all_composition_property_values
+        return final_data
 
     def evaluate_semantic(
         self,

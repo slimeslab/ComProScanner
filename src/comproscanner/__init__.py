@@ -8,6 +8,7 @@ Main functions:
 - collect_metadata: Collect and filter metadata from scientific articles
 - process_articles: Process articles from various sources (Elsevier, Wiley, etc.)
 - extract_composition_property_data: Extract composition-property relationships from articles
+- clean_data: Clean the extracted composition-property data
 - evaluate_semantic: Evaluate extraction quality using semantic similarity
 - evaluate_agentic: Evaluate extraction quality using agent-based methods
 - create_knowledge_graph: Create knowledge graph from extracted data
@@ -25,7 +26,7 @@ from . import eval_visualizer
 from . import data_visualizer
 
 # Package version
-__version__ = "0.1.0"
+__version__ = "0.1.4"
 
 # Importing options for "from comproscanner import *"
 __all__ = [
@@ -33,6 +34,7 @@ __all__ = [
     "collect_metadata",
     "process_articles",
     "extract_composition_property_data",
+    "clean_data",
     "evaluate_semantic",
     "evaluate_agentic",
     "create_knowledge_graph",
@@ -104,6 +106,38 @@ def extract_composition_property_data(
     scanner = ComProScanner(main_property_keyword=main_property_keyword)
     return scanner.extract_composition_property_data(
         main_extraction_keyword=main_extraction_keyword, **kwargs
+    )
+
+
+def clean_data(
+    main_property_keyword,
+    json_results_file: str = "results.json",
+    is_save_separate_results: bool = True,
+    cleaned_json_results_file: str = "cleaned_results.json",
+    is_save_composition_property_file: bool = True,
+    composition_property_file: str = "composition_property.json",
+    cleaning_strategy: str = "full",
+):
+    """
+    Clean the extracted composition-property data.
+
+    Args:
+        main_property_keyword (str): The main property keyword
+        json_results_file (str, optional): Path to the JSON results file. Defaults to "results.json".
+        is_save_separate_results (bool, optional): Whether to save separate results file after cleaning. Defaults to True.
+        cleaned_json_results_file (str, optional): Path to the cleaned JSON results file with articles having relevant composition-property data. Defaults to "cleaned_results.json".
+        is_save_composition_property_file (bool, optional): Whether to save composition-property values to a separate file. Defaults to True.
+        composition_property_file (str, optional): Path to the composition-property file containing a dictionary of composition-property data. Defaults to "composition_property.json".
+        cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
+    """
+    scanner = ComProScanner(main_property_keyword=main_property_keyword)
+    return scanner.clean_data(
+        json_results_file=json_results_file,
+        is_save_separate_results=is_save_separate_results,
+        cleaned_json_results_file=cleaned_json_results_file,
+        is_save_composition_property_file=is_save_composition_property_file,
+        composition_property_file=composition_property_file,
+        cleaning_strategy=cleaning_strategy,
     )
 
 

@@ -495,7 +495,7 @@ class DataCleaner:
                 )
         return result
 
-    def clean_data(
+    def clean_data_with_relevant_compositions(
         self, strategy: CleaningStrategy = CleaningStrategy.FULL
     ) -> Dict[str, Any]:
         """
