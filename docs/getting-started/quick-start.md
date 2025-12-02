@@ -9,19 +9,17 @@ Here's a complete minimal example demonstrating the full workflow for extracting
 ```python
 from comproscanner import ComProScanner
 
-# Initialize with property of interest
+# Step 1: Initialize with property of interest
 scanner = ComProScanner(main_property_keyword="piezoelectric")
 
-# Step 1: Collect metadata
+# Step 2: Collect metadata
 scanner.collect_metadata()
 
-# Step 2: Define property keywords for filtering
+# Step 3: Define property keywords for filtering and process articles from specific sources
 property_keywords = {
     "exact_keywords": ["d33"],
     "substring_keywords": [" d 33 "]
 }
-
-# Step 3: Process articles from specific sources
 scanner.process_articles(
     property_keywords=property_keywords,
     source_list=["elsevier", "springer"]
@@ -87,6 +85,16 @@ scanner.extract_composition_property_data(
 ```
 
 ## Optional
+
+### Clean Extracted Data
+
+Clean the extracted results to remove entries based on abbreviations, periodic elements and resolve arithmetic expressions, fractional compositions, etc. along with bracket standardization:
+
+```python
+scanner.clean_data(
+    json_results_file="extracted_results.json"
+)
+```
 
 ### Visualize Extracted Data
 

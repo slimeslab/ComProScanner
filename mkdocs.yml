@@ -7,7 +7,7 @@ repo_name: slimeslab/ComProScanner
 repo_url: https://github.com/slimeslab/ComProScanner
 edit_uri: edit/main/docs/
 
-copyright: Copyright &copy; 2025 SLIMES Lab - Licensed under MIT
+copyright: Copyright &copy; 2025 SLIMES Lab - Licensed under <a href="about/license/" style="color:#009485" onMouseOver="this.style.color='#ff9100'" onMouseOut="this.style.color='#009485'">MIT</a>
 
 theme:
   name: material
@@ -60,6 +60,21 @@ plugins:
       separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
   - minify:
       minify_html: true
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src] # Points to the source code
+          options:
+            show_symbol_type_toc: true
+            allow_inspection: true
+            docstring_style: google
+            heading_level: 2
+            show_root_heading: true
+            show_root_full_path: false
+            show_signature_annotations: true
+            separate_signature: true
+            members_order: source
 
 markdown_extensions:
   - abbr
@@ -144,6 +159,7 @@ nav:
       - Metadata Collection: usage/metadata-collection.md
       - Article Processing: usage/article-processing.md
       - Data Extraction: usage/data-extraction.md
+      - Data Cleaning: usage/data-cleaning.md
       - Evaluation:
           - Overview: usage/evaluation/overview.md
           - Semantic Evaluation: usage/evaluation/semantic.md
@@ -153,6 +169,7 @@ nav:
           - Data Visualization: usage/visualization/data-viz.md
           - Evaluation Visualization: usage/visualization/eval-viz.md
   - RAG Configuration: rag-config.md
+  - API Overview: api.md
   - About:
       - Project Structure: about/project-structure.md
       - License: about/license.md

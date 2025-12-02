@@ -72,17 +72,9 @@ Flag to indicate if the synthesis data (methods, precursors, characterization te
 
 Flag to indicate if only papers with composition-property data should be saved. If True, only saves papers that contain composition data. If False, saves all processed papers regardless of whether they contain composition data.
 
-#### :material-square-medium:`is_data_clean` _(bool)_
-
-Flag to indicate if the extracted data should be cleaned after processing. When True, applies data cleaning strategies to improve data quality.
-
-#### :material-square-medium:`cleaning_strategy` _(str)_
-
-The cleaning strategy to use when _is_data_clean_ is True. Options are "full" (with periodic element validation) or "basic" (without periodic element validation).
-
 #### :material-square-medium:`materials_data_identifier_query` _(str)_
 
-Custom query to identify if materials data is present in the paper. Must be designed to expect a 'yes/no' answer. If not provided, defaults to a query asking about material chemical composition and the corresponding property value.
+Custom query to identify if materials data is present in the paper. **Must be designed to expect a 'yes/no' answer.** If not provided, defaults to a query asking about material chemical composition and the corresponding property value.
 
 #### :material-square-medium:`model` _(str)_
 
@@ -166,7 +158,7 @@ Optional arguments for the MaterialsFlow class to customize extraction behavior 
 
 !!! info "Default Values"
 
-    :material-square-small:**`start_row`** = 0<br>:material-square-small:**`num_rows`** = All rows<br>:material-square-small:**`is_test_data_preparation`** = False<br>:material-square-small:**`test_doi_list_file`** = None<br>:material-square-small:**`total_test_data`** = 50<br>:material-square-small:**`is_only_consider_test_doi_list`** = False<br>:material-square-small:**`test_random_seed`** = 42<br>:material-square-small:**`checked_doi_list_file`** = "checked_dois.txt"<br>:material-square-small:**`json_results_file`** = "results.json"<br>:material-square-small:**`csv_results_file`** = "results.csv"<br>:material-square-small:**`is_extract_synthesis_data`** = True<br>:material-square-small:**`is_save_csv`** = False<br>:material-square-small:**`is_save_relevant`** = True<br>:material-square-small:**`is_data_clean`** = False<br>:material-square-small:**`cleaning_strategy`** = "full"<br>:material-square-small:**`materials_data_identifier_query`** = "Is there any material chemical composition and corresponding {main_property_keyword} value mentioned in the paper? Give one word answer. Either yes or no."<br>:material-square-small:**`model`** = "gpt-4o-mini"<br>:material-square-small:**`api_base`** = None<br>:material-square-small:**`base_url`** = None<br>:material-square-small:**`api_key`** = None<br>:material-square-small:**`output_log_folder`** = None<br>:material-square-small:**`is_log_json`** = False<br>:material-square-small:**`task_output_folder`** = None<br>:material-square-small:**`verbose`** = True<br>:material-square-small:**`temperature`** = 0.1<br>:material-square-small:**`top_p`** = 0.9<br>:material-square-small:**`timeout`** = 60<br>:material-square-small:**`frequency_penalty`** = None<br>:material-square-small:**`max_tokens`** = 2048<br>:material-square-small:**`rag_db_path`** = "db"<br>:material-square-small:**`embedding_model`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`rag_chat_model`** = "gpt-4o-mini"<br>:material-square-small:**`rag_max_tokens`** = 512<br>:material-square-small:**`rag_top_k`** = 3<br>:material-square-small:**`rag_base_url`** = None<br>:material-square-small:**`flow_optional_args`** = {}
+    :material-square-small:**`start_row`** = 0<br>:material-square-small:**`num_rows`** = All rows<br>:material-square-small:**`is_test_data_preparation`** = False<br>:material-square-small:**`test_doi_list_file`** = None<br>:material-square-small:**`total_test_data`** = 50<br>:material-square-small:**`is_only_consider_test_doi_list`** = False<br>:material-square-small:**`test_random_seed`** = 42<br>:material-square-small:**`checked_doi_list_file`** = "checked_dois.txt"<br>:material-square-small:**`json_results_file`** = "results.json"<br>:material-square-small:**`csv_results_file`** = "results.csv"<br>:material-square-small:**`is_extract_synthesis_data`** = True<br>:material-square-small:**`is_save_csv`** = False<br>:material-square-small:**`is_save_relevant`** = True<br>:material-square-small:**`materials_data_identifier_query`** = "Is there any material chemical composition and corresponding {main_property_keyword} value mentioned in the paper? Give one word answer. Either yes or no."<br>:material-square-small:**`model`** = "gpt-4o-mini"<br>:material-square-small:**`api_base`** = None<br>:material-square-small:**`base_url`** = None<br>:material-square-small:**`api_key`** = None<br>:material-square-small:**`output_log_folder`** = None<br>:material-square-small:**`is_log_json`** = False<br>:material-square-small:**`task_output_folder`** = None<br>:material-square-small:**`verbose`** = True<br>:material-square-small:**`temperature`** = 0.1<br>:material-square-small:**`top_p`** = 0.9<br>:material-square-small:**`timeout`** = 60<br>:material-square-small:**`frequency_penalty`** = None<br>:material-square-small:**`max_tokens`** = 2048<br>:material-square-small:**`rag_db_path`** = "db"<br>:material-square-small:**`embedding_model`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`rag_chat_model`** = "gpt-4o-mini"<br>:material-square-small:**`rag_max_tokens`** = 512<br>:material-square-small:**`rag_top_k`** = 3<br>:material-square-small:**`rag_base_url`** = None<br>:material-square-small:**`flow_optional_args`** = {}
 
 ## Extraction Agents
 
@@ -442,6 +434,7 @@ Once the data extraction is complete, article-specific metadata such as DOI, tit
 
 ## Next Steps
 
+- [Clean extracted data](data-cleaning.md)
 - Learn about [Evaluation](evaluation/overview.md)
 - Explore [Visualization](visualization/overview.md)
 - Configure [Advanced RAG](../rag-config.md)

@@ -40,26 +40,34 @@ comproscanner
 │       │   │   │   ├── crews
 │       │   │   │   │   ├── composition_evaluation_crew/
 │       │   │   │   │   └── synthesis_evaluation_crew/
+│       │   │   │   ├── __init__.py
 │       │   │   │   └── eval_flow.py
+│       │   │   ├── __init__.py
 │       │   │   └── semantic_evaluator.py
 │       │   ├── visualization
+│       │   │   ├── __init__.py
 │       │   │   ├── create_knowledge_graph.py
 │       │   │   ├── data_distribution_visualizers.py
 │       │   │   └── eval_plot_visualizers.py
+│       │   ├── __init__.py
 │       │   └── data_cleaner.py
 │       ├── utils/
 │       ├── __init__.py
 │       ├── comproscanner.py
 │       ├── data_visualizer.py
 │       └── eval_visualizer.py
-├── docs/
-├── tests/
 ├── assets/
+├── docs/
+├── examples/
+├── tests/
 ├── .env
 ├── .gitignore
+├── CHANGELOG.md
+├── CONTRIBUTING.md
 ├── LICENSE
 ├── README.md
 ├── mkdocs.yml
+├── paper-dependencies.txt
 └── pyproject.toml
 
 ```

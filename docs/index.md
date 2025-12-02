@@ -109,6 +109,10 @@ graph LR
   Function for AI agents-powered extraction flow for composition-property and synthesis data in a structured format.<br>
   [:octicons-arrow-right-24: Learn more](usage/data-extraction.md)
 
+- :material-broom: **Data Cleaner**<br>
+  Function for cleaning extracted composition-property data for using in data-driven research.<br>
+  [:octicons-arrow-right-24: Learn more](usage/data-cleaning.md)
+
 - :octicons-checklist-16: **Evaluator**<br>
   Functions for automated semantic and agentic evaluation methods to assess extraction quality.<br>
   [:octicons-arrow-right-24: Learn more](usage/evaluation/overview.md)
@@ -131,6 +135,9 @@ graph LR
 
 - :material-hammer-wrench: **[Advanced Configuration](rag-config.md)**<br>
   Advanced features like RAG configuration and custom flows.
+
+- :material-api: **[API Overview](api.md)**<br>
+  Detailed API documentation for all modules and classes.
 
 </div>
 
