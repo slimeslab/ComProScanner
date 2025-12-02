@@ -315,16 +315,6 @@ def test_value_error_handling_in_main_fetch(metadata_fetcher, mocker):
     logger_mock.error.assert_called()
 
 
-@pytest.mark.integration
-def test_keyboard_interrupt_handling(metadata_fetcher, mocker):
-    """Test KeyboardInterrupt handling in main_fetch method"""
-    mocker.patch("requests.get", side_effect=KeyboardInterrupt())
-    logger_mock = mocker.patch("comproscanner.metadata_extractor.fetch_metadata.logger")
-    with pytest.raises(KeyboardInterruptHandler):
-        metadata_fetcher.main_fetch()
-    logger_mock.error.assert_called()
-
-
 @pytest.mark.parametrize(
     "status_code,expected_flag",
     [

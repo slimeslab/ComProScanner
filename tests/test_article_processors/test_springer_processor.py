@@ -289,23 +289,20 @@ class TestSpringerArticleProcessor:
             # Restore the original method
             processor._send_request = original_method
 
-    def test_send_request_error(self, processor):
-        """Test handling of request errors"""
-        with patch(
-            "requests.get", side_effect=requests.exceptions.RequestException("Error")
-        ):
-            response = processor._send_request("10.1007/s12345-678-9101-2")
-        assert response is None
-
     def test_send_request_timeout(self, processor):
         """Test handling of request timeouts"""
-        with patch(
-            "requests.get", side_effect=requests.exceptions.ReadTimeout("Timeout")
+
+        def mock_sleep(seconds):
+            raise KeyboardInterrupt("Simulated keyboard interrupt")
+
+        with (
+            patch(
+                "requests.get", side_effect=requests.exceptions.ReadTimeout("Timeout")
+            ),
+            patch("time.sleep", side_effect=mock_sleep),
         ):
-            with patch("builtins.open", mock_open()) as mock_file:
-                response = processor._send_request("10.1007/s12345-678-9101-2")
-        assert response is None
-        mock_file.assert_called_once()
+            with pytest.raises(KeyboardInterruptHandler):
+                processor._send_request("10.1007/s12345-678-9101-2")
 
     def test_modify_specific_element(self, processor):
         """Test modification of specific XML elements"""

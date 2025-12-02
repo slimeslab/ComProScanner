@@ -78,8 +78,8 @@ def vector_db_manager():
             mock_config.chunk_overlap = 200
             mock_rag_config.return_value = mock_config
 
-            manager = VectorDatabaseManager()
-            manager.rag_db_path = "/tmp/rag_db"
+            manager = VectorDatabaseManager(mock_config)
+            manager.rag_db_path = MagicMock(spec=Path)
             manager.chunk_size = 1000
             manager.chunk_overlap = 200
             yield manager
@@ -245,7 +245,9 @@ class TestCSVDatabaseManager:
                             mock_exists.assert_has_calls(
                                 [call("test_path"), call(expected_filepath)]
                             )
-                            mock_read_csv.assert_called_once_with(expected_filepath)
+                            mock_read_csv.assert_called_once_with(
+                                expected_filepath, dtype=str
+                            )
 
 
 class TestVectorDatabaseManager:
@@ -262,7 +264,7 @@ class TestVectorDatabaseManager:
                 mock_config.chunk_size = 1000
                 mock_config.chunk_overlap = 200
                 mock_rag_config.return_value = mock_config
-                manager = VectorDatabaseManager()
+                manager = VectorDatabaseManager(mock_rag_config)
                 manager.rag_db_path = "/tmp/rag_db"
                 manager.chunk_size = 1000
                 manager.chunk_overlap = 200
@@ -274,32 +276,35 @@ class TestVectorDatabaseManager:
     def test_create_database_missing_params(self, vector_db_manager):
         """Test create_database method with missing parameters"""
         with patch("comproscanner.utils.error_handler.BaseError.exit_program"):
-            with pytest.raises(ValueErrorHandler):
-                vector_db_manager.create_database(article_text="test content")
-            with pytest.raises(ValueErrorHandler):
-                vector_db_manager.create_database(db_name="test_db")
+            with pytest.raises(ValueError, match="Database name is required"):
+                vector_db_manager.create_database(
+                    db_name="", article_text="test content"
+                )
+            with pytest.raises(ValueError, match="Article text is required"):
+                vector_db_manager.create_database(db_name="test_db", article_text="")
 
-    @patch("comproscanner.utils.database_manager.Path")
     @patch("comproscanner.utils.database_manager.RecursiveCharacterTextSplitter")
     @patch("comproscanner.utils.database_manager.Document")
     @patch("comproscanner.utils.database_manager.Chroma")
     def test_create_database(
-        self, mock_chroma, mock_document, mock_splitter, mock_path, vector_db_manager
+        self, mock_chroma, mock_document, mock_splitter, vector_db_manager
     ):
         """Test create_database method with proper mocking"""
-        mock_path_obj = MagicMock()
-        mock_path.return_value = mock_path_obj
-        mock_path_obj.__truediv__.return_value = mock_path_obj
-        mock_path_obj.exists.return_value = False
+        mock_db_path = MagicMock()
+        mock_db_path.exists.return_value = False
+        vector_db_manager.rag_db_path.__truediv__.return_value = mock_db_path
+
         mock_splitter_obj = MagicMock()
         mock_splitter.return_value = mock_splitter_obj
         mock_splitter_obj.split_text.return_value = ["chunk1", "chunk2"]
         mock_document.side_effect = lambda page_content: f"Doc({page_content})"
+
         vector_db_manager.create_database(
             db_name="test_db", article_text="test content"
         )
-        mock_path_obj.exists.assert_called_once()
-        mock_path_obj.mkdir.assert_called_once_with(parents=True)
+
+        vector_db_manager.rag_db_path.__truediv__.assert_called_once_with("test_db")
+        mock_db_path.mkdir.assert_called_once_with(parents=True, exist_ok=True)
         mock_splitter.assert_called_once_with(
             chunk_size=vector_db_manager.chunk_size,
             chunk_overlap=vector_db_manager.chunk_overlap,
@@ -307,33 +312,32 @@ class TestVectorDatabaseManager:
         mock_splitter_obj.split_text.assert_called_once_with("test content")
         mock_chroma.from_documents.assert_called_once()
 
-    @patch("comproscanner.utils.database_manager.Path")
-    def test_query_database_not_found(self, mock_path, vector_db_manager):
+    def test_query_database_not_found(self, vector_db_manager):
         """Test query_database with non-existent database"""
-        mock_path_obj = MagicMock()
-        mock_path.return_value = mock_path_obj
-        mock_path_obj.__truediv__.return_value = mock_path_obj
-        mock_path_obj.exists.return_value = False
-        with patch("comproscanner.utils.error_handler.BaseError.exit_program"):
-            with pytest.raises(ValueErrorHandler):
-                vector_db_manager.query_database(db_name="test_db", query="test query")
+        mock_db_path = MagicMock()
+        mock_db_path.exists.return_value = False
+        vector_db_manager.rag_db_path.__truediv__.return_value = mock_db_path
 
-    @patch("comproscanner.utils.database_manager.Path")
+        with pytest.raises(ValueError, match="Database test_db not found"):
+            vector_db_manager.query_database(db_name="test_db", query="test query")
+
     @patch("comproscanner.utils.database_manager.Chroma")
-    def test_query_database(self, mock_chroma, mock_path, vector_db_manager):
+    def test_query_database(self, mock_chroma, vector_db_manager):
         """Test query_database method with proper mocking"""
-        mock_path_obj = MagicMock()
-        mock_path.return_value = mock_path_obj
-        mock_path_obj.__truediv__.return_value = mock_path_obj
-        mock_path_obj.exists.return_value = True
+        mock_db_path = MagicMock()
+        mock_db_path.exists.return_value = True
+        vector_db_manager.rag_db_path.__truediv__.return_value = mock_db_path
+
         mock_chroma_obj = MagicMock()
         mock_chroma.return_value = mock_chroma_obj
         expected_results = [("Result 1", 0.95), ("Result 2", 0.85)]
         mock_chroma_obj.similarity_search_with_score.return_value = expected_results
+
         results = vector_db_manager.query_database(
             db_name="test_db", query="test query", top_k=2
         )
-        mock_path_obj.exists.assert_called_once()
+
+        vector_db_manager.rag_db_path.__truediv__.assert_called_once_with("test_db")
         mock_chroma.assert_called_once()
         mock_chroma_obj.similarity_search_with_score.assert_called_once_with(
             "test query", k=2

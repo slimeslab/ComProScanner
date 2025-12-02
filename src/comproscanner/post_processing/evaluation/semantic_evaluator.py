@@ -1143,7 +1143,7 @@ class MaterialsDataSemanticEvaluator:
 
         # Count composition items
         comp_data = item.get("composition_data", {})
-        if comp_data is not None:  # Add this check to handle None values
+        if comp_data is not None:
             if "property_unit" in comp_data:
                 count += 1
             if "family" in comp_data:
@@ -1154,7 +1154,7 @@ class MaterialsDataSemanticEvaluator:
 
         # Count synthesis items
         synth_data = item.get("synthesis_data", {})
-        if synth_data is not None:  # Add this check to handle None values
+        if synth_data is not None:
             if "method" in synth_data:
                 count += 1
             count += len(synth_data.get("precursors", []))
@@ -1451,7 +1451,6 @@ class MaterialsDataSemanticEvaluator:
 
                 # No contribution to total scores
 
-            # Add this DOI's results to the accumulated results
             accumulated_results["item_results"][doi] = item_results
 
             # Add to accumulated metrics
