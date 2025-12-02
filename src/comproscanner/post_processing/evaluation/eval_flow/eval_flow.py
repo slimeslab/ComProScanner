@@ -98,7 +98,6 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
         weights: Dict[str, float] = None,
         llm: Optional[LLM] = None,
     ):
-        super().__init__()
 
         # Validate required inputs
         if not ground_truth_file:
@@ -113,6 +112,8 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
             raise ValueErrorHandler(f"Ground truth file not found: {ground_truth_file}")
         if not os.path.exists(test_data_file):
             raise ValueErrorHandler(f"Test data file not found: {test_data_file}")
+
+        super().__init__()
 
         # Set state parameters
         self.state.ground_truth_file = ground_truth_file
