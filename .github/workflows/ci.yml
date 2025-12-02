@@ -33,28 +33,15 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest --cov=comproscanner --cov-report=html --cov-report=json --cov-report=term tests/
+          pytest --cov=comproscanner --cov-report=xml --cov-report=html --cov-report=term tests/
 
-      - name: Extract coverage percentage
-        id: coverage
+      - name: Upload coverage to Codecov
         if: matrix.python-version == '3.12'
-        run: |
-          COVERAGE=$(python -c "import json; print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
-          echo "percentage=$COVERAGE" >> $GITHUB_OUTPUT
-          echo "Coverage: $COVERAGE%"
-
-      - name: Create coverage badge
-        if: matrix.python-version == '3.12' && github.event_name == 'push'
-        uses: schneegans/dynamic-badges-action@v1.7.0
+        uses: codecov/codecov-action@v5
         with:
-          auth: ${{ secrets.GIST_SECRET }}
-          gistID: 916bf9bad1516373ec35312025a5973e
-          filename: comproscanner-coverage.json
-          label: coverage
-          message: ${{ steps.coverage.outputs.percentage }}%
-          valColorRange: ${{ steps.coverage.outputs.percentage }}
-          maxColorRange: 100
-          minColorRange: 0
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          fail_ci_if_error: false
 
       - name: Upload coverage HTML report
         if: matrix.python-version == '3.12'
@@ -88,6 +75,7 @@ jobs:
           restore-keys: |
             mkdocs-material-
 
-      - run: pip install mkdocs-material mkdocs-minify-plugin
+      - name: Install documentation dependencies
+        run: pip install mkdocs-material mkdocs-minify-plugin mkdocstrings[python]
 
       - run: mkdocs gh-deploy --force
