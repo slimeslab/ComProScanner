@@ -189,6 +189,7 @@ class TestPDFToMarkdownText:
             "## Conclusion\nThis is the conclusion.",
         ]
         mock_vector_db_manager = MagicMock()
+        mock_vector_db_manager.database_exists.return_value = False
         mock_logger = MagicMock()
         property_keywords = {
             "piezoelectric": ["piezoelectric", "piezo"],

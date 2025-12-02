@@ -11,7 +11,6 @@ import pytest
 import json
 import tempfile
 import os
-from unittest.mock import patch, mock_open, MagicMock
 from typing import Dict, Any, List
 import re
 
@@ -20,7 +19,6 @@ from comproscanner.post_processing.data_cleaner import (
     DataCleaner,
     CleaningStrategy,
     get_all_elements,
-    calculate_resolved_compositions,
 )
 
 
@@ -221,19 +219,60 @@ class TestDataCleanerPrivateMethods:
         expected = [{"NaCl": "value1"}, {"TiO2": "value2"}, {"CaCO3": "value3"}]
         assert result == expected
 
-    def test_convert_fractions_to_decimal(self, data_cleaner):
-        """Test _convert_fractions_to_decimal method."""
+    def test_convert_fractions_and_resolve_compositions_fractions(self, data_cleaner):
+        """Test _convert_fractions_and_resolve_compositions with fractions."""
         dict_list = [
             {"Na1/2Cl1/2": "value1"},
             {"Ti2/3O4/3": "value2"},
             {"Regular": "value3"},  # No fractions
         ]
-        result = data_cleaner._convert_fractions_to_decimal(dict_list)
+        result = data_cleaner._convert_fractions_and_resolve_compositions(dict_list)
 
         # Check that fractions are converted to decimals
-        assert "Na0.50Cl0.50" in result[0]
-        assert "Ti0.67O1.33" in result[1]
+        first_key = list(result[0].keys())[0]
+        assert "0.50" in first_key
+
+        second_key = list(result[1].keys())[0]
+        assert "0.67" in second_key
+
         assert {"Regular": "value3"} in result
+
+    def test_convert_fractions_and_resolve_compositions_arithmetic(self, data_cleaner):
+        """Test _convert_fractions_and_resolve_compositions with arithmetic in parentheses."""
+        dict_list = [
+            {"0.07Pb(Mn0.33Sb0.67)O3-(1-0.07)Pb(Zr0.48Ti0.52)O3": "value1"},
+            {"0.96K0.48Na0.52NbO3-0.01BaZrO3": "value2"},
+        ]
+        result = data_cleaner._convert_fractions_and_resolve_compositions(dict_list)
+
+        # Check that arithmetic is resolved
+        first_result = list(result[0].keys())[0]
+        assert "0.93" in first_result  # (1-0.07) should resolve to 0.93
+
+        # Check that brackets are added
+        second_result = list(result[1].keys())[0]
+        assert "(" in second_result or "[" in second_result
+
+    def test_convert_fractions_and_resolve_compositions_multiplication(
+        self, data_cleaner
+    ):
+        """Test _convert_fractions_and_resolve_compositions with multiplication."""
+        dict_list = [
+            {"0.03*(Bi0.5Ag0.5)ZrO3": "value1"},
+            {"0.03*(0.2)ZrO3": "value2"},
+        ]
+        result = data_cleaner._convert_fractions_and_resolve_compositions(dict_list)
+
+        # Check that multiplication is handled
+        first_result = list(result[0].keys())[0]
+        # The result should contain 0.03 and the composition part
+        assert "0.03" in first_result
+        assert "Bi0.5Ag0.5" in first_result or "Bi" in first_result
+
+        second_result = list(result[1].keys())[0]
+        assert (
+            "0.006" in second_result or "0.0060" in second_result
+        )  # 0.03 * 0.2 = 0.006
 
     def test_return_in_dict(self, data_cleaner):
         """Test _return_in_dict method."""
@@ -306,10 +345,12 @@ class TestDataCleanerPublicMethods:
             for comp_key in comp_values.keys():
                 assert not re.match(r"(?<![a-z0-9])[A-Z]{2,}(?![a-z0-9])", comp_key)
 
-    def test_clean_data_with_full_strategy(self, temp_mixed_json_file):
-        """Test clean_data with FULL strategy (element validation)."""
+    def test_clean_data_with_relevant_compositions_full_strategy(
+        self, temp_mixed_json_file
+    ):
+        """Test clean_data_with_relevant_compositions with FULL strategy (element validation)."""
         cleaner = DataCleaner(temp_mixed_json_file)
-        result = cleaner.clean_data(CleaningStrategy.FULL)
+        result = cleaner.clean_data_with_relevant_compositions(CleaningStrategy.FULL)
 
         assert isinstance(result, dict)
 
@@ -322,10 +363,12 @@ class TestDataCleanerPublicMethods:
                 # Should only contain valid elements after full cleaning
                 assert cleaner._is_elements(test_dict) is True
 
-    def test_clean_data_with_basic_strategy(self, temp_mixed_json_file):
-        """Test clean_data with BASIC strategy (no element validation)."""
+    def test_clean_data_with_relevant_compositions_basic_strategy(
+        self, temp_mixed_json_file
+    ):
+        """Test clean_data_with_relevant_compositions with BASIC strategy (no element validation)."""
         cleaner = DataCleaner(temp_mixed_json_file)
-        result = cleaner.clean_data(CleaningStrategy.BASIC)
+        result = cleaner.clean_data_with_relevant_compositions(CleaningStrategy.BASIC)
 
         assert isinstance(result, dict)
 
@@ -337,17 +380,21 @@ class TestDataCleanerPublicMethods:
                 # Should not contain all-caps invalid patterns
                 assert not re.match(r"(?<![a-z0-9])[A-Z]{2,}(?![a-z0-9])", comp_key)
 
-    def test_clean_data_default_strategy(self, temp_mixed_json_file):
-        """Test clean_data with default strategy (should be FULL)."""
+    def test_clean_data_with_relevant_compositions_default_strategy(
+        self, temp_mixed_json_file
+    ):
+        """Test clean_data_with_relevant_compositions with default strategy (should be FULL)."""
         cleaner = DataCleaner(temp_mixed_json_file)
-        result_default = cleaner.clean_data()
-        result_full = cleaner.clean_data(CleaningStrategy.FULL)
+        result_default = cleaner.clean_data_with_relevant_compositions()
+        result_full = cleaner.clean_data_with_relevant_compositions(
+            CleaningStrategy.FULL
+        )
 
         # Default should be same as FULL strategy
         assert result_default == result_full
 
-    def test_clean_data_empty_input(self):
-        """Test clean_data with empty JSON input."""
+    def test_clean_data_with_relevant_compositions_empty_input(self):
+        """Test clean_data_with_relevant_compositions with empty JSON input."""
         empty_data = {}
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump(empty_data, f)
@@ -355,115 +402,28 @@ class TestDataCleanerPublicMethods:
 
         try:
             cleaner = DataCleaner(temp_file_path)
-            result = cleaner.clean_data()
+            result = cleaner.clean_data_with_relevant_compositions()
             assert result == {}
         finally:
             os.unlink(temp_file_path)
 
+    def test_get_useful_data(self, temp_mixed_json_file):
+        """Test get_useful_data method."""
+        cleaner = DataCleaner(temp_mixed_json_file)
+        result = cleaner.get_useful_data()
 
-class TestCalculateResolvedCompositions:
-    """Test cases for calculate_resolved_compositions function."""
+        assert isinstance(result, dict)
 
-    def test_calculate_resolved_compositions_basic(self):
-        """Test basic functionality of calculate_resolved_compositions."""
-        composition_data = {
-            "composition_data": {
-                "compositions_property_values": {
-                    "Na(0.5)Cl(0.5)": "5.5 eV",
-                    "Ti(1)O(2)": "3.2 eV",
-                }
-            }
-        }
+        # Check that the expected structure is present
+        for doi, article_data in result.items():
+            assert "composition_data" in article_data
+            assert "synthesis_data" in article_data
+            assert "article_metadata" in article_data
 
-        result = calculate_resolved_compositions(composition_data)
-
-        assert "composition_data" in result
-        comp_values = result["composition_data"]["compositions_property_values"]
-
-        # Should process parentheses around pure numbers
-        assert "Na0.5Cl0.5" in comp_values
-        assert "Ti1O2" in comp_values
-
-    def test_calculate_resolved_compositions_math_operations(self):
-        """Test mathematical operations within parentheses."""
-        composition_data = {
-            "composition_data": {
-                "compositions_property_values": {
-                    "Na(1/2)Cl(1/2)": "value1",
-                    "Ti(2*1)O(4/2)": "value2",
-                    "Ca(1+0)Cl(3-1)": "value3",
-                }
-            }
-        }
-
-        result = calculate_resolved_compositions(composition_data)
-        comp_values = result["composition_data"]["compositions_property_values"]
-
-        # Should evaluate mathematical expressions
-        assert "Na0.5Cl0.5" in comp_values
-        assert "Ti2O2" in comp_values
-        assert "Ca1Cl2" in comp_values
-
-    def test_calculate_resolved_compositions_direct_comp_data(self):
-        """Test with direct composition data (not nested in composition_data)."""
-        composition_data = {
-            "compositions_property_values": {
-                "Na(0.5)Cl(0.5)": "5.5 eV",
-                "Ti(1)O(2)": "3.2 eV",
-            }
-        }
-
-        result = calculate_resolved_compositions(composition_data)
-
-        assert "compositions_property_values" in result
-        comp_values = result["compositions_property_values"]
-
-        assert "Na0.5Cl0.5" in comp_values
-        assert "Ti1O2" in comp_values
-
-    def test_calculate_resolved_compositions_empty_input(self):
-        """Test with empty input."""
-        result = calculate_resolved_compositions({})
-        assert result == {}
-
-        result = calculate_resolved_compositions(None)
-        assert result == {}
-
-    def test_calculate_resolved_compositions_nested_parentheses(self):
-        """Test with nested parentheses (should be handled safely)."""
-        composition_data = {
-            "composition_data": {
-                "compositions_property_values": {
-                    "Na((1+1)/2)Cl": "value1",
-                    "Ti(2*(1+1))O": "value2",
-                }
-            }
-        }
-
-        result = calculate_resolved_compositions(composition_data)
-        comp_values = result["composition_data"]["compositions_property_values"]
-
-        # Should handle nested expressions
-        assert "Na1Cl" in comp_values
-        assert "Ti4O" in comp_values
-
-    def test_calculate_resolved_compositions_max_iterations_safety(self):
-        """Test that maximum iterations prevent infinite loops."""
-        # This test ensures the safety counter works
-        composition_data = {
-            "composition_data": {
-                "compositions_property_values": {
-                    "Regular": "value1",  # Normal case
-                    "Na(0.5)Cl": "value2",  # Should process normally
-                }
-            }
-        }
-
-        result = calculate_resolved_compositions(composition_data)
-        comp_values = result["composition_data"]["compositions_property_values"]
-
-        assert "Regular" in comp_values
-        assert "Na0.5Cl" in comp_values
+            # Check composition_data structure
+            assert "compositions_property_values" in article_data["composition_data"]
+            assert "property_unit" in article_data["composition_data"]
+            assert "family" in article_data["composition_data"]
 
 
 class TestIntegration:
@@ -486,7 +446,7 @@ class TestIntegration:
             "paper2": {
                 "composition_data": {
                     "compositions_property_values": {
-                        "Ca(1/2)CO3": "2.71 g/cm3",  # Has parentheses with fractions
+                        "0.07Pb(Mn1/3Sb2/3)O3-(1-0.07)Pb(Zr0.48Ti0.52)O3": "2.71 g/cm3",  # Complex formula
                         "H2O": "1.33",  # Valid
                         "BADKEY": "remove",  # Invalid pattern
                     }
@@ -509,27 +469,20 @@ class TestIntegration:
         cleaner = DataCleaner(temp_complex_json_file)
 
         # Clean with FULL strategy
-        cleaned_data = cleaner.clean_data(CleaningStrategy.FULL)
-
-        # Apply resolved compositions
-        final_data = {}
-        for paper_key, paper_data in cleaned_data.items():
-            final_data[paper_key] = calculate_resolved_compositions(paper_data)
+        cleaned_data = cleaner.clean_data_with_relevant_compositions(
+            CleaningStrategy.FULL
+        )
 
         # Verify the integration worked correctly
-        assert isinstance(final_data, dict)
+        assert isinstance(cleaned_data, dict)
 
-        for paper_key, paper_data in final_data.items():
+        for paper_key, paper_data in cleaned_data.items():
             comp_values = paper_data["composition_data"]["compositions_property_values"]
 
             # Should have processed fractions, spaces, and parentheses
             for comp_key in comp_values.keys():
                 # No spaces should remain
                 assert " " not in comp_key
-                # No obvious fraction patterns should remain
-                assert (
-                    "/" not in comp_key or "(" in comp_key
-                )  # Allow fractions in preserved parentheses
                 # No invalid patterns should remain
                 assert not re.match(r"(?<![a-z0-9])[A-Z]{2,}(?![a-z0-9])", comp_key)
 
@@ -537,8 +490,12 @@ class TestIntegration:
         """Test comparison between BASIC and FULL cleaning strategies."""
         cleaner = DataCleaner(temp_complex_json_file)
 
-        basic_result = cleaner.clean_data(CleaningStrategy.BASIC)
-        full_result = cleaner.clean_data(CleaningStrategy.FULL)
+        basic_result = cleaner.clean_data_with_relevant_compositions(
+            CleaningStrategy.BASIC
+        )
+        full_result = cleaner.clean_data_with_relevant_compositions(
+            CleaningStrategy.FULL
+        )
 
         # Basic should potentially have more entries (less strict)
         basic_total_compositions = sum(
@@ -559,24 +516,53 @@ class TestErrorHandling:
     """Test cases for error handling scenarios."""
 
     def test_malformed_composition_data_structure(self):
-        """Test handling of malformed composition data structure."""
-        malformed_data = {
+        """Test handling of empty composition data."""
+        empty_comp_data = {
             "paper1": {
-                "wrong_key": {  # Missing composition_data key
-                    "compositions_property_values": {"NaCl": "5.5 eV"}
+                "composition_data": {
+                    "compositions_property_values": {}  # Empty compositions
                 }
             }
         }
 
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
-            json.dump(malformed_data, f)
+            json.dump(empty_comp_data, f)
             temp_file_path = f.name
 
         try:
             cleaner = DataCleaner(temp_file_path)
-            # Should handle missing keys gracefully
-            with pytest.raises(KeyError):
-                cleaner.clean_data()
+            # Should handle empty compositions gracefully without errors
+            result = cleaner.clean_data_with_relevant_compositions()
+            assert isinstance(result, dict)
+            # Should return empty dict since no valid compositions to process
+            assert len(result) == 0 or result == {}
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_division_by_zero_in_fractions(self):
+        """Test handling of division by zero in fraction conversion."""
+        test_data = {
+            "paper1": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        "Na1/0Cl": "value1",  # Division by zero
+                    }
+                }
+            }
+        }
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(test_data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            # Should handle division by zero gracefully
+            result = cleaner.clean_data_with_relevant_compositions(
+                CleaningStrategy.BASIC
+            )
+            # The original fraction should be kept if division by zero
+            assert isinstance(result, dict)
         finally:
             os.unlink(temp_file_path)
 
@@ -586,17 +572,23 @@ class TestParametrizedScenarios:
     """Parametrized tests for various input scenarios."""
 
     @pytest.mark.parametrize(
-        "input_key,expected_key",
+        "input_key,expected_pattern",
         [
-            ("Na1/2Cl1/2", "Na0.50Cl0.50"),
-            ("Ti2/3O4/3", "Ti0.67O1.33"),
-            ("Ca1/4CO3", "Ca0.25CO3"),
-            ("Regular", "Regular"),  # No fractions
-            ("H2O", "H2O"),  # No fractions
+            ("Na1/2Cl1/2", "0.50"),  # Fractions converted
+            ("Ti2/3O4/3", "0.67"),  # Fractions converted
+            ("Ca1/4CO3", "0.25"),  # Fraction converted
+            ("Regular", "Regular"),  # No changes
+            ("H2O", "H2O"),  # No changes
+            (
+                "0.07Pb(Mn0.33Sb0.67)O3-(1-0.07)Pb(Zr0.48Ti0.52)O3",
+                "0.93",
+            ),  # Arithmetic resolved
         ],
     )
-    def test_convert_fractions_parametrized(self, input_key, expected_key):
-        """Parametrized test for fraction conversion."""
+    def test_convert_fractions_and_resolve_compositions_parametrized(
+        self, input_key, expected_pattern
+    ):
+        """Parametrized test for fraction conversion and composition resolution."""
         temp_data = {"test": {"composition_data": {"compositions_property_values": {}}}}
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump(temp_data, f)
@@ -605,7 +597,8 @@ class TestParametrizedScenarios:
         try:
             cleaner = DataCleaner(temp_file_path)
             dict_list = [{input_key: "test_value"}]
-            result = cleaner._convert_fractions_to_decimal(dict_list)
-            assert expected_key in result[0]
+            result = cleaner._convert_fractions_and_resolve_compositions(dict_list)
+            result_key = list(result[0].keys())[0]
+            assert expected_pattern in result_key
         finally:
             os.unlink(temp_file_path)

@@ -46,7 +46,7 @@ def test_init_valid_parameters(sample_property_keywords):
     assert processor.keyword == "piezoelectric"
     assert processor.property_keywords == sample_property_keywords
     assert processor.is_sql_db is False
-    assert processor.csv_batch_size == 2000
+    assert processor.csv_batch_size == 1
     assert processor.valid_property_articles == 0
     assert processor.source == "pdf"
 
@@ -84,40 +84,19 @@ def test_init_missing_property_keywords():
     assert "property_keywords" in str(exc_info.value)
 
 
-def test_get_paper_metadata_from_pdf(pdfs_processor):
-    """Test extraction of metadata from PDF results"""
-    valid_results = {
-        "validation_info": json.dumps(
-            {
-                "title": "Test Title",
-                "container-title": "Test Journal",
-                "publisher": "Test Publisher",
-            }
-        )
-    }
+def test_extract_doi_from_text(pdfs_processor):
+    """Test DOI extraction from text"""
+    text_with_doi = "This paper has DOI: 10.1234/test.567"
+    doi = pdfs_processor._extract_doi_from_text(text_with_doi)
+    assert doi == "10.1234/test.567"
 
-    title, journal, publisher = pdfs_processor._get_paper_metadata_from_pdf(
-        valid_results
-    )
-    assert title == "Test Title"
-    assert journal == "Test Journal"
-    assert publisher == "Test Publisher"
+    text_without_doi = "This paper has no DOI"
+    doi = pdfs_processor._extract_doi_from_text(text_without_doi)
+    assert doi == ""
 
-    missing_validation = {}
-    title, journal, publisher = pdfs_processor._get_paper_metadata_from_pdf(
-        missing_validation
-    )
-    assert title == ""
-    assert journal == ""
-    assert publisher == ""
-
-    invalid_json = {"validation_info": "Not a valid JSON"}
-    title, journal, publisher = pdfs_processor._get_paper_metadata_from_pdf(
-        invalid_json
-    )
-    assert title == ""
-    assert journal == ""
-    assert publisher == ""
+    text_with_multiple_dois = "DOIs: 10.1234/test.567 and 10.5678/another.123"
+    doi = pdfs_processor._extract_doi_from_text(text_with_multiple_dois)
+    assert doi == "10.1234/test.567"
 
 
 @pytest.mark.parametrize("is_sql_db", [True, False])
@@ -136,16 +115,13 @@ def test_database_selection(is_sql_db):
             "substring_keywords": [" test_substring1 ", " test_substring2 "],
         }
 
-        # Create a simple test class for verification
         class TestProcessor(PDFsProcessor):
             def __init__(self, *args, **kwargs):
-                # Don't call parent constructor to avoid actual initialization
                 self.is_sql_db = kwargs.get("is_sql_db", False)
                 self.folder_path = "/test/path"
                 self.keyword = "piezoelectric"
                 self.property_keywords = sample_property_keywords
 
-                # Initialize database managers based on is_sql_db
                 if self.is_sql_db:
                     from comproscanner.utils.database_manager import (
                         MySQLDatabaseManager,
@@ -163,10 +139,8 @@ def test_database_selection(is_sql_db):
                 self.csv_db_manager = CSVDatabaseManager()
                 self.vector_db_manager = VectorDatabaseManager(rag_config=RAGConfig())
 
-        # Create the test processor
         processor = TestProcessor(is_sql_db=is_sql_db)
 
-        # Check if MySQLDatabaseManager was called based on is_sql_db
         if is_sql_db:
             assert mock_sql_db.called, "MySQLDatabaseManager should have been created"
         else:
@@ -176,15 +150,59 @@ def test_database_selection(is_sql_db):
 
 
 @patch("glob.glob")
-@patch("pdf2doi.pdf2doi")
-def test_process_pdfs_no_identifier(mock_pdf2doi, mock_glob, pdfs_processor):
-    """Test processing PDFs with no DOI identifier"""
+@patch(
+    "comproscanner.article_processors.pdfs_processor.get_paper_metadata_from_oaworks"
+)
+def test_process_pdfs_with_doi(mock_metadata, mock_glob, pdfs_processor):
+    """Test processing PDFs with DOI found"""
     mock_glob.return_value = ["/test/path/file1.pdf"]
-
-    mock_pdf2doi.return_value = {}
+    mock_metadata.return_value = ("Test Title", "Test Journal", "Test Publisher")
 
     with (
-        patch.object(PDFToMarkdownText, "convert_to_markdown", return_value="# Test"),
+        patch.object(
+            PDFToMarkdownText,
+            "convert_to_markdown",
+            return_value="DOI: 10.1234/test.567\n# Test content",
+        ),
+        patch.object(PDFToMarkdownText, "clean_text", return_value={}),
+        patch.object(
+            PDFToMarkdownText,
+            "append_section_to_df",
+            return_value=pd.DataFrame(
+                {
+                    "doi": ["10.1234/test.567"],
+                    "article_title": ["Test Title"],
+                    "publication_name": ["Test Journal"],
+                    "publisher": ["Test Publisher"],
+                    "abstract": [""],
+                    "introduction": [""],
+                    "exp_methods": [""],
+                    "comp_methods": [""],
+                    "results_discussion": [""],
+                    "conclusion": [""],
+                    "is_property_mentioned": ["0"],
+                }
+            ),
+        ),
+        patch.object(pdfs_processor.csv_db_manager, "write_to_csv"),
+    ):
+        pdfs_processor.process_pdfs()
+        assert pdfs_processor.identifier == "10.1234/test.567"
+        mock_metadata.assert_called_once_with("10.1234/test.567")
+
+
+@patch("glob.glob")
+@patch(
+    "comproscanner.article_processors.pdfs_processor.get_paper_metadata_from_oaworks"
+)
+def test_process_pdfs_no_doi(mock_metadata, mock_glob, pdfs_processor):
+    """Test processing PDFs with no DOI found"""
+    mock_glob.return_value = ["/test/path/file1.pdf"]
+
+    with (
+        patch.object(
+            PDFToMarkdownText, "convert_to_markdown", return_value="# Test content"
+        ),
         patch.object(PDFToMarkdownText, "clean_text", return_value={}),
         patch.object(
             PDFToMarkdownText,
@@ -207,53 +225,39 @@ def test_process_pdfs_no_identifier(mock_pdf2doi, mock_glob, pdfs_processor):
         ),
         patch.object(pdfs_processor.csv_db_manager, "write_to_csv"),
     ):
-
         pdfs_processor.process_pdfs()
-
-        assert pdfs_processor.identifier == "/test/path/file1"
+        assert pdfs_processor.identifier == "file1"
+        mock_metadata.assert_not_called()
 
 
 @patch("glob.glob")
-@patch("pdf2doi.pdf2doi")
-def test_process_pdfs_keyboard_interrupt(mock_pdf2doi, mock_glob, pdfs_processor):
-    """Test keyboard interrupt during PDF processing"""
-    mock_glob.return_value = ["/test/path/file1.pdf"]
-
-    mock_pdf2doi.side_effect = KeyboardInterrupt()
-
-    with pytest.raises(KeyboardInterruptHandler):
-        pdfs_processor.process_pdfs()
-
-
-@patch("glob.glob")
-@patch("pdf2doi.pdf2doi")
-def test_process_pdfs_exception_handling(mock_pdf2doi, mock_glob, pdfs_processor):
+@patch(
+    "comproscanner.article_processors.pdfs_processor.get_paper_metadata_from_oaworks"
+)
+def test_process_pdfs_exception_handling(mock_metadata, mock_glob, pdfs_processor):
     """Test exception handling during PDF processing"""
     mock_glob.return_value = ["/test/path/file1.pdf", "/test/path/file2.pdf"]
+    mock_metadata.return_value = ("Test Title", "Test Journal", "Test Publisher")
 
-    mock_pdf2doi.side_effect = [
-        Exception("Test error"),
-        {
-            "identifier": "10.1234/test.123",
-            "validation_info": json.dumps(
-                {
-                    "title": "Test Title",
-                    "container-title": "Test Journal",
-                    "publisher": "Test Publisher",
-                }
-            ),
-        },
-    ]
+    call_count = [0]
+
+    def mock_convert(*args, **kwargs):
+        call_count[0] += 1
+        if call_count[0] == 1:
+            raise Exception("Test error")
+        return "DOI: 10.1234/test.567\n# Test content"
 
     with (
-        patch.object(PDFToMarkdownText, "convert_to_markdown", return_value="# Test"),
+        patch.object(
+            PDFToMarkdownText, "convert_to_markdown", side_effect=mock_convert
+        ),
         patch.object(PDFToMarkdownText, "clean_text", return_value={}),
         patch.object(
             PDFToMarkdownText,
             "append_section_to_df",
             return_value=pd.DataFrame(
                 {
-                    "doi": ["10.1234/test.123"],
+                    "doi": ["10.1234/test.567"],
                     "article_title": ["Test Title"],
                     "publication_name": ["Test Journal"],
                     "publisher": ["Test Publisher"],
@@ -269,8 +273,62 @@ def test_process_pdfs_exception_handling(mock_pdf2doi, mock_glob, pdfs_processor
         ),
         patch.object(pdfs_processor.csv_db_manager, "write_to_csv"),
     ):
-
         pdfs_processor.process_pdfs()
+        assert pdfs_processor.valid_property_articles == 0
 
-        assert mock_pdf2doi.call_count == 2
+
+@patch("glob.glob")
+def test_process_pdfs_keyboard_interrupt(mock_glob, pdfs_processor):
+    """Test keyboard interrupt during PDF processing"""
+    mock_glob.return_value = ["/test/path/file1.pdf"]
+
+    with patch.object(
+        PDFToMarkdownText, "convert_to_markdown", side_effect=KeyboardInterrupt()
+    ):
+        with pytest.raises(KeyboardInterruptHandler):
+            pdfs_processor.process_pdfs()
+
+
+@patch("glob.glob")
+@patch("comproscanner.utils.common_functions.get_paper_metadata_from_oaworks")
+def test_process_pdfs_exception_handling(mock_metadata, mock_glob, pdfs_processor):
+    """Test exception handling during PDF processing"""
+    mock_glob.return_value = ["/test/path/file1.pdf", "/test/path/file2.pdf"]
+    mock_metadata.return_value = ("Test Title", "Test Journal", "Test Publisher")
+
+    call_count = [0]
+
+    def mock_convert(*args, **kwargs):
+        call_count[0] += 1
+        if call_count[0] == 1:
+            raise Exception("Test error")
+        return "DOI: 10.1234/test.567\n# Test content"
+
+    with (
+        patch.object(
+            PDFToMarkdownText, "convert_to_markdown", side_effect=mock_convert
+        ),
+        patch.object(PDFToMarkdownText, "clean_text", return_value={}),
+        patch.object(
+            PDFToMarkdownText,
+            "append_section_to_df",
+            return_value=pd.DataFrame(
+                {
+                    "doi": ["10.1234/test.567"],
+                    "article_title": ["Test Title"],
+                    "publication_name": ["Test Journal"],
+                    "publisher": ["Test Publisher"],
+                    "abstract": [""],
+                    "introduction": [""],
+                    "exp_methods": [""],
+                    "comp_methods": [""],
+                    "results_discussion": [""],
+                    "conclusion": [""],
+                    "is_property_mentioned": ["0"],
+                }
+            ),
+        ),
+        patch.object(pdfs_processor.csv_db_manager, "write_to_csv"),
+    ):
+        pdfs_processor.process_pdfs()
         assert pdfs_processor.valid_property_articles == 0

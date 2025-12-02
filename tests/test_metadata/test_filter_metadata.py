@@ -116,7 +116,7 @@ def test_get_publisher_from_issn_success(filter_metadata, mocker):
     mocker.patch("requests.get", return_value=mock_response)
     mocker.patch("pandas.read_csv", return_value=pd.DataFrame())
     mocker.patch("pandas.DataFrame.to_csv")
-    result = filter_metadata._get_publisher_from_issn("2767-9713", pd.DataFrame())
+    result = filter_metadata._get_publisher_from_issn("2767-9713")
     assert result is True
 
 
@@ -127,7 +127,7 @@ def test_get_publisher_from_issn_rate_limit(filter_metadata, monkeypatch, mocker
     mock_response.status_code = 429
     mocker.patch("requests.get", return_value=mock_response)
     with pytest.raises(CustomErrorHandler) as exc_info:
-        filter_metadata._get_publisher_from_issn("1234-5678", pd.DataFrame())
+        filter_metadata._get_publisher_from_issn("1234-5678")
     assert exc_info.value.status_code == 429
     assert "API rate limit exceeded" in str(exc_info.value)
 
@@ -292,8 +292,7 @@ def test_get_publisher_from_scopus_id_success(filter_metadata, monkeypatch, mock
     add_publisher_mock = mocker.patch.object(
         filter_metadata, "_add_publisher_to_df_and_save"
     )
-    mock_df = mocker.Mock()
-    result = filter_metadata._get_publisher_from_scopus_id("123456789", mock_df)
+    result = filter_metadata._get_publisher_from_scopus_id("123456789")
     assert result is True
     add_publisher_mock.assert_called_once_with(mock_response, scopus_id="123456789")
 
@@ -306,8 +305,7 @@ def test_get_publisher_from_scopus_id_404(filter_metadata, monkeypatch, mocker):
     logger_mock = mocker.patch(
         "comproscanner.metadata_extractor.filter_metadata.logger"
     )
-    mock_df = mocker.Mock()
-    result = filter_metadata._get_publisher_from_scopus_id("123456789", mock_df)
+    result = filter_metadata._get_publisher_from_scopus_id("123456789")
     assert result is False
     logger_mock.error.assert_called_once()
     assert "URL not found for Scopus ID: 123456789" in logger_mock.error.call_args[0][0]
@@ -323,8 +321,7 @@ def test_get_publisher_from_scopus_id_other_status(
     logger_mock = mocker.patch(
         "comproscanner.metadata_extractor.filter_metadata.logger"
     )
-    mock_df = mocker.Mock()
-    result = filter_metadata._get_publisher_from_scopus_id("123456789", mock_df)
+    result = filter_metadata._get_publisher_from_scopus_id("123456789")
     assert result is False
     logger_mock.error.assert_called_once()
     assert "Scopus ID API Error: 500" in logger_mock.error.call_args[0][0]
@@ -336,11 +333,13 @@ def test_get_publisher_from_scopus_id_exception(filter_metadata, monkeypatch, mo
     logger_mock = mocker.patch(
         "comproscanner.metadata_extractor.filter_metadata.logger"
     )
-    mock_df = mocker.Mock()
-    result = filter_metadata._get_publisher_from_scopus_id("123456789", mock_df)
+    result = filter_metadata._get_publisher_from_scopus_id("123456789")
     assert result is False
     logger_mock.error.assert_called_once()
-    assert "Error processing Scopus ID 123456789" in logger_mock.error.call_args[0][0]
+    assert (
+        "Unexpected error processing Scopus ID 123456789"
+        in logger_mock.error.call_args[0][0]
+    )
 
 
 def test_process_journal_exceeded_from_scopus_id(filter_metadata, monkeypatch, mocker):

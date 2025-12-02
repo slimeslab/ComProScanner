@@ -22,22 +22,25 @@ from comproscanner.utils.configs import RAGConfig
 def mock_huggingface_model():
     """Fixture to mock HuggingFace model components"""
     with (
-        patch("transformers.AutoTokenizer.from_pretrained") as mock_tokenizer,
-        patch("transformers.AutoModel.from_pretrained") as mock_model,
+        patch("comproscanner.utils.embeddings.AutoTokenizer") as mock_tokenizer_class,
+        patch("comproscanner.utils.embeddings.AutoModel") as mock_model_class,
     ):
         mock_tokenizer_instance = MagicMock()
         mock_tokenizer_instance.return_value = {
             "input_ids": torch.ones((1, 10), dtype=torch.long),
             "attention_mask": torch.ones((1, 10), dtype=torch.long),
         }
-        mock_tokenizer.return_value = mock_tokenizer_instance
+        mock_tokenizer_class.from_pretrained.return_value = mock_tokenizer_instance
+
         mock_model_instance = MagicMock()
         mock_outputs = MagicMock()
         mock_outputs.last_hidden_state = torch.ones((1, 10, 768), dtype=torch.float)
         mock_model_instance.return_value = mock_outputs
-        mock_model.return_value = mock_model_instance
+        mock_model_instance.to.return_value = mock_model_instance
+        mock_model_instance.eval.return_value = mock_model_instance
+        mock_model_class.from_pretrained.return_value = mock_model_instance
 
-        yield mock_tokenizer, mock_model
+        yield mock_tokenizer_class, mock_model_class
 
 
 @pytest.fixture
@@ -82,9 +85,9 @@ def test_init_huggingface(mock_huggingface_model):
 
     assert embeddings.model_type == "huggingface"
     assert embeddings.rag_config == config
-    mock_tokenizer, mock_model = mock_huggingface_model
-    mock_tokenizer.assert_called_once_with("bert-base-uncased")
-    mock_model.assert_called_once_with("bert-base-uncased")
+    mock_tokenizer_class, mock_model_class = mock_huggingface_model
+    mock_tokenizer_class.from_pretrained.assert_called_once_with("bert-base-uncased")
+    mock_model_class.from_pretrained.assert_called_once_with("bert-base-uncased")
 
 
 def test_init_sentence_transformers(mock_sentence_transformers):
@@ -169,6 +172,12 @@ def test_embed_documents_huggingface(mock_huggingface_model):
     """Test embedding documents with HuggingFace model"""
     config = RAGConfig(embedding_model="huggingface:bert-base-uncased")
     embeddings = MultiModelEmbeddings(config)
+
+    embeddings.tokenizer.return_value = {
+        "input_ids": torch.ones((1, 10), dtype=torch.long),
+        "attention_mask": torch.ones((1, 10), dtype=torch.long),
+    }
+
     with patch("torch.no_grad"):
         result = embeddings.embed_documents(["This is a test", "Another test"])
 

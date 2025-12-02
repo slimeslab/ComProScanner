@@ -238,20 +238,28 @@ def test_send_request_rate_limit(elsevier_processor, monkeypatch):
 
 def test_send_request_timeout(elsevier_processor, monkeypatch):
     """Test sending request with timeout error"""
+
+    # Mock time.sleep to prevent actual waiting
+    def mock_sleep(seconds):
+        raise KeyboardInterrupt("Simulated keyboard interrupt")
+
     with (
         patch("requests.get", side_effect=requests.exceptions.ReadTimeout) as mock_get,
         patch(
             "comproscanner.article_processors.elsevier_processor.write_timeout_file"
         ) as mock_write,
         patch(
-            "comproscanner.article_processors.elsevier_processor.logger.error"
+            "comproscanner.article_processors.elsevier_processor.logger"
         ) as mock_logger,
+        patch("time.sleep", side_effect=mock_sleep),
     ):
-        response = elsevier_processor._send_request("10.1000/test-doi")
+        # Expect KeyboardInterruptHandler to be raised
+        with pytest.raises(KeyboardInterruptHandler):
+            response = elsevier_processor._send_request("10.1000/test-doi")
 
-        assert response is None
-        assert mock_logger.called
-        mock_write.assert_called_once()
+        # Verify the mock was called
+        mock_get.assert_called_once()
+        mock_logger.warning.assert_called()
 
 
 def test_process_xml(elsevier_processor, sample_xml_content):
