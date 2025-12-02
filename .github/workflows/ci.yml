@@ -33,10 +33,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          coverage run -m pytest tests/
-          coverage report
-          coverage html
-          coverage json
+          pytest --cov=comproscanner --cov-report=html --cov-report=json --cov-report=term tests/
 
       - name: Extract coverage percentage
         id: coverage
