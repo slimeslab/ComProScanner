@@ -52,6 +52,7 @@ classifiers = [
 [project.optional-dependencies]
 dev = ["pytest", "pytest-mock"]
 docs = ["mkdocs-material", "mkdocs-minify-plugin", "mkdocstrings[python]"]
+test = ["pytest", "pytest-cov", "pytest-mock"]
 [project.urls]
 "Homepage" = "https://github.com/slimeslab/ComProScanner"
 "Bug Tracker" = "https://github.com/slimeslab/ComProScanner/issues"
