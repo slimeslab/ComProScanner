@@ -78,6 +78,8 @@ class TestCreateKnowledgeGraphFunction:
                 method_clustering_similarity_threshold=0.8,
                 technique_clustering_similarity_threshold=0.8,
                 keyword_clustering_similarity_threshold=0.85,
+                family_clustering_similarity_threshold=0.9,
+                precursor_clustering_similarity_threshold=0.9,
             )
 
     def test_create_knowledge_graph_with_none_file(self):
@@ -122,6 +124,8 @@ class TestCreateKnowledgeGraphFunction:
                 method_clustering_similarity_threshold=0.9,
                 technique_clustering_similarity_threshold=0.7,
                 keyword_clustering_similarity_threshold=0.95,
+                family_clustering_similarity_threshold=0.9,
+                precursor_clustering_similarity_threshold=0.9,
             )
 
     def test_create_knowledge_graph_exception_handling(self, temp_results_file):
