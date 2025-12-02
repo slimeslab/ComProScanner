@@ -547,7 +547,7 @@ class ComProScanner:
 
     def clean_data(
         self,
-        json_results_file: str = "results.json",
+        json_results_file: str = None,
         is_save_separate_results: bool = True,
         cleaned_json_results_file: str = "cleaned_results.json",
         is_save_composition_property_file: bool = True,
@@ -558,7 +558,7 @@ class ComProScanner:
         Removes extra information (key-value pairs) provided by extracted agents. Finally, cleans the composition-property data based on periodic elements, abbreviations and resolves arithmetic calculations, fractions etc.
 
         Args:
-            json_results_file (str, optional): Path to the JSON results file. Defaults to "results.json".
+            json_results_file (str, required): Path to the JSON results file.
             is_save_separate_results (bool, optional): Whether to save separate results file after cleaning. Defaults to True.
             cleaned_json_results_file (str, optional): Path to the cleaned JSON results file with articles having relevant composition-property data. Defaults to "cleaned_results.json".
             is_save_composition_property_file (bool, optional): Whether to save composition-property values to a separate file. Defaults to True.
@@ -569,12 +569,26 @@ class ComProScanner:
             Dict[str, Any]: Cleaned data based on selected strategy with relevant composition-property data.
             Dict[str, Any]: All composition-property values collected from the cleaned data. (Returned only if is_save_composition_property_file is True)
         """
+        if json_results_file is None:
+            logger.error(
+                "json_results_file cannot be None. Please provide a valid file path. Exiting..."
+            )
+            raise ValueErrorHandler(
+                message="Please provide json_results_file to proceed for data cleaning."
+            )
         if os.path.exists(json_results_file) is False:
             logger.error(
                 f"JSON results file {json_results_file} does not exist. Cannot proceed with data cleaning."
             )
             raise ValueErrorHandler(
                 message=f"JSON results file {json_results_file} does not exist. Cannot proceed with data cleaning."
+            )
+        if cleaning_strategy not in [CleaningStrategy.FULL, CleaningStrategy.BASIC]:
+            logger.error(
+                f"Invalid cleaning strategy: {cleaning_strategy}. Please choose either 'full' or 'basic'."
+            )
+            raise ValueErrorHandler(
+                message=f"Invalid cleaning strategy: {cleaning_strategy}. Please choose either 'full' or 'basic'."
             )
         data_cleaner = DataCleaner(results_file=json_results_file)
         final_data = data_cleaner.clean_data_with_relevant_compositions(
