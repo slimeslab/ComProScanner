@@ -10,6 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PyPI](https://img.shields.io/pypi/v/comproscanner)](https://pypi.org/project/comproscanner/)
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://slimeslab.github.io/ComProScanner/)
+[![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/aritraroy24/916bf9bad1516373ec35312025a5973e/raw/comproscanner-coverage.json)](https://gist.github.com/aritraroy24/916bf9bad1516373ec35312025a5973e)
 
 ## Overview
 

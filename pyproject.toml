@@ -20,13 +20,13 @@ dependencies = [
     "langchain",
     "transformers",
     "tokenizers",
-    "mysql",
-    "mysql-connector",
-    "langchain_community",
+    "mysql-connector-python",
+    "langchain-community",
     "litellm",
     "crewai",
     "crewai-tools",
     "chromadb",
+    "langchain-chroma",
     "docling",
     "sentence-transformers",
     "neo4j",
@@ -51,6 +51,7 @@ classifiers = [
 [project.optional-dependencies]
 dev = ["pytest", "pytest-mock"]
 docs = ["mkdocs-material", "mkdocs-minify-plugin", "mkdocstrings[python]"]
+test = ["pytest", "pytest-cov", "pytest-mock"]
 [project.urls]
 "Homepage" = "https://github.com/slimeslab/ComProScanner"
 "Bug Tracker" = "https://github.com/slimeslab/ComProScanner/issues"
@@ -63,3 +64,20 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"
+
+[tool.coverage.run]
+omit = [
+    "/tmp/*",
+    "*/_remote_module_non_scriptable.py",
+    "*/site-packages/*",
+    "*/tests/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
