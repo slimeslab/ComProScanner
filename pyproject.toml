@@ -27,6 +27,7 @@ dependencies = [
     "crewai",
     "crewai-tools",
     "chromadb",
+    "langchain_chroma",
     "docling",
     "sentence-transformers",
     "neo4j",
