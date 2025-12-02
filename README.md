@@ -6,11 +6,12 @@
 
 **A comprehensive Python package for extracting composition-property data from scientific articles for building databases**
 
-[![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PyPI](https://img.shields.io/pypi/v/comproscanner)](https://pypi.org/project/comproscanner/)
-[![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://slimeslab.github.io/ComProScanner/)
-[![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/aritraroy24/916bf9bad1516373ec35312025a5973e/raw/comproscanner-coverage.json)](https://gist.github.com/aritraroy24/916bf9bad1516373ec35312025a5973e)
+[![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg?logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![License: MIT](https://custom-icon-badges.demolab.com/badge/license-MIT-yellow.svg?logo=law&logoColor=white)](https://opensource.org/licenses/MIT)
+[![PyPI](https://img.shields.io/pypi/v/comproscanner?logo=pypi&logoColor=white)](https://pypi.org/project/comproscanner/)
+[![Documentation](https://custom-icon-badges.demolab.com/badge/docs-latest-brightgreen.svg?logo=materialformkdocs&logoColor=white)](https://slimeslab.github.io/ComProScanner/)
+[![Coverage](https://img.shields.io/codecov/c/github/aritraroy24/ComProScanner?logo=codecov&logoColor=white&label=coverage&color=e62277)](https://codecov.io/gh/aritraroy24/ComProScanner)
+![PyPI - Downloads](https://custom-icon-badges.demolab.com/pypi/dm/comproscanner?logo=download&logoColor=white&color=purple)
 
 ## Overview
 
