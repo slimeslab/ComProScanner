@@ -1,4 +1,4 @@
-## Unreleased
+## [0.1.4] - 02-12-2025
 
 ### Added
 
@@ -16,6 +16,8 @@
   - New mkdocstrings configuration added to mkdocs.yml for automatic API documentation generation.
 
 - New tests added for remaining utils functions.
+
+- Added pytest coverage tracking (50%) using `pytest-cov` and coverage report generation using _codecov_.
 
 ### Fixed
 

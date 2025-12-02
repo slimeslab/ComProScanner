@@ -1,17 +1,29 @@
 <p align="center">
-  <img src="assets/comproscanner_logo.png" alt="ComProScanner Logo" width="500"/>
+  <img src="https://raw.githubusercontent.com/aritraroy24/ComProScanner/refs/heads/main/assets/comproscanner_logo.png" alt="ComProScanner Logo" width="500"/>
+  <br><br>
+  <a href="https://www.python.org/downloads/">
+    <img src="https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg?logo=python&logoColor=white" alt="Python Version"/>
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://custom-icon-badges.demolab.com/badge/license-MIT-yellow.svg?logo=law&logoColor=white" alt="License: MIT"/>
+  </a>
+  <a href="https://pypi.org/project/comproscanner/">
+    <img src="https://img.shields.io/pypi/v/comproscanner?logo=pypi&logoColor=white" alt="PyPI"/>
+  </a>
+  <a href="https://slimeslab.github.io/ComProScanner/">
+    <img src="https://custom-icon-badges.demolab.com/badge/docs-latest-brightgreen.svg?logo=materialformkdocs&logoColor=white" alt="Documentation"/>
+  </a>
+  <a href="https://codecov.io/gh/aritraroy24/ComProScanner">
+    <img src="https://img.shields.io/codecov/c/github/aritraroy24/ComProScanner?logo=codecov&logoColor=white&label=coverage&color=e62277" alt="Coverage"/>
+  </a>
+  <a href="https://pypi.org/project/comproscanner/">
+    <img src="https://custom-icon-badges.demolab.com/pypi/dm/comproscanner?logo=download&logoColor=white&color=purple" alt="PyPI Downloads"/>
+  </a>
 </p>
 
 # ComProScanner
 
 **A comprehensive Python package for extracting composition-property data from scientific articles for building databases**
-
-[![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg?logo=python&logoColor=white)](https://www.python.org/downloads/)
-[![License: MIT](https://custom-icon-badges.demolab.com/badge/license-MIT-yellow.svg?logo=law&logoColor=white)](https://opensource.org/licenses/MIT)
-[![PyPI](https://img.shields.io/pypi/v/comproscanner?logo=pypi&logoColor=white)](https://pypi.org/project/comproscanner/)
-[![Documentation](https://custom-icon-badges.demolab.com/badge/docs-latest-brightgreen.svg?logo=materialformkdocs&logoColor=white)](https://slimeslab.github.io/ComProScanner/)
-[![Coverage](https://img.shields.io/codecov/c/github/aritraroy24/ComProScanner?logo=codecov&logoColor=white&label=coverage&color=e62277)](https://codecov.io/gh/aritraroy24/ComProScanner)
-![PyPI - Downloads](https://custom-icon-badges.demolab.com/pypi/dm/comproscanner?logo=download&logoColor=white&color=purple)
 
 ## Overview
 
@@ -78,7 +90,7 @@ scanner.extract_composition_property_data(
 ## Workflow
 
 <div align="center">
-  <img src="assets/overall_workflow.png" alt="ComProScanner Workflow" width="750"/>
+  <img src="https://raw.githubusercontent.com/aritraroy24/ComProScanner/refs/heads/main/assets/overall_workflow.png" alt="ComProScanner Workflow" width="750"/>
 </div>
 
 The ComProScanner workflow consists of four main stages:
