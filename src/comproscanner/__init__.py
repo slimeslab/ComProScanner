@@ -144,7 +144,7 @@ if not _is_testing:
 
     def clean_data(
         main_property_keyword,
-        json_results_file: str = "results.json",
+        json_results_file: str = None,
         is_save_separate_results: bool = True,
         cleaned_json_results_file: str = "cleaned_results.json",
         is_save_composition_property_file: bool = True,
@@ -156,7 +156,7 @@ if not _is_testing:
 
         Args:
             main_property_keyword (str): The main property keyword
-            json_results_file (str, optional): Path to the JSON results file. Defaults to "results.json".
+            json_results_file (str, required): Path to the JSON results file.
             is_save_separate_results (bool, optional): Whether to save separate results file after cleaning. Defaults to True.
             cleaned_json_results_file (str, optional): Path to the cleaned JSON results file with articles having relevant composition-property data. Defaults to "cleaned_results.json".
             is_save_composition_property_file (bool, optional): Whether to save composition-property values to a separate file. Defaults to True.
