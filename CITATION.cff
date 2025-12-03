@@ -1,0 +1,56 @@
+cff-version: "1.2.0"
+authors:
+  - family-names: Roy
+    given-names: Aritra
+    orcid: "https://orcid.org/0000-0003-0243-9124"
+  - family-names: Grisan
+    given-names: Enrico
+    orcid: "https://orcid.org/0000-0002-7365-5652"
+  - family-names: Buckeridge
+    given-names: John
+    orcid: "https://orcid.org/0000-0002-2537-5082"
+  - family-names: Gattinoni
+    given-names: Chiara
+    orcid: "https://orcid.org/0000-0002-3376-6374"
+contact:
+  - family-names: Roy
+    given-names: Aritra
+    orcid: "https://orcid.org/0000-0002-4928-2935"
+message: If you use this software, please cite our article on arXiv.
+preferred-citation:
+  authors:
+    - family-names: Roy
+      given-names: Aritra
+      orcid: "https://orcid.org/0000-0003-0243-9124"
+    - family-names: Grisan
+      given-names: Enrico
+      orcid: "https://orcid.org/0000-0002-7365-5652"
+    - family-names: Buckeridge
+      given-names: John
+      orcid: "https://orcid.org/0000-0002-2537-5082"
+    - family-names: Gattinoni
+      given-names: Chiara
+      orcid: "https://orcid.org/0000-0002-3376-6374"
+  date-published: 2025-10-23
+  identifiers:
+    - type: other
+      value: "arXiv:2510.20362"
+      description: "arXiv preprint"
+  title: "ComProScanner: A multi-agent based framework for composition-property structured data extraction from scientific literature"
+  type: article
+  url: "https://arxiv.org/abs/2510.20362"
+repository-code: "https://github.com/slimeslab/ComProScanner"
+license: MIT
+title: "ComProScanner: A multi-agent based framework for composition-property structured data extraction from scientific literature"
+type: software
+url: "https://slimeslab.github.io/ComProScanner/"
+version: "0.1.4"
+date-released: 2025-12-03
+keywords:
+  - materials science
+  - data extraction
+  - multi-agent systems
+  - machine learning
+  - computational materials science
+  - text mining
+  - composition-property database

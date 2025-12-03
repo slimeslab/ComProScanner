@@ -1,3 +1,19 @@
+## Unreleased
+
+### Added
+
+- Added DeepWiki integration badge to README.md for community Q&A support:
+  - [Ask DeepWiki](https://deepwiki.com/slimeslab/ComProScanner)
+- Added arXiv preprint badge to README.md:
+
+  - [arXiv:2510.20362](https://arxiv.org/abs/2510.20362)
+
+- [CITATION.cff](https://github.com/slimeslab/ComProScanner/blob/main/CITATION.cff) added for standardized citation information based on the latest release and arXiv preprint.
+
+### Changed
+
+- Moved the README badges section from html `p` tags to markdown format for better compatibility across platforms.
+
 ## [0.1.4] - 02-12-2025
 
 ### Added
@@ -26,6 +42,12 @@
 ### Removed
 
 - Arguments related to data cleaning removed from data extraction function.
+
+### Changed
+
+- README images updated with raw GitHub links for better reliability:
+  - [ComProScanner Logo](https://raw.githubusercontent.com/aritraroy24/ComProScanner/main/assets/comproscanner_logo.png)
+  - [ComProScanner Workflow](https://raw.githubusercontent.com/aritraroy24/ComProScanner/main/assets/overall_workflow.png)
 
 ## [0.1.3] - 04-11-2025
 

@@ -1,20 +1,8 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/aritraroy24/ComProScanner/refs/heads/main/assets/comproscanner_logo.png" alt="ComProScanner Logo" width="500"/>
-  <br><br>
-  <a href="https://www.python.org/downloads/">
-    <img src="https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg?logo=python&logoColor=white" alt="Python Version"/>
-  </a>&thinsp;<a href="https://opensource.org/licenses/MIT">
-    <img src="https://custom-icon-badges.demolab.com/badge/license-MIT-yellow.svg?logo=law&logoColor=white" alt="License: MIT"/>
-  </a>&thinsp;<a href="https://pypi.org/project/comproscanner/">
-    <img src="https://img.shields.io/pypi/v/comproscanner?logo=pypi&logoColor=white" alt="PyPI"/>
-  </a>&thinsp;<a href="https://slimeslab.github.io/ComProScanner/">
-    <img src="https://custom-icon-badges.demolab.com/badge/docs-latest-brightgreen.svg?logo=materialformkdocs&logoColor=white" alt="Documentation"/>
-  </a>&thinsp;<a href="https://codecov.io/gh/aritraroy24/ComProScanner">
-    <img src="https://img.shields.io/codecov/c/github/aritraroy24/ComProScanner?logo=codecov&logoColor=white&label=coverage&color=e62277" alt="Coverage"/>
-  </a>&thinsp;<a href="https://pypi.org/project/comproscanner/">
-    <img src="https://custom-icon-badges.demolab.com/pypi/dm/comproscanner?logo=download&logoColor=white&color=purple" alt="PyPI Downloads"/>
-  </a>
 </p>
+
+[![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg?logo=python&logoColor=white)](https://www.python.org/downloads/) [![License: MIT](https://custom-icon-badges.demolab.com/badge/license-MIT-yellow.svg?logo=law&logoColor=white)](https://opensource.org/licenses/MIT) [![PyPI](https://img.shields.io/pypi/v/comproscanner?logo=pypi&logoColor=white)](https://pypi.org/project/comproscanner/) [![Documentation](https://custom-icon-badges.demolab.com/badge/docs-latest-brightgreen.svg?logo=materialformkdocs&logoColor=white)](https://slimeslab.github.io/ComProScanner/) [![Coverage](https://img.shields.io/codecov/c/github/aritraroy24/ComProScanner?logo=codecov&logoColor=white&label=coverage&color=e62277)](https://codecov.io/gh/aritraroy24/ComProScanner) [![PyPI - Downloads](https://custom-icon-badges.demolab.com/pypi/dm/comproscanner?logo=download&logoColor=white&color=purple)](https://pypistats.org/packages/comproscanner) [![Ask DeepWiki](https://custom-icon-badges.demolab.com/badge/Ask%20DeepWiki-brightgreen.svg?logo=deepwikidevin&logoColor=white&labelColor=grey&color=5ab998)](https://deepwiki.com/slimeslab/ComProScanner) [![arXiv Preprint](https://custom-icon-badges.demolab.com/badge/arXiv-2510.20362-brightgreen.svg?logo=arxiv&logoColor=white&color=b22929)](https://arxiv.org/abs/2510.20362)
 
 # ComProScanner
 
