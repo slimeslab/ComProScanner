@@ -180,6 +180,10 @@ If you use ComProScanner in your research, please cite:
 }
 ```
 
+## Changelog
+
+See the [CHANGELOG](CHANGELOG.md) for details on what has changed in each version.
+
 ## Contributing
 
 We welcome contributions! Please see our [Contributing Guidelines](https://slimeslab.github.io/ComProScanner/about/contribution/) for details.

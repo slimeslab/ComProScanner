@@ -173,6 +173,7 @@ nav:
   - About:
       - Project Structure: about/project-structure.md
       - License: about/license.md
+      - Changelog: about/changelog.md
       - Contribution: about/contribution.md
       - Citation: about/citation.md
       - Contact: about/contact.md
