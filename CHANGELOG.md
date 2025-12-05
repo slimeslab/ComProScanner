@@ -2,6 +2,13 @@
 
 ### Added
 
+- Template for GitHub issues added to [.github/ISSUE_TEMPLATE](https://github.com/slimeslab/ComProScanner/tree/main/.github/ISSUE_TEMPLATE) for the following topics:
+
+  - bug reports
+  - feature requests
+  - documentation improvements
+  - support questions
+
 - [Changelog page](https://slimeslab.github.io/ComProScanner/about/changelog/) added in the documentation. Also, [CHANGELOG.md](https://github.com/slimeslab/ComProScanner/blob/main/CHANGELOG.md) linked in [README.md](https://github.com/slimeslab/ComProScanner/blob/main/README.md).
 
 - Added DeepWiki integration badge to README.md for community Q&A support:
