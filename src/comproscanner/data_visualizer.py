@@ -7,7 +7,7 @@ Website: https://aritraroy.live
 Date: 07-05-2025
 """
 
-from typing import Optional, List, Dict, Union, Tuple
+from typing import Optional, List, Dict, Union, Tuple, TYPE_CHECKING
 import numpy as np
 from comproscanner.post_processing.visualization.data_distribution_visualizers import (
     DataDistributionVisualizer,
@@ -15,9 +15,9 @@ from comproscanner.post_processing.visualization.data_distribution_visualizers i
 from .post_processing.visualization.create_knowledge_graph import CreateKG
 from .utils.logger import setup_logger
 
-# Import for type annotations, but use lazy loading for actual imports
-if False:
-    import matplotlib.figure
+# Import for type annotations only
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure
     from matplotlib import pyplot as plt
     import pandas as pd
     import seaborn as sns
@@ -41,7 +41,7 @@ def plot_family_pie_chart(
     legend_fontsize: int = 10,
     is_semantic_clustering_enabled: bool = True,
     similarity_threshold: float = 0.8,
-):
+) -> "Figure":
     """
     Create a pie chart visualization of material families distribution.
 
@@ -61,7 +61,7 @@ def plot_family_pie_chart(
         similarity_threshold (float, optional): Similarity threshold for clustering (Default: 0.8)
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueError: If neither data_sources nor folder_path is provided, or if no family data found
@@ -107,7 +107,7 @@ def plot_family_histogram(
     grid_alpha: float = 0.3,
     is_semantic_clustering_enabled: bool = True,
     similarity_threshold: float = 0.8,
-):
+) -> "Figure":
     """
     Create a histogram visualization of material families distribution.
 
@@ -135,7 +135,7 @@ def plot_family_histogram(
         similarity_threshold (float, optional): Similarity threshold for clustering (Default: 0.8)
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueError: If neither data_sources nor folder_path is provided, or if no family data found
@@ -181,7 +181,7 @@ def plot_precursors_pie_chart(
     legend_fontsize: int = 10,
     is_semantic_clustering_enabled: bool = True,
     similarity_threshold: float = 0.8,
-):
+) -> "Figure":
     """
     Create a pie chart visualization of precursors distribution.
 
@@ -201,7 +201,7 @@ def plot_precursors_pie_chart(
         similarity_threshold (float, optional): Threshold for similarity-based clustering when is_semantic_clustering_enabled is True (Default: 0.8)
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueError: If neither data_sources nor folder_path is provided, or if no precursors data found
@@ -247,7 +247,7 @@ def plot_precursors_histogram(
     grid_alpha: float = 0.3,
     is_semantic_clustering_enabled: bool = True,
     similarity_threshold: float = 0.8,
-):
+) -> "Figure":
     """
     Create a histogram visualization of precursors distribution.
 
@@ -275,7 +275,7 @@ def plot_precursors_histogram(
         similarity_threshold (float, optional): Similarity threshold for clustering (Default: 0.8)
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueError: If neither data_sources nor folder_path is provided, or if no precursors data found
@@ -321,7 +321,7 @@ def plot_characterization_techniques_pie_chart(
     title_fontsize: int = 14,
     label_fontsize: int = 10,
     legend_fontsize: int = 10,
-):
+) -> "Figure":
     """
     Create a pie chart visualization of characterization techniques distribution.
 
@@ -341,7 +341,7 @@ def plot_characterization_techniques_pie_chart(
         legend_fontsize (int, optional): Font size for the legend (Default: 10)
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueError: If neither data_sources nor folder_path is provided, or if no characterization techniques data found
@@ -387,7 +387,7 @@ def plot_characterization_techniques_histogram(
     grid_axis: str = "y",
     grid_linestyle: str = "--",
     grid_alpha: float = 0.3,
-):
+) -> "Figure":
     """
     Create a histogram visualization of characterization techniques distribution.
 
@@ -415,7 +415,7 @@ def plot_characterization_techniques_histogram(
         grid_alpha (float, optional): Alpha (transparency) for grid lines (Default: 0.3)
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueError: If neither data_sources nor folder_path is provided, or if no characterization techniques data found
@@ -455,7 +455,7 @@ def create_knowledge_graph(
     precursor_clustering_similarity_threshold: float = 0.9,
     technique_clustering_similarity_threshold: float = 0.8,
     keyword_clustering_similarity_threshold: float = 0.85,
-):
+) -> None:
     """
     Create a knowledge graph from extracted composition-property data directly in Neo4j database.
 
@@ -469,7 +469,7 @@ def create_knowledge_graph(
         keyword_clustering_similarity_threshold (float, optional): Similarity threshold for keyword clustering (Default: 0.85)
 
     Returns:
-        None (knowledge graph is created directly in Neo4j database).
+        None: Knowledge graph is created directly in Neo4j database.
 
     Raises:
         ValueErrorHandler: If result_file is not provided.

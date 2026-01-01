@@ -174,7 +174,7 @@ class ElsevierArticleProcessor:
         # Check CSV files
         if os.path.exists(self.csv_filepath):
             try:
-                df = pd.read_csv(self.csv_filepath)
+                df = pd.read_csv(self.csv_filepath, dtype=str, low_memory=False)
                 processed_dois.update(df["doi"].tolist())
             except Exception as e:
                 logger.warning(
@@ -879,7 +879,9 @@ class ElsevierArticleProcessor:
                             self.csv_batch_size,
                         )
                         csv_dataframes = []
-                        time.sleep(5)
+                        # Only sleep for large batches to avoid excessive delays
+                        if self.csv_batch_size > 1:
+                            time.sleep(5)
                     continue
 
                 root = self._parse_response(response)
@@ -932,7 +934,9 @@ class ElsevierArticleProcessor:
                         self.csv_batch_size,
                     )
                     csv_dataframes = []
-                    time.sleep(5)
+                    # Only sleep for large batches to avoid excessive delays
+                    if self.csv_batch_size > 1:
+                        time.sleep(5)
 
                 time.sleep(0.2)
 

@@ -4,13 +4,13 @@ Visualization module for ComProScanner evaluation results.
 This module provides functions for creating various visualizations of evaluation results, including bar charts, radar charts, heatmaps, histograms, and violin plots.
 """
 
-from typing import Optional, List, Dict, Tuple, Union
+from typing import Optional, List, Dict, Tuple, Union, TYPE_CHECKING
 import numpy as np
 from .post_processing.visualization.eval_plot_visualizers import EvalVisualizer
 
-# Import for type annotations, but use lazy loading for actual imports
-if False:
-    import matplotlib.figure
+# Import for type annotations only
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure
     from matplotlib import pyplot as plt
     import pandas as pd
     import seaborn as sns
@@ -46,7 +46,7 @@ def plot_single_bar_chart(
         "normalized_recall",
         "normalized_f1_score",
     ],
-):
+) -> "Figure":
     """
     Plot evaluation metrics from results file or dictionary.
 
@@ -72,7 +72,7 @@ def plot_single_bar_chart(
         metrics_to_include (list, optional): List of metrics to include in the plot (default: ['overall_accuracy', 'overall_composition_accuracy', 'overall_synthesis_accuracy', 'absolute_precision', 'absolute_recall', 'absolute_f1_score', 'normalized_precision', 'normalized_recall', 'normalized_f1_score'])
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueError: If neither result_file nor result_dict is provided
@@ -136,7 +136,7 @@ def plot_multiple_bar_charts(
         "normalized_recall",
         "normalized_f1_score",
     ],
-):
+) -> "Figure":
     """
     Plot evaluation metrics from multiple result files or dictionaries as grouped bar charts.
 
@@ -165,7 +165,7 @@ def plot_multiple_bar_charts(
         metrics_to_include (Optional[List[str]]): List of metrics to include from the plot (default: ['overall_accuracy', 'overall_composition_accuracy', 'overall_synthesis_accuracy', 'precision', 'recall', 'f1_score', 'normalized_precision', 'normalized_recall', 'normalized_f1_score'])
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueErrorHandler: If neither result_sources nor folder_path is provided, or if the specified path does not exist
@@ -242,7 +242,7 @@ def plot_single_radar_chart(
         "normalized_recall",
         "normalized_f1_score",
     ],
-):
+) -> "Figure":
     """
     Plot radar chart for a single evaluation result.
 
@@ -282,7 +282,7 @@ def plot_single_radar_chart(
         metrics_to_include (list, optional): List of metrics to include
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueErrorHandler: If neither result_file nor result_dict is provided, or if the specified path does not exist
@@ -370,7 +370,7 @@ def plot_multiple_radar_charts(
         "normalized_recall",
         "normalized_f1_score",
     ],
-):
+) -> "Figure":
     """
     Plot evaluation metrics from multiple result files or dictionaries as a radar chart.
 
@@ -410,7 +410,7 @@ def plot_multiple_radar_charts(
         metrics_to_include (Optional[List[str]]): List of metrics to include in the plot
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueErrorHandler: If neither result_sources nor folder_path is provided, or if the specified path does not exist
@@ -491,7 +491,7 @@ def plot_single_performance_heatmap(
     group_label_right_margin: int = 1,
     average_value_left_margin: int = 1,
     plot_padding: float = 0.1,
-):
+) -> "Figure":
     """
     Create a heatmap showing the distribution of scores across metrics for a single model.
 
@@ -524,7 +524,7 @@ def plot_single_performance_heatmap(
         plot_padding (float, optional): Padding between heatmap and axes (default: 0.1)
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueErrorHandler: If neither result_file nor result_dict is provided, or if the specified path does not exist
@@ -599,7 +599,7 @@ def plot_multiple_performance_heatmaps(
     group_label_right_margin: int = 1,
     average_value_left_margin: int = 1,
     plot_padding: float = 0.1,
-):
+) -> "Figure":
     """
     Create a heatmap showing the distribution of scores across metrics for multiple models.
 
@@ -633,7 +633,7 @@ def plot_multiple_performance_heatmaps(
         plot_padding (float): Padding between heatmap and axes labels and title
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueErrorHandler: If neither result_sources nor folder_path is provided, or if the specified path does not exist
@@ -705,7 +705,7 @@ def plot_multiple_confusion_matrices_combined(
     colorbar_label: str = "Score",
     colorbar_fontsize: int = 10,
     plot_padding: float = 0.1,
-):
+) -> "Figure":
     """
     Create a confusion matrix-style heatmap showing all models vs all performance metrics in a single visualization.
 
@@ -735,7 +735,7 @@ def plot_multiple_confusion_matrices_combined(
         plot_padding (float): Padding between heatmap and axes labels and title
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
     """
     visualizer = EvalVisualizer()
     fig = visualizer.plot_multiple_confusion_matrices_combined(
@@ -797,7 +797,7 @@ def plot_single_histogram_chart(
     legend_loc: Optional[str] = "best",
     bbox_to_anchor: Optional[str] = None,
     dpi: int = 300,
-):
+) -> "Figure":
     """
     Create a histogram for a single metric from evaluation results.
 
@@ -830,7 +830,7 @@ def plot_single_histogram_chart(
         dpi (int, optional): DPI for the output image
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueErrorHandler: If neither result_file nor result_dict is provided, or if the specified path does not exist
@@ -905,12 +905,12 @@ def plot_multiple_histogram_charts(
     is_normalized: bool = True,
     shared_bins: bool = True,
     dpi: int = 300,
-):
+) -> "Figure":
     """
     Create histograms for a single metric from evaluation results for multiple models.
 
     Args:
-        =result_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing evaluation results
+        result_sources (Union[List[str], List[Dict], str], optional): List of paths to JSON files or dictionaries containing evaluation results
         folder_path (Optional[str], optional): Path to folder containing JSON result files. Either result_sources or folder_path must be provided.
         output_file (str, optional): Path to save the output plot image
         model_names (Optional[List[str]]): Names of the models for display in the plot titles
@@ -945,7 +945,7 @@ def plot_multiple_histogram_charts(
         dpi (int, optional): DPI for the output image (default: 300)
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueErrorHandler: If neither result_sources nor folder_path is provided, or if the specified path does not exist
@@ -1032,7 +1032,7 @@ def plot_single_violin_chart(
         "normalized_recall",
         "normalized_f1_score",
     ],
-):
+) -> "Figure":
     """
     Create a violin plot for all metrics from a single model's evaluation results.
 
@@ -1071,7 +1071,7 @@ def plot_single_violin_chart(
         metrics_to_include (list, optional): Specific metrics to include in the plot (default: None - all available)
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueErrorHandler: If neither result_file nor result_dict is provided, or if the specified path does not exist
@@ -1147,7 +1147,7 @@ def plot_multiple_violin_charts(
     label_rotation: int = 45,
     inner: str = "box",
     dpi: int = 300,
-):
+) -> "Figure":
     """
     Create violin plots comparing multiple models on a single metric.
 
@@ -1186,7 +1186,7 @@ def plot_multiple_violin_charts(
         dpi (int, optional): Resolution for saved image (default: 300)
 
     Returns:
-        matplotlib.figure.Figure: The generated figure object
+        Figure: The generated matplotlib figure object
 
     Raises:
         ValueErrorHandler: If neither result_sources nor folder_path is provided, or if the specified path does not exist

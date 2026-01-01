@@ -119,7 +119,7 @@ if not _is_testing:
             main_property_keyword (str): The main property keyword to search for
             property_keywords (dict): Dictionary of property keywords for filtering
             source_list (list, optional): List of sources to process
-            **kwargs: Additional arguments to pass to the process_articles method
+            **kwargs (Any): Additional keyword arguments to pass to the process_articles method
         """
         scanner = ComProScanner(main_property_keyword=main_property_keyword)
         return scanner.process_articles(
@@ -135,7 +135,7 @@ if not _is_testing:
         Args:
             main_property_keyword (str): The main property keyword
             main_extraction_keyword (str): The main keyword to extract data for
-            **kwargs: Additional arguments to pass to the extract_composition_property_data method
+            **kwargs (Any): Additional keyword arguments to pass to the extract_composition_property_data method
         """
         scanner = ComProScanner(main_property_keyword=main_property_keyword)
         return scanner.extract_composition_property_data(

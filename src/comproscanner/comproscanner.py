@@ -11,7 +11,7 @@ Date: 02-04-2025
 import time
 import json
 import os
-from typing import Optional, Tuple, List, Dict, Union
+from typing import Optional, Tuple, List, Dict, Union, Any
 
 # Third-party imports
 from tqdm import tqdm
@@ -123,11 +123,12 @@ class ComProScanner:
         """Process articles for the main property keyword.
 
         Args:
-            property_keywords (dict, required): A dictionary of property keywords which will be used for filtering sentences and should look like the following:
-            {
-                "exact_keywords": ["example1", "example2"],
-                "substring_keywords": [" example 1 ", " example 2 "],
-            }
+            property_keywords (dict, required): A dictionary of property keywords which will be used for filtering sentences and should look like the following::
+
+                {
+                    "exact_keywords": ["example1", "example2"],
+                    "substring_keywords": [" example 1 ", " example 2 "],
+                }
             source_list (list, optional): List of sources to process the articles from. Defaults to ["elsevier", "wiley", "iop", "springer"] - currently supported publishers.
             folder_path (str, optional): Path to the folder containing PDFs. Defaults to None.
             sql_batch_size (int, optional): The number of rows to write to the database at once (Applicable only if is_sql_db is True). Defaults to 500.
@@ -298,9 +299,8 @@ class ComProScanner:
             is_extract_synthesis_data (bool, optional): A flag to indicate if the synthesis data should be extracted. Defaults to True.
             is_save_csv (bool, optional): A flag to indicate if the results should be saved in the CSV file. Defaults to False.
             is_save_relevant (bool, optional): A flag to indicate if only papers with composition-property data should be saved. If True, only saves papers with composition data. If False, saves all processed papers. Defaults to True.
-            llm (LLM, optional): An instance of the LLM class. Defaults to None.
             materials_data_identifier_query (str, optional): Query to identify the materials data. Must be an 'yes/no' answer. Defaults to "Is there any material chemical composition and corresponding {main_property_keyword} value mentioned in the paper? GIVE ONE WORD ANSWER. Either yes or no."
-            model (str: optional): The model to use (defaults to "gpt-4o-mini")
+            model (str, optional): The model to use (defaults to "gpt-4o-mini")
             api_base (str, optional): Base URL for standard API endpoints
             base_url (str, optional): Base URL for the model service
             api_key (str, optional): API key for the model service
@@ -319,7 +319,7 @@ class ComProScanner:
             rag_max_tokens (int, optional): Maximum tokens for completion for RAG. Defaults to 512.
             rag_top_k (int, optional): Top k value for sampling for RAG. Defaults to 3.
             rag_base_url (str, optional): Base URL for the RAG model service.
-            **flow_optional_args: Optional arguments for the MaterialsFlow class.
+            **flow_optional_args (Any): Optional keyword arguments for the MaterialsFlow class.
 
         Raises:
             ValueErrorHandler: If main_extraction_keyword is not provided.
@@ -553,7 +553,7 @@ class ComProScanner:
         is_save_composition_property_file: bool = True,
         composition_property_file: str = "composition_property.json",
         cleaning_strategy: str = "full",
-    ):
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Removes extra information (key-value pairs) provided by extracted agents. Finally, cleans the composition-property data based on periodic elements, abbreviations and resolves arithmetic calculations, fractions etc.
 
@@ -566,8 +566,9 @@ class ComProScanner:
             cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
 
         Returns:
-            Dict[str, Any]: Cleaned data based on selected strategy with relevant composition-property data.
-            Dict[str, Any]: All composition-property values collected from the cleaned data. (Returned only if is_save_composition_property_file is True)
+            tuple: A tuple containing:
+                - Dict[str, Any]: Cleaned data based on selected strategy with relevant composition-property data.
+                - Dict[str, Any]: All composition-property values collected from the cleaned data. (Returned only if is_save_composition_property_file is True)
         """
         if json_results_file is None:
             logger.error(
