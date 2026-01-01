@@ -35,31 +35,32 @@ There are several ways to contribute to ComProScanner:
 ### Setting Up Development Environment
 
 1. Fork the repository on GitHub
+
 2. Clone your fork locally:
 
-   ```bash
-   git clone https://github.com/slimeslab/ComProScanner.git
-   cd comproscanner
-   ```
+    ```bash
+    git clone https://github.com/slimeslab/ComProScanner.git
+    cd comproscanner
+    ```
 
 3. Create a virtual environment:
 
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    ```
 
 4. Install dependencies:
 
-   ```bash
-   pip install -e ".[dev]"
-   ```
+    ```bash
+    pip install -e ".[dev]"
+    ```
 
 5. Create a `.env` file based on `.env.example`:
 
-   ```bash
-   cp .env.example .env
-   ```
+    ```bash
+    cp .env.example .env
+    ```
 
 6. Add your API keys to the `.env` file
 
@@ -67,11 +68,11 @@ There are several ways to contribute to ComProScanner:
 
 1. Create a new branch for your feature or bugfix:
 
-   ```bash
-   git checkout -b feature/your-feature-name
-   # or
-   git checkout -b fix/your-bugfix-name
-   ```
+    ```bash
+    git checkout -b feature/your-feature-name
+    # or
+    git checkout -b fix/your-bugfix-name
+    ```
 
 2. Make your changes
 
@@ -81,9 +82,9 @@ There are several ways to contribute to ComProScanner:
 
 5. Push to your fork:
 
-   ```bash
-   git push origin feature/your-feature-name
-   ```
+    ```bash
+    git push origin feature/your-feature-name
+    ```
 
 6. Submit a pull request
 
@@ -136,27 +137,28 @@ Fixes #456
 
 1. **Before submitting**, ensure:
 
-   - All tests pass
-   - Code is formatted and linted
-   - Documentation is updated
-   - No merge conflicts with main branch
+    - All tests pass
+    - Code is formatted and linted
+    - Documentation is updated
+    - No merge conflicts with main branch
 
 2. **PR Description** should include:
 
-   - Clear description of changes
-   - Related issue numbers (e.g., "Closes #123")
-   - Screenshots (if applicable)
-   - Breaking changes (if any)
+    - Clear description of changes
+    - Related issue numbers (e.g., "Closes #123")
+    - Screenshots (if applicable)
+    - Breaking changes (if any)
 
 3. **Review Process**:
 
-   - At least one maintainer review is required
-   - Address all review comments
-   - Keep discussions focused and respectful
+    - At least one maintainer review is required
+    - Address all review comments
+    - Keep discussions focused and respectful
 
 4. **After Approval**:
-   - Maintainers will merge your PR
-   - Your contribution will be credited
+
+    - Maintainers will merge your PR
+    - Your contribution will be credited
 
 ## Reporting Bugs
 

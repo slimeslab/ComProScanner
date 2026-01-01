@@ -2,16 +2,66 @@
 
 ### Added
 
+- New parameter `apply_advanced_cleaning` added to data cleaning methods in `data_cleaner.py`. When set to `True`, it triggers the advanced cleaning pipeline.
+
+- Advanced composition cleaning methods in `data_cleaner.py`:
+
+  - `_remove_miller_indices()` - Removes crystal plane notations from chemical formulas
+  - `_remove_zero_coefficient_elements()` - Removes elements with zero coefficients
+  - `_normalize_coefficients()` - Removes trailing zeros from coefficients
+  - `_expand_leading_and_trailing_coefficients()` - Expands leading/trailing coefficient patterns
+  - `_expand_parenthetical_coefficients()` - Expands nested bracket coefficients
+
+- Enhanced documentation in `docs/usage/data-cleaning.md`:
+
+  - Added `apply_advanced_cleaning` parameter documentation
+  - Added Mermaid process flow diagram showing cleaning stages
+  - Added advanced cleaning examples with tables for each transformation type
+
+- Template for GitHub issues added to [.github/ISSUE_TEMPLATE](https://github.com/slimeslab/ComProScanner/tree/main/.github/ISSUE_TEMPLATE) for the following topics:
+
+  - bug reports
+  - feature requests
+  - documentation improvements
+  - support questions
+
 - [Changelog page](https://slimeslab.github.io/ComProScanner/about/changelog/) added in the documentation. Also, [CHANGELOG.md](https://github.com/slimeslab/ComProScanner/blob/main/CHANGELOG.md) linked in [README.md](https://github.com/slimeslab/ComProScanner/blob/main/README.md).
 
-- Added DeepWiki integration badge to README.md for community Q&A support: [Ask DeepWiki](https://deepwiki.com/slimeslab/ComProScanner)
-- Added arXiv preprint badge to README.md: [arXiv:2510.20362](https://arxiv.org/abs/2510.20362)
+- DeepWiki integration badge added to README.md for community Q&A support:
+
+  - [Ask DeepWiki](https://deepwiki.com/slimeslab/ComProScanner)
+
+- arXiv preprint badge added to README.md:
+
+  - [arXiv:2510.20362](https://arxiv.org/abs/2510.20362)
 
 - [CITATION.cff](https://github.com/slimeslab/ComProScanner/blob/main/CITATION.cff) added for standardized citation information based on the latest release and arXiv preprint.
 
+### Fixed
+
+- CSV progress tracking in `elsevier_processor.py`:
+
+  - DtypeWarning resolved by adding `dtype=str, low_memory=False` to `pd.read_csv()`
+  - Data loss issue fixed with immediate CSV persistence for processed articles
+  - Sleep delays optimized for batch writes
+
+- Type annotation warnings in documentation build (griffe/mkdocstrings):
+  - Added return type annotations to function signatures in `comproscanner.py`
+  - Added return type annotations to all visualization functions in `data_visualizer.py` and `eval_visualizer.py`
+  - Fixed parameter type format in docstrings from colon to comma notation
+  - Added `TYPE_CHECKING` conditional imports for matplotlib Figure type
+  - Fixed `**kwargs` type annotations across multiple modules
+
+- Numbered list formatting in `docs/about/contribution.md`:
+  - Fixed list continuation by using 4-space indentation for code blocks and nested lists
+  - Disabled format on save for Markdown files in `.vscode/settings.json`
+
+- GitHub Actions CI disk space issue:
+  - Added `--no-cache-dir` flag to pip install to reduce disk usage
+
 ### Changed
 
-- Moved the README badges section from html `p` tags to markdown format for better compatibility across platforms.
+- README badges section converted from HTML to markdown format for better compatibility across platforms.
 
 ## [0.1.4] - 02-12-2025
 

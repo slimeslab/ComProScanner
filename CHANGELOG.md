@@ -52,6 +52,13 @@
   - Added `TYPE_CHECKING` conditional imports for matplotlib Figure type
   - Fixed `**kwargs` type annotations across multiple modules
 
+- Numbered list formatting in `docs/about/contribution.md`:
+  - Fixed list continuation by using 4-space indentation for code blocks and nested lists
+  - Disabled format on save for Markdown files in `.vscode/settings.json`
+
+- GitHub Actions CI disk space issue:
+  - Added `--no-cache-dir` flag to pip install to reduce disk usage
+
 ### Changed
 
 - README badges section converted from HTML to markdown format for better compatibility across platforms.
