@@ -419,6 +419,25 @@ class ComProScanner:
 
             try:
                 try:
+                    if paper_data["comp_prop_text"].strip() == "":
+                        logger.warning(
+                            f"No composition-property text data for DOI: {paper_data['doi']}. Skipping..."
+                        )
+                        # add the DOI to checked DOIs file
+                        try:
+                            dir_path = os.path.dirname(checked_doi_list_file)
+                            if dir_path:
+                                os.makedirs(dir_path, exist_ok=True)
+                            with open(checked_doi_list_file, "a") as f:
+                                logger.info(
+                                    f"Adding DOI to checked list: {paper_data['doi']}"
+                                )
+                                f.write(f"{paper_data['doi']}\n")
+                        except Exception as e:
+                            logger.error(
+                                f"Error writing to checked DOIs file {checked_doi_list_file}: {str(e)}"
+                            )
+                        continue
                     flow = DataExtractionFlow(
                         doi=paper_data["doi"],
                         main_extraction_keyword=main_extraction_keyword,
