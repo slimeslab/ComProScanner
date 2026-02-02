@@ -1,0 +1,423 @@
+{
+  "10.1016/j.ceramint.2024.10.251": {
+    "composition_data": {
+      "compositions_property_values": {
+        "barium zirconate titanate (BZT)": 235,
+        "BaZr x Ti 1-x O 3": 235,
+        "BaTiO3": "",
+        "1–3 BZT-PC composite": 133,
+        "0–3 BZT-PC composite": 27
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3-based"
+    },
+    "synthesis_data": {
+      "method": "mixed oxide method (solid-state reaction)",
+      "precursors": [
+        "barium carbonate",
+        "zirconium dioxide",
+        "titanium dioxide"
+      ],
+      "steps": [
+        "BZT powder was prepared using the mixed oxide method by calcining barium carbonate, zirconium dioxide, and titanium dioxide at 1200 °C for 2 h.",
+        "BZT powder was pressed into a disc shape of ∼15 mm diameter and a thickness of ∼1.5 mm using an applied pressure of ∼85 MPa.",
+        "BZT discs were sintered at 1450 °C for 2 h.",
+        "BZT discs (dimension ∼12 mm and thickness ∼1.5 mm) were poled using an electric field of 1.5 kV/mm at 50 °C for 30 min in a silicone oil chamber.",
+        "Poled BZT ceramic was cut using a diamond saw in a parallel direction along with the polarization axis (cut and fill method).",
+        "Mixtures of Portland cement powder, water, epoxy resin (bisphenol-A-(epichlorhydrin)) and hardener (Triethylenetetramine) were prepared as the matrix phase. The water to cement ratio (w/c) used is 0.35 and the volume ratio of epoxy resin and hardener is 7.5.",
+        "The matrix mixture was filled into the cut areas of the BZT ceramic.",
+        "The samples were then cured in a controlled chamber at 60 °C for 5 days at 98 %RH."
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "SEM",
+        "EDS",
+        "optical microscopy",
+        "ultrasonic thickness meter",
+        "LCR meter",
+        "d33 meter"
+      ]
+    }
+  },
+  "10.1016/j.jallcom.2024.177560": {
+    "composition_data": {
+      "compositions_property_values": {
+        "0.3PbTiO3–0.65PbZrO3–0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3–5 wt% (La2O3+Nb2O5)": 585,
+        "0.3PT–0.65PZ–0.05BLZT– x wt% LN": 585
+      },
+      "property_unit": "pC/N",
+      "family": "Pb(Zr, Ti)O3-based"
+    },
+    "synthesis_data": {
+      "method": "solid-state synthesis",
+      "precursors": [
+        "PbO",
+        "TiO2",
+        "ZrO2",
+        "Bi2O3",
+        "La2O3",
+        "ZnO",
+        "Nb2O5"
+      ],
+      "steps": [
+        "The raw powders of La2O3 and Nb2O5 mixed at a mass ratio of 3:2 were ball-milled in ethanol for 12 hours.",
+        "The mixture of La2O3 and Nb2O5 was sieved to prepare the LN additive.",
+        "High-purity raw powders of PbO, TiO2, ZrO2, Bi2O3, and La2O3 were weighed based on the 0.3PT–0.65PZ–0.05BLZT formula.",
+        "The mixed powders were combined with ethanol and ball-milled for 16 hours.",
+        "The mixtures were dried in an oven at 80 °C for 1–2 hours.",
+        "The dried mixtures were calcined at 820 °C for 2 hours.",
+        "The synthesized powders were weighted based on the PT–PZ–BLZT– x LN formula.",
+        "The powders were subjected to secondary ball milling, drying, and sieving processes.",
+        "The granulated powders were pressed into 12 mm thick sheets under the granulation of 5% polyvinyl alcohol.",
+        "The sheets were sintered at 600 °C for 4 hours to remove the binder.",
+        "The sheets were sintered at 1230 °C for 2 hours to synthesize the ceramic samples.",
+        "The ceramic surfaces were polished to maintain a uniform thickness of approximately 0.3 mm.",
+        "Silver electrodes were applied to a ceramic sheet."
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "Raman spectroscopy",
+        "piezoelectric coefficient d33 measurement",
+        "impedance analyzer (Qm, kp)",
+        "dielectric temperature spectrometer",
+        "ferroelectric analyzer (P-E, S-E loops)",
+        "PFM",
+        "SEM",
+        "EDS"
+      ]
+    }
+  },
+  "10.1016/j.jallcom.2024.177690": {
+    "composition_data": {
+      "compositions_property_values": {
+        "(K0.5Na0.5)NbO3": "",
+        "Eu3+-doped KNN (KNEN)": 135,
+        "Pb(Zr,Ti)O3 (PZT)": "",
+        "K1-xNaxNbO3": "",
+        "(K0.5Na0.5)1-xEuxNbO3": "",
+        "KNEN": 135
+      },
+      "property_unit": "pC/N",
+      "family": "KNN-based"
+    },
+    "synthesis_data": {
+      "method": "conventional solid-state reaction method",
+      "precursors": [
+        "K2CO3",
+        "Na2CO3",
+        "Nb2O5",
+        "Eu2O3"
+      ],
+      "steps": [
+        "K2CO3 and Na2CO3 powders were dried at 150 °C for 1 h before weighing.",
+        "Powders were weighed according to the compositions ((K0.5Na0.5)xEu0.01NbO3 with x = 0.99, 1.00, and 1.01).",
+        "The weighed powders were milled with zirconia balls in ethanol for 24 hours.",
+        "The milled mixture was dried at 100 °C.",
+        "The dried powder was calcined at 850 °C for 4 h.",
+        "Polyvinyl alcohol (PVA) was added to the calcined powder as a binder.",
+        "The green ceramics were prepared by uniaxial pressing into pellets with a thickness of 1 mm and a diameter of 10 mm.",
+        "The green ceramics were covered with the same powder prior to sintering to prevent the volatilization of K and Na.",
+        "Ceramics were heated to 850 °C for 1 h to effectively burn out the PVA binder.",
+        "Ceramics were sintered at 1170 °C for 3 h."
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "SEM",
+        "EDS",
+        "Ferroelectric hysteresis loop measurement",
+        "Piezoelectric coefficient (d33) measurement",
+        "Impedance analysis",
+        "Dielectric constant measurement",
+        "Dielectric loss measurement",
+        "Photoluminescence (PL) spectroscopy",
+        "Photoluminescence excitation (PLE) spectroscopy",
+        "Diffuse reflectance spectroscopy",
+        "UV-Vis spectroscopy",
+        "X-ray photoelectron spectroscopy (XPS)"
+      ]
+    }
+  },
+  "10.1016/j.jallcom.2024.178322": {
+    "composition_data": {
+      "compositions_property_values": {
+        "(1-x)(0.7BiFeO3-0.3BaTiO3)-x(Bi0.5Na0.5)TiO3-5 mol%Bi2O3": 202,
+        "0.7BiFeO3-0.3BaTiO3": 116,
+        "BF-33BT": 454
+      },
+      "property_unit": "pC/N",
+      "family": "BiFeO3-BaTiO3 based"
+    },
+    "synthesis_data": {
+      "method": "solid-state reaction method",
+      "precursors": [
+        "Bi2O3",
+        "Fe2O3",
+        "BaCO3",
+        "TiO2",
+        "Na2CO3"
+      ],
+      "steps": [
+        "A series of (1-x)(0.7BiFeO3-0.3BaTiO3)-x(Bi0.5Na0.5)TiO3-5 mol% Bi2O3 (x = 0.000, 0.001, 0.002, 0.003) ceramics were prepared using the traditional solid-state reaction method.",
+        "The detail experimental procedures were listed in Supporting materials."
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "Raman spectroscopy",
+        "XPS",
+        "SEM",
+        "PFM"
+      ]
+    }
+  },
+  "10.1016/j.jallcom.2025.178686": {
+    "composition_data": {
+      "compositions_property_values": {
+        "0.06PSN-0.59PMN-0.35PT": 665,
+        "0.15PSN-0.48PMN-0.37PT": 620,
+        "0.29PSN-0.32PMN-0.39PT": 585,
+        "0.43PSN-0.17PMN-0.40PT": 650,
+        "0.29PSN-0.34PMN-0.37PT": 640,
+        "0.15PSN-0.51PMN-0.34PT": 529,
+        "0.15PSN-0.51PMN-0.34PT/0.05 mol ZnO": 590
+      },
+      "property_unit": "pC/N",
+      "family": "PSN-PMN-PT"
+    },
+    "synthesis_data": {
+      "method": "solid state reaction method",
+      "precursors": [
+        "MgO",
+        "Sc2O3",
+        "Nb2O5",
+        "TiO2",
+        "PbO"
+      ],
+      "steps": [
+        "MgO, Sc2O3 and Nb2O5 were used to synthesize the precursors MgNb2O6 (fabricated at 1000 °C) and ScNbO4 (fabricated at 1150 °C).",
+        "The MgNb2O6, ScNbO4, TiO2 and PbO powders were selected and weighed in accordance with the stoichiometric proportion and 2 mol% PbO extra was added to make up for the vaporization of PbO during sintering.",
+        "Alcohol and the above oxide powders were mixed in a 1:1 ratio by wet-milling for 24 h.",
+        "The combined powder was subjected to calcination at 800 − 850 °C for 2 h.",
+        "The calcined mixture was mixed again for 12 h.",
+        "The powder was conglutinated with a solution of polyvinyl alcohol (PVA) and pressed into tablets under 8 MPa.",
+        "The PVA was burned off at 550 °C for a duration of 2 h.",
+        "The ceramic tablets were covered by powders with the same composition to maintain a Pb-rich atmosphere and sintered at 1200 − 1280 °C for 4 h.",
+        "The polished samples (cylindrical disks with diameters of 11.40 – 11.54 mm and thickness of 0.74 – 0.90 mm) were coated with sliver electrodes on both sides in preparation for electrical tests.",
+        "The poling temperature, duration and electric field are 130 °C, 15 min and 30 kV/cm, respectively."
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "SEM",
+        "Archimedes method",
+        "quasi-static piezoelectric meter",
+        "LCR meter",
+        "ferroelectric test system",
+        "impedance analyzer",
+        "thermal stimulated depolarization current measurement",
+        "resonant method"
+      ]
+    }
+  },
+  "10.1016/j.jece.2024.115049": {
+    "composition_data": {
+      "compositions_property_values": {
+        "BiFeO3": 17.04,
+        "CdS": 20.24
+      },
+      "property_unit": "pC/N",
+      "family": "Perovskite oxide / Metal sulfide"
+    },
+    "synthesis_data": {
+      "method": "liquid-phase precipitation method",
+      "precursors": [
+        "Bi(NO3)3",
+        "Fe(NO3)3·9H2O",
+        "triammonium citrate",
+        "cadmium chloride",
+        "sodium citrate",
+        "ammonia (NH3·H2O)",
+        "thiourea"
+      ],
+      "steps": [
+        "BiFeO3 (BFO) powders preparation: 0.011 mol Bi(NO3)3 and 0.01 mol Fe(NO3)3·9H2O were dissolved into 100 mL of deionized water, respectively, to obtain an aqueous solution of 0.11 M bismuth nitrate and 0.1 M iron nitrate.",
+        "3 mL of nitric acid (68 %) was gradually added to the bismuth nitrate solution during constant stirring until the bismuth nitrate was completely dissolved.",
+        "The two solutions were mixed and 0.02 mol of triammonium citrate was added as the complexing agent and stirred for 30 min.",
+        "The gel of the reaction intermediate was obtained by continuous stirring at 90°C until the water was completely evaporated.",
+        "The gel was calcined at 550°C for 2 h to obtain pure phase BFO powder particles.",
+        "CdS nanosheets preparation: 10 mL of 0.3 M cadmium chloride solution was added to 50 mL of 0.1 M sodium citrate solution and stirred at room temperature for 20 min.",
+        "3 mL of concentrated ammonia (NH3·H2O 28 %) and 10 mL of 0.6 M thiourea solution were added in sequence.",
+        "The mixed solution was then reacted in a water bath at 60 °C for 2.5 h.",
+        "After being cooled naturally, the precipitate was collected by centrifugation, rinsed several times with deionized water and anhydrous ethanol to remove impurities, and dried in an oven at 60°C to obtain CdS nanosheets.",
+        "BFO/CdS samples preparation: 0.6 g of BFO was weighed into 60 mL of 0.1 M sodium citrate solution, and 1.38 mL of 0.3 M cadmium chloride solution was added according to 10 wt% of BFO, and stirred at room temperature for 3 h.",
+        "3.6 mL of concentrated ammonia (NH3·H2O, 28 %) and 1.38 mL of 0.9 M thiourea solution were slowly added.",
+        "The reaction was then carried out at 60 °C in a water bath for 2.5 h.",
+        "The precipitates were centrifuged after natural cooling.",
+        "The precipitate was collected, and rinsed several times with deionised water and anhydrous ethanol, and dried in an oven at 60°C to obtain 10 % CdS/BiFeO3 (BC10) samples.",
+        "Cadmium chloride solution and thiourea solution were further increased in stoichiometric ratios of the corresponding volume solutions to obtain 20 % CdS/BiFeO3 (BC20) and 30 % CdS/BiFeO3 (BC30)."
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "SEM",
+        "TEM",
+        "XPS",
+        "N2 adsorption-desorption",
+        "PL",
+        "EPR",
+        "UV-Vis",
+        "photocurrent",
+        "EIS",
+        "Mott-Schottky",
+        "piezoelectric coefficient (d33)",
+        "I-V measurement"
+      ]
+    }
+  },
+  "10.1016/j.jeurceramsoc.2024.117101": {
+    "composition_data": {
+      "compositions_property_values": {
+        "CaBi2Nb2O9": 6.5,
+        "Ca0.92(Li0.5Ce0.5)0.08Bi2Nb1.97(W2/3Mo1/3)0.03O9": 16.1,
+        "CLCBN-3WM": 16.1
+      },
+      "property_unit": "pC/N",
+      "family": "Aurivillius-type / Bismuth layer-structured ferroelectrics (BLSF)"
+    },
+    "synthesis_data": {
+      "method": "solid-state reaction",
+      "precursors": [
+        "CaCO3",
+        "Li2CO3",
+        "CeO2",
+        "Bi2O3",
+        "Nb2O5",
+        "WO3",
+        "MoO3"
+      ],
+      "steps": [
+        "Raw materials were precisely weighed according to the stoichiometric ratios of CLCBN-100xWM.",
+        "Ethanol was utilized as the dispersion medium for ball milling for 8 h.",
+        "The mixed raw materials were subsequently dried and calcined at 850 °C for 4 h.",
+        "The calcined powder was ground again under the same condition.",
+        "The obtained powder was then dried, ground, and compressed into a disk with a diameter of 8 mm under a pressure of 250 MPa.",
+        "The ceramics were obtained by sintering at a temperature of 1100 °C for 4 h.",
+        "For samples requiring electrical property testing, both sides were polished and coated with electrodes made of either silver or platinum."
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "SEM",
+        "Raman spectroscopy",
+        "XPS",
+        "LCR bridge",
+        "Ferroelectric test system",
+        "Quasi-static piezoelectric coefficient meter",
+        "Electrochemical workstation",
+        "UV-Vis absorption spectroscopy",
+        "TEM",
+        "HR-TEM",
+        "EDS"
+      ]
+    }
+  },
+  "10.1016/j.matchemphys.2024.129999": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Ba0.85Ca0.15Zr0.1Ti0.9O3": 520
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3-based"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    }
+  },
+  "10.1016/j.mtcomm.2024.111118": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi5Ti3FeO15": 7,
+        "Bi5-xHoxTi3FeO15": 23.1,
+        "BTF-4Ho": 23.1,
+        "Bi5Ti3FeO15-CaBi4Ti4O15": 18.6,
+        "(Na, Ce) co-modified Bi5Ti3FeO15": 13.4,
+        "Mn-substituted Bi5Ti3FeO15": 23,
+        "BTF-4Mn": 23,
+        "W-substituted Bi5Ti3FeO15": 24.3,
+        "CaBi2Nb2O9": "",
+        "SrBi4Ti4O15": "",
+        "Bi0.5Na0.5TiO3": "",
+        "Bi5-xHoxTi3FeO15 (BTF-100xHo)": 23.1
+      },
+      "property_unit": "pC/N",
+      "family": "Bismuth Layer-Structured Ferroelectrics (BLSFs)"
+    },
+    "synthesis_data": {
+      "method": "conventional solid-state reaction",
+      "precursors": [
+        "Bi2O3",
+        "Fe2O3",
+        "TiO2",
+        "Ho2O3"
+      ],
+      "steps": [
+        "The weighed chemicals were wet-milled in polyethylene bottles with ZrO2 balls for 12 h in ethanol.",
+        "The milled mixture was calcined at 750 °C for 3 hours.",
+        "The calcined powders were then milled, dried, ground, and granulated with a polyvinyl alcohol (PVA) binder.",
+        "The granulated powders were pressed into discs with diameters of 12.5 mm and thicknesses of 1.0 mm at a pressure of 150 MPa.",
+        "The pellets were subsequently heated to 650 °C for 60 min to burn out the binder.",
+        "Finally, the samples were sintered at 1080 °C for 3 h.",
+        "The sintered samples were polished to a thickness of approximately 0.5 mm.",
+        "Silver paste was screen-printed onto the two parallel polished surfaces, followed by firing at 570 °C for 30 min."
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "FE-SEM",
+        "d33 meter",
+        "impedance analyzer",
+        "ferroelectric hysteresis measurement"
+      ]
+    }
+  },
+  "10.1016/j.mtcomm.2025.111645": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Ba0.92Ca0.08Zr0.05Ti0.95O3-0.8%La-0.7%Tm": 181,
+        "Ba0.98–3x/2BixCa0.02Zr0.02Ti0.976Cu0.008O3": "",
+        "Ba0.85Ca0.15Zr0.1(Ti1−xNix)0.9O3": "",
+        "(Ba0.85Ca0.15)(Zr0.1Ti0.9)O3": 420,
+        "Ba0.85Ca0.15Zr0.1(Ti1-xMnx)0.9O3": "",
+        "Ba0.98Ca0.02Zr0.02Ti0.98O3-xPr": ""
+      },
+      "property_unit": "pC/N",
+      "family": "BCZT-based"
+    },
+    "synthesis_data": {
+      "method": "sol-gel",
+      "precursors": [
+        "Ba(CH3COO)2",
+        "Ca(NO3)2·4H2O",
+        "Zr(NO3)4·5H2O",
+        "Ti(OC4H9)4",
+        "La(NO3)3·nH2O",
+        "Tm(NO3)3·5H2O"
+      ],
+      "steps": [
+        "High-purity raw precursors were added to an Erlenmeyer flask, and then ethanol was added to react for 3 h to obtain polymer solutions.",
+        "The solutions were placed in an oven at 120 °C for 10 h.",
+        "The dried material was calcined at 900 °C for 2 h in a muffle furnace to form precursor powders.",
+        "The powders were mixed with 2 wt% polyvinyl alcohol (PVA) as an organic binder (weight ratio of PVA to powders was 1:120).",
+        "The mixture was formed into disks with a diameter of 20 mm under 20 MPa pressure with a retention time of 150 s.",
+        "The disks were embedded in alumina and sintered at 1300 °C for 4 h in air using a heating rate of 5 °C/min."
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "XPS",
+        "SEM",
+        "Dielectric testing",
+        "LCR instrument",
+        "Polarization-electric field (P-E) hysteresis loops measurement",
+        "Piezoelectric constant (d33) measurement"
+      ]
+    }
+  }
+}

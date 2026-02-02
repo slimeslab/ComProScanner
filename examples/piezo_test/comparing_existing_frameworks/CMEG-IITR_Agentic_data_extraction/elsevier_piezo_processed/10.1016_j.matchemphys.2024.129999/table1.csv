@@ -1,0 +1,14 @@
+1,PA,Weighed polarization of elements at A site [ 37 ]
+2,PB,Weighed polarization of elements at B site
+3,ENA,Weighed MB Electronegativity of elements at A site [ 38 ]
+4,ENB,Weighed MB Electronegativity of elements at B site
+5,RA,Weighed Ionic radii of elements at A site [ 39 ]
+6,RB,Weighed Ionic radii of elements at B site
+7,VA,Weighed Atomic volume of elements at A site [ 40 ]
+8,VB,Weighed Atomic volume of elements at B site
+9,At. Comp.,Weighed Atomic mass of composition
+10,At. Num.,Weighed Atomic number of compositions
+11,CRSA,Weighed Core radii sum of A site elements [ 38 ]
+12,CRSB,Weighed Core radii sum of B site elements
+13,NTC,"Effect of doping on T C ε (−1,0,1)"
+14,T,Temperature (for dielectric spectrum prediction)

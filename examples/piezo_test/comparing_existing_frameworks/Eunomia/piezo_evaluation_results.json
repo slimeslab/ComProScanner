@@ -1,0 +1,2446 @@
+{
+  "extraction_agent_model_name": "DeepSeek-V3.2",
+  "overall_accuracy": 0.6443939393939393,
+  "overall_composition_accuracy": 0.6819999999999999,
+  "overall_synthesis_accuracy": 0.6067878787878788,
+  "total_items": 10,
+  "absolute_classification_metrics": {
+    "true_positives": 60,
+    "false_positives": 104,
+    "false_negatives": 217,
+    "precision": 0.36585365853658536,
+    "recall": 0.21660649819494585,
+    "f1_score": 0.27210884353741494
+  },
+  "normalized_classification_metrics": {
+    "true_positives": 2.938568443051202,
+    "false_positives": 6.271069935811315,
+    "false_negatives": 7.511086729362592,
+    "precision": 0.31907533414076833,
+    "recall": 0.28121200121596107,
+    "f1_score": 0.29894954621707914
+  },
+  "item_results": {
+    "10.1016/j.ceramint.2024.10.251": {
+      "overall_match": false,
+      "field_scores": {
+        "composition_data": 0.6000000000000001,
+        "synthesis_data": 0.6000000000000001
+      },
+      "overall_score": 0.6000000000000001,
+      "absolute_classification_metrics": {
+        "true_positives": 4,
+        "false_positives": 11,
+        "false_negatives": 24,
+        "precision": 0.26666666666666666,
+        "recall": 0.14285714285714285,
+        "f1_score": 0.18604651162790697
+      },
+      "normalized_classification_metrics": {
+        "true_positives": 0.2,
+        "false_positives": 0.41250000000000003,
+        "false_negatives": 0.8125,
+        "precision": 0.32653061224489793,
+        "recall": 0.19753086419753088,
+        "f1_score": 0.24615384615384617
+      },
+      "details": {
+        "composition_data": {
+          "property_unit": {
+            "match_value": 1,
+            "reference": "pC/N",
+            "test": "pC/N"
+          },
+          "family": {
+            "match_value": 0,
+            "reference": "BZT",
+            "test": "Perovskite"
+          },
+          "compositions_property_values": {
+            "reference": {
+              "0.6BaZr0.4Ti0.6O3, 0 vol% epoxy resin": null,
+              "0.6BaZr0.4Ti0.6O3, 3 vol% epoxy resin": null,
+              "0.6BaZr0.4Ti0.6O3, 5 vol% epoxy resin": null,
+              "0.6BaZr0.4Ti0.6O3, 7 vol% epoxy resin": null,
+              "0.5BaZr0.5Ti0.5O3, 0 vol% epoxy resin": 79,
+              "0.5BaZr0.5Ti0.5O3, 3 vol% epoxy resin": 81,
+              "0.5BaZr0.5Ti0.5O3, 5 vol% epoxy resin": 82,
+              "0.5BaZr0.5Ti0.5O3, 7 vol% epoxy resin": 83,
+              "0.4BaZr0.6Ti0.4O3, 0 vol% epoxy resin": null,
+              "0.4BaZr0.6Ti0.4O3, 3 vol% epoxy resin": null,
+              "0.4BaZr0.6Ti0.4O3, 5 vol% epoxy resin": null,
+              "0.4BaZr0.6Ti0.4O3, 7 vol% epoxy resin": null
+            },
+            "test": {
+              "BaTiO3": 191.0,
+              "Pb(Zr0.52Ti0.48)O3": 274.0
+            },
+            "key_matches": [
+              {
+                "reference_key": "0.5BaZr0.5Ti0.5O3, 0 vol% epoxy resin",
+                "test_key": "none",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.5BaZr0.5Ti0.5O3, 3 vol% epoxy resin",
+                "test_key": "none",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.5BaZr0.5Ti0.5O3, 5 vol% epoxy resin",
+                "test_key": "none",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.5BaZr0.5Ti0.5O3, 7 vol% epoxy resin",
+                "test_key": "none",
+                "match_value": 0
+              }
+            ],
+            "value_matches": [
+              {
+                "reference_key": "0.5BaZr0.5Ti0.5O3, 0 vol% epoxy resin",
+                "test_key": "none",
+                "reference_value": 79,
+                "test_value": null,
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.5BaZr0.5Ti0.5O3, 3 vol% epoxy resin",
+                "test_key": "none",
+                "reference_value": 81,
+                "test_value": null,
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.5BaZr0.5Ti0.5O3, 5 vol% epoxy resin",
+                "test_key": "none",
+                "reference_value": 82,
+                "test_value": null,
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.5BaZr0.5Ti0.5O3, 7 vol% epoxy resin",
+                "test_key": "none",
+                "reference_value": 83,
+                "test_value": null,
+                "match_value": 0
+              }
+            ],
+            "pair_matches": [
+              {
+                "reference_pair": {
+                  "0.5BaZr0.5Ti0.5O3, 0 vol% epoxy resin": 79
+                },
+                "test_pair": {},
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.5BaZr0.5Ti0.5O3, 3 vol% epoxy resin": 81
+                },
+                "test_pair": {},
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.5BaZr0.5Ti0.5O3, 5 vol% epoxy resin": 82
+                },
+                "test_pair": {},
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.5BaZr0.5Ti0.5O3, 7 vol% epoxy resin": 83
+                },
+                "test_pair": {},
+                "match_value": 0
+              }
+            ],
+            "total_ground_truth_keys": 4,
+            "total_match": 0,
+            "missing_keys": [
+              "0.5BaZr0.5Ti0.5O3, 0 vol% epoxy resin",
+              "0.5BaZr0.5Ti0.5O3, 3 vol% epoxy resin",
+              "0.5BaZr0.5Ti0.5O3, 5 vol% epoxy resin",
+              "0.5BaZr0.5Ti0.5O3, 7 vol% epoxy resin"
+            ],
+            "extra_keys": [
+              "BaTiO3",
+              "Pb(Zr0.52Ti0.48)O3"
+            ],
+            "key_match_ratio": 0.0,
+            "value_match_ratio": 0.0,
+            "pair_match_ratio": 0.0,
+            "overall_match_ratio": 0.0,
+            "similarity_score": 0.0,
+            "match": false
+          }
+        },
+        "synthesis_data": {
+          "method": {
+            "match_value": 0,
+            "reference": "mixed oxide method with composite fabrication",
+            "test": "Solid state reaction",
+            "similarity": 0.0,
+            "match": false
+          },
+          "precursors": {
+            "reference": [
+              "BaCO3",
+              "ZrO2",
+              "TiO2",
+              "Portland cement powder",
+              "epoxy resin",
+              "hardener"
+            ],
+            "test": [
+              "BaCO3",
+              "TiO2"
+            ],
+            "matches": [
+              {
+                "reference_item": "BaCO3",
+                "test_item": "BaCO3",
+                "match_value": 1
+              },
+              {
+                "reference_item": "TiO2",
+                "test_item": "TiO2",
+                "match_value": 1
+              }
+            ],
+            "total_ground_truth_items": 6,
+            "total_match": 2,
+            "missing_items": [
+              "ZrO2",
+              "Portland cement powder",
+              "epoxy resin",
+              "hardener"
+            ],
+            "extra_items": [],
+            "similarity": 0.3333333333333333,
+            "match": false
+          },
+          "characterization_techniques": {
+            "reference": [
+              "ultrasonic thickness meter",
+              "optical microscope",
+              "SEM",
+              "EDX",
+              "LCR meter",
+              "d33 meter"
+            ],
+            "test": [
+              "XRD",
+              "SEM",
+              "AFM"
+            ],
+            "matches": [
+              {
+                "reference_item": "SEM",
+                "test_item": "SEM",
+                "match_value": 1
+              }
+            ],
+            "total_ground_truth_items": 6,
+            "total_match": 1,
+            "missing_items": [
+              "ultrasonic thickness meter",
+              "optical microscope",
+              "EDX",
+              "LCR meter",
+              "d33 meter"
+            ],
+            "extra_items": [
+              "XRD",
+              "AFM"
+            ],
+            "similarity": 0.16666666666666666,
+            "match": false
+          },
+          "steps": {
+            "match_value": 0.25,
+            "reference_steps": [
+              "BZT powder was prepared by calcining barium carbonate, zirconium dioxide and titanium dioxide at 1200\u00b0C for 2 h using mixed oxide method.",
+              "BZT powder was pressed into disc shape of ~15 mm diameter and thickness of ~1.5 mm at applied pressure of ~85 MPa.",
+              "BZT discs were sintered at 1450\u00b0C for 2 h.",
+              "BZT discs (dimension ~12 mm and thickness ~1.5 mm) were poled using electric field of 1.5 kV/mm at 50\u00b0C for 30 min in silicone oil chamber.",
+              "Poled BZT ceramic was cut using diamond saw in parallel direction along polarization axis using cut and fill method.",
+              "Mixtures of Portland cement powder, water (w/c ratio 0.35), epoxy resin and hardener (volume ratio 7.5) were prepared as matrix phase.",
+              "Mixture was filled into cut areas of BZT ceramic to create 1-3 connectivity composites with 40, 50, and 60 vol% BZT and 0, 3, 5, and 7 vol% epoxy resin.",
+              "Samples were cured in controlled chamber at 60\u00b0C for 5 days at 98% RH."
+            ],
+            "test_steps": [
+              "Mixing",
+              "Calcination",
+              "Sintering"
+            ],
+            "steps_match": "false"
+          }
+        }
+      }
+    },
+    "10.1016/j.matchemphys.2024.129999": {
+      "overall_match": false,
+      "field_scores": {
+        "composition_data": 0.6000000000000001,
+        "synthesis_data": 0.525
+      },
+      "overall_score": 0.5625,
+      "absolute_classification_metrics": {
+        "true_positives": 2,
+        "false_positives": 11,
+        "false_negatives": 13,
+        "precision": 0.15384615384615385,
+        "recall": 0.13333333333333333,
+        "f1_score": 0.14285714285714288
+      },
+      "normalized_classification_metrics": {
+        "true_positives": 0.125,
+        "false_positives": 1.0999999999999999,
+        "false_negatives": 0.875,
+        "precision": 0.10204081632653063,
+        "recall": 0.125,
+        "f1_score": 0.11235955056179776
+      },
+      "details": {
+        "composition_data": {
+          "property_unit": {
+            "match_value": 1,
+            "reference": "pC/N",
+            "test": "pC/N"
+          },
+          "family": {
+            "match_value": 0,
+            "reference": "BaTiO3",
+            "test": "PZT"
+          },
+          "compositions_property_values": {
+            "reference": {
+              "Ba0.85Ca0.15Zr0.1Ti0.9O3": 520
+            },
+            "test": {
+              "Pb(Zr0.52Ti0.48)O3": 274.0,
+              "BaTiO3": 191.0
+            },
+            "key_matches": [
+              {
+                "reference_key": "Ba0.85Ca0.15Zr0.1Ti0.9O3",
+                "test_key": "None",
+                "match_value": 0
+              }
+            ],
+            "value_matches": [
+              {
+                "reference_key": "Ba0.85Ca0.15Zr0.1Ti0.9O3",
+                "test_key": "None",
+                "reference_value": 520,
+                "test_value": null,
+                "match_value": 0
+              }
+            ],
+            "pair_matches": [
+              {
+                "reference_pair": {
+                  "Ba0.85Ca0.15Zr0.1Ti0.9O3": 520
+                },
+                "test_pair": {},
+                "match_value": 0
+              }
+            ],
+            "total_ground_truth_keys": 1,
+            "total_match": 0,
+            "missing_keys": [
+              "Ba0.85Ca0.15Zr0.1Ti0.9O3"
+            ],
+            "extra_keys": [
+              "Pb(Zr0.52Ti0.48)O3",
+              "BaTiO3"
+            ],
+            "key_match_ratio": 0.0,
+            "value_match_ratio": 0.0,
+            "pair_match_ratio": 0.0,
+            "overall_match_ratio": 0.0,
+            "similarity_score": 0.0,
+            "match": false
+          }
+        },
+        "synthesis_data": {
+          "method": {
+            "match_value": 0,
+            "reference": "solvothermal",
+            "test": "Sol-gel",
+            "similarity": 0.0,
+            "match": false
+          },
+          "precursors": {
+            "reference": [
+              "BaTiO3",
+              "Li compound"
+            ],
+            "test": [
+              "Pb(CH3COO)2.3H2O",
+              "Zr(CH3COO)4",
+              "Ti(OC3H7)4"
+            ],
+            "matches": [],
+            "total_ground_truth_items": 2,
+            "total_match": 0,
+            "missing_items": [
+              "BaTiO3",
+              "Li compound"
+            ],
+            "extra_items": [
+              "Pb(CH3COO)2.3H2O",
+              "Zr(CH3COO)4",
+              "Ti(OC3H7)4"
+            ],
+            "similarity": 0.0,
+            "match": false
+          },
+          "characterization_techniques": {
+            "reference": [
+              "XRD",
+              "Rietveld refinement",
+              "EDS",
+              "TEM",
+              "SAED",
+              "dielectric impedance spectroscopy"
+            ],
+            "test": [
+              "XRD",
+              "SEM",
+              "AFM"
+            ],
+            "matches": [
+              {
+                "reference_item": "XRD",
+                "test_item": "XRD",
+                "match_value": 1
+              }
+            ],
+            "total_ground_truth_items": 6,
+            "total_match": 1,
+            "missing_items": [
+              "Rietveld refinement",
+              "EDS",
+              "TEM",
+              "SAED",
+              "dielectric impedance spectroscopy"
+            ],
+            "extra_items": [
+              "SEM",
+              "AFM"
+            ],
+            "similarity": 0.16666666666666666,
+            "match": false
+          },
+          "steps": {
+            "match_value": 0.0,
+            "reference_steps": [
+              "Li-doped BaTiO3 ceramics were synthesized with varying weight percentages of Li (0 wt%, 2 wt%, and 4 wt%) using solvothermal approach",
+              "Powders were pressed into pellets for dielectric measurements",
+              "Pellets were sintered in closed environment at 1100\u00b0C for 2 hours",
+              "Care was taken to minimize lithium loss during sintering by covering samples with crucibles"
+            ],
+            "test_steps": [
+              "Mixing of precursors",
+              "Drying",
+              "Calcination",
+              "Sintering"
+            ],
+            "steps_match": "false"
+          }
+        }
+      }
+    },
+    "10.1016/j.mtcomm.2024.111118": {
+      "overall_match": false,
+      "field_scores": {
+        "composition_data": 0.6000000000000001,
+        "synthesis_data": 0.56
+      },
+      "overall_score": 0.5800000000000001,
+      "absolute_classification_metrics": {
+        "true_positives": 3,
+        "false_positives": 21,
+        "false_negatives": 35,
+        "precision": 0.125,
+        "recall": 0.07894736842105263,
+        "f1_score": 0.0967741935483871
+      },
+      "normalized_classification_metrics": {
+        "true_positives": 0.16,
+        "false_positives": 0.55,
+        "false_negatives": 0.96,
+        "precision": 0.22535211267605632,
+        "recall": 0.14285714285714288,
+        "f1_score": 0.1748633879781421
+      },
+      "details": {
+        "composition_data": {
+          "property_unit": {
+            "match_value": 1,
+            "reference": "pC/N",
+            "test": "pC/N"
+          },
+          "family": {
+            "match_value": 0,
+            "reference": "Bi5Ti3FeO15",
+            "test": "Perovskite"
+          },
+          "compositions_property_values": {
+            "reference": {
+              "Bi5Ti3FeO15": 7.1,
+              "0.98Bi0.02HoTi3FeO15": 21.8,
+              "0.97Bi0.03HoTi3FeO15": 21.1,
+              "0.96Bi0.04HoTi3FeO15": 23.1,
+              "0.95Bi0.05HoTi3FeO15": 20.0,
+              "0.92Bi0.08HoTi3FeO15": 18.6
+            },
+            "test": {
+              "BaTiO3": 191.0,
+              "PZT": 275.0
+            },
+            "key_matches": [
+              {
+                "reference_key": "Bi5Ti3FeO15",
+                "test_key": "none",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.98Bi0.02HoTi3FeO15",
+                "test_key": "none",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.97Bi0.03HoTi3FeO15",
+                "test_key": "none",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.96Bi0.04HoTi3FeO15",
+                "test_key": "none",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.95Bi0.05HoTi3FeO15",
+                "test_key": "none",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.92Bi0.08HoTi3FeO15",
+                "test_key": "none",
+                "match_value": 0
+              }
+            ],
+            "value_matches": [
+              {
+                "reference_key": "Bi5Ti3FeO15",
+                "test_key": "none",
+                "reference_value": 7.1,
+                "test_value": null,
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.98Bi0.02HoTi3FeO15",
+                "test_key": "none",
+                "reference_value": 21.8,
+                "test_value": null,
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.97Bi0.03HoTi3FeO15",
+                "test_key": "none",
+                "reference_value": 21.1,
+                "test_value": null,
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.96Bi0.04HoTi3FeO15",
+                "test_key": "none",
+                "reference_value": 23.1,
+                "test_value": null,
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.95Bi0.05HoTi3FeO15",
+                "test_key": "none",
+                "reference_value": 20.0,
+                "test_value": null,
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.92Bi0.08HoTi3FeO15",
+                "test_key": "none",
+                "reference_value": 18.6,
+                "test_value": null,
+                "match_value": 0
+              }
+            ],
+            "pair_matches": [
+              {
+                "reference_pair": {
+                  "Bi5Ti3FeO15": 7.1
+                },
+                "test_pair": {},
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.98Bi0.02HoTi3FeO15": 21.8
+                },
+                "test_pair": {},
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.97Bi0.03HoTi3FeO15": 21.1
+                },
+                "test_pair": {},
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.96Bi0.04HoTi3FeO15": 23.1
+                },
+                "test_pair": {},
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.95Bi0.05HoTi3FeO15": 20.0
+                },
+                "test_pair": {},
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.92Bi0.08HoTi3FeO15": 18.6
+                },
+                "test_pair": {},
+                "match_value": 0
+              }
+            ],
+            "total_ground_truth_keys": 6,
+            "total_match": 0,
+            "missing_keys": [
+              "Bi5Ti3FeO15",
+              "0.98Bi0.02HoTi3FeO15",
+              "0.97Bi0.03HoTi3FeO15",
+              "0.96Bi0.04HoTi3FeO15",
+              "0.95Bi0.05HoTi3FeO15",
+              "0.92Bi0.08HoTi3FeO15"
+            ],
+            "extra_keys": [
+              "BaTiO3",
+              "PZT"
+            ],
+            "key_match_ratio": 0.0,
+            "value_match_ratio": 0.0,
+            "pair_match_ratio": 0.0,
+            "overall_match_ratio": 0.0,
+            "similarity_score": 0.0,
+            "match": false
+          }
+        },
+        "synthesis_data": {
+          "method": {
+            "match_value": 0,
+            "reference": "solid-state reaction",
+            "test": "Sol-gel",
+            "similarity": 0.0,
+            "match": false
+          },
+          "precursors": {
+            "reference": [
+              "Bi2O3",
+              "Fe2O3",
+              "TiO2",
+              "Ho2O3"
+            ],
+            "test": [
+              "Barium acetate",
+              "Titanium isopropoxide"
+            ],
+            "matches": [
+              {
+                "reference_item": "Bi2O3",
+                "test_item": "None",
+                "match_value": 0
+              },
+              {
+                "reference_item": "Fe2O3",
+                "test_item": "None",
+                "match_value": 0
+              },
+              {
+                "reference_item": "TiO2",
+                "test_item": "None",
+                "match_value": 0
+              },
+              {
+                "reference_item": "Ho2O3",
+                "test_item": "None",
+                "match_value": 0
+              }
+            ],
+            "total_ground_truth_items": 4,
+            "total_match": 0,
+            "missing_items": [
+              "Bi2O3",
+              "Fe2O3",
+              "TiO2",
+              "Ho2O3"
+            ],
+            "extra_items": [
+              "Barium acetate",
+              "Titanium isopropoxide"
+            ],
+            "similarity": 0.0,
+            "match": false
+          },
+          "characterization_techniques": {
+            "reference": [
+              "XRD",
+              "FE-SEM",
+              "quasistatic d33 meter",
+              "impedance analyzer",
+              "TF Analyzer"
+            ],
+            "test": [
+              "XRD",
+              "SEM",
+              "AFM"
+            ],
+            "matches": [
+              {
+                "reference_item": "XRD",
+                "test_item": "XRD",
+                "match_value": 1
+              },
+              {
+                "reference_item": "FE-SEM",
+                "test_item": "SEM",
+                "match_value": 1
+              },
+              {
+                "reference_item": "quasistatic d33 meter",
+                "test_item": "None",
+                "match_value": 0
+              },
+              {
+                "reference_item": "impedance analyzer",
+                "test_item": "None",
+                "match_value": 0
+              },
+              {
+                "reference_item": "TF Analyzer",
+                "test_item": "None",
+                "match_value": 0
+              }
+            ],
+            "total_ground_truth_items": 5,
+            "total_match": 2,
+            "missing_items": [
+              "quasistatic d33 meter",
+              "impedance analyzer",
+              "TF Analyzer"
+            ],
+            "extra_items": [
+              "AFM"
+            ],
+            "similarity": 0.4,
+            "match": false
+          },
+          "steps": {
+            "match_value": 0.0,
+            "reference_steps": [
+              "Weighed chemicals were wet-milled in polyethylene bottles with ZrO2 balls for 12 h in ethanol.",
+              "Materials were calcined at 750\u00b0C for 3 hours.",
+              "Calcined powders were milled, dried, ground, and granulated with polyvinyl alcohol binder.",
+              "Granulated powders were pressed into discs with diameters of 12.5 mm and thicknesses of 1.0 mm at pressure of 150 MPa.",
+              "Pellets were heated to 650\u00b0C for 60 min to burn out the binder.",
+              "Samples were sintered at 1080\u00b0C for 3 h.",
+              "Sintered samples were polished to thickness of approximately 0.5 mm.",
+              "Silver paste was screen-printed onto two parallel polished surfaces, followed by firing at 570\u00b0C for 30 min."
+            ],
+            "test_steps": [
+              "Mixing of precursors",
+              "Calcination",
+              "Sintering"
+            ],
+            "steps_match": "false"
+          }
+        }
+      }
+    },
+    "10.1016/j.jallcom.2025.178686": {
+      "overall_match": false,
+      "field_scores": {
+        "composition_data": 0.7,
+        "synthesis_data": 0.5
+      },
+      "overall_score": 0.6,
+      "absolute_classification_metrics": {
+        "true_positives": 6,
+        "false_positives": 5,
+        "false_negatives": 43,
+        "precision": 0.5454545454545454,
+        "recall": 0.12244897959183673,
+        "f1_score": 0.2
+      },
+      "normalized_classification_metrics": {
+        "true_positives": 0.22068965517241385,
+        "false_positives": 0.1103448275862069,
+        "false_negatives": 0.6689655172413793,
+        "precision": 0.6666666666666667,
+        "recall": 0.24806201550387602,
+        "f1_score": 0.3615819209039549
+      },
+      "details": {
+        "composition_data": {
+          "property_unit": {
+            "match_value": 1,
+            "reference": "pC/N",
+            "test": "pC/N"
+          },
+          "family": {
+            "match_value": 1,
+            "reference": "PSN-PMN-PT",
+            "test": "PSN-PMN-PT system"
+          },
+          "compositions_property_values": {
+            "reference": {
+              "0.06Pb(Sc1/2Nb1/2)O3-0.62Pb(Mg1/3Nb2/3)O3-0.32PbTiO3": 560,
+              "0.06Pb(Sc1/2Nb1/2)O3-0.61Pb(Mg1/3Nb2/3)O3-0.33PbTiO3": 570,
+              "0.06Pb(Sc1/2Nb1/2)O3-0.60Pb(Mg1/3Nb2/3)O3-0.34PbTiO3": 580,
+              "0.06Pb(Sc1/2Nb1/2)O3-0.59Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 665,
+              "0.06Pb(Sc1/2Nb1/2)O3-0.58Pb(Mg1/3Nb2/3)O3-0.36PbTiO3": 642,
+              "0.15Pb(Sc1/2Nb1/2)O3-0.53Pb(Mg1/3Nb2/3)O3-0.32PbTiO3": 405,
+              "0.15Pb(Sc1/2Nb1/2)O3-0.52Pb(Mg1/3Nb2/3)O3-0.33PbTiO3": 500,
+              "0.15Pb(Sc1/2Nb1/2)O3-0.51Pb(Mg1/3Nb2/3)O3-0.34PbTiO3": 529,
+              "0.15Pb(Sc1/2Nb1/2)O3-0.50Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 540,
+              "0.15Pb(Sc1/2Nb1/2)O3-0.49Pb(Mg1/3Nb2/3)O3-0.36PbTiO3": 575,
+              "0.15Pb(Sc1/2Nb1/2)O3-0.48Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 620,
+              "0.15Pb(Sc1/2Nb1/2)O3-0.47Pb(Mg1/3Nb2/3)O3-0.38PbTiO3": 545,
+              "0.15Pb(Sc1/2Nb1/2)O3-0.46Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 478,
+              "0.15Pb(Sc1/2Nb1/2)O3-0.45Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 404,
+              "0.29Pb(Sc1/2Nb1/2)O3-0.38Pb(Mg1/3Nb2/3)O3-0.33PbTiO3": 335,
+              "0.29Pb(Sc1/2Nb1/2)O3-0.37Pb(Mg1/3Nb2/3)O3-0.34PbTiO3": 365,
+              "0.29Pb(Sc1/2Nb1/2)O3-0.36Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 460,
+              "0.29Pb(Sc1/2Nb1/2)O3-0.35Pb(Mg1/3Nb2/3)O3-0.36PbTiO3": 535,
+              "0.29Pb(Sc1/2Nb1/2)O3-0.34Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 540,
+              "0.29Pb(Sc1/2Nb1/2)O3-0.33Pb(Mg1/3Nb2/3)O3-0.38PbTiO3": 545,
+              "0.29Pb(Sc1/2Nb1/2)O3-0.32Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 585,
+              "0.29Pb(Sc1/2Nb1/2)O3-0.31Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 575,
+              "0.29Pb(Sc1/2Nb1/2)O3-0.30Pb(Mg1/3Nb2/3)O3-0.41PbTiO3": 467,
+              "0.43Pb(Sc1/2Nb1/2)O3-0.20Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 340,
+              "0.43Pb(Sc1/2Nb1/2)O3-0.19Pb(Mg1/3Nb2/3)O3-0.38PbTiO3": 490,
+              "0.43Pb(Sc1/2Nb1/2)O3-0.18Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 520,
+              "0.43Pb(Sc1/2Nb1/2)O3-0.17Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 650,
+              "0.43Pb(Sc1/2Nb1/2)O3-0.16Pb(Mg1/3Nb2/3)O3-0.41PbTiO3": 570,
+              "0.43Pb(Sc1/2Nb1/2)O3-0.15Pb(Mg1/3Nb2/3)O3-0.42PbTiO3": 475
+            },
+            "test": {
+              "0.06PSN-0.59PMN-0.35PT": 665.0,
+              "0.15PSN-0.48PMN-0.37PT": 620.0,
+              "0.29PSN-0.32PMN-0.39PT": 585.0,
+              "0.43PSN-0.17PMN-0.40PT": 650.0
+            },
+            "key_matches": [
+              {
+                "reference_key": "0.06Pb(Sc1/2Nb1/2)O3-0.59Pb(Mg1/3Nb2/3)O3-0.35PbTiO3",
+                "test_key": "0.06PSN-0.59PMN-0.35PT",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.15Pb(Sc1/2Nb1/2)O3-0.48Pb(Mg1/3Nb2/3)O3-0.37PbTiO3",
+                "test_key": "0.15PSN-0.48PMN-0.37PT",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.29Pb(Sc1/2Nb1/2)O3-0.32Pb(Mg1/3Nb2/3)O3-0.39PbTiO3",
+                "test_key": "0.29PSN-0.32PMN-0.39PT",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.43Pb(Sc1/2Nb1/2)O3-0.17Pb(Mg1/3Nb2/3)O3-0.40PbTiO3",
+                "test_key": "0.43PSN-0.17PMN-0.40PT",
+                "match_value": 0
+              }
+            ],
+            "value_matches": [
+              {
+                "reference_key": "0.06Pb(Sc1/2Nb1/2)O3-0.59Pb(Mg1/3Nb2/3)O3-0.35PbTiO3",
+                "test_key": "0.06PSN-0.59PMN-0.35PT",
+                "reference_value": 665,
+                "test_value": 665.0,
+                "match_value": 1
+              },
+              {
+                "reference_key": "0.15Pb(Sc1/2Nb1/2)O3-0.48Pb(Mg1/3Nb2/3)O3-0.37PbTiO3",
+                "test_key": "0.15PSN-0.48PMN-0.37PT",
+                "reference_value": 620,
+                "test_value": 620.0,
+                "match_value": 1
+              },
+              {
+                "reference_key": "0.29Pb(Sc1/2Nb1/2)O3-0.32Pb(Mg1/3Nb2/3)O3-0.39PbTiO3",
+                "test_key": "0.29PSN-0.32PMN-0.39PT",
+                "reference_value": 585,
+                "test_value": 585.0,
+                "match_value": 1
+              },
+              {
+                "reference_key": "0.43Pb(Sc1/2Nb1/2)O3-0.17Pb(Mg1/3Nb2/3)O3-0.40PbTiO3",
+                "test_key": "0.43PSN-0.17PMN-0.40PT",
+                "reference_value": 650,
+                "test_value": 650.0,
+                "match_value": 1
+              }
+            ],
+            "pair_matches": [
+              {
+                "reference_pair": {
+                  "0.06Pb(Sc1/2Nb1/2)O3-0.59Pb(Mg1/3Nb2/3)O3-0.35PbTiO3": 665
+                },
+                "test_pair": {
+                  "0.06PSN-0.59PMN-0.35PT": 665.0
+                },
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.15Pb(Sc1/2Nb1/2)O3-0.48Pb(Mg1/3Nb2/3)O3-0.37PbTiO3": 620
+                },
+                "test_pair": {
+                  "0.15PSN-0.48PMN-0.37PT": 620.0
+                },
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.29Pb(Sc1/2Nb1/2)O3-0.32Pb(Mg1/3Nb2/3)O3-0.39PbTiO3": 585
+                },
+                "test_pair": {
+                  "0.29PSN-0.32PMN-0.39PT": 585.0
+                },
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.43Pb(Sc1/2Nb1/2)O3-0.17Pb(Mg1/3Nb2/3)O3-0.40PbTiO3": 650
+                },
+                "test_pair": {
+                  "0.43PSN-0.17PMN-0.40PT": 650.0
+                },
+                "match_value": 0
+              }
+            ],
+            "total_ground_truth_keys": 29,
+            "total_match": 0,
+            "missing_keys": [
+              "0.06Pb(Sc1/2Nb1/2)O3-0.62Pb(Mg1/3Nb2/3)O3-0.32PbTiO3",
+              "0.06Pb(Sc1/2Nb1/2)O3-0.61Pb(Mg1/3Nb2/3)O3-0.33PbTiO3",
+              "0.06Pb(Sc1/2Nb1/2)O3-0.60Pb(Mg1/3Nb2/3)O3-0.34PbTiO3",
+              "0.06Pb(Sc1/2Nb1/2)O3-0.58Pb(Mg1/3Nb2/3)O3-0.36PbTiO3",
+              "0.15Pb(Sc1/2Nb1/2)O3-0.53Pb(Mg1/3Nb2/3)O3-0.32PbTiO3",
+              "0.15Pb(Sc1/2Nb1/2)O3-0.52Pb(Mg1/3Nb2/3)O3-0.33PbTiO3",
+              "0.15Pb(Sc1/2Nb1/2)O3-0.51Pb(Mg1/3Nb2/3)O3-0.34PbTiO3",
+              "0.15Pb(Sc1/2Nb1/2)O3-0.50Pb(Mg1/3Nb2/3)O3-0.35PbTiO3",
+              "0.15Pb(Sc1/2Nb1/2)O3-0.49Pb(Mg1/3Nb2/3)O3-0.36PbTiO3",
+              "0.15Pb(Sc1/2Nb1/2)O3-0.47Pb(Mg1/3Nb2/3)O3-0.38PbTiO3",
+              "0.15Pb(Sc1/2Nb1/2)O3-0.46Pb(Mg1/3Nb2/3)O3-0.39PbTiO3",
+              "0.15Pb(Sc1/2Nb1/2)O3-0.45Pb(Mg1/3Nb2/3)O3-0.40PbTiO3",
+              "0.29Pb(Sc1/2Nb1/2)O3-0.38Pb(Mg1/3Nb2/3)O3-0.33PbTiO3",
+              "0.29Pb(Sc1/2Nb1/2)O3-0.37Pb(Mg1/3Nb2/3)O3-0.34PbTiO3",
+              "0.29Pb(Sc1/2Nb1/2)O3-0.36Pb(Mg1/3Nb2/3)O3-0.35PbTiO3",
+              "0.29Pb(Sc1/2Nb1/2)O3-0.35Pb(Mg1/3Nb2/3)O3-0.36PbTiO3",
+              "0.29Pb(Sc1/2Nb1/2)O3-0.34Pb(Mg1/3Nb2/3)O3-0.37PbTiO3",
+              "0.29Pb(Sc1/2Nb1/2)O3-0.33Pb(Mg1/3Nb2/3)O3-0.38PbTiO3",
+              "0.29Pb(Sc1/2Nb1/2)O3-0.31Pb(Mg1/3Nb2/3)O3-0.40PbTiO3",
+              "0.29Pb(Sc1/2Nb1/2)O3-0.30Pb(Mg1/3Nb2/3)O3-0.41PbTiO3",
+              "0.43Pb(Sc1/2Nb1/2)O3-0.20Pb(Mg1/3Nb2/3)O3-0.37PbTiO3",
+              "0.43Pb(Sc1/2Nb1/2)O3-0.19Pb(Mg1/3Nb2/3)O3-0.38PbTiO3",
+              "0.43Pb(Sc1/2Nb1/2)O3-0.18Pb(Mg1/3Nb2/3)O3-0.39PbTiO3",
+              "0.43Pb(Sc1/2Nb1/2)O3-0.16Pb(Mg1/3Nb2/3)O3-0.41PbTiO3",
+              "0.43Pb(Sc1/2Nb1/2)O3-0.15Pb(Mg1/3Nb2/3)O3-0.42PbTiO3"
+            ],
+            "extra_keys": [],
+            "key_match_ratio": 0.0,
+            "value_match_ratio": 0.13793103448275862,
+            "pair_match_ratio": 0.0,
+            "overall_match_ratio": 0.0,
+            "similarity_score": 0.0,
+            "match": false
+          }
+        },
+        "synthesis_data": {
+          "method": {
+            "match_value": 0,
+            "reference": "solid-state reaction",
+            "test": "Not provided",
+            "similarity": 0.0,
+            "match": false
+          },
+          "precursors": {
+            "reference": [
+              "MgO",
+              "Sc2O3",
+              "Nb2O5",
+              "TiO2",
+              "PbO"
+            ],
+            "test": [],
+            "matches": [],
+            "total_ground_truth_items": 5,
+            "total_match": 0,
+            "missing_items": [
+              "MgO",
+              "Sc2O3",
+              "Nb2O5",
+              "TiO2",
+              "PbO"
+            ],
+            "extra_items": [],
+            "similarity": 0.0,
+            "match": false
+          },
+          "characterization_techniques": {
+            "reference": [
+              "XRD",
+              "SEM",
+              "d33 meter",
+              "LCR meter",
+              "P-E loop measurement",
+              "impedance analyzer",
+              "Keithley 6487"
+            ],
+            "test": [],
+            "matches": [],
+            "total_ground_truth_items": 7,
+            "total_match": 0,
+            "missing_items": [
+              "XRD",
+              "SEM",
+              "d33 meter",
+              "LCR meter",
+              "P-E loop measurement",
+              "impedance analyzer",
+              "Keithley 6487"
+            ],
+            "extra_items": [],
+            "similarity": 0.0,
+            "match": false
+          },
+          "steps": {
+            "match_value": 0.0,
+            "reference_steps": [
+              "MgO, Sc2O3 and Nb2O5 were used to synthesize precursors MgNb2O6 at 1000\u00b0C and ScNbO4 at 1150\u00b0C.",
+              "MgNb2O6, ScNbO4, TiO2 and PbO powders were weighed according to stoichiometric proportion with 2 mol% extra PbO added.",
+              "Alcohol and oxide powders were mixed in 1:1 ratio by wet-milling for 24 hours.",
+              "Combined powder was calcined at 800-850\u00b0C for 2 hours.",
+              "Calcined mixture was mixed again for 12 hours.",
+              "Powder was conglutinated with polyvinyl alcohol solution and pressed into tablets under 8 MPa.",
+              "PVA was burned off at 550\u00b0C for 2 hours.",
+              "Ceramic tablets were covered by powders with same composition and sintered at 1200-1280\u00b0C for 4 hours.",
+              "Polished samples were coated with silver electrodes on both sides.",
+              "Samples were poled at 130\u00b0C for 15 minutes under 30 kV/cm electric field."
+            ],
+            "test_steps": [],
+            "steps_match": "false"
+          }
+        }
+      }
+    },
+    "10.1016/j.mtcomm.2025.111645": {
+      "overall_match": true,
+      "field_scores": {
+        "composition_data": 1.0,
+        "synthesis_data": 1.0
+      },
+      "overall_score": 1.0,
+      "absolute_classification_metrics": {
+        "true_positives": 19,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "normalized_classification_metrics": {
+        "true_positives": 0.9999999999999999,
+        "false_positives": 0.0,
+        "false_negatives": 0.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "details": {
+        "composition_data": {
+          "property_unit": {
+            "match_value": 1,
+            "reference": "pC/N",
+            "test": "pC/N"
+          },
+          "family": {
+            "match_value": 1,
+            "reference": "Barium Calcium Zirconate Titanate or BCZT",
+            "test": "BCZT-based"
+          },
+          "compositions_property_values": {
+            "reference": {
+              "Ba0.92Ca0.08Zr0.05Ti0.95O3-0.8%La-0.7%Tm": 181
+            },
+            "test": {
+              "Ba0.92Ca0.08Ti0.95Zr0.05-0.8 %La- xTm (BCZT-0.8 %La- xTm, with x = 0, 0.1 %, 0.3 %, 0.5 %, 0.7 %, 1 %, and 2 %)": 181.0
+            },
+            "key_matches": [
+              {
+                "reference_key": "Ba0.92Ca0.08Zr0.05Ti0.95O3-0.8%La-0.7%Tm",
+                "test_key": "Ba0.92Ca0.08Ti0.95Zr0.05-0.8 %La- xTm (BCZT-0.8 %La- xTm, with x = 0, 0.1 %, 0.3 %, 0.5 %, 0.7 %, 1 %, and 2 %)",
+                "match_value": 1
+              }
+            ],
+            "value_matches": [
+              {
+                "reference_key": "Ba0.92Ca0.08Zr0.05Ti0.95O3-0.8%La-0.7%Tm",
+                "test_key": "Ba0.92Ca0.08Ti0.95Zr0.05-0.8 %La- xTm (BCZT-0.8 %La- xTm, with x = 0, 0.1 %, 0.3 %, 0.5 %, 0.7 %, 1 %, and 2 %)",
+                "reference_value": 181,
+                "test_value": 181.0,
+                "match_value": 1
+              }
+            ],
+            "pair_matches": [
+              {
+                "reference_pair": {
+                  "Ba0.92Ca0.08Zr0.05Ti0.95O3-0.8%La-0.7%Tm": 181
+                },
+                "test_pair": {
+                  "Ba0.92Ca0.08Ti0.95Zr0.05-0.8 %La- xTm (BCZT-0.8 %La- xTm, with x = 0, 0.1 %, 0.3 %, 0.5 %, 0.7 %, 1 %, and 2 %)": 181.0
+                },
+                "match_value": 1
+              }
+            ],
+            "total_ground_truth_keys": 1,
+            "total_match": 1,
+            "missing_keys": [],
+            "extra_keys": [],
+            "key_match_ratio": 1.0,
+            "value_match_ratio": 1.0,
+            "pair_match_ratio": 1.0,
+            "overall_match_ratio": 1.0,
+            "similarity_score": 1.0,
+            "match": true
+          }
+        },
+        "synthesis_data": {
+          "method": {
+            "match_value": 1,
+            "reference": "sol-gel method",
+            "test": "Sol-gel method",
+            "similarity": 1.0,
+            "match": true
+          },
+          "precursors": {
+            "reference": [
+              "Ba(CH3COO)2",
+              "Ca(NO3)2\u00b74H2O",
+              "Zr(NO3)4\u00b75H2O",
+              "Ti(OC4H9)4",
+              "La(NO3)3\u00b7nH2O",
+              "Tm(NO3)3\u00b75H2O"
+            ],
+            "test": [
+              "Ba(CH3COO)2",
+              "Ca(NO3)2\u00b74H2O",
+              "Zr(NO3)4\u00b75H2O",
+              "Ti(OC4H9)4",
+              "La(NO3)3\u00b7nH2O",
+              "Tm(NO3)3\u00b75H2O"
+            ],
+            "matches": [
+              {
+                "reference_item": "Ba(CH3COO)2",
+                "test_item": "Ba(CH3COO)2",
+                "match_value": 1
+              },
+              {
+                "reference_item": "Ca(NO3)2\u00b74H2O",
+                "test_item": "Ca(NO3)2\u00b74H2O",
+                "match_value": 1
+              },
+              {
+                "reference_item": "Zr(NO3)4\u00b75H2O",
+                "test_item": "Zr(NO3)4\u00b75H2O",
+                "match_value": 1
+              },
+              {
+                "reference_item": "Ti(OC4H9)4",
+                "test_item": "Ti(OC4H9)4",
+                "match_value": 1
+              },
+              {
+                "reference_item": "La(NO3)3\u00b7nH2O",
+                "test_item": "La(NO3)3\u00b7nH2O",
+                "match_value": 1
+              },
+              {
+                "reference_item": "Tm(NO3)3\u00b75H2O",
+                "test_item": "Tm(NO3)3\u00b75H2O",
+                "match_value": 1
+              }
+            ],
+            "total_ground_truth_items": 6,
+            "total_match": 6,
+            "missing_items": [],
+            "extra_items": [],
+            "similarity": 1.0,
+            "match": true
+          },
+          "characterization_techniques": {
+            "reference": [
+              "XRD",
+              "XPS",
+              "SEM",
+              "dielectric testing",
+              "LCR",
+              "P-E hysteresis loops",
+              "piezoelectric meter"
+            ],
+            "test": [
+              "X-ray diffraction (XRD)",
+              "X-ray photoelectron spectroscopy (XPS)",
+              "Scanning electron microscopy (SEM)",
+              "Dielectric testing instrument",
+              "LCR instrument",
+              "Radiant precision workstation",
+              "Quasistatic piezoelectric meter"
+            ],
+            "matches": [
+              {
+                "reference_item": "XRD",
+                "test_item": "X-ray diffraction (XRD)",
+                "match_value": 1
+              },
+              {
+                "reference_item": "XPS",
+                "test_item": "X-ray photoelectron spectroscopy (XPS)",
+                "match_value": 1
+              },
+              {
+                "reference_item": "SEM",
+                "test_item": "Scanning electron microscopy (SEM)",
+                "match_value": 1
+              },
+              {
+                "reference_item": "dielectric testing",
+                "test_item": "Dielectric testing instrument",
+                "match_value": 1
+              },
+              {
+                "reference_item": "LCR",
+                "test_item": "LCR instrument",
+                "match_value": 1
+              },
+              {
+                "reference_item": "P-E hysteresis loops",
+                "test_item": "Radiant precision workstation",
+                "match_value": 1
+              },
+              {
+                "reference_item": "piezoelectric meter",
+                "test_item": "Quasistatic piezoelectric meter",
+                "match_value": 1
+              }
+            ],
+            "total_ground_truth_items": 7,
+            "total_match": 7,
+            "missing_items": [],
+            "extra_items": [],
+            "similarity": 1.0,
+            "match": true
+          },
+          "steps": {
+            "match_value": 1.0,
+            "reference_steps": [
+              "Raw precursors Ba(CH3COO)2, Ca(NO3)2\u00b74H2O, Zr(NO3)4\u00b75H2O, Ti(OC4H9)4, La(NO3)3\u00b7nH2O, and Tm(NO3)3\u00b75H2O were added to an Erlenmeyer flask.",
+              "Ethanol was added to react for 3 hours to obtain polymer solutions.",
+              "Solutions were placed in oven at 120\u00b0C for 10 hours.",
+              "Materials were calcined at 900\u00b0C for 2 hours in muffle furnace to form precursor powders.",
+              "Powders were mixed with 2 wt% polyvinyl alcohol (PVA) as organic binder with weight ratio of PVA and powders 1:120.",
+              "Mixture was formed into disks with diameter of 20 mm under 20 MPa pressure with retention time of 150 seconds.",
+              "Disks were embedded in alumina and sintered at 1300\u00b0C for 4 hours in air using heating rate of 5\u00b0C/min."
+            ],
+            "test_steps": [
+              "Raw precursors were added to an Erlenmeyer flask, ethanol was added, and reacted for 3 hours to obtain polymer solutions.",
+              "Solutions were placed in an oven at 120\u00b0C for 10 hours, then calcined at 900\u00b0C for 2 hours in a muffle furnace to form precursor powders.",
+              "Powders were mixed with 2 wt% polyvinyl alcohol (PVA) as an organic binder (weight ratio PVA:powders = 1:120) and formed into disks (20 mm diameter) under 20 MPa pressure with a retention time of 150 seconds.",
+              "Disks were embedded in alumina and sintered at 1300\u00b0C for 4 hours in air using a heating rate of 5\u00b0C/min."
+            ],
+            "steps_match": "true"
+          }
+        }
+      }
+    },
+    "10.1016/j.jeurceramsoc.2024.117101": {
+      "overall_match": false,
+      "field_scores": {
+        "composition_data": 0.6000000000000001,
+        "synthesis_data": 0.5272727272727273
+      },
+      "overall_score": 0.5636363636363637,
+      "absolute_classification_metrics": {
+        "true_positives": 3,
+        "false_positives": 13,
+        "false_negatives": 25,
+        "precision": 0.1875,
+        "recall": 0.10714285714285714,
+        "f1_score": 0.13636363636363635
+      },
+      "normalized_classification_metrics": {
+        "true_positives": 0.1272727272727273,
+        "false_positives": 0.6779220779220779,
+        "false_negatives": 0.8727272727272728,
+        "precision": 0.15806451612903227,
+        "recall": 0.1272727272727273,
+        "f1_score": 0.1410071942446043
+      },
+      "details": {
+        "composition_data": {
+          "property_unit": {
+            "match_value": 1,
+            "reference": "pC/N",
+            "test": "pC/N"
+          },
+          "family": {
+            "match_value": 0,
+            "reference": "Aurivillius-type ceramics or BLSF or CaBi2Nb2O9 or CBNO",
+            "test": "PZT"
+          },
+          "compositions_property_values": {
+            "reference": {
+              "Ca0.92(Li0.5Ce0.5)0.08Bi2Nb1.97(W2/3Mo1/3)0.03O9": 16.1,
+              "CaBi2Nb2O9": 6.5
+            },
+            "test": {
+              "Pb(Zr0.52Ti0.48)O3": 274.0,
+              "BaTiO3": 191.0
+            },
+            "key_matches": [
+              {
+                "reference_key": "Ca0.92(Li0.5Ce0.5)0.08Bi2Nb1.97(W2/3Mo1/3)0.03O9",
+                "test_key": "Pb(Zr0.52Ti0.48)O3",
+                "match_value": 0
+              },
+              {
+                "reference_key": "CaBi2Nb2O9",
+                "test_key": "BaTiO3",
+                "match_value": 0
+              }
+            ],
+            "value_matches": [
+              {
+                "reference_key": "Ca0.92(Li0.5Ce0.5)0.08Bi2Nb1.97(W2/3Mo1/3)0.03O9",
+                "test_key": "Pb(Zr0.52Ti0.48)O3",
+                "reference_value": 16.1,
+                "test_value": 274.0,
+                "match_value": 0
+              },
+              {
+                "reference_key": "CaBi2Nb2O9",
+                "test_key": "BaTiO3",
+                "reference_value": 6.5,
+                "test_value": 191.0,
+                "match_value": 0
+              }
+            ],
+            "pair_matches": [
+              {
+                "reference_pair": {
+                  "Ca0.92(Li0.5Ce0.5)0.08Bi2Nb1.97(W2/3Mo1/3)0.03O9": 16.1
+                },
+                "test_pair": {
+                  "Pb(Zr0.52Ti0.48)O3": 274.0
+                },
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "CaBi2Nb2O9": 6.5
+                },
+                "test_pair": {
+                  "BaTiO3": 191.0
+                },
+                "match_value": 0
+              }
+            ],
+            "total_ground_truth_keys": 2,
+            "total_match": 0,
+            "missing_keys": [
+              "Ca0.92(Li0.5Ce0.5)0.08Bi2Nb1.97(W2/3Mo1/3)0.03O9",
+              "CaBi2Nb2O9"
+            ],
+            "extra_keys": [
+              "Pb(Zr0.52Ti0.48)O3",
+              "BaTiO3"
+            ],
+            "key_match_ratio": 0.0,
+            "value_match_ratio": 0.0,
+            "pair_match_ratio": 0.0,
+            "overall_match_ratio": 0.0,
+            "similarity_score": 0.0,
+            "match": false
+          }
+        },
+        "synthesis_data": {
+          "method": {
+            "match_value": 0,
+            "reference": "solid-state reaction",
+            "test": "Sol-gel",
+            "similarity": 0.0,
+            "match": false
+          },
+          "precursors": {
+            "reference": [
+              "CaCO3",
+              "Li2CO3",
+              "CeO2",
+              "Bi2O3",
+              "Nb2O5",
+              "WO3",
+              "MoO3"
+            ],
+            "test": [
+              "Pb(CH3COO)2.3H2O",
+              "Zr(CH3COO)4",
+              "Ti(OC3H7)4"
+            ],
+            "matches": [],
+            "total_ground_truth_items": 7,
+            "total_match": 0,
+            "missing_items": [
+              "CaCO3",
+              "Li2CO3",
+              "CeO2",
+              "Bi2O3",
+              "Nb2O5",
+              "WO3",
+              "MoO3"
+            ],
+            "extra_items": [
+              "Pb(CH3COO)2.3H2O",
+              "Zr(CH3COO)4",
+              "Ti(OC3H7)4"
+            ],
+            "similarity": 0.0,
+            "match": false
+          },
+          "characterization_techniques": {
+            "reference": [
+              "XRD",
+              "SEM",
+              "Raman spectroscopy",
+              "XPS",
+              "LCR bridge",
+              "ferroelectric test system",
+              "d33 meter",
+              "electrochemical workstation",
+              "UV-Vis spectroscopy",
+              "TEM",
+              "HR-TEM"
+            ],
+            "test": [
+              "XRD",
+              "SEM",
+              "AFM"
+            ],
+            "matches": [
+              {
+                "reference_item": "XRD",
+                "test_item": "XRD",
+                "match_value": 1
+              },
+              {
+                "reference_item": "SEM",
+                "test_item": "SEM",
+                "match_value": 1
+              }
+            ],
+            "total_ground_truth_items": 11,
+            "total_match": 2,
+            "missing_items": [
+              "Raman spectroscopy",
+              "XPS",
+              "LCR bridge",
+              "ferroelectric test system",
+              "d33 meter",
+              "electrochemical workstation",
+              "UV-Vis spectroscopy",
+              "TEM",
+              "HR-TEM"
+            ],
+            "extra_items": [
+              "AFM"
+            ],
+            "similarity": 0.18181818181818182,
+            "match": false
+          },
+          "steps": {
+            "match_value": 0.0,
+            "reference_steps": [
+              "Raw materials were precisely weighed according to stoichiometric ratios.",
+              "Materials were ball milled for 8 hours using ethanol as dispersion medium.",
+              "Mixed raw materials were dried and calcined at 850\u00b0C for 4 hours.",
+              "Calcined powder was ground again under same condition.",
+              "Obtained powder was dried, ground, and compressed into disk with diameter of 8 mm under pressure of 250 MPa.",
+              "Ceramics were sintered at 1100\u00b0C for 4 hours.",
+              "For electrical property testing, both sides were polished and coated with silver or platinum electrodes.",
+              "Samples were immersed in silicone oil at 180\u00b0C and electric field of 150-200 kV/cm was applied for 30 minutes for polarization."
+            ],
+            "test_steps": [
+              "Mixing of precursors",
+              "Drying",
+              "Calcination",
+              "Sintering"
+            ],
+            "steps_match": "false"
+          }
+        }
+      }
+    },
+    "10.1016/j.jallcom.2024.177690": {
+      "overall_match": false,
+      "field_scores": {
+        "composition_data": 0.6000000000000001,
+        "synthesis_data": 0.53
+      },
+      "overall_score": 0.5650000000000001,
+      "absolute_classification_metrics": {
+        "true_positives": 3,
+        "false_positives": 10,
+        "false_negatives": 18,
+        "precision": 0.23076923076923078,
+        "recall": 0.14285714285714285,
+        "f1_score": 0.17647058823529413
+      },
+      "normalized_classification_metrics": {
+        "true_positives": 0.13,
+        "false_positives": 0.9524999999999999,
+        "false_negatives": 0.87,
+        "precision": 0.12009237875288684,
+        "recall": 0.13,
+        "f1_score": 0.1248499399759904
+      },
+      "details": {
+        "composition_data": {
+          "property_unit": {
+            "match_value": 1,
+            "reference": "pC/N",
+            "test": "pC/N"
+          },
+          "family": {
+            "match_value": 0,
+            "reference": "KNN",
+            "test": "PZT"
+          },
+          "compositions_property_values": {
+            "reference": {
+              "(K0.5Na0.5)0.99Eu0.01NbO3": null,
+              "(K0.5Na0.5)1.00Eu0.01NbO3": 135,
+              "(K0.5Na0.5)1.01Eu0.01NbO3": null
+            },
+            "test": {
+              "Pb(Zr0.52Ti0.48)O3": 274.0,
+              "BaTiO3": 191.0
+            },
+            "key_matches": [
+              {
+                "reference_key": "(K0.5Na0.5)1.00Eu0.01NbO3",
+                "test_key": "none",
+                "match_value": 0
+              }
+            ],
+            "value_matches": [
+              {
+                "reference_key": "(K0.5Na0.5)1.00Eu0.01NbO3",
+                "test_key": "none",
+                "reference_value": 135,
+                "test_value": null,
+                "match_value": 0
+              }
+            ],
+            "pair_matches": [
+              {
+                "reference_pair": {
+                  "(K0.5Na0.5)1.00Eu0.01NbO3": 135
+                },
+                "test_pair": {},
+                "match_value": 0
+              }
+            ],
+            "total_ground_truth_keys": 1,
+            "total_match": 0,
+            "missing_keys": [
+              "(K0.5Na0.5)1.00Eu0.01NbO3"
+            ],
+            "extra_keys": [
+              "Pb(Zr0.52Ti0.48)O3",
+              "BaTiO3"
+            ],
+            "key_match_ratio": 0.0,
+            "value_match_ratio": 0.0,
+            "pair_match_ratio": 0.0,
+            "overall_match_ratio": 0.0,
+            "similarity_score": 0.0,
+            "match": false
+          }
+        },
+        "synthesis_data": {
+          "method": {
+            "match_value": 0,
+            "reference": "solid-state reaction",
+            "test": "Sol-gel",
+            "similarity": 0.0,
+            "match": false
+          },
+          "precursors": {
+            "reference": [
+              "K2CO3",
+              "Na2CO3",
+              "Nb2O5",
+              "Eu2O3"
+            ],
+            "test": [
+              "Pb(CH3COO)2.3H2O",
+              "Zr(CH3COO)4",
+              "Ti(OC3H7)4"
+            ],
+            "matches": [],
+            "total_ground_truth_items": 4,
+            "total_match": 0,
+            "missing_items": [
+              "K2CO3",
+              "Na2CO3",
+              "Nb2O5",
+              "Eu2O3"
+            ],
+            "extra_items": [
+              "Pb(CH3COO)2.3H2O",
+              "Zr(CH3COO)4",
+              "Ti(OC3H7)4"
+            ],
+            "similarity": 0.0,
+            "match": false
+          },
+          "characterization_techniques": {
+            "reference": [
+              "XRD",
+              "SEM",
+              "P-E hysteresis measurement",
+              "d33 measurement",
+              "dielectric measurement",
+              "PL spectroscopy",
+              "PLE spectroscopy",
+              "UV-Vis spectroscopy",
+              "XPS",
+              "reflectance measurement"
+            ],
+            "test": [
+              "XRD",
+              "SEM",
+              "AFM"
+            ],
+            "matches": [
+              {
+                "reference_item": "XRD",
+                "test_item": "XRD",
+                "match_value": 1
+              },
+              {
+                "reference_item": "SEM",
+                "test_item": "SEM",
+                "match_value": 1
+              }
+            ],
+            "total_ground_truth_items": 10,
+            "total_match": 2,
+            "missing_items": [
+              "P-E hysteresis measurement",
+              "d33 measurement",
+              "dielectric measurement",
+              "PL spectroscopy",
+              "PLE spectroscopy",
+              "UV-Vis spectroscopy",
+              "XPS",
+              "reflectance measurement"
+            ],
+            "extra_items": [
+              "AFM"
+            ],
+            "similarity": 0.2,
+            "match": false
+          },
+          "steps": {
+            "match_value": 0.0,
+            "reference_steps": [
+              "K2CO3 and Na2CO3 powders dried at 150\u00b0C for 1 h before weighing.",
+              "Powders weighed according to compositions (K0.5Na0.5)xEu0.01NbO3 with x = 0.99, 1.00, and 1.01.",
+              "Weighed powders milled with zirconia balls in ethanol for 24 hours.",
+              "Powder mixture dried at 100\u00b0C and calcined at 850\u00b0C for 4 h.",
+              "Polyvinyl alcohol (PVA) added to calcined powder as binder.",
+              "Green ceramics prepared by uniaxial pressing into pellets with 1 mm thickness and 10 mm diameter.",
+              "Green ceramics covered with same powder prior to sintering to prevent K and Na volatilization.",
+              "Ceramics heated to 850\u00b0C for 1 h to burn out PVA binder.",
+              "Final sintering at 1170\u00b0C for 3 h.",
+              "Silver paste applied to polished surface (600 \u03bcm thickness) followed by baking at 350\u00b0C for 30 min for electrical measurements.",
+              "Ceramics poled using 30 kV/cm DC electric field for 30 min at room temperature."
+            ],
+            "test_steps": [
+              "Mixing of precursors",
+              "Drying",
+              "Calcination",
+              "Sintering"
+            ],
+            "steps_match": "false"
+          }
+        }
+      }
+    },
+    "10.1016/j.jallcom.2024.178322": {
+      "overall_match": false,
+      "field_scores": {
+        "composition_data": 0.6000000000000001,
+        "synthesis_data": 0.5333333333333333
+      },
+      "overall_score": 0.5666666666666667,
+      "absolute_classification_metrics": {
+        "true_positives": 3,
+        "false_positives": 13,
+        "false_negatives": 19,
+        "precision": 0.1875,
+        "recall": 0.13636363636363635,
+        "f1_score": 0.15789473684210525
+      },
+      "normalized_classification_metrics": {
+        "true_positives": 0.13333333333333333,
+        "false_positives": 1.1791666666666667,
+        "false_negatives": 1.0166666666666666,
+        "precision": 0.10158730158730159,
+        "recall": 0.11594202898550725,
+        "f1_score": 0.10829103214890018
+      },
+      "details": {
+        "composition_data": {
+          "property_unit": {
+            "match_value": 1,
+            "reference": "pC/N",
+            "test": "pC/N"
+          },
+          "family": {
+            "match_value": 0,
+            "reference": "BiFeO3-BaTiO3",
+            "test": "PZT"
+          },
+          "compositions_property_values": {
+            "reference": {
+              "0.999(0.7BiFeO3-0.3BaTiO3) - 0.001(Bi0.5Na0.5)TiO3-5 mol% Bi2O3": 202
+            },
+            "test": {
+              "Pb(Zr0.52Ti0.48)O3": 274.0,
+              "BaTiO3": 191.0
+            },
+            "key_matches": [
+              {
+                "reference_key": "0.999(0.7BiFeO3-0.3BaTiO3) - 0.001(Bi0.5Na0.5)TiO3-5 mol% Bi2O3",
+                "test_key": "Pb(Zr0.52Ti0.48)O3",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.999(0.7BiFeO3-0.3BaTiO3) - 0.001(Bi0.5Na0.5)TiO3-5 mol% Bi2O3",
+                "test_key": "BaTiO3",
+                "match_value": 0
+              }
+            ],
+            "value_matches": [
+              {
+                "reference_key": "0.999(0.7BiFeO3-0.3BaTiO3) - 0.001(Bi0.5Na0.5)TiO3-5 mol% Bi2O3",
+                "test_key": "Pb(Zr0.52Ti0.48)O3",
+                "reference_value": 202,
+                "test_value": 274.0,
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.999(0.7BiFeO3-0.3BaTiO3) - 0.001(Bi0.5Na0.5)TiO3-5 mol% Bi2O3",
+                "test_key": "BaTiO3",
+                "reference_value": 202,
+                "test_value": 191.0,
+                "match_value": 0
+              }
+            ],
+            "pair_matches": [
+              {
+                "reference_pair": {
+                  "0.999(0.7BiFeO3-0.3BaTiO3) - 0.001(Bi0.5Na0.5)TiO3-5 mol% Bi2O3": 202
+                },
+                "test_pair": {
+                  "Pb(Zr0.52Ti0.48)O3": 274.0
+                },
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.999(0.7BiFeO3-0.3BaTiO3) - 0.001(Bi0.5Na0.5)TiO3-5 mol% Bi2O3": 202
+                },
+                "test_pair": {
+                  "BaTiO3": 191.0
+                },
+                "match_value": 0
+              }
+            ],
+            "total_ground_truth_keys": 1,
+            "total_match": 0,
+            "missing_keys": [
+              "0.999(0.7BiFeO3-0.3BaTiO3) - 0.001(Bi0.5Na0.5)TiO3-5 mol% Bi2O3"
+            ],
+            "extra_keys": [
+              "Pb(Zr0.52Ti0.48)O3",
+              "BaTiO3"
+            ],
+            "key_match_ratio": 0.0,
+            "value_match_ratio": 0.0,
+            "pair_match_ratio": 0.0,
+            "overall_match_ratio": 0.0,
+            "similarity_score": 0.0,
+            "match": false
+          }
+        },
+        "synthesis_data": {
+          "method": {
+            "match_value": 0,
+            "reference": "solid-state reaction",
+            "test": "Sol-gel",
+            "similarity": 0.0,
+            "match": false
+          },
+          "precursors": {
+            "reference": [
+              "BiFeO3",
+              "BaTiO3",
+              "(Bi0.5Na0.5)TiO3",
+              "Bi2O3"
+            ],
+            "test": [
+              "Pb(CH3COO)2.3H2O",
+              "Zr(CH3COO)4",
+              "Ti(OC3H7)4"
+            ],
+            "matches": [],
+            "total_ground_truth_items": 4,
+            "total_match": 0,
+            "missing_items": [
+              "BiFeO3",
+              "BaTiO3",
+              "(Bi0.5Na0.5)TiO3",
+              "Bi2O3"
+            ],
+            "extra_items": [
+              "Pb(CH3COO)2.3H2O",
+              "Zr(CH3COO)4",
+              "Ti(OC3H7)4"
+            ],
+            "similarity": 0.0,
+            "match": false
+          },
+          "characterization_techniques": {
+            "reference": [
+              "XRD",
+              "Raman spectroscopy",
+              "XPS",
+              "SEM",
+              "PFM",
+              "dielectric measurement",
+              "P-E loop measurement",
+              "strain measurement",
+              "piezoelectric measurement"
+            ],
+            "test": [
+              "XRD",
+              "SEM",
+              "AFM"
+            ],
+            "matches": [
+              {
+                "reference_item": "XRD",
+                "test_item": "XRD",
+                "match_value": 1
+              },
+              {
+                "reference_item": "SEM",
+                "test_item": "SEM",
+                "match_value": 1
+              }
+            ],
+            "total_ground_truth_items": 9,
+            "total_match": 2,
+            "missing_items": [
+              "Raman spectroscopy",
+              "XPS",
+              "PFM",
+              "dielectric measurement",
+              "P-E loop measurement",
+              "strain measurement",
+              "piezoelectric measurement"
+            ],
+            "extra_items": [
+              "AFM"
+            ],
+            "similarity": 0.2222222222222222,
+            "match": false
+          },
+          "steps": {
+            "match_value": 0.0,
+            "reference_steps": [
+              "Raw materials were weighed according to stoichiometric ratio of (1-x)(0.7BiFeO3-0.3BaTiO3)-x(Bi0.5Na0.5)TiO3-5 mol% Bi2O3 with x = 0.000, 0.001, 0.002, 0.003.",
+              "Materials were processed using traditional solid-state reaction method.",
+              "Ceramics were sintered to obtain final products.",
+              "Samples were poled for 24 hours at room temperature before electrical measurements."
+            ],
+            "test_steps": [
+              "Mixing of precursors",
+              "Drying",
+              "Calcination",
+              "Sintering"
+            ],
+            "steps_match": "false"
+          }
+        }
+      }
+    },
+    "10.1016/j.jece.2024.115049": {
+      "overall_match": false,
+      "field_scores": {
+        "composition_data": 0.8200000000000001,
+        "synthesis_data": 0.765
+      },
+      "overall_score": 0.7925,
+      "absolute_classification_metrics": {
+        "true_positives": 13,
+        "false_positives": 8,
+        "false_negatives": 18,
+        "precision": 0.6190476190476191,
+        "recall": 0.41935483870967744,
+        "f1_score": 0.5
+      },
+      "normalized_classification_metrics": {
+        "true_positives": 0.6150000000000001,
+        "false_positives": 0.2,
+        "false_negatives": 0.4625,
+        "precision": 0.754601226993865,
+        "recall": 0.5707656612529003,
+        "f1_score": 0.6499339498018495
+      },
+      "details": {
+        "composition_data": {
+          "property_unit": {
+            "match_value": 1,
+            "reference": "pC/N",
+            "test": "pC/N"
+          },
+          "family": {
+            "match_value": 1,
+            "reference": "BiFeO3",
+            "test": "Perovskite oxides"
+          },
+          "compositions_property_values": {
+            "reference": {
+              "BiFeO3": 17.04,
+              "CdS": 20.24,
+              "BiFeO3/CdS (90/10)": 26.48,
+              "BiFeO3/CdS (80/20)": 35.2,
+              "BiFeO3/CdS (70/30)": 29.5
+            },
+            "test": {
+              "BiFeO3": 17.04,
+              "CdS": 20.24,
+              "BFO/CdS": 35.2
+            },
+            "key_matches": [
+              {
+                "reference_key": "BiFeO3",
+                "test_key": "BiFeO3",
+                "match_value": 1
+              },
+              {
+                "reference_key": "CdS",
+                "test_key": "CdS",
+                "match_value": 1
+              },
+              {
+                "reference_key": "BiFeO3/CdS (90/10)",
+                "test_key": "not found",
+                "match_value": 0
+              },
+              {
+                "reference_key": "BiFeO3/CdS (80/20)",
+                "test_key": "BFO/CdS",
+                "match_value": 0
+              },
+              {
+                "reference_key": "BiFeO3/CdS (70/30)",
+                "test_key": "not found",
+                "match_value": 0
+              }
+            ],
+            "value_matches": [
+              {
+                "reference_key": "BiFeO3",
+                "test_key": "BiFeO3",
+                "reference_value": 17.04,
+                "test_value": 17.04,
+                "match_value": 1
+              },
+              {
+                "reference_key": "CdS",
+                "test_key": "CdS",
+                "reference_value": 20.24,
+                "test_value": 20.24,
+                "match_value": 1
+              },
+              {
+                "reference_key": "BiFeO3/CdS (90/10)",
+                "test_key": "not found",
+                "reference_value": 26.48,
+                "test_value": null,
+                "match_value": 0
+              },
+              {
+                "reference_key": "BiFeO3/CdS (80/20)",
+                "test_key": "BFO/CdS",
+                "reference_value": 35.2,
+                "test_value": 35.2,
+                "match_value": 1
+              },
+              {
+                "reference_key": "BiFeO3/CdS (70/30)",
+                "test_key": "not found",
+                "reference_value": 29.5,
+                "test_value": null,
+                "match_value": 0
+              }
+            ],
+            "pair_matches": [
+              {
+                "reference_pair": {
+                  "BiFeO3": 17.04
+                },
+                "test_pair": {
+                  "BiFeO3": 17.04
+                },
+                "match_value": 1
+              },
+              {
+                "reference_pair": {
+                  "CdS": 20.24
+                },
+                "test_pair": {
+                  "CdS": 20.24
+                },
+                "match_value": 1
+              },
+              {
+                "reference_pair": {
+                  "BiFeO3/CdS (90/10)": 26.48
+                },
+                "test_pair": {},
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "BiFeO3/CdS (80/20)": 35.2
+                },
+                "test_pair": {
+                  "BFO/CdS": 35.2
+                },
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "BiFeO3/CdS (70/30)": 29.5
+                },
+                "test_pair": {},
+                "match_value": 0
+              }
+            ],
+            "total_ground_truth_keys": 5,
+            "total_match": 2,
+            "missing_keys": [
+              "BiFeO3/CdS (90/10)",
+              "BiFeO3/CdS (80/20)",
+              "BiFeO3/CdS (70/30)"
+            ],
+            "extra_keys": [
+              "BFO/CdS"
+            ],
+            "key_match_ratio": 0.4,
+            "value_match_ratio": 0.6,
+            "pair_match_ratio": 0.4,
+            "overall_match_ratio": 0.4,
+            "similarity_score": 0.4,
+            "match": false
+          }
+        },
+        "synthesis_data": {
+          "method": {
+            "match_value": 1,
+            "reference": "liquid-phase precipitation method",
+            "test": "Liquid-phase precipitation method",
+            "similarity": 1.0,
+            "match": true
+          },
+          "precursors": {
+            "reference": [
+              "Bi(NO3)3",
+              "Fe(NO3)3\u00b79H2O",
+              "CdCl2",
+              "CH4N2S"
+            ],
+            "test": [
+              "Bi(NO3)3",
+              "Fe(NO3)3.9 H2O",
+              "triammonium citrate"
+            ],
+            "matches": [
+              {
+                "reference_item": "Bi(NO3)3",
+                "test_item": "Bi(NO3)3",
+                "match_value": 1
+              },
+              {
+                "reference_item": "Fe(NO3)3\u00b79H2O",
+                "test_item": "Fe(NO3)3.9 H2O",
+                "match_value": 1
+              }
+            ],
+            "total_ground_truth_items": 4,
+            "total_match": 2,
+            "missing_items": [
+              "CdCl2",
+              "CH4N2S"
+            ],
+            "extra_items": [
+              "triammonium citrate"
+            ],
+            "similarity": 0.5,
+            "match": false
+          },
+          "characterization_techniques": {
+            "reference": [
+              "XRD",
+              "SEM",
+              "TEM",
+              "XPS",
+              "BET",
+              "PL spectroscopy",
+              "EPR",
+              "UV-Vis spectroscopy",
+              "photoelectrochemical tests",
+              "EIS"
+            ],
+            "test": [
+              "X-ray diffraction (XRD)",
+              "X-ray photoelectron spectroscopy (XPS)",
+              "electron paramagnetic resonance (ESR) spin trapping spectroscopy",
+              "piezoelectric coefficient test",
+              "current voltage measurement (I-V)"
+            ],
+            "matches": [
+              {
+                "reference_item": "XRD",
+                "test_item": "X-ray diffraction (XRD)",
+                "match_value": 1
+              },
+              {
+                "reference_item": "XPS",
+                "test_item": "X-ray photoelectron spectroscopy (XPS)",
+                "match_value": 1
+              },
+              {
+                "reference_item": "EPR",
+                "test_item": "electron paramagnetic resonance (ESR) spin trapping spectroscopy",
+                "match_value": 1
+              }
+            ],
+            "total_ground_truth_items": 10,
+            "total_match": 3,
+            "missing_items": [
+              "SEM",
+              "TEM",
+              "BET",
+              "PL spectroscopy",
+              "UV-Vis spectroscopy",
+              "photoelectrochemical tests",
+              "EIS"
+            ],
+            "extra_items": [
+              "piezoelectric coefficient test",
+              "current voltage measurement (I-V)"
+            ],
+            "similarity": 0.3,
+            "match": false
+          },
+          "steps": {
+            "match_value": 0.45,
+            "reference_steps": [
+              "0.011 mol Bi(NO3)3 and 0.01 mol Fe(NO3)3\u00b79H2O were dissolved into 100 mL deionized water to obtain 0.11 M bismuth nitrate and 0.1 M iron nitrate solutions.",
+              "3 mL nitric acid (68%) was added gradually to bismuth nitrate solution during stirring until completely dissolved.",
+              "Two solutions were mixed and 0.02 mol triammonium citrate was added as complexing agent and stirred for 30 minutes.",
+              "Gel was obtained by continuous stirring at 90\u00b0C until water completely evaporated.",
+              "Gel was calcined at 550\u00b0C for 2 hours to obtain pure phase BFO powder particles.",
+              "10 mL of 0.3 M cadmium chloride solution was added to 50 mL of 0.1 M sodium citrate solution and stirred at room temperature for 20 minutes.",
+              "3 mL concentrated ammonia (NH3\u00b7H2O 28%) and 10 mL of 0.6 M thiourea solution were added in sequence.",
+              "Mixed solution was reacted in water bath at 60\u00b0C for 2.5 hours.",
+              "Precipitate was collected by centrifugation, rinsed with deionized water and anhydrous ethanol, and dried at 60\u00b0C."
+            ],
+            "test_steps": [
+              "Dissolving Bi(NO3)3 and Fe(NO3)3.9 H2O in deionized water",
+              "mixing the two solutions",
+              "adding triammonium citrate",
+              "stirring at 90C until water is completely evaporated",
+              "calcining the gel at 550C for 2 h"
+            ],
+            "steps_match": "false"
+          }
+        }
+      }
+    },
+    "10.1016/j.jallcom.2024.177560": {
+      "overall_match": false,
+      "field_scores": {
+        "composition_data": 0.7,
+        "synthesis_data": 0.5272727272727273
+      },
+      "overall_score": 0.6136363636363636,
+      "absolute_classification_metrics": {
+        "true_positives": 4,
+        "false_positives": 12,
+        "false_negatives": 22,
+        "precision": 0.25,
+        "recall": 0.15384615384615385,
+        "f1_score": 0.1904761904761905
+      },
+      "normalized_classification_metrics": {
+        "true_positives": 0.2272727272727273,
+        "false_positives": 1.0886363636363636,
+        "false_negatives": 0.9727272727272727,
+        "precision": 0.17271157167530227,
+        "recall": 0.18939393939393942,
+        "f1_score": 0.1806684733514002
+      },
+      "details": {
+        "composition_data": {
+          "property_unit": {
+            "match_value": 1,
+            "reference": "pC/N",
+            "test": "pC/N"
+          },
+          "family": {
+            "match_value": 1,
+            "reference": "Pb(Zr, Ti)O3",
+            "test": "PZT"
+          },
+          "compositions_property_values": {
+            "reference": {
+              "0.3PbTiO3-0.65PbZrO3-0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3-5 wt% (La2O3+Nb2O5)": 585
+            },
+            "test": {
+              "Pb(Zr0.52Ti0.48)O3": 274.0,
+              "BaTiO3": 191.0
+            },
+            "key_matches": [
+              {
+                "reference_key": "0.3PbTiO3-0.65PbZrO3-0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3-5 wt% (La2O3+Nb2O5)",
+                "test_key": "Pb(Zr0.52Ti0.48)O3",
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.3PbTiO3-0.65PbZrO3-0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3-5 wt% (La2O3+Nb2O5)",
+                "test_key": "BaTiO3",
+                "match_value": 0
+              }
+            ],
+            "value_matches": [
+              {
+                "reference_key": "0.3PbTiO3-0.65PbZrO3-0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3-5 wt% (La2O3+Nb2O5)",
+                "test_key": "Pb(Zr0.52Ti0.48)O3",
+                "reference_value": 585,
+                "test_value": 274.0,
+                "match_value": 0
+              },
+              {
+                "reference_key": "0.3PbTiO3-0.65PbZrO3-0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3-5 wt% (La2O3+Nb2O5)",
+                "test_key": "BaTiO3",
+                "reference_value": 585,
+                "test_value": 191.0,
+                "match_value": 0
+              }
+            ],
+            "pair_matches": [
+              {
+                "reference_pair": {
+                  "0.3PbTiO3-0.65PbZrO3-0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3-5 wt% (La2O3+Nb2O5)": 585
+                },
+                "test_pair": {
+                  "Pb(Zr0.52Ti0.48)O3": 274.0
+                },
+                "match_value": 0
+              },
+              {
+                "reference_pair": {
+                  "0.3PbTiO3-0.65PbZrO3-0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3-5 wt% (La2O3+Nb2O5)": 585
+                },
+                "test_pair": {
+                  "BaTiO3": 191.0
+                },
+                "match_value": 0
+              }
+            ],
+            "total_ground_truth_keys": 1,
+            "total_match": 0,
+            "missing_keys": [
+              "0.3PbTiO3-0.65PbZrO3-0.05(Bi0.3La0.7)(Zn0.5Ti0.5)O3-5 wt% (La2O3+Nb2O5)"
+            ],
+            "extra_keys": [
+              "Pb(Zr0.52Ti0.48)O3",
+              "BaTiO3"
+            ],
+            "key_match_ratio": 0.0,
+            "value_match_ratio": 0.0,
+            "pair_match_ratio": 0.0,
+            "overall_match_ratio": 0.0,
+            "similarity_score": 0.0,
+            "match": false
+          }
+        },
+        "synthesis_data": {
+          "method": {
+            "match_value": 0,
+            "reference": "solid-state reaction",
+            "test": "Sol-gel",
+            "similarity": 0.0,
+            "match": false
+          },
+          "precursors": {
+            "reference": [
+              "La2O3",
+              "Nb2O5",
+              "PbO",
+              "TiO2",
+              "ZrO2",
+              "Bi2O3"
+            ],
+            "test": [
+              "Pb(CH3COO)2.3H2O",
+              "Zr(CH3COO)4",
+              "Ti(OC3H7)4"
+            ],
+            "matches": [],
+            "total_ground_truth_items": 6,
+            "total_match": 0,
+            "missing_items": [
+              "La2O3",
+              "Nb2O5",
+              "PbO",
+              "TiO2",
+              "ZrO2",
+              "Bi2O3"
+            ],
+            "extra_items": [
+              "Pb(CH3COO)2.3H2O",
+              "Zr(CH3COO)4",
+              "Ti(OC3H7)4"
+            ],
+            "similarity": 0.0,
+            "match": false
+          },
+          "characterization_techniques": {
+            "reference": [
+              "XRD",
+              "Rietveld refinement",
+              "Raman spectroscopy",
+              "d33 measurement",
+              "impedance measurement",
+              "dielectric measurement",
+              "P-E hysteresis measurement",
+              "strain measurement",
+              "PFM",
+              "FESEM",
+              "EDS"
+            ],
+            "test": [
+              "XRD",
+              "SEM",
+              "AFM"
+            ],
+            "matches": [
+              {
+                "reference_item": "XRD",
+                "test_item": "XRD",
+                "match_value": 1
+              },
+              {
+                "reference_item": "FESEM",
+                "test_item": "SEM",
+                "match_value": 1
+              }
+            ],
+            "total_ground_truth_items": 11,
+            "total_match": 2,
+            "missing_items": [
+              "Rietveld refinement",
+              "Raman spectroscopy",
+              "d33 measurement",
+              "impedance measurement",
+              "dielectric measurement",
+              "P-E hysteresis measurement",
+              "strain measurement",
+              "PFM",
+              "EDS"
+            ],
+            "extra_items": [
+              "AFM"
+            ],
+            "similarity": 0.18181818181818182,
+            "match": false
+          },
+          "steps": {
+            "match_value": 0.0,
+            "reference_steps": [
+              "Raw powders La2O3 and Nb2O5 mixed at mass ratio 3:2 and ball-milled in ethanol for 12 hours to prepare LN additive.",
+              "LN mixture sieved to prepare the additive.",
+              "High-purity raw powders PbO, TiO2, ZrO2, Bi2O3, and La2O3 weighed based on 0.3PT-0.65PZ-0.05BLZT formula.",
+              "Mixed powders combined with ethanol and ball-milled for 16 hours.",
+              "Mixtures dried in oven at 80\u00b0C for 1-2 hours and calcined at 820\u00b0C for 2 hours.",
+              "Synthesized powders weighed based on PT-PZ-BLZT-xLN formula (x = 0, 3, 4, 5, 6, 7 wt%).",
+              "Secondary ball milling, drying, and sieving processes performed.",
+              "Granulated powders pressed into 12 mm thick sheets with 5% polyvinyl alcohol binder.",
+              "Sheets sintered at 600\u00b0C for 4 hours to remove binder.",
+              "Final sintering at 1230\u00b0C for 2 hours to synthesize ceramic samples.",
+              "Ceramic surfaces polished to uniform thickness of approximately 0.3 mm.",
+              "Silver electrodes applied to ceramic sheets for electrical measurements."
+            ],
+            "test_steps": [
+              "Mixing",
+              "Drying",
+              "Calcination",
+              "Sintering"
+            ],
+            "steps_match": "false"
+          }
+        }
+      }
+    }
+  }
+}

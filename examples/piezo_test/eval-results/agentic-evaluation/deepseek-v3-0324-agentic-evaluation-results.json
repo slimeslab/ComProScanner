@@ -20473,11 +20473,11 @@
           "compositions_property_values": {
             "reference": {
               "Bi5Ti3FeO15": 7.1,
-              "0.98Bi0.02HoTi3FeO15": 21.8,
-              "0.97Bi0.03HoTi3FeO15": 21.1,
-              "0.96Bi0.04HoTi3FeO15": 23.1,
-              "0.95Bi0.05HoTi3FeO15": 20.0,
-              "0.92Bi0.08HoTi3FeO15": 18.6
+              "Bi4.98Ho0.02Ti3FeO15": 21.8,
+              "Bi4.97Ho0.03Ti3FeO15": 21.1,
+              "Bi4.96Ho0.04Ti3FeO15": 23.1,
+              "Bi4.95Ho0.05Ti3FeO15": 20.0,
+              "Bi4.92Ho0.08Ti3FeO15": 18.6
             },
             "test": {
               "Bi5Ti3FeO15": 7.1,

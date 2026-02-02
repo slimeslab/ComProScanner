@@ -1,0 +1,287 @@
+{
+  "10.1016/j.mtcomm.2024.111118": {
+    "composition_data": {
+      "compositions_property_values": {
+        "BaTiO3": 191.0,
+        "PZT": 275.0
+      },
+      "property_unit": "pC/N",
+      "family": "Perovskite"
+    },
+    "synthesis_data": {
+      "method": "Sol-gel",
+      "precursors": [
+        "Barium acetate",
+        "Titanium isopropoxide"
+      ],
+      "steps": [
+        "Mixing of precursors",
+        "Calcination",
+        "Sintering"
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "SEM",
+        "AFM"
+      ]
+    }
+  },
+  "10.1016/j.mtcomm.2025.111645": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Ba0.92Ca0.08Ti0.95Zr0.05-0.8 %La- xTm (BCZT-0.8 %La- xTm, with x = 0, 0.1 %, 0.3 %, 0.5 %, 0.7 %, 1 %, and 2 %)": 181.0
+      },
+      "property_unit": "pC/N",
+      "family": "BCZT-based"
+    },
+    "synthesis_data": {
+      "method": "Sol-gel method",
+      "precursors": [
+        "Ba(CH3COO)2",
+        "Ca(NO3)2·4H2O",
+        "Zr(NO3)4·5H2O",
+        "Ti(OC4H9)4",
+        "La(NO3)3·nH2O",
+        "Tm(NO3)3·5H2O"
+      ],
+      "steps": [
+        "Raw precursors were added to an Erlenmeyer flask, ethanol was added, and reacted for 3 hours to obtain polymer solutions.",
+        "Solutions were placed in an oven at 120°C for 10 hours, then calcined at 900°C for 2 hours in a muffle furnace to form precursor powders.",
+        "Powders were mixed with 2 wt% polyvinyl alcohol (PVA) as an organic binder (weight ratio PVA:powders = 1:120) and formed into disks (20 mm diameter) under 20 MPa pressure with a retention time of 150 seconds.",
+        "Disks were embedded in alumina and sintered at 1300°C for 4 hours in air using a heating rate of 5°C/min."
+      ],
+      "characterization_techniques": [
+        "X-ray diffraction (XRD)",
+        "X-ray photoelectron spectroscopy (XPS)",
+        "Scanning electron microscopy (SEM)",
+        "Dielectric testing instrument",
+        "LCR instrument",
+        "Radiant precision workstation",
+        "Quasistatic piezoelectric meter"
+      ]
+    }
+  },
+  "10.1016/j.jeurceramsoc.2024.117101": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Pb(Zr0.52Ti0.48)O3": 274.0,
+        "BaTiO3": 191.0
+      },
+      "property_unit": "pC/N",
+      "family": "PZT"
+    },
+    "synthesis_data": {
+      "method": "Sol-gel",
+      "precursors": [
+        "Pb(CH3COO)2.3H2O",
+        "Zr(CH3COO)4",
+        "Ti(OC3H7)4"
+      ],
+      "steps": [
+        "Mixing of precursors",
+        "Drying",
+        "Calcination",
+        "Sintering"
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "SEM",
+        "AFM"
+      ]
+    }
+  },
+  "10.1016/j.matchemphys.2024.129999": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Pb(Zr0.52Ti0.48)O3": 274.0,
+        "BaTiO3": 191.0
+      },
+      "property_unit": "pC/N",
+      "family": "PZT"
+    },
+    "synthesis_data": {
+      "method": "Sol-gel",
+      "precursors": [
+        "Pb(CH3COO)2.3H2O",
+        "Zr(CH3COO)4",
+        "Ti(OC3H7)4"
+      ],
+      "steps": [
+        "Mixing of precursors",
+        "Drying",
+        "Calcination",
+        "Sintering"
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "SEM",
+        "AFM"
+      ]
+    }
+  },
+  "10.1016/j.jallcom.2024.177560": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Pb(Zr0.52Ti0.48)O3": 274.0,
+        "BaTiO3": 191.0
+      },
+      "property_unit": "pC/N",
+      "family": "PZT"
+    },
+    "synthesis_data": {
+      "method": "Sol-gel",
+      "precursors": [
+        "Pb(CH3COO)2.3H2O",
+        "Zr(CH3COO)4",
+        "Ti(OC3H7)4"
+      ],
+      "steps": [
+        "Mixing",
+        "Drying",
+        "Calcination",
+        "Sintering"
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "SEM",
+        "AFM"
+      ]
+    }
+  },
+  "10.1016/j.jallcom.2024.177690": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Pb(Zr0.52Ti0.48)O3": 274.0,
+        "BaTiO3": 191.0
+      },
+      "property_unit": "pC/N",
+      "family": "PZT"
+    },
+    "synthesis_data": {
+      "method": "Sol-gel",
+      "precursors": [
+        "Pb(CH3COO)2.3H2O",
+        "Zr(CH3COO)4",
+        "Ti(OC3H7)4"
+      ],
+      "steps": [
+        "Mixing of precursors",
+        "Drying",
+        "Calcination",
+        "Sintering"
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "SEM",
+        "AFM"
+      ]
+    }
+  },
+  "10.1016/j.jallcom.2024.178322": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Pb(Zr0.52Ti0.48)O3": 274.0,
+        "BaTiO3": 191.0
+      },
+      "property_unit": "pC/N",
+      "family": "PZT"
+    },
+    "synthesis_data": {
+      "method": "Sol-gel",
+      "precursors": [
+        "Pb(CH3COO)2.3H2O",
+        "Zr(CH3COO)4",
+        "Ti(OC3H7)4"
+      ],
+      "steps": [
+        "Mixing of precursors",
+        "Drying",
+        "Calcination",
+        "Sintering"
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "SEM",
+        "AFM"
+      ]
+    }
+  },
+  "10.1016/j.jece.2024.115049": {
+    "composition_data": {
+      "compositions_property_values": {
+        "BiFeO3": 17.04,
+        "CdS": 20.24,
+        "BFO/CdS": 35.2
+      },
+      "property_unit": "pC/N",
+      "family": "Perovskite oxides"
+    },
+    "synthesis_data": {
+      "method": "Liquid-phase precipitation method",
+      "precursors": [
+        "Bi(NO3)3",
+        "Fe(NO3)3.9 H2O",
+        "triammonium citrate"
+      ],
+      "steps": [
+        "Dissolving Bi(NO3)3 and Fe(NO3)3.9 H2O in deionized water",
+        "mixing the two solutions",
+        "adding triammonium citrate",
+        "stirring at 90C until water is completely evaporated",
+        "calcining the gel at 550C for 2 h"
+      ],
+      "characterization_techniques": [
+        "X-ray diffraction (XRD)",
+        "X-ray photoelectron spectroscopy (XPS)",
+        "electron paramagnetic resonance (ESR) spin trapping spectroscopy",
+        "piezoelectric coefficient test",
+        "current voltage measurement (I-V)"
+      ]
+    }
+  },
+  "10.1016/j.jallcom.2025.178686": {
+    "composition_data": {
+      "compositions_property_values": {
+        "0.06PSN-0.59PMN-0.35PT": 665.0,
+        "0.15PSN-0.48PMN-0.37PT": 620.0,
+        "0.29PSN-0.32PMN-0.39PT": 585.0,
+        "0.43PSN-0.17PMN-0.40PT": 650.0
+      },
+      "property_unit": "pC/N",
+      "family": "PSN-PMN-PT system"
+    },
+    "synthesis_data": {
+      "method": "Not provided",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    }
+  },
+  "10.1016/j.ceramint.2024.10.251": {
+    "composition_data": {
+      "compositions_property_values": {
+        "BaTiO3": 191.0,
+        "Pb(Zr0.52Ti0.48)O3": 274.0
+      },
+      "property_unit": "pC/N",
+      "family": "Perovskite"
+    },
+    "synthesis_data": {
+      "method": "Solid state reaction",
+      "precursors": [
+        "BaCO3",
+        "TiO2"
+      ],
+      "steps": [
+        "Mixing",
+        "Calcination",
+        "Sintering"
+      ],
+      "characterization_techniques": [
+        "XRD",
+        "SEM",
+        "AFM"
+      ]
+    }
+  }
+}

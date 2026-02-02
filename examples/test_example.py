@@ -9,7 +9,7 @@ flow_optional_args = {
     "composition_property_extraction_task_notes": [
         "Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.",
         "If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.",
-        "Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.",
+        "Most of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.",
         "Use element symbols (e.g. 'K' not 'Potassium')",
         "For compositions with variables:\n   * If multiple d33 values exist: Extract all compositions by substituting each variable value\n   * If single d33 value: Extract only the best composition",
         "Prioritize data from tables",
@@ -91,7 +91,7 @@ if __name__ == "__main__":
         ground_truth_file="piezo_test/ground_truth.json",
         test_data_file="piezo_test/model-outputs/deepseek/deepseek-v3-piezo-ceramic-test-results.json",
         output_file="piezo_test/eval-results/semantic-evaluation/deepseek-v3-0324-semantic-evaluation-results.json",
-        agent_model_name="DeepSeek-V3-0324",
+        extraction_agent_model_name="DeepSeek-V3-0324",
     )
 
     llm = LLM(model="gemini/gemini-2.5-pro")
@@ -100,6 +100,6 @@ if __name__ == "__main__":
         ground_truth_file="piezo_test/ground_truth.json",
         test_data_file="piezo_test/model-outputs/deepseek/deepseek-v3-piezo-ceramic-test-results.json",
         output_file="piezo_test/eval-results/agentic-evaluation/deepseek-v3-0324-agentic-evaluation-results.json",
-        agent_model_name="DeepSeek-V3-0324",
+        extraction_agent_model_name="DeepSeek-V3-0324",
         llm=llm,
     )

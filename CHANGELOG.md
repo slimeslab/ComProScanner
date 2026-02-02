@@ -1,6 +1,7 @@
 ## Unreleased
 
 ### Added
+- Data related to comparison with other agentic data extraction frameworks added for the ComProScanner paper in the `examples/piezo_test/comparing_existing_frameworks` folder.
 
 - New parameter `apply_advanced_cleaning` added to data cleaning methods in `data_cleaner.py`. When set to `True`, it triggers the advanced cleaning pipeline.
 
@@ -38,6 +39,7 @@
 - [CITATION.cff](https://github.com/slimeslab/ComProScanner/blob/main/CITATION.cff) added for standardized citation information based on the latest release and arXiv preprint.
 
 ### Fixed
+- Data extraction failures fixed if composition-property text data is empty.
 
 - CSV progress tracking in `elsevier_processor.py`:
 

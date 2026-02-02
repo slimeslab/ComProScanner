@@ -67,11 +67,17 @@ class CompositionsPropertyValuesMatch(BaseModel):
 
 
 class CompositionDataDetails(BaseModel):
-    """Composition data details - the only output from the evaluation task"""
+    """Composition data details"""
 
     property_unit: CompositionMatch
     family: CompositionMatch
     compositions_property_values: CompositionsPropertyValuesMatch
+
+
+class CompositionDataWrapper(BaseModel):
+    """Wrapper for composition data - the output from the evaluation task"""
+
+    composition_data: CompositionDataDetails
 
 
 @CrewBase
@@ -82,7 +88,6 @@ class CompositionEvaluationCrew:
     """
 
     def __init__(self, llm: Optional[LLM] = None):
-        super().__init__()
         self.llm = llm or LLM(model="o3-mini")
 
     @agent
@@ -97,7 +102,7 @@ class CompositionEvaluationCrew:
         """Task for evaluating composition data with binary decisions."""
         return Task(
             config=self.tasks_config["evaluate_composition_data_task"],
-            output_pydantic=CompositionDataDetails,
+            output_pydantic=CompositionDataWrapper,
         )
 
     @crew

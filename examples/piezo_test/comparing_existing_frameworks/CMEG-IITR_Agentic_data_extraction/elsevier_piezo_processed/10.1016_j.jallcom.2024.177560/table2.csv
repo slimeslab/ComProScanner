@@ -1,0 +1,12 @@
+Materials,E (kV/cm),Strain,Hysteresis,d 33 (pC/N),Refs.
+PNN–PZT–Sn,50,0.06 %,28 %,1123,[58]
+PNN–PZT–Ta,15,0.12 %,25 %,1090,[59]
+BZT–PZ–PT,40,0.13 %,40 %,341,[21]
+PHT–PIN–Li/W,30,0.15 %,30 %,655,[28]
+BS–PT–Mn,40,0.18 %,32 %,-,[60]
+BS–PT-PMN–Fe,40,0.23 %,36 %,160,[61]
+BS–PT,40,0.25 %,50 %,-,[60]
+BMT–PMN–PT,60,0.29 %,18 %,120,[60]
+PT–PZ–BNT,50,0.40 %,38 %,200,[62]
+Textured PMN−24 %PT,30,0.10 %,0 %,-,[63]
+PT–PZ–BLZT–5LN,50,0.45 %,16 %,585,This work

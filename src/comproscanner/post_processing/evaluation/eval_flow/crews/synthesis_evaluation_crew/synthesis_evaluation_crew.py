@@ -55,12 +55,18 @@ class StepsMatch(BaseModel):
 
 
 class SynthesisDataDetails(BaseModel):
-    """Synthesis data details - the only output from the evaluation task"""
+    """Synthesis data details"""
 
     method: SynthesisMatch
     precursors: ListItemsMatch
     characterization_techniques: ListItemsMatch
     steps: StepsMatch
+
+
+class SynthesisDataWrapper(BaseModel):
+    """Wrapper for synthesis data - the output from the evaluation task"""
+
+    synthesis_data: SynthesisDataDetails
 
 
 @CrewBase
@@ -71,7 +77,6 @@ class SynthesisEvaluationCrew:
     """
 
     def __init__(self, llm: Optional[LLM] = None):
-        super().__init__()
         self.llm = llm or LLM(model="o3-mini")
 
     @agent
@@ -86,7 +91,7 @@ class SynthesisEvaluationCrew:
         """Task for evaluating synthesis data with binary decisions."""
         return Task(
             config=self.tasks_config["evaluate_synthesis_data_task"],
-            output_pydantic=SynthesisDataDetails,
+            output_pydantic=SynthesisDataWrapper,
         )
 
     @crew

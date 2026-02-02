@@ -1411,7 +1411,7 @@
       "property_unit": "pC/N",
       "family": "Barium Calcium Zirconate Titanate or BCZT"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "sol-gel method",
       "precursors": [
         "Ba(CH3COO)2",
@@ -1607,7 +1607,7 @@
       "property_unit": "pC/N",
       "family": "PZT or PIMNT"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "crystal growth and electrode preparation",
       "precursors": [
         "0.30PIN-0.40PMN-0.30PT single crystal"
@@ -1717,7 +1717,7 @@
       "property_unit": "pC/N",
       "family": "BiFeO3"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "liquid-phase precipitation method",
       "precursors": [
         "Bi(NO3)3",
@@ -1850,7 +1850,7 @@
       "property_unit": "pm/V",
       "family": "Dipeptides"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "spin-coating and vapor saturation",
       "precursors": [
         "L-phenylalanyl-L-leucine (Phe-Leu)",
@@ -1989,7 +1989,7 @@
       "property_unit": "pC/N",
       "family": "CBN-based ceramics"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "solid state sintering method",
       "precursors": [
         "CaCO3",
@@ -2085,7 +2085,7 @@
       "property_unit": "pC/N",
       "family": "CBN-based ceramics"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "solid-state reaction",
       "precursors": [
         "Ca2CO3",
@@ -2222,7 +2222,7 @@
       "property_unit": "pC/N",
       "family": "BLSFs"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "solid-state reaction method",
       "precursors": [
         "Na2CO3",
@@ -2323,7 +2323,7 @@
       "property_unit": "pC/N",
       "family": "PZT"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "RF magnetron sputtering",
       "precursors": [
         "PMN-PZT ceramic target",
@@ -2449,7 +2449,7 @@
       "property_unit": "pC/N",
       "family": "BZT-BS-PT"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "solid-state reaction",
       "precursors": [
         "Sc2O3",
@@ -4336,7 +4336,7 @@
       "property_unit": "pC/N",
       "family": "PSN-PMN-PT"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "template grain growth technology",
       "precursors": [
         "Pb(Sc1/2Nb1/2)O3",
@@ -4431,7 +4431,7 @@
       "property_unit": "pC/N",
       "family": "PNNZT"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "two-dimensional directed template grain growth (2DD TGG)",
       "precursors": [
         "PbO",
@@ -4511,7 +4511,7 @@
       "property_unit": "pC/N",
       "family": "PbTiO3"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "solid-state synthesis technique",
       "precursors": [
         "Bi2O3",
@@ -4586,7 +4586,7 @@
       "property_unit": "pC/N",
       "family": "BiFeO3-BaTiO3"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "conventional high temperature solid-state reaction method",
       "precursors": [
         "Bi2O3",
@@ -4689,7 +4689,7 @@
       "property_unit": "pC/N",
       "family": "NKBN"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "solid-state reaction method",
       "precursors": [
         "Na2CO3",
@@ -4782,7 +4782,7 @@
       "property_unit": "pC/N",
       "family": "KNN"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "seed-free solid-state crystal growth (SFSSCG) method",
       "precursors": [
         "Na2CO3",
@@ -4891,7 +4891,7 @@
       "property_unit": "pC/N",
       "family": "BNT-BT-KNN"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "flux method",
       "precursors": [
         "Bi2O3",
@@ -4987,7 +4987,7 @@
       "property_unit": "pC/N",
       "family": "BiFeO3-BaTiO3"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "traditional solid-state reaction method",
       "precursors": [
         "Bi2O3",
@@ -5095,7 +5095,7 @@
       "property_unit": "pm/V",
       "family": "Bi4Ti3O12"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "one-step molten salt route",
       "precursors": [
         "TiO2 (P25)",
@@ -5173,7 +5173,7 @@
       "property_unit": "pC/N",
       "family": "Bi4Ti3O12"
     },
-    "synthesis": {
+    "synthesis_data": {
       "method": "solid-state reaction technique",
       "precursors": [
         "Bi2O3",
