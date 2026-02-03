@@ -12,6 +12,7 @@ import os
 import sys
 import time
 import tempfile
+import re
 
 # third-party library imports
 import requests
@@ -149,6 +150,34 @@ class WileyArticleProcessor:
         self.csv_db_manager = CSVDatabaseManager()
         self.vector_db_manager = VectorDatabaseManager(rag_config=self.rag_config)
         self.is_exceeded = False
+
+    def _is_corrupted_text(self, text: str) -> bool:
+        """Check if the text contains corrupted GLYPH patterns from failed OCR.
+
+        Args:
+            text (str): The text to check.
+
+        Returns:
+            bool: True if text is corrupted (high ratio of GLYPH patterns), False otherwise.
+        """
+        if not text:
+            return True
+
+        # Count GLYPH pattern occurrences (both raw and HTML-escaped)
+        glyph_pattern = r"GLYPH(?:<|&lt;)\d+(?:>|&gt;)"
+        glyph_matches = re.findall(glyph_pattern, text)
+        glyph_count = len(glyph_matches)
+
+        # If there are many GLYPH patterns, the text is corrupted
+        # Threshold: if GLYPH patterns make up more than 10% of words, consider it corrupted
+        words = text.split()
+        word_count = len(words)
+
+        if word_count == 0:
+            return True
+
+        glyph_ratio = glyph_count / word_count
+        return glyph_ratio > 0.1  # More than 10% GLYPH patterns indicates corruption
 
     def _load_and_preprocess_data(self):
         """
@@ -419,12 +448,19 @@ class WileyArticleProcessor:
 
                 # Download PDF
                 file_path = self._send_request(row["doi"])
-                if file_path is None:
-                    logger.warning(f"Failed to download PDF for DOI {row['doi']}")
-                    continue
 
-                # Handle "Not Found" articles
-                if file_path == "Not Found":
+                # Handle failed downloads and "Not Found" articles
+                if file_path is None or file_path == "Not Found":
+                    if file_path is None:
+                        logger.warning(
+                            f"Failed to download PDF for DOI {row['doi']}. "
+                            "Storing with is_property_mentioned=0."
+                        )
+                    else:
+                        logger.warning(
+                            f"Article not found for DOI {row['doi']}. "
+                            "Storing with is_property_mentioned=0."
+                        )
                     empty_data = {
                         "doi": row["doi"],
                         "article_title": row["article_title"],
@@ -462,19 +498,20 @@ class WileyArticleProcessor:
                         time.sleep(5)
                     continue
 
-                # Get metadata
-                title, journal_name, publisher = get_paper_metadata_from_oaworks(
-                    row["doi"]
-                )
+                # Get metadata from the metadata CSV row
+                title = row.get("article_title", "")
+                journal_name = row.get("publication_name", "")
+                publisher = row.get("metadata_publisher", "")
 
                 # Convert PDF to Markdown
                 pdf_to_md = PDFToMarkdownText(file_path)
                 md_text = pdf_to_md.convert_to_markdown()
 
-                # Check if conversion was successful
-                if md_text is None:
-                    logger.error(
-                        f"Failed to convert PDF to markdown for DOI {row['doi']}"
+                # Check if conversion was successful or text detection is empty/corrupted
+                if md_text is None or not md_text.strip() or self._is_corrupted_text(md_text):
+                    logger.warning(
+                        f"Text detection result is empty or corrupted for DOI {doi}. "
+                        "Storing with is_property_mentioned=0 and skipping vector database creation."
                     )
                     # Clean up temporary file if it exists
                     if not self.is_save_pdf and os.path.exists(file_path):
@@ -484,6 +521,42 @@ class WileyArticleProcessor:
                             logger.warning(
                                 f"Failed to remove temp file {file_path}: {e}"
                             )
+                    # Store empty row with DOI, metadata and is_property_mentioned=0
+                    empty_data = {
+                        "doi": doi,
+                        "article_title": title,
+                        "publication_name": journal_name,
+                        "publisher": publisher,
+                        "abstract": "",
+                        "introduction": "",
+                        "exp_methods": "",
+                        "comp_methods": "",
+                        "results_discussion": "",
+                        "conclusion": "",
+                        "is_property_mentioned": "0",
+                    }
+                    empty_row = pd.DataFrame([empty_data])
+                    sql_dataframes.append(empty_row)
+                    csv_dataframes.append(empty_row)
+                    if len(sql_dataframes) == self.sql_batch_size:
+                        final_sql_df = pd.concat(sql_dataframes, ignore_index=True)
+                        if self.is_sql_db:
+                            self.sql_db_manager.write_to_sql_db(
+                                self.paperdata_table_name, final_sql_df
+                            )
+                        sql_dataframes = []
+                        time.sleep(5)
+                    if len(csv_dataframes) == self.csv_batch_size:
+                        final_csv_df = pd.concat(csv_dataframes, ignore_index=True)
+                        self.csv_db_manager.write_to_csv(
+                            final_csv_df,
+                            self.csv_path,
+                            self.keyword,
+                            self.source,
+                            self.csv_batch_size,
+                        )
+                        csv_dataframes = []
+                        time.sleep(5)
                     continue
 
                 # Process the markdown text

@@ -150,6 +150,95 @@ class PDFsProcessor:
             logger.error(f"Error extracting DOI from text: {e}")
             return ""
 
+    def _create_empty_row(
+        self, doi: str, title: str = "", journal_name: str = "", publisher: str = ""
+    ):
+        """Create a row with empty values for PDFs with no text detection.
+
+        Args:
+            doi (str): The DOI of the article (may be empty string).
+            title (str): The title of the article.
+            journal_name (str): The name of the publication.
+            publisher (str): The name of the publisher.
+
+        Returns:
+            pd.DataFrame: DataFrame with metadata and empty section values and is_property_mentioned=0.
+        """
+        return pd.DataFrame(
+            [
+                {
+                    "doi": doi,
+                    "article_title": title,
+                    "publication_name": journal_name,
+                    "publisher": publisher,
+                    "abstract": "",
+                    "introduction": "",
+                    "exp_methods": "",
+                    "comp_methods": "",
+                    "results_discussion": "",
+                    "conclusion": "",
+                    "is_property_mentioned": "0",
+                }
+            ]
+        )
+
+    def _is_corrupted_text(self, text: str) -> bool:
+        """Check if the text contains corrupted GLYPH patterns from failed OCR.
+
+        Args:
+            text (str): The text to check.
+
+        Returns:
+            bool: True if text is corrupted (high ratio of GLYPH patterns), False otherwise.
+        """
+        if not text:
+            return True
+
+        # Count GLYPH pattern occurrences (both raw and HTML-escaped)
+        glyph_pattern = r"GLYPH(?:<|&lt;)\d+(?:>|&gt;)"
+        glyph_matches = re.findall(glyph_pattern, text)
+        glyph_count = len(glyph_matches)
+
+        # If there are many GLYPH patterns, the text is corrupted
+        # Threshold: if GLYPH patterns make up more than 10% of words, consider it corrupted
+        words = text.split()
+        word_count = len(words)
+
+        if word_count == 0:
+            return True
+
+        glyph_ratio = glyph_count / word_count
+        return glyph_ratio > 0.1  # More than 10% GLYPH patterns indicates corruption
+
+    def _get_metadata_from_csv(self, doi: str):
+        """Try to get metadata from the local metadata CSV file.
+
+        Args:
+            doi (str): The DOI to search for.
+
+        Returns:
+            tuple: (title, journal_name, publisher) or ("", "", "") if not found.
+        """
+        try:
+            if not os.path.exists(self.metadata_csv_filename):
+                return "", "", ""
+            
+            # Load metadata CSV if not already loaded
+            if self.df is None:
+                self.df = pd.read_csv(self.metadata_csv_filename)
+            
+            matching_rows = self.df[self.df["doi"] == doi]
+            if not matching_rows.empty:
+                row = matching_rows.iloc[0]
+                title = row.get("article_title", "")
+                journal_name = row.get("publication_name", "")
+                publisher = row.get("metadata_publisher", "")
+                return title, journal_name, publisher
+            return "", "", ""
+        except Exception as e:
+            logger.warning(f"Error reading metadata from CSV: {e}")
+            return "", "", ""
+
     def process_pdfs(self):
         """
         Main function to process the PDFs in the folder. It reads the PDFs, extracts the text, and writes the data to CSV file, to the SQL database (if set), and creates a vector database if the keyword is found in the text.
@@ -168,6 +257,49 @@ class PDFsProcessor:
                 pdf_to_md = PDFToMarkdownText(source=pdf_file)
                 md_text = pdf_to_md.convert_to_markdown()
 
+                # Handle empty or corrupted text detection result
+                if md_text is None or not md_text.strip() or self._is_corrupted_text(md_text):
+                    logger.warning(
+                        f"Text detection result is empty or corrupted for {pdf_file}. "
+                        "Storing with is_property_mentioned=0 and skipping vector database creation."
+                    )
+                    # Try to extract DOI from filename if possible
+                    filename = os.path.basename(pdf_file)
+                    self.doi = filename.replace(".pdf", "").replace("_", "/")
+                    self.identifier = self.doi
+
+                    # Try to get metadata from local CSV
+                    title, journal_name, publisher = "", "", ""
+                    if self.doi:
+                        title, journal_name, publisher = self._get_metadata_from_csv(self.doi)
+
+                    row = self._create_empty_row(
+                        self.doi, title, journal_name, publisher
+                    )
+                    sql_dataframes.append(row)
+                    csv_dataframes.append(row)
+
+                    if len(sql_dataframes) == self.sql_batch_size:
+                        final_sql_df = pd.concat(sql_dataframes, ignore_index=True)
+                        if self.is_sql_db:
+                            self.sql_db_manager.write_to_sql_db(
+                                self.paperdata_table_name, final_sql_df
+                            )
+                        sql_dataframes = []
+                        time.sleep(5)
+                    if len(csv_dataframes) == self.csv_batch_size:
+                        final_csv_df = pd.concat(csv_dataframes, ignore_index=True)
+                        self.csv_db_manager.write_to_csv(
+                            final_csv_df,
+                            self.csv_path,
+                            self.keyword,
+                            self.source,
+                            self.csv_batch_size,
+                        )
+                        csv_dataframes = []
+                        time.sleep(5)
+                    continue
+
                 # Extract DOI from the converted markdown text
                 self.doi = self._extract_doi_from_text(md_text)
 
@@ -182,14 +314,13 @@ class PDFsProcessor:
                     filename = os.path.basename(pdf_file)
                     self.identifier = filename.replace(".pdf", "")
 
-                # Get metadata from external API using DOI
+                # Get metadata from local CSV using DOI
                 title, journal_name, publisher = "", "", ""
                 if self.doi:
-                    title, journal_name, publisher = get_paper_metadata_from_oaworks(
-                        self.doi
-                    )
+                    title, journal_name, publisher = self._get_metadata_from_csv(self.doi)
+
                     if not title:
-                        logger.warning(f"Metadata not found for DOI: {self.doi}")
+                        logger.warning(f"Metadata not found in CSV for DOI: {self.doi}")
 
                 # Process sections
                 all_sections = pdf_to_md.clean_text(md_text)
@@ -208,20 +339,28 @@ class PDFsProcessor:
 
                 if row["is_property_mentioned"].iloc[0] == "1":
                     self.valid_property_articles += 1
+
                 if len(sql_dataframes) == self.sql_batch_size:
-                    final_df = pd.concat(sql_dataframes, ignore_index=True)
+                    final_sql_df = pd.concat(sql_dataframes, ignore_index=True)
                     if self.is_sql_db:
                         self.sql_db_manager.write_to_sql_db(
-                            self.paperdata_table_name, final_df
+                            self.paperdata_table_name, final_sql_df
                         )
                     sql_dataframes = []
                     time.sleep(5)
+
                 if len(csv_dataframes) == self.csv_batch_size:
+                    final_csv_df = pd.concat(csv_dataframes, ignore_index=True)
                     self.csv_db_manager.write_to_csv(
-                        final_df, self.csv_path, self.keyword, self.source
+                        final_csv_df,
+                        self.csv_path,
+                        self.keyword,
+                        self.source,
+                        self.csv_batch_size,
                     )
                     csv_dataframes = []
                     time.sleep(5)
+
                 time.sleep(0.2)
 
             except KeyboardInterrupt as kie:
