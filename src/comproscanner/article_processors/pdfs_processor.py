@@ -268,10 +268,18 @@ class PDFsProcessor:
                     self.doi = filename.replace(".pdf", "").replace("_", "/")
                     self.identifier = self.doi
 
-                    # Try to get metadata from local CSV
+                    # Try to get metadata (API first, then CSV)
                     title, journal_name, publisher = "", "", ""
-                    if self.doi:
-                        title, journal_name, publisher = self._get_metadata_from_csv(self.doi)
+                    if self.doi.startswith("10."):
+                        title, journal_name, publisher = get_paper_metadata_from_oaworks(
+                            self.doi
+                        )
+                        
+                        if not title or not journal_name or not publisher:
+                            csv_title, csv_journal, csv_publisher = self._get_metadata_from_csv(self.doi)
+                            title = title or csv_title
+                            journal_name = journal_name or csv_journal
+                            publisher = publisher or csv_publisher
 
                     row = self._create_empty_row(
                         self.doi, title, journal_name, publisher
@@ -314,13 +322,21 @@ class PDFsProcessor:
                     filename = os.path.basename(pdf_file)
                     self.identifier = filename.replace(".pdf", "")
 
-                # Get metadata from local CSV using DOI
+                # Get metadata from external API (with CSV fallback) using DOI
                 title, journal_name, publisher = "", "", ""
                 if self.doi:
-                    title, journal_name, publisher = self._get_metadata_from_csv(self.doi)
+                    title, journal_name, publisher = get_paper_metadata_from_oaworks(
+                        self.doi
+                    )
+                    
+                    if not title or not journal_name or not publisher:
+                        csv_title, csv_journal, csv_publisher = self._get_metadata_from_csv(self.doi)
+                        title = title or csv_title
+                        journal_name = journal_name or csv_journal
+                        publisher = publisher or csv_publisher
 
                     if not title:
-                        logger.warning(f"Metadata not found in CSV for DOI: {self.doi}")
+                        logger.warning(f"Metadata not found for DOI: {self.doi}")
 
                 # Process sections
                 all_sections = pdf_to_md.clean_text(md_text)
