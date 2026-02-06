@@ -14,9 +14,9 @@ import time
 
 
 @staticmethod
-def get_paper_metadata_from_oaworks(doi: str):
+def get_paper_metadata_from_openalex(doi: str):
     """
-    Function to get the paper metadata from the Open Access Works API.
+    Function to get the paper metadata from the OpenAlex API.
 
     Args:
         doi (str: required): DOI of the paper
@@ -27,15 +27,27 @@ def get_paper_metadata_from_oaworks(doi: str):
         publisher (str): Name of the publisher.
     """
     try:
-        url = f"https://bg.api.oa.works/metadata?id={doi}"
-        response = requests.request("GET", url)
+        url = f"https://api.openalex.org/works/doi:{doi}"
+        response = requests.get(url)
         if response.status_code != 200:
             return "", "", ""
         else:
             data = response.json()
             title = data.get("title", "")
-            journal_name = data.get("container-title", "")
-            publisher = data.get("publisher", "")
+            journal_name = ""
+            publisher = ""
+
+            if (
+                "primary_location" in data
+                and data["primary_location"]
+                and "source" in data["primary_location"]
+                and data["primary_location"]["source"]
+            ):
+                journal_name = data["primary_location"]["source"].get("display_name", "")
+                publisher = data["primary_location"]["source"].get(
+                    "host_organization_name", ""
+                )
+
             return title, journal_name, publisher
     except Exception:
         return "", "", ""

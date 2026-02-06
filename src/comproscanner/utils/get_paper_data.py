@@ -24,17 +24,17 @@ logger = setup_logger("comproscanner.log", module_name="get_paper_data")
 class PaperMetadataExtractor:
     def __init__(self):
         """
-        Initialize the PaperMetadataExtractor class with the Scopus API key (optional) from the environment variables. If the Scopus API key is not found, only the OA.Works API will be used for metadata extraction.
+        Initialize the PaperMetadataExtractor class with the Scopus API key (optional) from the environment variables. If the Scopus API key is not found, only the OpenAlex API will be used for metadata extraction.
         """
         self.scopus_api_key = os.getenv("SCOPUS_API_KEY")
         if not self.scopus_api_key:
             logger.warning(
-                "Scopus API key not found in environment variables. Only OA.Works API will be used."
+                "Scopus API key not found in environment variables. Only OpenAlex API will be used."
             )
 
     def get_article_metadata(self, doi: str) -> Dict:
         """
-        Extract the journal article metadata by doing Scopus API and Unpaywall API call with the provided DOI and returns article metadata in a dictionary. The metadata includes DOI, title, journal, year, isOpenAccess, and authors. The authors are a list of dictionaries containing name and affiliation_id.
+        Extract the journal article metadata by doing Scopus API and OpenAlex API call with the provided DOI and returns article metadata in a dictionary. The metadata includes DOI, title, journal, year, isOpenAccess, and authors. The authors are a list of dictionaries containing name and affiliation_id.
 
         Args:
             doi (str: required): The DOI of the article to get metadata for
@@ -110,9 +110,9 @@ class PaperMetadataExtractor:
                 logger.error(f"Error in getting keywords from Scopus API: {e}")
                 return []
 
-        def _get_oaworks_data(doi: str):
+        def _get_openalex_data(doi: str):
             """
-            Get the article metadata from OAWorks API using the provided DOI
+            Get the article metadata from OpenAlex API using the provided DOI
 
             Args:
                 doi (str: required): The DOI of the article to get metadata for
@@ -121,8 +121,8 @@ class PaperMetadataExtractor:
                 response.json() (dict): The metadata of the article
             """
             try:
-                url = f"https://bg.api.oa.works/metadata?id={doi}"
-                response = requests.request("GET", url)
+                url = f"https://api.openalex.org/works/doi:{doi}"
+                response = requests.get(url)
                 if response.status_code != 200:
                     return f"Sorry, the status code is not 200, it is {response.status_code}"
                 return response.json()
@@ -188,16 +188,16 @@ class PaperMetadataExtractor:
         scopus_data = None
         if self.scopus_api_key:
             scopus_data = _get_scopus_data(doi)
-        oaworks_data = _get_oaworks_data(doi)
+        openalex_data = _get_openalex_data(doi)
 
         # Check if either API returned an error string instead of data
         if isinstance(scopus_data, str):
             print(f"Error fetching Scopus data: {scopus_data}")
             scopus_data = {}
 
-        if isinstance(oaworks_data, str):
-            print(f"Error fetching OAWorks data: {oaworks_data}")
-            oaworks_data = {}
+        if isinstance(openalex_data, str):
+            print(f"Error fetching OpenAlex data: {openalex_data}")
+            openalex_data = {}
 
         # Initialize empty dictionary for paper data
         paper_data = {
@@ -215,16 +215,25 @@ class PaperMetadataExtractor:
             scopus_data, ["coredata", "dc:title"]
         ):
             paper_data["title"] = scopus_data["coredata"]["dc:title"]
-        elif isinstance(oaworks_data, dict) and "title" in oaworks_data:
-            paper_data["title"] = oaworks_data["title"]
+        elif isinstance(openalex_data, dict) and "title" in openalex_data:
+            paper_data["title"] = openalex_data["title"]
 
         # Get the journal name
         if isinstance(scopus_data, dict) and _safe_get_nested(
             scopus_data, ["coredata", "prism:publicationName"]
         ):
             paper_data["journal"] = scopus_data["coredata"]["prism:publicationName"]
-        elif isinstance(oaworks_data, dict) and "journal" in oaworks_data:
-            paper_data["journal"] = oaworks_data["journal"]
+        elif (
+            isinstance(openalex_data, dict)
+            and "primary_location" in openalex_data
+            and openalex_data["primary_location"]
+            and "source" in openalex_data["primary_location"]
+            and openalex_data["primary_location"]["source"]
+            and "display_name" in openalex_data["primary_location"]["source"]
+        ):
+            paper_data["journal"] = openalex_data["primary_location"]["source"][
+                "display_name"
+            ]
 
         # Get the year
         if isinstance(scopus_data, dict):
@@ -237,10 +246,10 @@ class PaperMetadataExtractor:
 
         if (
             not paper_data["year"]
-            and isinstance(oaworks_data, dict)
-            and "year" in oaworks_data
+            and isinstance(openalex_data, dict)
+            and "publication_year" in openalex_data
         ):
-            paper_data["year"] = oaworks_data["year"]
+            paper_data["year"] = openalex_data["publication_year"]
 
         # Get Open Access status
         if (
@@ -250,6 +259,12 @@ class PaperMetadataExtractor:
             paper_data["isOpenAccess"] = False
         elif isinstance(scopus_data, dict) and _safe_get_nested(
             scopus_data, ["coredata", "openaccess"]
+        ):
+            paper_data["isOpenAccess"] = True
+        elif (
+            isinstance(openalex_data, dict)
+            and "open_access" in openalex_data
+            and openalex_data["open_access"].get("is_oa")
         ):
             paper_data["isOpenAccess"] = True
 
@@ -311,17 +326,40 @@ class PaperMetadataExtractor:
             except KeyError as e:
                 print(f"KeyError while processing authors from Scopus: {e}")
 
-        elif isinstance(oaworks_data, dict) and "author" in oaworks_data:
-            for author in oaworks_data["author"]:
-                if isinstance(author, dict) and "name" in author:
+        elif isinstance(openalex_data, dict) and "authorships" in openalex_data:
+            for authorship in openalex_data["authorships"]:
+                if (
+                    isinstance(authorship, dict)
+                    and "author" in authorship
+                    and "display_name" in authorship["author"]
+                ):
+                    author_name = authorship["author"]["display_name"]
+                    affiliation_name = ""
+                    affiliation_country = ""
+                    affiliation_id = ""
+
+                    if (
+                        "institutions" in authorship
+                        and isinstance(authorship["institutions"], list)
+                        and len(authorship["institutions"]) > 0
+                    ):
+                        inst = authorship["institutions"][0]
+                        affiliation_name = inst.get("display_name", "")
+                        affiliation_country = inst.get("country_code", "")
+                        affiliation_id = (
+                            inst.get("id", "").split("/")[-1] if inst.get("id") else ""
+                        )
+
                     authors.append(
                         {
-                            "name": author["name"],
-                            "affiliation_id": "",
-                            "affiliation_name": "",
-                            "affiliation_country": "",
+                            "name": author_name,
+                            "affiliation_id": affiliation_id,
+                            "affiliation_name": affiliation_name,
+                            "affiliation_country": affiliation_country,
                         }
                     )
+
+        paper_data["authors"] = authors
 
         # Get the keywords - combine from both sources
         all_keywords = []
@@ -332,13 +370,13 @@ class PaperMetadataExtractor:
             if scopus_keywords:
                 all_keywords.extend(scopus_keywords)
 
-        # Get keywords from OAWorks
-        if isinstance(oaworks_data, dict) and "keyword" in oaworks_data:
-            oaworks_keywords = oaworks_data["keyword"]
-            if isinstance(oaworks_keywords, list):
-                all_keywords.extend(oaworks_keywords)
-            elif isinstance(oaworks_keywords, str):
-                all_keywords.append(oaworks_keywords)
+        # Get keywords from OpenAlex
+        if isinstance(openalex_data, dict) and "keywords" in openalex_data:
+            openalex_keywords = openalex_data["keywords"]
+            if isinstance(openalex_keywords, list):
+                for kw in openalex_keywords:
+                    if isinstance(kw, dict) and "display_name" in kw:
+                        all_keywords.append(kw["display_name"])
 
         # Remove duplicates while preserving order
         unique_keywords = []

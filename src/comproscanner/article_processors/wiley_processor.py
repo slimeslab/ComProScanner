@@ -39,7 +39,7 @@ from ..utils.error_handler import ValueErrorHandler, KeyboardInterruptHandler
 from ..utils.logger import setup_logger
 from ..utils.pdf_to_markdown_text import PDFToMarkdownText
 from ..utils.common_functions import (
-    get_paper_metadata_from_oaworks,
+    get_paper_metadata_from_openalex,
     return_error_message,
 )
 from ..utils.common_functions import write_timeout_file

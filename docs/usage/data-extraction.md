@@ -325,7 +325,7 @@ scanner.extract_composition_property_data(
 
 ## Article Specific Metadata Collection
 
-Once the data extraction is complete, article-specific metadata such as DOI, title, authors, journal, publication year, publisher, open-access related information, and keywords are collected and included in the final output JSON/CSV files along with the extracted data using Scopus API or OA.Works API.
+Once the data extraction is complete, article-specific metadata such as DOI, title, authors, journal, publication year, publisher, open-access related information, and keywords are collected and included in the final output JSON/CSV files along with the extracted data using Scopus API or OpenAlex API.
 
 ```json
 {

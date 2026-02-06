@@ -236,9 +236,9 @@ def test_process_articles(
     # Mock _send_request to return the real temp file path
     mocker.patch.object(wiley_processor, "_send_request", return_value=str(pdf_file))
 
-    # Mock get_paper_metadata_from_oaworks
+    # Mock get_paper_metadata_from_openalex
     mocker.patch(
-        "comproscanner.utils.common_functions.get_paper_metadata_from_oaworks",
+        "comproscanner.utils.common_functions.get_paper_metadata_from_openalex",
         return_value=("Test Title", "Test Journal", "Wiley"),
     )
 

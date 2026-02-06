@@ -33,7 +33,7 @@ from ..utils.error_handler import ValueErrorHandler, KeyboardInterruptHandler
 from ..utils.logger import setup_logger
 from ..utils.pdf_to_markdown_text import PDFToMarkdownText
 from ..utils.common_functions import (
-    get_paper_metadata_from_oaworks,
+    get_paper_metadata_from_openalex,
     return_error_message,
 )
 
@@ -271,7 +271,7 @@ class PDFsProcessor:
                     # Try to get metadata (API first, then CSV)
                     title, journal_name, publisher = "", "", ""
                     if self.doi.startswith("10."):
-                        title, journal_name, publisher = get_paper_metadata_from_oaworks(
+                        title, journal_name, publisher = get_paper_metadata_from_openalex(
                             self.doi
                         )
                         
@@ -325,7 +325,7 @@ class PDFsProcessor:
                 # Get metadata from external API (with CSV fallback) using DOI
                 title, journal_name, publisher = "", "", ""
                 if self.doi:
-                    title, journal_name, publisher = get_paper_metadata_from_oaworks(
+                    title, journal_name, publisher = get_paper_metadata_from_openalex(
                         self.doi
                     )
                     

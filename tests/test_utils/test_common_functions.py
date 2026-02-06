@@ -13,70 +13,78 @@ import requests
 from unittest.mock import patch, mock_open, MagicMock
 import time
 from comproscanner.utils.common_functions import (
-    get_paper_metadata_from_oaworks,
+    get_paper_metadata_from_openalex,
     return_error_message,
     write_timeout_file,
 )
 
 
-class TestGetPaperMetadataFromOAWorks:
-    """Test cases for get_paper_metadata_from_oaworks function"""
+class TestGetPaperMetadataFromOpenAlex:
+    """Test cases for get_paper_metadata_from_openalex function"""
 
-    @patch("requests.request")
-    def test_successful_request(self, mock_request):
+    @patch("requests.get")
+    def test_successful_request(self, mock_get):
         """Test a successful API request"""
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = {
             "title": "Test Paper Title",
-            "container-title": "Test Journal",
-            "publisher": "Test Publisher",
+            "primary_location": {
+                "source": {
+                    "display_name": "Test Journal",
+                    "host_organization_name": "Test Publisher",
+                }
+            },
         }
-        mock_request.return_value = mock_response
-        title, journal_name, publisher = get_paper_metadata_from_oaworks(
+        mock_get.return_value = mock_response
+        title, journal_name, publisher = get_paper_metadata_from_openalex(
             "10.1000/test.doi"
         )
         assert title == "Test Paper Title"
         assert journal_name == "Test Journal"
         assert publisher == "Test Publisher"
-        mock_request.assert_called_once_with(
-            "GET", "https://bg.api.oa.works/metadata?id=10.1000/test.doi"
+        mock_get.assert_called_once_with(
+            "https://api.openalex.org/works/doi:10.1000/test.doi"
         )
 
-    @patch("requests.request")
-    def test_failed_request(self, mock_request):
+    @patch("requests.get")
+    def test_failed_request(self, mock_get):
         """Test a failed API request"""
         mock_response = MagicMock()
         mock_response.status_code = 404
-        mock_request.return_value = mock_response
-        title, journal_name, publisher = get_paper_metadata_from_oaworks(
+        mock_get.return_value = mock_response
+        title, journal_name, publisher = get_paper_metadata_from_openalex(
             "10.1000/test.doi"
         )
         assert title == ""
         assert journal_name == ""
         assert publisher == ""
 
-    @patch("requests.request")
-    def test_exception_handling(self, mock_request):
+    @patch("requests.get")
+    def test_exception_handling(self, mock_get):
         """Test exception handling"""
-        mock_request.side_effect = Exception("Connection error")
-        title, journal_name, publisher = get_paper_metadata_from_oaworks(
+        mock_get.side_effect = Exception("Connection error")
+        title, journal_name, publisher = get_paper_metadata_from_openalex(
             "10.1000/test.doi"
         )
         assert title == ""
         assert journal_name == ""
         assert publisher == ""
 
-    @patch("requests.request")
-    def test_missing_data_fields(self, mock_request):
+    @patch("requests.get")
+    def test_missing_data_fields(self, mock_get):
         """Test handling of missing data fields"""
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = {
-            "container-title": "Test Journal",
+            "primary_location": {
+                "source": {
+                    "display_name": "Test Journal",
+                }
+            },
         }
-        mock_request.return_value = mock_response
-        title, journal_name, publisher = get_paper_metadata_from_oaworks(
+        mock_get.return_value = mock_response
+        title, journal_name, publisher = get_paper_metadata_from_openalex(
             "10.1000/test.doi"
         )
         assert title == ""

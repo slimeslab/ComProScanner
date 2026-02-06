@@ -84,17 +84,26 @@ class TestPaperMetadataExtractor:
         }
 
     @pytest.fixture
-    def sample_oaworks_response(self):
-        """Sample OAWorks API response."""
+    def sample_openalex_response(self):
+        """Sample OpenAlex API response."""
         return {
-            "title": "OAWorks Test Article",
-            "journal": "OAWorks Journal",
-            "year": "2022",
-            "author": [
-                {"name": "Alice Johnson"},
-                {"name": "Bob Williams"},
+            "title": "OpenAlex Test Article",
+            "primary_location": {
+                "source": {
+                    "display_name": "OpenAlex Journal",
+                    "host_organization_name": "OpenAlex Publisher",
+                }
+            },
+            "publication_year": 2022,
+            "authorships": [
+                {"author": {"display_name": "Alice Johnson"}},
+                {"author": {"display_name": "Bob Williams"}},
             ],
-            "keyword": ["nanotechnology", "synthesis"],
+            "keywords": [
+                {"display_name": "nanotechnology"},
+                {"display_name": "synthesis"},
+            ],
+            "open_access": {"is_oa": True},
         }
 
     @pytest.fixture
@@ -120,7 +129,7 @@ class TestPaperMetadataExtractor:
     @patch("comproscanner.utils.get_paper_data.requests.request")
     @patch("comproscanner.utils.get_paper_data.requests.get")
     def test_get_article_metadata_scopus_api_error(
-        self, mock_get, mock_request, extractor_with_key, sample_oaworks_response
+        self, mock_get, mock_request, extractor_with_key, sample_openalex_response
     ):
         """Test handling of Scopus API error."""
         mock_scopus_response = Mock()
@@ -130,25 +139,25 @@ class TestPaperMetadataExtractor:
         mock_keywords_response.status_code = 404
         mock_keywords_response.raise_for_status.side_effect = requests.HTTPError()
 
-        mock_oaworks_response = Mock()
-        mock_oaworks_response.status_code = 200
-        mock_oaworks_response.json.return_value = sample_oaworks_response
+        mock_openalex_response = Mock()
+        mock_openalex_response.status_code = 200
+        mock_openalex_response.json.return_value = sample_openalex_response
 
-        mock_request.side_effect = [mock_scopus_response, mock_oaworks_response]
-        mock_get.return_value = mock_keywords_response
+        mock_request.side_effect = [mock_scopus_response]
+        mock_get.side_effect = [mock_openalex_response, mock_keywords_response]
 
         result = extractor_with_key.get_article_metadata("10.1000/test")
 
-        # Should fallback to OAWorks data
-        assert result["title"] == "OAWorks Test Article"
-        assert result["journal"] == "OAWorks Journal"
+        # Should fallback to OpenAlex data
+        assert result["title"] == "OpenAlex Test Article"
+        assert result["journal"] == "OpenAlex Journal"
 
     @patch("comproscanner.utils.get_paper_data.requests.request")
     @patch("comproscanner.utils.get_paper_data.requests.get")
-    def test_get_article_metadata_oaworks_api_error(
+    def test_get_article_metadata_openalex_api_error(
         self, mock_get, mock_request, extractor_with_key, sample_scopus_response
     ):
-        """Test handling of OAWorks API error."""
+        """Test handling of OpenAlex API error."""
         mock_scopus_response = Mock()
         mock_scopus_response.status_code = 200
         mock_scopus_response.json.return_value = sample_scopus_response
@@ -158,11 +167,11 @@ class TestPaperMetadataExtractor:
         mock_keywords_response.json.return_value = sample_scopus_response
         mock_keywords_response.raise_for_status = Mock()
 
-        mock_oaworks_response = Mock()
-        mock_oaworks_response.status_code = 500
+        mock_openalex_response = Mock()
+        mock_openalex_response.status_code = 500
 
-        mock_request.side_effect = [mock_scopus_response, mock_oaworks_response]
-        mock_get.return_value = mock_keywords_response
+        mock_request.side_effect = [mock_scopus_response]
+        mock_get.side_effect = [mock_openalex_response, mock_keywords_response]
 
         result = extractor_with_key.get_article_metadata("10.1000/test")
 
@@ -183,11 +192,11 @@ class TestPaperMetadataExtractor:
         mock_keywords_response.status_code = 500
         mock_keywords_response.raise_for_status.side_effect = requests.HTTPError()
 
-        mock_oaworks_response = Mock()
-        mock_oaworks_response.status_code = 500
+        mock_openalex_response = Mock()
+        mock_openalex_response.status_code = 500
 
-        mock_request.side_effect = [mock_scopus_response, mock_oaworks_response]
-        mock_get.return_value = mock_keywords_response
+        mock_request.side_effect = [mock_scopus_response]
+        mock_get.side_effect = [mock_openalex_response, mock_keywords_response]
 
         result = extractor_with_key.get_article_metadata("10.1000/test")
 
@@ -201,7 +210,7 @@ class TestPaperMetadataExtractor:
     @patch("comproscanner.utils.get_paper_data.requests.request")
     @patch("comproscanner.utils.get_paper_data.requests.get")
     def test_get_article_metadata_with_closed_access(
-        self, mock_get, mock_request, extractor_with_key, sample_oaworks_response
+        self, mock_get, mock_request, extractor_with_key, sample_openalex_response
     ):
         """Test metadata extraction for closed access article."""
         scopus_response = {
@@ -223,12 +232,12 @@ class TestPaperMetadataExtractor:
         mock_keywords_response.json.return_value = scopus_response
         mock_keywords_response.raise_for_status = Mock()
 
-        mock_oaworks_response = Mock()
-        mock_oaworks_response.status_code = 200
-        mock_oaworks_response.json.return_value = sample_oaworks_response
+        mock_openalex_response = Mock()
+        mock_openalex_response.status_code = 200
+        mock_openalex_response.json.return_value = sample_openalex_response
 
-        mock_request.side_effect = [mock_scopus_response, mock_oaworks_response]
-        mock_get.return_value = mock_keywords_response
+        mock_request.side_effect = [mock_scopus_response]
+        mock_get.side_effect = [mock_openalex_response, mock_keywords_response]
 
         result = extractor_with_key.get_article_metadata("10.1000/test")
 
@@ -237,7 +246,7 @@ class TestPaperMetadataExtractor:
     @patch("comproscanner.utils.get_paper_data.requests.request")
     @patch("comproscanner.utils.get_paper_data.requests.get")
     def test_get_article_metadata_keywords_single_dict(
-        self, mock_get, mock_request, extractor_with_key, sample_oaworks_response
+        self, mock_get, mock_request, extractor_with_key, sample_openalex_response
     ):
         """Test keywords extraction when single keyword as dict."""
         scopus_response = {
@@ -257,12 +266,12 @@ class TestPaperMetadataExtractor:
         mock_keywords_response.json.return_value = scopus_response
         mock_keywords_response.raise_for_status = Mock()
 
-        mock_oaworks_response = Mock()
-        mock_oaworks_response.status_code = 200
-        mock_oaworks_response.json.return_value = sample_oaworks_response
+        mock_openalex_response = Mock()
+        mock_openalex_response.status_code = 200
+        mock_openalex_response.json.return_value = sample_openalex_response
 
-        mock_request.side_effect = [mock_scopus_response, mock_oaworks_response]
-        mock_get.return_value = mock_keywords_response
+        mock_request.side_effect = [mock_scopus_response]
+        mock_get.side_effect = [mock_openalex_response, mock_keywords_response]
 
         result = extractor_with_key.get_article_metadata("10.1000/test")
 
@@ -270,10 +279,10 @@ class TestPaperMetadataExtractor:
 
     @patch("comproscanner.utils.get_paper_data.requests.request")
     @patch("comproscanner.utils.get_paper_data.requests.get")
-    def test_get_article_metadata_keywords_string_from_oaworks(
+    def test_get_article_metadata_keywords_from_openalex(
         self, mock_get, mock_request, extractor_with_key
     ):
-        """Test keywords extraction when OAWorks returns string."""
+        """Test keywords extraction from OpenAlex."""
         scopus_response = {
             "abstracts-retrieval-response": {
                 "coredata": {"dc:title": "Test Article"},
@@ -281,9 +290,9 @@ class TestPaperMetadataExtractor:
             }
         }
 
-        oaworks_response = {
+        openalex_response = {
             "title": "Test Article",
-            "keyword": "single keyword string",
+            "keywords": [{"display_name": "openalex keyword"}],
         }
 
         mock_scopus_response = Mock()
@@ -295,16 +304,16 @@ class TestPaperMetadataExtractor:
         mock_keywords_response.json.return_value = scopus_response
         mock_keywords_response.raise_for_status = Mock()
 
-        mock_oaworks_response = Mock()
-        mock_oaworks_response.status_code = 200
-        mock_oaworks_response.json.return_value = oaworks_response
+        mock_openalex_response = Mock()
+        mock_openalex_response.status_code = 200
+        mock_openalex_response.json.return_value = openalex_response
 
-        mock_request.side_effect = [mock_scopus_response, mock_oaworks_response]
-        mock_get.return_value = mock_keywords_response
+        mock_request.side_effect = [mock_scopus_response]
+        mock_get.side_effect = [mock_openalex_response, mock_keywords_response]
 
         result = extractor_with_key.get_article_metadata("10.1000/test")
 
-        assert "single keyword string" in result["keywords"]
+        assert "openalex keyword" in result["keywords"]
 
     @patch("comproscanner.utils.get_paper_data.requests.request")
     @patch("comproscanner.utils.get_paper_data.requests.get")
@@ -325,9 +334,13 @@ class TestPaperMetadataExtractor:
             }
         }
 
-        oaworks_response = {
+        openalex_response = {
             "title": "Test Article",
-            "keyword": ["materials science", "conductivity", "Synthesis"],
+            "keywords": [
+                {"display_name": "materials science"},
+                {"display_name": "conductivity"},
+                {"display_name": "Synthesis"},
+            ],
         }
 
         mock_scopus_response = Mock()
@@ -339,12 +352,12 @@ class TestPaperMetadataExtractor:
         mock_keywords_response.json.return_value = scopus_response
         mock_keywords_response.raise_for_status = Mock()
 
-        mock_oaworks_response = Mock()
-        mock_oaworks_response.status_code = 200
-        mock_oaworks_response.json.return_value = oaworks_response
+        mock_openalex_response = Mock()
+        mock_openalex_response.status_code = 200
+        mock_openalex_response.json.return_value = openalex_response
 
-        mock_request.side_effect = [mock_scopus_response, mock_oaworks_response]
-        mock_get.return_value = mock_keywords_response
+        mock_request.side_effect = [mock_scopus_response]
+        mock_get.side_effect = [mock_openalex_response, mock_keywords_response]
 
         result = extractor_with_key.get_article_metadata("10.1000/test")
 
@@ -370,7 +383,7 @@ class TestPaperMetadataExtractor:
     @patch("comproscanner.utils.get_paper_data.requests.request")
     @patch("comproscanner.utils.get_paper_data.requests.get")
     def test_get_article_metadata_scopus_keyerror(
-        self, mock_get, mock_request, extractor_with_key, sample_oaworks_response
+        self, mock_get, mock_request, extractor_with_key, sample_openalex_response
     ):
         """Test handling of KeyError in Scopus response."""
         scopus_response = {
@@ -398,12 +411,12 @@ class TestPaperMetadataExtractor:
         mock_keywords_response.json.return_value = scopus_response
         mock_keywords_response.raise_for_status = Mock()
 
-        mock_oaworks_response = Mock()
-        mock_oaworks_response.status_code = 200
-        mock_oaworks_response.json.return_value = sample_oaworks_response
+        mock_openalex_response = Mock()
+        mock_openalex_response.status_code = 200
+        mock_openalex_response.json.return_value = sample_openalex_response
 
-        mock_request.side_effect = [mock_scopus_response, mock_oaworks_response]
-        mock_get.return_value = mock_keywords_response
+        mock_request.side_effect = [mock_scopus_response]
+        mock_get.side_effect = [mock_openalex_response, mock_keywords_response]
 
         result = extractor_with_key.get_article_metadata("10.1000/test")
 

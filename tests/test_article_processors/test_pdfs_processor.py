@@ -151,7 +151,7 @@ def test_database_selection(is_sql_db):
 
 @patch("glob.glob")
 @patch(
-    "comproscanner.article_processors.pdfs_processor.get_paper_metadata_from_oaworks"
+    "comproscanner.article_processors.pdfs_processor.get_paper_metadata_from_openalex"
 )
 def test_process_pdfs_with_doi(mock_metadata, mock_glob, pdfs_processor):
     """Test processing PDFs with DOI found"""
@@ -193,7 +193,7 @@ def test_process_pdfs_with_doi(mock_metadata, mock_glob, pdfs_processor):
 
 @patch("glob.glob")
 @patch(
-    "comproscanner.article_processors.pdfs_processor.get_paper_metadata_from_oaworks"
+    "comproscanner.article_processors.pdfs_processor.get_paper_metadata_from_openalex"
 )
 def test_process_pdfs_no_doi(mock_metadata, mock_glob, pdfs_processor):
     """Test processing PDFs with no DOI found"""
@@ -232,7 +232,7 @@ def test_process_pdfs_no_doi(mock_metadata, mock_glob, pdfs_processor):
 
 @patch("glob.glob")
 @patch(
-    "comproscanner.article_processors.pdfs_processor.get_paper_metadata_from_oaworks"
+    "comproscanner.article_processors.pdfs_processor.get_paper_metadata_from_openalex"
 )
 def test_process_pdfs_exception_handling(mock_metadata, mock_glob, pdfs_processor):
     """Test exception handling during PDF processing"""
@@ -290,7 +290,7 @@ def test_process_pdfs_keyboard_interrupt(mock_glob, pdfs_processor):
 
 
 @patch("glob.glob")
-@patch("comproscanner.utils.common_functions.get_paper_metadata_from_oaworks")
+@patch("comproscanner.utils.common_functions.get_paper_metadata_from_openalex")
 def test_process_pdfs_exception_handling(mock_metadata, mock_glob, pdfs_processor):
     """Test exception handling during PDF processing"""
     mock_glob.return_value = ["/test/path/file1.pdf", "/test/path/file2.pdf"]
