@@ -39,6 +39,8 @@
 - [CITATION.cff](https://github.com/slimeslab/ComProScanner/blob/main/CITATION.cff) added for standardized citation information based on the latest release and arXiv preprint.
 
 ### Fixed
+- OAWorks API is replaced with OpenAlex API as OAWorks is no longer available.
+
 - Empty/corrupted PDF handled in `pdf_processor.py` and `wiley_processor.py` to avoid having GLYPH errors during text extraction.
 
 - Data extraction failures fixed if composition-property text data is empty.
