@@ -1,4 +1,4 @@
-## Unreleased
+## [0.1.5] - 08-02-2026
 
 ### Added
 - Data related to comparison with other agentic data extraction frameworks added for the ComProScanner paper in the `examples/piezo_test/comparing_existing_frameworks` folder.
