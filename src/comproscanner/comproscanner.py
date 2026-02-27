@@ -119,6 +119,7 @@ class ComProScanner:
         chunk_size: int = 1000,
         chunk_overlap: int = 25,
         embedding_model: str = "huggingface:thellert/physbert_cased",
+        caption_keywords: Optional[Dict] = None,
     ):
         """Process articles for the main property keyword.
 
@@ -143,6 +144,7 @@ class ComProScanner:
             chunk_size (int, optional): Size of the chunks to split the input text into. Defaults to 1000.
             chunk_overlap (int, optional): Overlap between the chunks. Defaults to 25.
             embedding_model (str, optional): Name of the embedding model. Defaults to 'thellert/physbert_cased'.
+            caption_keywords (dict, optional): Keywords to match figure captions for figure extraction. Same format as property_keywords with "exact_keywords" and "substring_keywords" keys. Defaults to None (no figure extraction).
 
         Raises:
             ValueErrorHandler: If property_keywords is not provided.
@@ -151,6 +153,8 @@ class ComProScanner:
             raise ValueErrorHandler(
                 message="Please provide property_keywords dictionary to proceed."
             )
+        if caption_keywords is None:
+            caption_keywords = property_keywords
         rag_config = RAGConfig(
             rag_db_path=rag_db_path,
             chunk_size=chunk_size,
@@ -173,6 +177,7 @@ class ComProScanner:
                 is_sql_db=is_sql_db,
                 is_save_xml=is_save_xml,
                 rag_config=rag_config,
+                caption_keywords=caption_keywords,
             )
             elsevier_processor.process_elsevier_articles()
 
@@ -191,6 +196,7 @@ class ComProScanner:
                 is_sql_db=is_sql_db,
                 is_save_xml=is_save_xml,
                 rag_config=rag_config,
+                caption_keywords=caption_keywords,
             )
             springer_processor.process_springer_articles()
 
@@ -209,6 +215,7 @@ class ComProScanner:
                 is_sql_db=is_sql_db,
                 is_save_pdf=is_save_pdf,
                 rag_config=rag_config,
+                caption_keywords=caption_keywords,
             )
             wiley_processor.process_wiley_articles()
 
@@ -226,6 +233,7 @@ class ComProScanner:
                 doi_list=doi_list,
                 is_sql_db=is_sql_db,
                 rag_config=rag_config,
+                caption_keywords=caption_keywords,
             )
             iop_processor.process_iop_articles()
 
@@ -241,6 +249,7 @@ class ComProScanner:
                 csv_batch_size=csv_batch_size,
                 is_sql_db=is_sql_db,
                 rag_config=rag_config,
+                caption_keywords=caption_keywords,
             )
             pdf_processor.process_pdfs()
 
@@ -280,6 +289,9 @@ class ComProScanner:
         rag_max_tokens: int = 512,
         rag_top_k: int = 3,
         rag_base_url: Optional[str] = None,
+        vlm_model: str = "gemini/gemini-3-flash-preview",
+        related_figures_base_path: Optional[str] = None,
+        caption_keywords: Optional[Dict] = None,
         **flow_optional_args,
     ):
         """Extract the composition-property data and synthesis data if the property is present in the article.
@@ -319,6 +331,10 @@ class ComProScanner:
             rag_max_tokens (int, optional): Maximum tokens for completion for RAG. Defaults to 512.
             rag_top_k (int, optional): Top k value for sampling for RAG. Defaults to 3.
             rag_base_url (str, optional): Base URL for the RAG model service.
+            vlm_model (str, optional): Vision LLM model for graph data extraction from saved figures. Defaults to "gemini/gemini-3-flash-preview".
+            related_figures_base_path (str, optional): Base path where saved figures are stored. Defaults to
+                "results/extracted_data/{main_property_keyword}/related_figures".
+            caption_keywords (dict, optional): Keywords used for caption matching (propagated to GraphExtractorTool). Defaults to None.
             **flow_optional_args (Any): Optional keyword arguments for the MaterialsFlow class.
 
         Raises:
@@ -363,6 +379,10 @@ class ComProScanner:
             rag_top_k=rag_top_k,
             rag_base_url=rag_base_url,
         )
+        if related_figures_base_path is None:
+            related_figures_base_path = (
+                f"results/extracted_data/{self.main_property_keyword}/related_figures"
+            )
         if materials_data_identifier_query is None:
             materials_data_identifier_query = f"Is there any material chemical composition and corresponding {self.main_property_keyword} value mentioned in the paper? Give one word answer. Either yes or no."
         preparator = MatPropDataPreparator(
@@ -446,6 +466,9 @@ class ComProScanner:
                         llm=llm,
                         materials_data_identifier_query=materials_data_identifier_query,
                         is_extract_synthesis_data=is_extract_synthesis_data,
+                        vlm_model=vlm_model,
+                        related_figures_base_path=related_figures_base_path,
+                        caption_keywords=caption_keywords,
                         rag_config=rag_config,
                         output_log_folder=output_log_folder,
                         task_output_folder=task_output_folder,
@@ -557,6 +580,13 @@ class ComProScanner:
             except Exception as e:
                 logger.error(f"Error processing DOI: {paper_data['doi']}. {e}")
                 continue
+
+        json_dir = os.path.dirname(json_results_file)
+        if json_dir:
+            os.makedirs(json_dir, exist_ok=True)
+        if not os.path.exists(json_results_file):
+            with open(json_results_file, "w", encoding="utf-8") as file:
+                json.dump({}, file, indent=2, default=str)
 
         data_cleaner = DataCleaner(results_file=json_results_file)
         final_data = data_cleaner.get_useful_data()

@@ -13,6 +13,7 @@ from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from pydantic import BaseModel
 from .....utils.configs.llm_config import LLMConfig
+from ....tools.graph_extractor_tool import GraphExtractorTool
 
 
 class DetailedCompositionPropertyData(BaseModel):
@@ -47,6 +48,9 @@ class CompositionExtractionCrew:
         task_output_folder: Optional[str] = None,
         is_log_json: bool = False,
         verbose: Optional[bool] = True,
+        vlm_model: str = "gemini/gemini-3-flash-preview",
+        related_figures_base_path: str = "results/related_figures",
+        caption_keywords: Optional[Dict] = None,
     ):
         """
         Initialize the MaterialsDataIdentifierCrew.
@@ -58,6 +62,9 @@ class CompositionExtractionCrew:
         - task_output_folder (str, optional): Folder path for storing the task outputs as .txt files inside {provided foler}/{doi} folder. Defaults to None.
         - is_log_json (bool, optional): Flag to save logs in JSON format. Defaults to False.
         - verbose: Optional boolean for verbosity. Default is True.
+        - vlm_model (str, optional): Vision LLM model for graph extraction. Defaults to "gemini/gemini-3-flash-preview".
+        - related_figures_base_path (str, optional): Base path for saved figures. Defaults to "results/related_figures".
+        - caption_keywords (dict, optional): Keywords used for caption matching (propagated to GraphExtractorTool). Defaults to None.
         """
         if doi is None:
             raise ValueError("DOI must be provided")
@@ -68,6 +75,9 @@ class CompositionExtractionCrew:
         self.task_output_folder = task_output_folder
         self.is_log_json = is_log_json
         self.verbose = verbose
+        self.vlm_model = vlm_model
+        self.related_figures_base_path = related_figures_base_path
+        self.caption_keywords = caption_keywords or {}
 
         # Initialize output file paths as None
         self.output_log_file = None
@@ -99,8 +109,14 @@ class CompositionExtractionCrew:
     # Agents
     @agent
     def composition_property_extractor(self) -> Agent:
+        graph_tool = GraphExtractorTool(
+            vlm_model=self.vlm_model,
+            related_figures_base_path=self.related_figures_base_path,
+            caption_keywords=self.caption_keywords,
+        )
         return Agent(
             config=self.agents_config["composition_property_extractor"],
+            tools=[graph_tool],
             llm=self.llm,
             verbose=self.verbose,
         )

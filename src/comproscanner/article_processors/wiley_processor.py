@@ -84,6 +84,7 @@ class WileyArticleProcessor:
         is_sql_db: bool = False,
         is_save_pdf: bool = False,
         rag_config: RAGConfig = RAGConfig(),
+        caption_keywords: dict = None,
     ):
         keyword_message = return_error_message("main_property_keyword")
         property_keywords_message = return_error_message("property_keywords")
@@ -116,6 +117,7 @@ class WileyArticleProcessor:
         self.is_sql_db = is_sql_db
         self.is_save_pdf = is_save_pdf
         self.rag_config = rag_config
+        self.caption_keywords = caption_keywords
         # Takes from config file
         self.timeout_file = self.all_paths.TIMEOUT_DOI_LOG_FILENAME
         self.article_related_keywords = ArticleRelatedKeywords()
@@ -558,6 +560,10 @@ class WileyArticleProcessor:
                         csv_dataframes = []
                         time.sleep(5)
                     continue
+
+                # Extract and save figures matching caption_keywords
+                if self.caption_keywords:
+                    pdf_to_md.extract_and_save_figures(row["doi"], self.caption_keywords)
 
                 # Process the markdown text
                 all_sections = pdf_to_md.clean_text(md_text)

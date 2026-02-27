@@ -11,6 +11,7 @@ Date: 21-03-2025
 import re
 import os
 import time
+from io import BytesIO
 import pandas as pd
 import torch
 from docling.document_converter import DocumentConverter, PdfFormatOption
@@ -21,15 +22,18 @@ from docling.datamodel.pipeline_options import (
     PdfPipelineOptions,
 )
 from docling.datamodel.settings import settings
+from docling_core.types.doc import PictureItem, TableItem
 from requests.exceptions import Timeout, RequestException
 
 # Custom imports
 from .error_handler import ValueErrorHandler, KeyboardInterruptHandler
 from .configs import ArticleRelatedKeywords
 from .logger import setup_logger
+from .figure_extractor import FigureExtractor
 
 # configure logger
 logger = setup_logger("comproscanner.log", module_name="pdf_to_markdown_text")
+IMAGE_RESOLUTION_SCALE = 2.0
 
 
 class PDFToMarkdownText:
@@ -48,6 +52,7 @@ class PDFToMarkdownText:
         self.num_threads = num_threads
         self.retry_delay = 60
         self.converter = self._setup_converter()
+        self._document = None  # Cached Docling document for HTML/figure export
 
     def _setup_converter(self):
         """Setup document converter with appropriate acceleration options.
@@ -79,6 +84,10 @@ class PDFToMarkdownText:
         pipeline_options.do_ocr = True
         pipeline_options.do_table_structure = True
         pipeline_options.table_structure_options.do_cell_matching = True
+        pipeline_options.images_scale = IMAGE_RESOLUTION_SCALE
+        pipeline_options.generate_page_images = True
+        pipeline_options.generate_picture_images = True
+        pipeline_options.generate_table_images = True
 
         # Enable timing profiling for debugging
         settings.debug.profile_pipeline_timings = True
@@ -117,6 +126,7 @@ class PDFToMarkdownText:
                     )
 
                 result = self.converter.convert(self.source)
+                self._document = result.document
                 return result.document.export_to_markdown()
 
             except (ConnectionError, Timeout) as e:
@@ -193,6 +203,81 @@ class PDFToMarkdownText:
             except KeyboardInterrupt:
                 logger.warning("User interrupted the conversion process.")
                 raise KeyboardInterruptHandler()
+
+    def extract_and_save_figures(
+        self, doi: str, caption_keywords: dict, base_path: str = None
+    ):
+        """
+        Extract figures/tables from converted PDF using Docling item images and save
+        those whose captions match caption_keywords.
+
+        Must be called after convert_to_markdown() so that self._document is populated.
+
+        Args:
+            doi (str): Article DOI.
+            caption_keywords (dict): Dict with "exact_keywords" and/or "substring_keywords".
+            base_path (str, optional): Base directory for saving figures. Defaults to
+                FigureExtractor.BASE_PATH ("results/related_figures").
+        """
+        if self._document is None:
+            logger.warning(
+                "extract_and_save_figures called before convert_to_markdown(); skipping."
+            )
+            return
+        if not caption_keywords:
+            return
+
+        try:
+            match_counter = 0
+            for element, _level in self._document.iterate_items():
+                if not isinstance(element, (PictureItem, TableItem)):
+                    continue
+
+                try:
+                    caption_text = element.caption_text(self._document).strip()
+                except Exception:
+                    caption_text = ""
+
+                if not FigureExtractor.keyword_matches_caption(
+                    caption_text, caption_keywords
+                ):
+                    continue
+
+                caption_id = f"figure_{match_counter}"
+                FigureExtractor.update_info_json(doi, caption_id, caption_text, base_path)
+
+                try:
+                    image = element.get_image(self._document)
+                except Exception as e:
+                    logger.warning(
+                        f"Could not render image for figure '{caption_id}' in {doi}: {e}"
+                    )
+                    match_counter += 1
+                    continue
+
+                if image is None:
+                    logger.warning(
+                        f"Docling returned empty image for figure '{caption_id}' in {doi}"
+                    )
+                    match_counter += 1
+                    continue
+
+                try:
+                    image_bytes_buffer = BytesIO()
+                    image.save(image_bytes_buffer, format="PNG")
+                    saved = FigureExtractor.save_figure_from_bytes(
+                        image_bytes_buffer.getvalue(), doi, caption_id, base_path
+                    )
+                    if saved:
+                        logger.info(f"Saved figure '{caption_id}' for {doi} -> {saved}")
+                except Exception as e:
+                    logger.warning(
+                        f"Failed to save rendered image for figure '{caption_id}' in {doi}: {e}"
+                    )
+
+                match_counter += 1
+        except Exception as e:
+            logger.warning(f"Error extracting figures from PDF for {doi}: {e}")
 
     @staticmethod
     def clean_text(text: str):

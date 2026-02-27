@@ -11,6 +11,7 @@ Date: 10-03-2025
 import os
 import time
 import re
+import requests
 
 # Third party imports
 import pandas as pd
@@ -34,6 +35,7 @@ from ..utils.error_handler import ValueErrorHandler, KeyboardInterruptHandler
 from ..utils.logger import setup_logger
 from ..utils.common_functions import return_error_message
 from ..utils.prepare_iop_files import PrepareIOPFiles
+from ..utils.figure_extractor import FigureExtractor
 
 
 # configure logger
@@ -72,6 +74,7 @@ class IOPArticleProcessor:
         doi_list: list = None,
         is_sql_db: bool = False,
         rag_config: RAGConfig = RAGConfig(),
+        caption_keywords: dict = None,
     ):
         keyword_message = return_error_message("main_property_keyword")
         property_keywords_message = return_error_message("property_keywords")
@@ -100,6 +103,7 @@ class IOPArticleProcessor:
         self.doi_list = doi_list
         self.is_sql_db = is_sql_db
         self.rag_config = rag_config
+        self.caption_keywords = caption_keywords
         # Takes from config file
         self.timeout_file = self.all_paths.TIMEOUT_DOI_LOG_FILENAME
         self.article_related_keywords = ArticleRelatedKeywords()
@@ -129,6 +133,92 @@ class IOPArticleProcessor:
         self.sql_db_manager = MySQLDatabaseManager(self.keyword, self.is_sql_db)
         self.csv_db_manager = CSVDatabaseManager()
         self.vector_db_manager = VectorDatabaseManager(rag_config=self.rag_config)
+        self._iop_revision_cache = {}
+
+    def _get_first_xpath_text(self, root, xpath_expr: str) -> str:
+        values = root.xpath(xpath_expr)
+        for value in values:
+            if isinstance(value, str):
+                cleaned = value.strip()
+                if cleaned:
+                    return cleaned
+            elif value is not None and hasattr(value, "text") and value.text:
+                cleaned = value.text.strip()
+                if cleaned:
+                    return cleaned
+        return ""
+
+    def _get_iop_cdn_path_parts(self, root):
+        issn = self._get_first_xpath_text(
+            root,
+            './/*[local-name()="journal-meta"]/*[local-name()="issn"][1]/text()',
+        )
+        volume = self._get_first_xpath_text(
+            root,
+            './/*[local-name()="article-meta"]/*[local-name()="volume"][1]/text()',
+        )
+        issue = self._get_first_xpath_text(
+            root,
+            './/*[local-name()="article-meta"]/*[local-name()="issue"][1]/text()',
+        )
+        elocation_id = self._get_first_xpath_text(
+            root,
+            './/*[local-name()="article-meta"]/*[local-name()="elocation-id"][1]/text()',
+        )
+        if not (issn and volume and issue and elocation_id):
+            return None
+        return issn, volume, issue, elocation_id
+
+    def _is_iop_no_such_key(self, response: requests.Response) -> bool:
+        if response is None:
+            return False
+        if response.status_code == 404:
+            return True
+        content_type = (response.headers.get("Content-Type") or "").lower()
+        if "xml" not in content_type:
+            return False
+        body = (response.text or "").strip()
+        return "<Code>NoSuchKey</Code>" in body
+
+    def _download_iop_figure_from_content_cdn(
+        self,
+        issn: str,
+        volume: str,
+        issue: str,
+        elocation_id: str,
+        figure_filename: str,
+        cache_key: str,
+    ):
+        cached_revision = self._iop_revision_cache.get(cache_key)
+        revision_candidates = [cached_revision] if cached_revision else []
+        revision_candidates.extend(
+            revision
+            for revision in range(1, 10)
+            if cached_revision is None or revision != cached_revision
+        )
+        for revision in revision_candidates:
+            url = (
+                "https://content.cld.iop.org/journals/"
+                f"{issn}/{volume}/{issue}/{elocation_id}/revision{revision}/{figure_filename}"
+            )
+            try:
+                resp = requests.get(url, timeout=20)
+            except Exception as exc:
+                logger.warning(f"Error calling IOP content CDN URL '{url}': {exc}")
+                continue
+
+            if resp.status_code == 200 and not self._is_iop_no_such_key(resp):
+                self._iop_revision_cache[cache_key] = revision
+                return resp.content
+
+            if self._is_iop_no_such_key(resp):
+                continue
+
+            logger.warning(
+                f"Unexpected response for IOP content CDN URL '{url}' "
+                f"(HTTP {resp.status_code})."
+            )
+        return None
 
     def _load_and_preprocess_data(self):
         """
@@ -283,6 +373,121 @@ class IOPArticleProcessor:
             return abstract, modified_sections
         else:
             return None, modified_sections
+
+    def _extract_and_save_figures(self, root, doi: str, xml_dir: str):
+        """
+        Extract figures from IOP JATS XML whose captions match self.caption_keywords.
+        Tries local image files first (co-located with the XML), then IOP CDN as fallback.
+        Saves to results/extracted_data/{keyword}/related_figures/{doi_}/.
+
+        Args:
+            root: lxml root element of the parsed IOP XML.
+            doi (str): Article DOI.
+            xml_dir (str): Directory containing the XML file (for local image lookup).
+        """
+        if not self.caption_keywords:
+            return
+        base_path = f"results/extracted_data/{self.keyword}/related_figures"
+        try:
+            XLINK = "http://www.w3.org/1999/xlink"
+            cdn_parts = self._get_iop_cdn_path_parts(root)
+            cache_key = None
+            if cdn_parts:
+                issn, volume, issue, elocation_id = cdn_parts
+                cache_key = f"{issn}/{volume}/{issue}/{elocation_id}"
+            else:
+                logger.warning(
+                    f"Could not find ISSN/volume/issue/elocation-id for {doi}. "
+                    "IOP content CDN figure fallback may fail."
+                )
+            figures = root.xpath('.//*[local-name()="fig"]')
+            for i, figure in enumerate(figures):
+                caption_id = figure.get("id", f"fig_{i}")
+
+                label_els = figure.xpath('.//*[local-name()="label"]')
+                label_text = (
+                    "".join(label_els[0].itertext()).strip() if label_els else ""
+                )
+                caption_paras = figure.xpath(
+                    './/*[local-name()="caption"]//*[local-name()="p"]'
+                )
+                para_text = " ".join(
+                    "".join(p.itertext()) for p in caption_paras
+                ).strip()
+                caption_text = f"{label_text} {para_text}".strip()
+
+                if not FigureExtractor.keyword_matches_caption(
+                    caption_text, self.caption_keywords
+                ):
+                    continue
+
+                FigureExtractor.update_info_json(
+                    doi, caption_id, caption_text, base_path
+                )
+
+                graphic_els = figure.xpath('.//*[local-name()="graphic"]')
+                href = None
+                low_href = None
+                high_href = None
+                any_jpg_href = None
+                for g in graphic_els:
+                    candidate_href = g.get(f"{{{XLINK}}}href") or g.get("href")
+                    if not candidate_href:
+                        continue
+                    content_type = (g.get("content-type") or "").lower()
+                    if content_type == "low" and low_href is None:
+                        low_href = candidate_href
+                    elif content_type == "high" and high_href is None:
+                        high_href = candidate_href
+                    if candidate_href.lower().endswith(".jpg") and any_jpg_href is None:
+                        any_jpg_href = candidate_href
+                    if href is None:
+                        href = candidate_href
+                href = low_href or high_href or any_jpg_href or href
+                if not href:
+                    logger.warning(
+                        f"No graphic href for IOP figure '{caption_id}' in {doi}"
+                    )
+                    continue
+
+                # Try local file first
+                local_path = os.path.join(xml_dir, href)
+                saved = FigureExtractor.save_figure_from_local_path(
+                    local_path, doi, caption_id, base_path
+                )
+                if saved:
+                    logger.info(
+                        f"Saved IOP figure '{caption_id}' for {doi} from local file"
+                    )
+                    continue
+
+                # Fallback: try IOP CDN
+                figure_filename = os.path.basename(href)
+                content = None
+                if cdn_parts and cache_key:
+                    content = self._download_iop_figure_from_content_cdn(
+                        issn=issn,
+                        volume=volume,
+                        issue=issue,
+                        elocation_id=elocation_id,
+                        figure_filename=figure_filename,
+                        cache_key=cache_key,
+                    )
+                if content:
+                    saved = FigureExtractor.save_figure_from_bytes(
+                        content, doi, caption_id, base_path
+                    )
+                    if saved:
+                        logger.info(
+                            f"Saved IOP figure '{caption_id}' for {doi} from content CDN"
+                        )
+                else:
+                    logger.warning(
+                        f"Could not download IOP figure '{caption_id}' for {doi} "
+                        "from content CDN; caption saved to info.json only."
+                    )
+        except Exception as e:
+            logger.warning(f"Error extracting figures from IOP XML for {doi}: {e}")
 
     def _extract_paragraphs(self, element):
         paragraphs = element.xpath('.//*[local-name()="p"]')
@@ -624,6 +829,7 @@ class IOPArticleProcessor:
                                 f"Error processing IOP article with DOI {doi}. Skipping..."
                             )
                             continue
+                        self._extract_and_save_figures(root, doi, self.iop_folderpath)
                         body_element = root.xpath('.//*[local-name()="body"]')
                         body = body_element[0] if body_element else None
                         if body is None:

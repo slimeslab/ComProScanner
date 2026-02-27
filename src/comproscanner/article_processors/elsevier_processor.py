@@ -37,6 +37,7 @@ from ..utils.database_manager import (
 from ..utils.error_handler import ValueErrorHandler, KeyboardInterruptHandler
 from ..utils.logger import setup_logger
 from ..utils.common_functions import return_error_message, write_timeout_file
+from ..utils.figure_extractor import FigureExtractor
 
 # Load environment variables from .env file
 load_dotenv()
@@ -79,6 +80,7 @@ class ElsevierArticleProcessor:
         is_sql_db: bool = False,
         is_save_xml: bool = False,
         rag_config: RAGConfig = RAGConfig(),
+        caption_keywords: dict = None,
     ):
         keyword_message = return_error_message("main_property_keyword")
         property_keywords_message = return_error_message("property_keywords")
@@ -111,6 +113,7 @@ class ElsevierArticleProcessor:
         self.is_sql_db = is_sql_db
         self.is_save_xml = is_save_xml
         self.rag_config = rag_config
+        self.caption_keywords = caption_keywords
         # Takes from config file
         self.timeout_file = self.all_paths.TIMEOUT_DOI_LOG_FILENAME
         self.article_related_keywords = ArticleRelatedKeywords()
@@ -458,6 +461,104 @@ class ElsevierArticleProcessor:
             return abstract, modified_sections
         else:
             return None, modified_sections
+
+    def _extract_and_save_figures(self, root, doi: str):
+        """
+        Extract figures from Elsevier XML whose captions match self.caption_keywords.
+        Downloads images from the Elsevier API and saves them to
+        results/extracted_data/{keyword}/related_figures/{doi_}/{caption_id}.jpg
+        alongside info.json.
+
+        Args:
+            root: lxml root element of the parsed Elsevier XML.
+            doi (str): Article DOI.
+        """
+        if not self.caption_keywords:
+            return
+        base_path = f"results/extracted_data/{self.keyword}/related_figures"
+        try:
+            # Build ref → URL map from <objects> element
+            objects = root.xpath(
+                './/*[local-name()="object"][@category="standard"]'
+                '[@type="IMAGE-DOWNSAMPLED"]'
+            )
+            ref_to_url = {}
+            for obj in objects:
+                ref = obj.get("ref")
+                url = obj.text.strip() if obj.text else None
+                if ref and url:
+                    ref_to_url[ref] = url
+            # Find all <ce:figure> elements
+            figures = root.xpath('.//*[local-name()="figure"]')
+            for figure in figures:
+                # Caption text from all <ce:simple-para> descendants inside <ce:caption>
+                caption_elements = figure.xpath(
+                    './/*[local-name()="caption"]'
+                    '//*[local-name()="simple-para"]'
+                )
+                caption_text = " ".join(
+                    "".join(el.itertext()) for el in caption_elements
+                ).strip()
+                if not caption_text:
+                    # Try any text inside <ce:caption>
+                    caption_els = figure.xpath('.//*[local-name()="caption"]')
+                    caption_text = " ".join(
+                        "".join(el.itertext()) for el in caption_els
+                    ).strip()
+
+                if not FigureExtractor.keyword_matches_caption(
+                    caption_text, self.caption_keywords
+                ):
+                    continue
+
+                # Get the image reference locator (e.g., "gr1")
+                link_els = figure.xpath('.//*[local-name()="link"]')
+                locator = None
+                for link_el in link_els:
+                    locator = link_el.get("locator")
+                    if locator:
+                        break
+                if locator is None:
+                    locator = figure.get("id", "unknown")
+
+                caption_id = locator
+
+                # Always save caption to info.json
+                FigureExtractor.update_info_json(doi, caption_id, caption_text, base_path)
+
+                # Download image if URL is available
+                url = ref_to_url.get(locator)
+                if url:
+                    try:
+                        img_headers = {
+                            "X-ELS-APIKey": self.api_key,
+                            "Accept": "*/*",
+                        }
+                        resp = requests.get(url, headers=img_headers, timeout=30)
+                        if resp.status_code == 200:
+                            saved = FigureExtractor.save_figure_from_bytes(
+                                resp.content, doi, caption_id, base_path
+                            )
+                            if saved:
+                                logger.info(
+                                    f"Saved Elsevier figure '{caption_id}' for {doi}"
+                                )
+                        else:
+                            logger.warning(
+                                f"Failed to download Elsevier figure '{caption_id}' "
+                                f"for {doi}: HTTP {resp.status_code}"
+                            )
+                    except Exception as e:
+                        logger.warning(
+                            f"Error downloading Elsevier figure '{caption_id}' "
+                            f"for {doi}: {e}"
+                        )
+                else:
+                    logger.warning(
+                        f"No image URL found for Elsevier figure '{caption_id}' in {doi}"
+                    )
+        except Exception as e:
+            logger.warning(f"Error extracting figures from Elsevier XML for {doi}: {e}")
 
     def _extract_paragraphs(self, element):
         """
@@ -888,6 +989,7 @@ class ElsevierArticleProcessor:
                 if root is None:
                     logger.error(f"Failed to parse XML...skipping {row["doi"]}...")
                     continue
+                self._extract_and_save_figures(root, row["doi"])
                 if self.is_save_xml:
                     logger.info("Saving XML for DOI: ", row["doi"])
                     self._save_xml(response, row["doi"])
