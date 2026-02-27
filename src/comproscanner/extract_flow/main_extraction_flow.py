@@ -58,7 +58,6 @@ class MaterialsState(BaseModel):
     is_extract_synthesis_data: bool = True
     vlm_model: str = "gemini/gemini-3-flash-preview"
     related_figures_base_path: str = "results/related_figures"
-    caption_keywords: Dict = {}
     llm: Optional[LLM] = None
     rag_config: Optional[RAGConfig] = None
     output_log_folder: Optional[str] = None
@@ -124,7 +123,6 @@ class DataExtractionFlow(Flow[MaterialsState]):
         is_extract_synthesis_data: bool = True,
         vlm_model: str = "gemini/gemini-3-flash-preview",
         related_figures_base_path: str = "results/related_figures",
-        caption_keywords: Optional[Dict] = None,
         rag_config: Optional[RAGConfig] = None,
         output_log_folder: Optional[str] = None,
         task_output_folder: Optional[str] = None,
@@ -156,7 +154,6 @@ class DataExtractionFlow(Flow[MaterialsState]):
         self.state.is_extract_synthesis_data = is_extract_synthesis_data
         self.state.vlm_model = vlm_model
         self.state.related_figures_base_path = related_figures_base_path
-        self.state.caption_keywords = caption_keywords or {}
         self.state.rag_config = rag_config
         self.state.output_log_folder = output_log_folder
         self.state.task_output_folder = task_output_folder
@@ -591,7 +588,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 verbose=self.state.verbose,
                 vlm_model=self.state.vlm_model,
                 related_figures_base_path=self.state.related_figures_base_path,
-                caption_keywords=self.state.caption_keywords,
+                main_extraction_keyword=self.state.main_extraction_keyword,
             ).crew()
         else:
             composition_property_crew = CompositionExtractionCrew(
@@ -602,7 +599,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 verbose=self.state.verbose,
                 vlm_model=self.state.vlm_model,
                 related_figures_base_path=self.state.related_figures_base_path,
-                caption_keywords=self.state.caption_keywords,
+                main_extraction_keyword=self.state.main_extraction_keyword,
             ).crew()
 
         result = composition_property_crew.kickoff(

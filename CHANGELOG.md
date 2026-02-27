@@ -1,3 +1,17 @@
+## [Unreleased]
+
+### Added
+
+- VLM-based graph data extraction added across all publishers and PDF processors:
+
+  - New `GraphExtractorTool` — a CrewAI agent tool that reads saved figures for a given DOI and uses a vision LLM to extract composition-property value pairs from graphs and charts. Default VLM: `gemini/gemini-3-flash-preview`.
+
+  - New `FigureExtractor` utility — shared helper for caption keyword-based figure filtering and saving, used by all article processors.
+
+  - New `caption_keywords` parameter in `process_articles()` and `extract_composition_property_data()`, and new `vlm_model` and `related_figures_base_path` parameters in `extract_composition_property_data()`.
+
+- New unit tests added for all three agent tools in `tests/test_agent_tools/`.
+
 ## [0.1.5] - 08-02-2026
 
 ### Added

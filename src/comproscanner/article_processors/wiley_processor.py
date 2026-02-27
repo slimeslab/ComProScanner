@@ -563,7 +563,11 @@ class WileyArticleProcessor:
 
                 # Extract and save figures matching caption_keywords
                 if self.caption_keywords:
-                    pdf_to_md.extract_and_save_figures(row["doi"], self.caption_keywords)
+                    pdf_to_md.extract_and_save_figures(
+                        row["doi"],
+                        self.caption_keywords,
+                        base_path=f"results/extracted_data/{self.keyword}/related_figures",
+                    )
 
                 # Process the markdown text
                 all_sections = pdf_to_md.clean_text(md_text)

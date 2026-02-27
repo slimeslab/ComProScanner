@@ -291,7 +291,6 @@ class ComProScanner:
         rag_base_url: Optional[str] = None,
         vlm_model: str = "gemini/gemini-3-flash-preview",
         related_figures_base_path: Optional[str] = None,
-        caption_keywords: Optional[Dict] = None,
         **flow_optional_args,
     ):
         """Extract the composition-property data and synthesis data if the property is present in the article.
@@ -334,7 +333,6 @@ class ComProScanner:
             vlm_model (str, optional): Vision LLM model for graph data extraction from saved figures. Defaults to "gemini/gemini-3-flash-preview".
             related_figures_base_path (str, optional): Base path where saved figures are stored. Defaults to
                 "results/extracted_data/{main_property_keyword}/related_figures".
-            caption_keywords (dict, optional): Keywords used for caption matching (propagated to GraphExtractorTool). Defaults to None.
             **flow_optional_args (Any): Optional keyword arguments for the MaterialsFlow class.
 
         Raises:
@@ -468,7 +466,6 @@ class ComProScanner:
                         is_extract_synthesis_data=is_extract_synthesis_data,
                         vlm_model=vlm_model,
                         related_figures_base_path=related_figures_base_path,
-                        caption_keywords=caption_keywords,
                         rag_config=rag_config,
                         output_log_folder=output_log_folder,
                         task_output_folder=task_output_folder,

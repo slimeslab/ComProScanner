@@ -50,7 +50,7 @@ class CompositionExtractionCrew:
         verbose: Optional[bool] = True,
         vlm_model: str = "gemini/gemini-3-flash-preview",
         related_figures_base_path: str = "results/related_figures",
-        caption_keywords: Optional[Dict] = None,
+        main_extraction_keyword: str = "",
     ):
         """
         Initialize the MaterialsDataIdentifierCrew.
@@ -64,7 +64,7 @@ class CompositionExtractionCrew:
         - verbose: Optional boolean for verbosity. Default is True.
         - vlm_model (str, optional): Vision LLM model for graph extraction. Defaults to "gemini/gemini-3-flash-preview".
         - related_figures_base_path (str, optional): Base path for saved figures. Defaults to "results/related_figures".
-        - caption_keywords (dict, optional): Keywords used for caption matching (propagated to GraphExtractorTool). Defaults to None.
+        - main_extraction_keyword (str, optional): Property keyword used to label axes in the VLM extraction prompt. Defaults to "".
         """
         if doi is None:
             raise ValueError("DOI must be provided")
@@ -77,7 +77,7 @@ class CompositionExtractionCrew:
         self.verbose = verbose
         self.vlm_model = vlm_model
         self.related_figures_base_path = related_figures_base_path
-        self.caption_keywords = caption_keywords or {}
+        self.main_extraction_keyword = main_extraction_keyword
 
         # Initialize output file paths as None
         self.output_log_file = None
@@ -112,7 +112,7 @@ class CompositionExtractionCrew:
         graph_tool = GraphExtractorTool(
             vlm_model=self.vlm_model,
             related_figures_base_path=self.related_figures_base_path,
-            caption_keywords=self.caption_keywords,
+            vlm_property_name=self.main_extraction_keyword,
         )
         return Agent(
             config=self.agents_config["composition_property_extractor"],

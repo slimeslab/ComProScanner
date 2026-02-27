@@ -11,7 +11,7 @@ Date: 26-02-2025
 import os
 import json
 import base64
-from typing import Type, Dict, Any
+from typing import Type, Dict
 
 # Third-party imports
 from crewai.tools import BaseTool
@@ -56,7 +56,7 @@ class GraphExtractorTool(BaseTool):
 
     vlm_model: str = "gemini/gemini-3-flash-preview"
     related_figures_base_path: str = "results/related_figures"
-    caption_keywords: Dict[str, Any] = Field(default_factory=dict)
+    vlm_property_name: str = "the target property"
 
     def _run(self, doi: str) -> str:
         """
@@ -99,11 +99,7 @@ class GraphExtractorTool(BaseTool):
                 "Captions available: " + json.dumps(captions)
             )
 
-        # Determine property name from caption_keywords for the prompt
-        property_name = "the target property"
-        exact_kws = self.caption_keywords.get("exact_keywords", [])
-        if exact_kws:
-            property_name = exact_kws[0]
+        property_name = self.vlm_property_name or "the target property"
 
         results: Dict[str, Any] = {}
 
