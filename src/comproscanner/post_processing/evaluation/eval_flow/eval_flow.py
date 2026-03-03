@@ -58,6 +58,9 @@ class AgentEvaluationState(BaseModel):
     # Weights for evaluation components
     weights: Dict[str, float] = {}
 
+    # Optional per-range absolute error tolerances for numeric property values
+    value_error_thresholds: Dict = {}
+
     # Results storage
     evaluation_details: Dict = {}
     item_results: Dict = {}
@@ -97,6 +100,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
         is_synthesis_evaluation: bool = True,
         weights: Dict[str, float] = None,
         llm: Optional[LLM] = None,
+        value_error_thresholds: Dict = None,
     ):
 
         # Validate required inputs
@@ -136,6 +140,9 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
         self.state.weights = default_weights.copy()
         if weights:
             self.state.weights.update(weights)
+
+        # Store optional per-range error tolerances for numeric property values
+        self.state.value_error_thresholds = value_error_thresholds or {}
 
     def _calculate_tp_fp_fn(self, details, section):
         """
@@ -1018,8 +1025,25 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
         # Get normalized weights for metric calculations
         normalized_weights = self._normalize_weights()
 
+        # Build threshold instructions for the agent task prompt (injected as template var)
+        if self.state.value_error_thresholds:
+            _threshold_instructions = (
+                "IMPORTANT — error tolerance is configured for this evaluation. "
+                "For each numeric property value comparison, call the "
+                "`get_value_error_threshold` tool with the ground-truth reference value "
+                "to retrieve the allowed absolute error. "
+                "If the tool returns 'threshold:<N>', mark the value as a match (1) when "
+                "|test_value - reference_value| <= N. "
+                "If the tool returns 'exact', require exact equality (within 1e-6)."
+            )
+        else:
+            _threshold_instructions = ""
+
         # Set up the crews
-        composition_crew = CompositionEvaluationCrew(llm=self.state.llm).crew()
+        composition_crew = CompositionEvaluationCrew(
+            llm=self.state.llm,
+            value_error_thresholds=self.state.value_error_thresholds,
+        ).crew()
         if self.state.is_synthesis_evaluation:
             synthesis_crew = SynthesisEvaluationCrew(llm=self.state.llm).crew()
 
@@ -1111,6 +1135,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
                             "test_item": json.dumps(
                                 test_item.get("composition_data", {})
                             ),
+                            "value_error_threshold_instructions": _threshold_instructions,
                         }
                     )
 

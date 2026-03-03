@@ -2,6 +2,14 @@
 
 ### Added
 
+- New `value_error_thresholds` parameter added to both `evaluate_semantic()` and `evaluate_agentic()` for range-based absolute error tolerances on numeric property value comparisons:
+
+  - Accepts a dict mapping `(min, max)` tuples to absolute error thresholds. When a ground-truth value falls inside a range, the extracted value is accepted if `|extracted - ground_truth| ≤ threshold`. Values outside all configured ranges fall back to exact comparison.
+
+  - **Semantic evaluation**: handled inside `_is_value_in_range()` via the new `_get_error_threshold()` helper in `MaterialsDataSemanticEvaluator`.
+
+  - **Agentic evaluation**: a new `GetValueErrorThresholdTool` (CrewAI `BaseTool`) is added to the composition evaluator agent when thresholds are configured. The agent calls this tool with the reference value to retrieve the tolerance before deciding on each numeric match. No tool is added and no prompt changes are made when no thresholds are provided.
+
 - VLM-based graph data extraction added across all publishers and PDF processors:
 
   - New `GraphExtractorTool` — a CrewAI agent tool that reads saved figures for a given DOI and uses a vision LLM to extract composition-property value pairs from graphs and charts. Default VLM: `gemini/gemini-3-flash-preview`.
