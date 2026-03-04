@@ -153,6 +153,7 @@ class ComProScanner:
             raise ValueErrorHandler(
                 message="Please provide property_keywords dictionary to proceed."
             )
+        source_list = [source.lower() for source in source_list]
         if caption_keywords is None:
             caption_keywords = property_keywords
         rag_config = RAGConfig(
@@ -162,8 +163,90 @@ class ComProScanner:
             embedding_model=embedding_model,
         )
 
+        routed_doi_list = {
+            "elsevier": doi_list,
+            "springer": doi_list,
+            "wiley": doi_list,
+            "iop": doi_list,
+        }
+        publisher_sources = {"elsevier", "springer", "wiley", "iop"}
+        selected_publisher_sources = set(source_list).intersection(publisher_sources)
+
+        # If a manual DOI list is provided, route each DOI to the matching publisher.
+        if doi_list is not None and len(selected_publisher_sources) > 0:
+            for src in publisher_sources:
+                routed_doi_list[src] = []
+            try:
+                import pandas as pd
+
+                metadata_file = (
+                    f"results/{self.main_property_keyword}_metadata.csv"
+                )
+                if not os.path.exists(metadata_file):
+                    logger.warning(
+                        f"Metadata file '{metadata_file}' not found. "
+                        "Using provided DOI list for all selected sources."
+                    )
+                    for src in publisher_sources:
+                        routed_doi_list[src] = doi_list
+                else:
+                    metadata_df = pd.read_csv(
+                        metadata_file, dtype=str, low_memory=False
+                    ).fillna("")
+                    if (
+                        "doi" not in metadata_df.columns
+                        or "general_publisher" not in metadata_df.columns
+                    ):
+                        logger.warning(
+                            "Metadata file is missing required columns "
+                            "('doi', 'general_publisher'). "
+                            "Using provided DOI list for all selected sources."
+                        )
+                        for src in publisher_sources:
+                            routed_doi_list[src] = doi_list
+                    else:
+                        doi_to_publisher = {
+                            str(row["doi"]).strip(): str(
+                                row["general_publisher"]
+                            ).strip().lower()
+                            for _, row in metadata_df.iterrows()
+                            if str(row["doi"]).strip()
+                        }
+
+                        unresolved_dois = []
+                        filtered_out_dois = []
+                        for doi in doi_list:
+                            doi_key = str(doi).strip()
+                            publisher = doi_to_publisher.get(doi_key)
+                            if publisher in selected_publisher_sources:
+                                routed_doi_list[publisher].append(doi)
+                            elif publisher is None or publisher == "":
+                                unresolved_dois.append(doi)
+                            else:
+                                filtered_out_dois.append((doi, publisher))
+
+                        if unresolved_dois:
+                            logger.warning(
+                                f"{len(unresolved_dois)} DOI(s) were not found in metadata "
+                                "and were skipped."
+                            )
+                        if filtered_out_dois:
+                            logger.info(
+                                f"{len(filtered_out_dois)} DOI(s) were skipped because their "
+                                "publisher is not in source_list."
+                            )
+            except Exception as e:
+                logger.warning(
+                    f"Failed to route DOI list by publisher from metadata: {e}. "
+                    "Using provided DOI list for all selected sources."
+                )
+                for src in publisher_sources:
+                    routed_doi_list[src] = doi_list
+
         # Process Elsevier articles
-        if "elsevier" in source_list:
+        if "elsevier" in source_list and (
+            doi_list is None or len(routed_doi_list["elsevier"]) > 0
+        ):
             from .article_processors.elsevier_processor import ElsevierArticleProcessor
 
             elsevier_processor = ElsevierArticleProcessor(
@@ -173,7 +256,7 @@ class ComProScanner:
                 csv_batch_size=csv_batch_size,
                 start_row=start_row,
                 end_row=end_row,
-                doi_list=doi_list,
+                doi_list=routed_doi_list["elsevier"],
                 is_sql_db=is_sql_db,
                 is_save_xml=is_save_xml,
                 rag_config=rag_config,
@@ -182,7 +265,9 @@ class ComProScanner:
             elsevier_processor.process_elsevier_articles()
 
         # Process Springer articles
-        if "springer" in source_list:
+        if "springer" in source_list and (
+            doi_list is None or len(routed_doi_list["springer"]) > 0
+        ):
             from .article_processors.springer_processor import SpringerArticleProcessor
 
             springer_processor = SpringerArticleProcessor(
@@ -192,7 +277,7 @@ class ComProScanner:
                 csv_batch_size=csv_batch_size,
                 start_row=start_row,
                 end_row=end_row,
-                doi_list=doi_list,
+                doi_list=routed_doi_list["springer"],
                 is_sql_db=is_sql_db,
                 is_save_xml=is_save_xml,
                 rag_config=rag_config,
@@ -201,7 +286,9 @@ class ComProScanner:
             springer_processor.process_springer_articles()
 
         # Process Wiley articles
-        if "wiley" in source_list:
+        if "wiley" in source_list and (
+            doi_list is None or len(routed_doi_list["wiley"]) > 0
+        ):
             from .article_processors.wiley_processor import WileyArticleProcessor
 
             wiley_processor = WileyArticleProcessor(
@@ -211,7 +298,7 @@ class ComProScanner:
                 csv_batch_size=csv_batch_size,
                 start_row=start_row,
                 end_row=end_row,
-                doi_list=doi_list,
+                doi_list=routed_doi_list["wiley"],
                 is_sql_db=is_sql_db,
                 is_save_pdf=is_save_pdf,
                 rag_config=rag_config,
@@ -220,7 +307,9 @@ class ComProScanner:
             wiley_processor.process_wiley_articles()
 
         # Process IOP articles
-        if "iop" in source_list:
+        if "iop" in source_list and (
+            doi_list is None or len(routed_doi_list["iop"]) > 0
+        ):
             from .article_processors.iop_processor import IOPArticleProcessor
 
             iop_processor = IOPArticleProcessor(
@@ -230,7 +319,7 @@ class ComProScanner:
                 csv_batch_size=csv_batch_size,
                 start_row=start_row,
                 end_row=end_row,
-                doi_list=doi_list,
+                doi_list=routed_doi_list["iop"],
                 is_sql_db=is_sql_db,
                 rag_config=rag_config,
                 caption_keywords=caption_keywords,
@@ -681,6 +770,7 @@ class ComProScanner:
         primary_model_name="thellert/physbert_cased",
         fallback_model_name="all-mpnet-base-v2",
         similarity_thresholds=None,
+        value_error_thresholds=None,
     ):
         """Evaluate the extracted data using semantic evaluation.
 
@@ -695,6 +785,8 @@ class ComProScanner:
             primary_model_name (str, optional): Name of the primary model for semantic evaluation. Defaults to "thellert/physbert_cased".
             fallback_model_name (str, optional): Name of the fallback model for semantic evaluation. Defaults to "all-mpnet-base-v2".
             similarity_thresholds (dict, optional): Similarity thresholds for evaluation. Defaults to 0.8 for each metric.
+            value_error_thresholds (dict, optional): Mapping of ``(min, max)`` tuples to
+                absolute error tolerances for numeric property-value comparisons.
 
         Returns:
             results (dict): Evaluation results containing various metrics.
@@ -712,6 +804,7 @@ class ComProScanner:
             primary_model_name=primary_model_name,
             fallback_model_name=fallback_model_name,
             similarity_thresholds=similarity_thresholds,
+            value_error_thresholds=value_error_thresholds,
         )
         results = evaluator.evaluate(
             ground_truth_file=ground_truth_file,
@@ -720,6 +813,7 @@ class ComProScanner:
             output_file=output_file,
             extraction_agent_model_name=extraction_agent_model_name,
             is_synthesis_evaluation=is_synthesis_evaluation,
+            value_error_thresholds=value_error_thresholds,
         )
         return results
 
@@ -732,6 +826,7 @@ class ComProScanner:
         output_file: str = "agentic_evaluation_result.json",
         is_synthesis_evaluation: bool = True,
         llm: Optional[LLM] = None,
+        value_error_thresholds=None,
     ):
         """Evaluate the extracted data using agentic evaluation.
 
@@ -743,6 +838,8 @@ class ComProScanner:
             output_file (str, optional): Path to the output file for saving the evaluation results. Defaults to "agentic_evaluation_result.json".
             is_synthesis_evaluation (bool, optional): A flag to indicate if synthesis evaluation is required. Defaults to True.
             llm (LLM, optional): An instance of the LLM class. Defaults to instance of LLM with model="o3-mini"
+            value_error_thresholds (dict, optional): Mapping of ``(min, max)`` tuples to
+                absolute error tolerances for numeric property-value comparisons.
 
         Returns:
             results (dict): Evaluation results containing various metrics.
@@ -764,6 +861,7 @@ class ComProScanner:
             is_synthesis_evaluation=is_synthesis_evaluation,
             weights=weights,
             llm=llm,
+            value_error_thresholds=value_error_thresholds,
         )
         results = evaluator.kickoff()
         return results

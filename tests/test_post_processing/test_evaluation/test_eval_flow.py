@@ -51,6 +51,7 @@ class TestAgentEvaluationState:
         assert state.processed_count == 0
         assert state.total_count == 0
         assert state.remaining_dois == []
+        assert state.value_error_thresholds == {}
 
     def test_agent_evaluation_state_custom_values(self):
         """Test AgentEvaluationState with custom values"""
@@ -1065,6 +1066,32 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         assert success is True
         assert os.path.exists(nested_output)
         assert os.path.exists(os.path.dirname(nested_output))
+
+    def test_value_error_thresholds_stored_in_state(self, temp_files):
+        """value_error_thresholds passed at construction are stored in flow.state"""
+        gt_file, test_file, _ = temp_files
+        thresholds = {(0, 200): 5, (201, 500): 10}
+
+        flow = MaterialsDataAgenticEvaluatorFlow(
+            ground_truth_file=gt_file,
+            test_data_file=test_file,
+            extraction_agent_model_name="test-model",
+            value_error_thresholds=thresholds,
+        )
+
+        assert flow.state.value_error_thresholds == thresholds
+
+    def test_value_error_thresholds_default_is_empty(self, temp_files):
+        """When value_error_thresholds is not provided it defaults to empty dict"""
+        gt_file, test_file, _ = temp_files
+
+        flow = MaterialsDataAgenticEvaluatorFlow(
+            ground_truth_file=gt_file,
+            test_data_file=test_file,
+            extraction_agent_model_name="test-model",
+        )
+
+        assert flow.state.value_error_thresholds == {}
 
     def test_missing_dois_handling(self, temp_files):
         """Test handling of DOIs missing from test data"""

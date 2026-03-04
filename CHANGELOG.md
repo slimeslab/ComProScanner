@@ -10,6 +10,8 @@
 
   - **Agentic evaluation**: a new `GetValueErrorThresholdTool` (CrewAI `BaseTool`) is added to the composition evaluator agent when thresholds are configured. The agent calls this tool with the reference value to retrieve the tolerance before deciding on each numeric match. No tool is added and no prompt changes are made when no thresholds are provided.
 
+- Exposed `value_error_thresholds` in public evaluation methods: `ComProScanner.evaluate_semantic()`, `ComProScanner.evaluate_agentic()`, `comproscanner.evaluate_semantic()`, and `comproscanner.evaluate_agentic()`.
+
 - VLM-based graph data extraction added across all publishers and PDF processors:
 
   - New `GraphExtractorTool` — a CrewAI agent tool that reads saved figures for a given DOI and uses a vision LLM to extract composition-property value pairs from graphs and charts. Default VLM: `gemini/gemini-3-flash-preview`.
@@ -19,6 +21,10 @@
   - New `caption_keywords` parameter in `process_articles()` and `extract_composition_property_data()`, and new `vlm_model` and `related_figures_base_path` parameters in `extract_composition_property_data()`.
 
 - New unit tests added for all three agent tools in `tests/test_agent_tools/`.
+
+### Fixed
+
+- `process_articles()` now routes user-provided `doi_list` by `general_publisher` from metadata and sends each DOI only to its matching source processor.
 
 ## [0.1.5] - 08-02-2026
 

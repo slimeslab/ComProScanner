@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     comproscanner.evaluate_semantic(
         ground_truth_file="piezo_test/ground_truth.json",
-        test_data_file="piezo_test/model-outputs/deepseek/deepseek-v3-piezo-ceramic-test-results.json",
+        test_data_file="piezo_test/model-outputs/deepseek/deepseek-v3-0324-piezo-ceramic-test-results.json",
         output_file="piezo_test/eval-results/semantic-evaluation/deepseek-v3-0324-semantic-evaluation-results.json",
         extraction_agent_model_name="DeepSeek-V3-0324",
     )
@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
     comproscanner.evaluate_agentic(
         ground_truth_file="piezo_test/ground_truth.json",
-        test_data_file="piezo_test/model-outputs/deepseek/deepseek-v3-piezo-ceramic-test-results.json",
+        test_data_file="piezo_test/model-outputs/deepseek/deepseek-v3-0324-piezo-ceramic-test-results.json",
         output_file="piezo_test/eval-results/agentic-evaluation/deepseek-v3-0324-agentic-evaluation-results.json",
         extraction_agent_model_name="DeepSeek-V3-0324",
         llm=llm,

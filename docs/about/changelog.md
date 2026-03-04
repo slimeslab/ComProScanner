@@ -1,4 +1,4 @@
-## Unreleased
+﻿## Unreleased
 
 ### Added
 
@@ -37,6 +37,8 @@
 
 - [CITATION.cff](https://github.com/slimeslab/ComProScanner/blob/main/CITATION.cff) added for standardized citation information based on the latest release and arXiv preprint.
 
+- Exposed `value_error_thresholds` in public evaluation methods: `ComProScanner.evaluate_semantic()`, `ComProScanner.evaluate_agentic()`, `comproscanner.evaluate_semantic()`, and `comproscanner.evaluate_agentic()`.
+
 ### Fixed
 
 - CSV progress tracking in `elsevier_processor.py`:
@@ -58,6 +60,8 @@
 
 - GitHub Actions CI disk space issue:
   - Added `--no-cache-dir` flag to pip install to reduce disk usage
+
+- `process_articles()` now routes user-provided `doi_list` by `general_publisher` from metadata and sends each DOI only to its matching source processor.
 
 ### Changed
 
@@ -121,3 +125,5 @@
 ### Added
 
 - Initial release of ComProScanner.
+
+
