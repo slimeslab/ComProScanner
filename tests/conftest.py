@@ -76,6 +76,12 @@ sys.modules["litellm.types"] = create_mock_module("litellm.types")
 sys.modules["litellm.types.utils"] = create_mock_module("litellm.types.utils")
 sys.modules["instructor"] = create_mock_module("instructor")
 sys.modules["crewai_tools"] = create_mock_module("crewai_tools")
+sys.modules["langchain_chroma"] = create_mock_module(
+    "langchain_chroma", Chroma=MagicMock()
+)
+sys.modules["chromadb"] = create_mock_module(
+    "chromadb", PersistentClient=MagicMock()
+)
 
 # Mock aiohttp to avoid the ConnectionTimeoutError
 aiohttp_mock = create_mock_module("aiohttp")
