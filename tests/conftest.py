@@ -1,6 +1,7 @@
 import pytest
 import sys
 import os
+import types
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -28,20 +29,109 @@ def create_mock_module(name, **kwargs):
     return mock
 
 
+def create_real_module(name, **kwargs):
+    """Create a real module object (not MagicMock) with explicit attributes."""
+    module = types.ModuleType(name)
+    module.__package__ = name.rsplit(".", 1)[0] if "." in name else ""
+    module.__path__ = [name]
+
+    for key, value in kwargs.items():
+        setattr(module, key, value)
+
+    return module
+
+
+def _identity_decorator(*args, **kwargs):
+    if len(args) == 1 and callable(args[0]) and not kwargs:
+        return args[0]
+
+    def _decorator(func):
+        return func
+
+    return _decorator
+
+
+def _event_decorator(*args, **kwargs):
+    def _decorator(func):
+        return func
+
+    return _decorator
+
+
+def _or_(*signals):
+    return signals
+
+
+class _DummyFlow:
+    def __class_getitem__(cls, _item):
+        return cls
+
+    def __init__(self, *args, **kwargs):
+        self.state = types.SimpleNamespace(
+            is_materials_mentioned="",
+            composition_extracted_data={},
+            composition_formatted_data={},
+            synthesis_extracted_data={},
+            synthesis_formatted_data={},
+            doi="",
+            materials_data_identifier_query="",
+            main_extraction_keyword="",
+            composition_property_text_data="",
+            synthesis_text_data="",
+            is_extract_synthesis_data=True,
+            vlm_model="gemini/gemini-3-flash-preview",
+            related_figures_base_path="results/related_figures",
+            llm=None,
+            rag_config=None,
+            output_log_folder=None,
+            task_output_folder=None,
+            is_log_json=False,
+            verbose=True,
+            expected_composition_property_example="",
+            expected_variable_composition_property_example="",
+            composition_property_extraction_agent_note="",
+            composition_property_extraction_task_note="",
+            composition_property_formatting_agent_note="",
+            composition_property_formatting_task_note="",
+            synthesis_extraction_agent_note="",
+            synthesis_extraction_task_note="",
+            synthesis_formatting_agent_note="",
+            synthesis_formatting_task_note="",
+            allowed_synthesis_methods="",
+            allowed_characterization_techniques="",
+        )
+
+
+class _DummyChromaCollection:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def query(self, *args, **kwargs):
+        return {"ids": [[]], "metadatas": [[]], "documents": [[]], "distances": [[]]}
+
+    def upsert(self, *args, **kwargs):
+        return None
+
+
+class _DummyCrewAILLM:
+    pass
+
+
 # Mock crewai completely before any imports
 crewai_modules = {
     "crewai": {
-        "LLM": MagicMock(),
+        "LLM": _DummyCrewAILLM,
         "Agent": MagicMock(),
         "Task": MagicMock(),
         "Crew": MagicMock(),
     },
     "crewai.flow": {},
     "crewai.flow.flow": {
-        "Flow": MagicMock(),
-        "listen": MagicMock(),
-        "start": MagicMock(),
-        "router": MagicMock(),
+        "Flow": _DummyFlow,
+        "listen": _event_decorator,
+        "start": _identity_decorator,
+        "router": _event_decorator,
+        "or_": _or_,
     },
     "crewai.project": {
         "CrewBase": MagicMock(),
@@ -53,7 +143,7 @@ crewai_modules = {
         "BaseTool": MagicMock(),
     },
     "crewai.agent": {},
-    "crewai.llm": {"LLM": MagicMock()},
+    "crewai.llm": {"LLM": _DummyCrewAILLM},
     "crewai.agents": {},
     "crewai.agents.crew_agent_executor": {"CrewAgentExecutor": MagicMock()},
     "crewai.agents.agent_builder": {},
@@ -74,13 +164,238 @@ for module_name, attrs in crewai_modules.items():
 sys.modules["litellm"] = create_mock_module("litellm")
 sys.modules["litellm.types"] = create_mock_module("litellm.types")
 sys.modules["litellm.types.utils"] = create_mock_module("litellm.types.utils")
+sys.modules["litellm.exceptions"] = create_real_module(
+    "litellm.exceptions",
+    ContextWindowExceededError=type("ContextWindowExceededError", (Exception,), {}),
+)
+sys.modules["litellm.utils"] = create_real_module(
+    "litellm.utils",
+    supports_response_schema=lambda *args, **kwargs: True,
+    supports_function_calling=lambda *args, **kwargs: True,
+)
+sys.modules["litellm.litellm_core_utils"] = create_real_module(
+    "litellm.litellm_core_utils"
+)
+sys.modules["litellm.litellm_core_utils.get_supported_openai_params"] = (
+    create_real_module(
+        "litellm.litellm_core_utils.get_supported_openai_params",
+        get_supported_openai_params=lambda *args, **kwargs: ["stop"],
+    )
+)
+sys.modules["litellm.integrations"] = create_real_module("litellm.integrations")
+sys.modules["litellm.integrations.custom_logger"] = create_real_module(
+    "litellm.integrations.custom_logger",
+    CustomLogger=type("CustomLogger", (), {}),
+)
 sys.modules["instructor"] = create_mock_module("instructor")
 sys.modules["crewai_tools"] = create_mock_module("crewai_tools")
-sys.modules["langchain_chroma"] = create_mock_module(
-    "langchain_chroma", Chroma=MagicMock()
+sys.modules["langchain_chroma"] = create_real_module(
+    "langchain_chroma", Chroma=type("Chroma", (), {})
 )
-sys.modules["chromadb"] = create_mock_module(
-    "chromadb", PersistentClient=MagicMock()
+
+# Use lightweight real types/functions (not MagicMock) for chromadb stubs.
+# CrewAI/Pydantic dataclass parsing reads type annotations and fails on MagicMock.
+class _PydanticAnyTypeMixin:
+    @classmethod
+    def __get_pydantic_core_schema__(cls, _source_type, _handler):
+        from pydantic_core import core_schema
+
+        return core_schema.any_schema()
+
+
+class _DummyPersistentClient(_PydanticAnyTypeMixin):
+    def __init__(self, *args, **kwargs):
+        self._args = args
+        self._kwargs = kwargs
+
+    def get_or_create_collection(self, *args, **kwargs):
+        return _DummyChromaCollection()
+
+    def reset(self):
+        return None
+
+    def clear_system_cache(self):
+        return None
+
+
+class _DummySettings(_PydanticAnyTypeMixin):
+    def __init__(self, *args, **kwargs):
+        self._kwargs = kwargs
+
+
+class _DummyAsyncClientAPI(_PydanticAnyTypeMixin):
+    pass
+
+
+class _DummyClientAPI(_PydanticAnyTypeMixin):
+    pass
+
+
+class _DummyCollectionConfigurationInterface(_PydanticAnyTypeMixin):
+    pass
+
+
+class _DummyCollectionMetadata(dict, _PydanticAnyTypeMixin):
+    pass
+
+
+class _DummyLoadable(_PydanticAnyTypeMixin):
+    pass
+
+
+class _DummyWhere(dict, _PydanticAnyTypeMixin):
+    pass
+
+
+class _DummyWhereDocument(dict, _PydanticAnyTypeMixin):
+    pass
+
+
+class _DummyDataLoader(_PydanticAnyTypeMixin):
+    def __class_getitem__(cls, _item):
+        return cls
+
+
+class _DummyEmbeddingFunction(_PydanticAnyTypeMixin):
+    def __class_getitem__(cls, _item):
+        return cls
+
+
+class _DummyInclude(list, _PydanticAnyTypeMixin):
+    pass
+
+
+class _DummyDocuments(list, _PydanticAnyTypeMixin):
+    pass
+
+
+class _DummyEmbeddings(list, _PydanticAnyTypeMixin):
+    pass
+
+
+class _DummyMetadata(dict, _PydanticAnyTypeMixin):
+    pass
+
+
+class _DummyCollection(_PydanticAnyTypeMixin):
+    pass
+
+
+class _DummyOpenAIEmbeddingFunction(_PydanticAnyTypeMixin):
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class _DummyEmbeddingCallable(_PydanticAnyTypeMixin):
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+def _dummy_validate_embedding_function(*args, **kwargs):
+    return None
+
+
+sys.modules["chromadb"] = create_real_module(
+    "chromadb",
+    PersistentClient=_DummyPersistentClient,
+    Collection=_DummyCollection,
+    Documents=_DummyDocuments,
+    EmbeddingFunction=_DummyEmbeddingFunction,
+    Embeddings=_DummyEmbeddings,
+    Metadata=_DummyMetadata,
+)
+sys.modules["chromadb.config"] = create_real_module(
+    "chromadb.config", Settings=_DummySettings
+)
+sys.modules["chromadb.api"] = create_real_module(
+    "chromadb.api",
+    AsyncClientAPI=_DummyAsyncClientAPI,
+    ClientAPI=_DummyClientAPI,
+)
+sys.modules["chromadb.api.types"] = create_real_module(
+    "chromadb.api.types",
+    CollectionMetadata=_DummyCollectionMetadata,
+    DataLoader=_DummyDataLoader,
+    Documents=_DummyDocuments,
+    EmbeddingFunction=_DummyEmbeddingFunction,
+    Embeddings=_DummyEmbeddings,
+    Include=_DummyInclude,
+    Loadable=_DummyLoadable,
+    OneOrMany=list,
+    Where=_DummyWhere,
+    WhereDocument=_DummyWhereDocument,
+    validate_embedding_function=_dummy_validate_embedding_function,
+)
+sys.modules["chromadb.errors"] = create_real_module(
+    "chromadb.errors",
+    InvalidDimensionException=type("InvalidDimensionException", (Exception,), {}),
+)
+sys.modules["chromadb.api.configuration"] = create_real_module(
+    "chromadb.api.configuration",
+    CollectionConfigurationInterface=_DummyCollectionConfigurationInterface,
+)
+sys.modules["chromadb.utils"] = create_real_module("chromadb.utils")
+sys.modules["chromadb.utils.embedding_functions"] = create_real_module(
+    "chromadb.utils.embedding_functions"
+)
+
+
+def _register_embedding_function_module(module_name, class_names):
+    attrs = {class_name: _DummyEmbeddingCallable for class_name in class_names}
+    sys.modules[module_name] = create_real_module(module_name, **attrs)
+
+
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.openai_embedding_function",
+    ["OpenAIEmbeddingFunction"],
+)
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.amazon_bedrock_embedding_function",
+    ["AmazonBedrockEmbeddingFunction"],
+)
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.cohere_embedding_function",
+    ["CohereEmbeddingFunction"],
+)
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.google_embedding_function",
+    ["GoogleGenerativeAiEmbeddingFunction", "GoogleVertexEmbeddingFunction"],
+)
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.huggingface_embedding_function",
+    ["HuggingFaceEmbeddingFunction", "HuggingFaceEmbeddingServer"],
+)
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.instructor_embedding_function",
+    ["InstructorEmbeddingFunction"],
+)
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.jina_embedding_function",
+    ["JinaEmbeddingFunction"],
+)
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.ollama_embedding_function",
+    ["OllamaEmbeddingFunction"],
+)
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.onnx_mini_lm_l6_v2",
+    ["ONNXMiniLM_L6_V2"],
+)
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.open_clip_embedding_function",
+    ["OpenCLIPEmbeddingFunction"],
+)
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.roboflow_embedding_function",
+    ["RoboflowEmbeddingFunction"],
+)
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.sentence_transformer_embedding_function",
+    ["SentenceTransformerEmbeddingFunction"],
+)
+_register_embedding_function_module(
+    "chromadb.utils.embedding_functions.text2vec_embedding_function",
+    ["Text2VecEmbeddingFunction"],
 )
 
 # Mock aiohttp to avoid the ConnectionTimeoutError

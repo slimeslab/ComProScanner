@@ -185,3 +185,10 @@ tests example/
 applications
 vlm_test
 examples/vlm_piezo_test
+
+# Test results
+db
+results
+elsevier_test.xml
+springer_test.xml
+wiley_test.pdf

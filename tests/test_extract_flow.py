@@ -11,26 +11,34 @@ Date: 16-04-2025
 import sys
 import os
 
-# Ensure we import the real modules first
-if "PYTEST_CURRENT_TEST" in os.environ:
+# Optionally import with real crewai modules only when explicitly enabled.
+# Default test runs should keep conftest mocks active.
+use_real_crewai_import = os.environ.get("USE_REAL_CREWAI_IMPORT", "").lower() in (
+    "1",
+    "true",
+    "yes",
+)
+
+saved_mocks = {}
+if "PYTEST_CURRENT_TEST" in os.environ and use_real_crewai_import:
     # Temporarily remove the mock to import the real class
     crewai_mocks = [key for key in sys.modules.keys() if key.startswith("crewai")]
-    saved_mocks = {
-        key: sys.modules.pop(key) for key in crewai_mocks if key in sys.modules
-    }
+    saved_mocks = {key: sys.modules.pop(key) for key in crewai_mocks if key in sys.modules}
 
 import pytest
 import json
 from unittest.mock import MagicMock, patch, call
 
-# Now import after ensuring real modules are loaded
-from comproscanner.extract_flow.main_extraction_flow import DataExtractionFlow
+# Import flow. Prefer real modules, but gracefully fall back to mocked environment.
+try:
+    from comproscanner.extract_flow.main_extraction_flow import DataExtractionFlow
+finally:
+    # Always restore removed crewai mocks so other test modules don't inherit a broken state.
+    if "PYTEST_CURRENT_TEST" in os.environ and use_real_crewai_import and saved_mocks:
+        sys.modules.update(saved_mocks)
+
 from comproscanner.utils.error_handler import ValueErrorHandler
 from comproscanner.utils.configs.rag_config import RAGConfig
-
-# Restore mocks if needed
-if "PYTEST_CURRENT_TEST" in os.environ and "saved_mocks" in locals():
-    sys.modules.update(saved_mocks)
 
 
 @pytest.fixture
