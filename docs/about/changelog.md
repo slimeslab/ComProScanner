@@ -1,6 +1,16 @@
-## Unreleased
+## [0.1.6] - 02-04-2026
+### Changed
+- Updated [README.md](README.md), [CITATION.cff](CITATION.cff) and docs with the published version (advance article) of the ComProScanner paper in _Digital Discovery_ as fully open access:
+  - [ComProScanner: a multi-agent based framework for composition-property structured data extraction from scientific literature](https://doi.org/10.1039/D5DD00521C) 
 
 ### Added
+- Guide for API key creation for various LLM providers and publisher APIs added to the documentation at `docs/getting-started/api-key-guide.md` with detailed instructions for each provider.
+
+---
+## [0.1.5] - 08-02-2026
+
+### Added
+- Data related to comparison with other agentic data extraction frameworks added for the ComProScanner paper in the `examples/piezo_test/comparing_existing_frameworks` folder.
 
 - New parameter `apply_advanced_cleaning` added to data cleaning methods in `data_cleaner.py`. When set to `True`, it triggers the advanced cleaning pipeline.
 
@@ -38,6 +48,11 @@
 - [CITATION.cff](https://github.com/slimeslab/ComProScanner/blob/main/CITATION.cff) added for standardized citation information based on the latest release and arXiv preprint.
 
 ### Fixed
+- OAWorks API is replaced with OpenAlex API as OAWorks is no longer available.
+
+- Empty/corrupted PDF handled in `pdf_processor.py` and `wiley_processor.py` to avoid having GLYPH errors during text extraction.
+
+- Data extraction failures fixed if composition-property text data is empty.
 
 - CSV progress tracking in `elsevier_processor.py`:
 
@@ -63,6 +78,7 @@
 
 - README badges section converted from HTML to markdown format for better compatibility across platforms.
 
+---
 ## [0.1.4] - 02-12-2025
 
 ### Added
@@ -96,6 +112,7 @@
 
 - README images updated with raw GitHub links for better reliability: [ComProScanner Logo](https://raw.githubusercontent.com/aritraroy24/ComProScanner/main/assets/comproscanner_logo.png), [ComProScanner Workflow](https://raw.githubusercontent.com/aritraroy24/ComProScanner/main/assets/overall_workflow.png)
 
+---
 ## [0.1.3] - 04-11-2025
 
 ### Fixed
@@ -104,18 +121,21 @@
   - Changed from `from langchain.text_splitter import RecursiveCharacterTextSplitter`
   - To `from langchain.text_splitter.recursive_character import RecursiveCharacterTextSplitter`
 
+---
 ## [0.1.2] - 24-10-2025
 
 ### Added
 
 - Link to ComProScanner preprint on arXiv in the documentation index page and README.md: [arXiv:2510.20362](https://arxiv.org/abs/2510.20362)
 
+---
 ## [0.1.1] - 22-10-2025
 
 ### Fixed
 
 - README images updated with external image link to fix PyPI rendering issue. [ComProScanner Logo](https://i.ibb.co/whHSbGvT/comproscanner-logo.png), [ComProScanner Workflow](https://i.ibb.co/QWd2qd3/overall-workflow.png)
 
+---
 ## [0.1.0] - 22-10-2025
 
 ### Added
