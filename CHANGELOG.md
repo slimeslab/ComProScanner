@@ -37,15 +37,16 @@
 - `HF_TOKEN` documentation clarified as optional — only required for gated or private Hugging Face models.
 
 ---
+
 ## [0.1.5] - 2026-02-08
 
 ### Added
+
 - Data related to comparison with other agentic data extraction frameworks added for the ComProScanner paper in the `examples/piezo_test/comparing_existing_frameworks` folder.
 
 - New parameter `apply_advanced_cleaning` added to data cleaning methods in `data_cleaner.py`. When set to `True`, it triggers the advanced cleaning pipeline.
 
 - Advanced composition cleaning methods in `data_cleaner.py`:
-
   - `_remove_miller_indices()` - Removes crystal plane notations from chemical formulas
   - `_remove_zero_coefficient_elements()` - Removes elements with zero coefficients
   - `_normalize_coefficients()` - Removes trailing zeros from coefficients
@@ -53,13 +54,11 @@
   - `_expand_parenthetical_coefficients()` - Expands nested bracket coefficients
 
 - Enhanced documentation in `docs/usage/data-cleaning.md`:
-
   - Added `apply_advanced_cleaning` parameter documentation
   - Added Mermaid process flow diagram showing cleaning stages
   - Added advanced cleaning examples with tables for each transformation type
 
 - Template for GitHub issues added to [.github/ISSUE_TEMPLATE](https://github.com/slimeslab/ComProScanner/tree/main/.github/ISSUE_TEMPLATE) for the following topics:
-
   - bug reports
   - feature requests
   - documentation improvements
@@ -68,16 +67,15 @@
 - [Changelog page](https://slimeslab.github.io/ComProScanner/about/changelog/) added in the documentation. Also, [CHANGELOG.md](https://github.com/slimeslab/ComProScanner/blob/main/CHANGELOG.md) linked in [README.md](https://github.com/slimeslab/ComProScanner/blob/main/README.md).
 
 - DeepWiki integration badge added to README.md for community Q&A support:
-
   - [Ask DeepWiki](https://deepwiki.com/slimeslab/ComProScanner)
 
 - arXiv preprint badge added to README.md:
-
   - [arXiv:2510.20362](https://arxiv.org/abs/2510.20362)
 
 - [CITATION.cff](https://github.com/slimeslab/ComProScanner/blob/main/CITATION.cff) added for standardized citation information based on the latest release and arXiv preprint.
 
 ### Fixed
+
 - OAWorks API is replaced with OpenAlex API as OAWorks is no longer available.
 
 - Empty/corrupted PDF handled in `pdf_processor.py` and `wiley_processor.py` to avoid having GLYPH errors during text extraction.
@@ -85,7 +83,6 @@
 - Data extraction failures fixed if composition-property text data is empty.
 
 - CSV progress tracking in `elsevier_processor.py`:
-
   - DtypeWarning resolved by adding `dtype=str, low_memory=False` to `pd.read_csv()`
   - Data loss issue fixed with immediate CSV persistence for processed articles
   - Sleep delays optimized for batch writes
@@ -116,12 +113,10 @@
 - New function `clean_data()` added for improved data cleaning and preprocessing instead of integrating it into data extraction function.
 
 - New documentation page for Data Cleaning added:
-
   - docs/usage/data-cleaning.md
   - Added to mkdocs.yml navigation.
 
 - New API overview documentation page added:
-
   - docs/api.md
   - Added to mkdocs.yml navigation.
   - New mkdocstrings configuration added to mkdocs.yml for automatic API documentation generation.
