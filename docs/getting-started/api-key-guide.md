@@ -200,7 +200,7 @@ OPENROUTER_API_KEY=your_openrouter_api_key
 
 Environment variable: `TOGETHER_API_KEY`
 
-Typical model prefixes: `together_ai/...`
+Typical model prefixes: `together/...`
 
 How to get it:
 
@@ -232,7 +232,7 @@ COHERE_API_KEY=your_cohere_api_key
 
 Environment variable: `FIREWORKS_API_KEY`
 
-Typical model prefixes: `fireworks_ai/...`
+Typical model prefixes: `fireworks/...`
 
 How to get it:
 
@@ -264,11 +264,12 @@ How to set it up:
 
 Environment variable: `HF_TOKEN`
 
+> **Optional.** Only required for downloading gated or private Hugging Face models. Public models work without a token.
+
 Used for:
 
-- Accessing the default Hugging Face embedding model workflow
-- Accessing gated or rate-limited Hugging Face models
-- Optional embedding/model downloads when required
+- Accessing gated or private Hugging Face models
+- Rate-limited API access
 
 How to get it:
 
