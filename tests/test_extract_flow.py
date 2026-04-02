@@ -427,10 +427,14 @@ class TestDataExtractionFlowCore:
             task_output_folder=None,
             is_log_json=False,
             verbose=True,
+            vlm_model="gemini/gemini-3-flash-preview",
+            related_figures_base_path="results/related_figures",
+            main_extraction_keyword=sample_main_extraction_keyword,
         )
 
         # Verify kickoff was called with correct inputs
         expected_inputs = {
+            "doi": sample_doi,
             "composition_property_text_data": sample_composition_property_text,
             "main_extraction_keyword": sample_main_extraction_keyword,
             "composition_property_extraction_agent_note": flow.state.composition_property_extraction_agent_note,
@@ -1289,6 +1293,25 @@ class TestDataExtractionFlowEdgeCases:
         assert isinstance(flow.state.synthesis_extraction_task_note, str)
         assert isinstance(flow.state.allowed_synthesis_methods, str)
         assert isinstance(flow.state.allowed_characterization_techniques, str)
+
+    def test_initialization_with_custom_graph_extraction_config(
+        self,
+        sample_doi,
+        sample_main_extraction_keyword,
+        sample_composition_property_text,
+    ):
+        """Test initialization with custom graph extraction configuration"""
+        flow = DataExtractionFlow(
+            doi=sample_doi,
+            main_extraction_keyword=sample_main_extraction_keyword,
+            composition_property_text_data=sample_composition_property_text,
+            vlm_model="openrouter/google/gemini-2.0-flash-exp:free",
+            related_figures_base_path="custom/related_figures",
+        )
+
+        assert flow.state.vlm_model == "openrouter/google/gemini-2.0-flash-exp:free"
+        assert flow.state.related_figures_base_path == "custom/related_figures"
+        assert flow.state.main_extraction_keyword == sample_main_extraction_keyword
 
     def test_flow_with_custom_materials_identifier_query(
         self,

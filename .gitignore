@@ -175,6 +175,8 @@ cython_debug/
 
 # IDE
 .vscode/
+.claude
+CLAUDE.md
 
 # Remove example directory primarily
 examples/db/10.*

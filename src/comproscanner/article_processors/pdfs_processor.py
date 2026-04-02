@@ -53,6 +53,7 @@ class PDFsProcessor:
         csv_batch_size: int = 1,
         is_sql_db: bool = False,
         rag_config: RAGConfig = RAGConfig(),
+        caption_keywords: dict = None,
     ):
         """Class to process PDFs in a folder and process them to extract the required sections of the articles and save them to the MySQL database and CSV files and create a vector store if the relevant data is present in the article.
 
@@ -87,6 +88,7 @@ class PDFsProcessor:
             logger.error(f"{property_keywords_message}")
             raise ValueErrorHandler(f"{property_keywords_message}")
         self.is_sql_db = is_sql_db
+        self.caption_keywords = caption_keywords
 
         self.identifier = ""
         self.doi = ""
@@ -337,6 +339,14 @@ class PDFsProcessor:
 
                     if not title:
                         logger.warning(f"Metadata not found for DOI: {self.doi}")
+
+                # Extract and save figures matching caption_keywords
+                if self.caption_keywords:
+                    pdf_to_md.extract_and_save_figures(
+                        self.doi,
+                        self.caption_keywords,
+                        base_path=f"results/extracted_data/{self.keyword}/related_figures",
+                    )
 
                 # Process sections
                 all_sections = pdf_to_md.clean_text(md_text)

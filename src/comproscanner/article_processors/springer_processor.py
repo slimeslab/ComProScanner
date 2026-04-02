@@ -37,6 +37,7 @@ from ..utils.database_manager import (
 from ..utils.error_handler import ValueErrorHandler, KeyboardInterruptHandler
 from ..utils.logger import setup_logger
 from ..utils.common_functions import return_error_message, write_timeout_file
+from ..utils.figure_extractor import FigureExtractor
 
 # Load environment variables from .env file
 load_dotenv()
@@ -79,6 +80,7 @@ class SpringerArticleProcessor:
         is_sql_db: bool = False,
         is_save_xml: bool = False,
         rag_config: RAGConfig = RAGConfig(),
+        caption_keywords: dict = None,
     ):
         keyword_message = return_error_message("main_property_keyword")
         property_keywords_message = return_error_message("property_keywords")
@@ -114,6 +116,7 @@ class SpringerArticleProcessor:
         self.is_save_xml = is_save_xml
         self.rag_config = rag_config
         self.tdm_api_key = os.getenv("SPRINGER_TDM_API_KEY")
+        self.caption_keywords = caption_keywords
         # Takes from config file
         self.timeout_file = self.all_paths.TIMEOUT_DOI_LOG_FILENAME
         self.article_related_keywords = ArticleRelatedKeywords()
@@ -501,6 +504,97 @@ class SpringerArticleProcessor:
             return abstract, modified_sections
         else:
             return None, modified_sections
+
+    def _extract_and_save_figures(self, root, doi: str):
+        """
+        Extract figures from Springer JATS XML whose captions match self.caption_keywords.
+        Attempts to download images from the Springer CDN and saves them to
+        results/extracted_data/{keyword}/related_figures/{doi_}/{caption_id}.jpg
+        alongside info.json.
+
+        Args:
+            root: lxml root element of the parsed Springer JATS XML.
+            doi (str): Article DOI.
+        """
+        if not self.caption_keywords:
+            return
+        base_path = f"results/extracted_data/{self.keyword}/related_figures"
+        try:
+            import urllib.parse
+            figures = root.xpath('.//*[local-name()="fig"]')
+            for figure in figures:
+                # caption_id from @id attribute
+                caption_id = figure.get("id", "")
+                # Label text for caption_id fallback
+                label_els = figure.xpath('.//*[local-name()="label"]')
+                if not caption_id and label_els:
+                    caption_id = "".join(label_els[0].itertext()).strip()
+                if not caption_id:
+                    caption_id = f"fig_{figures.index(figure)}"
+
+                # Caption text from <caption> → all <p> descendants
+                caption_paras = figure.xpath(
+                    './/*[local-name()="caption"]//*[local-name()="p"]'
+                )
+                label_text = (
+                    "".join(label_els[0].itertext()).strip() if label_els else ""
+                )
+                para_text = " ".join(
+                    "".join(p.itertext()) for p in caption_paras
+                ).strip()
+                caption_text = f"{label_text} {para_text}".strip()
+
+                if not FigureExtractor.keyword_matches_caption(
+                    caption_text, self.caption_keywords
+                ):
+                    continue
+
+                # Always save caption to info.json
+                FigureExtractor.update_info_json(doi, caption_id, caption_text, base_path)
+
+                # Image href from <graphic xlink:href="...">
+                XLINK = "http://www.w3.org/1999/xlink"
+                graphic_els = figure.xpath('.//*[local-name()="graphic"]')
+                href = None
+                for g in graphic_els:
+                    href = g.get(f"{{{XLINK}}}href") or g.get("href")
+                    if href:
+                        break
+                if not href:
+                    logger.warning(
+                        f"No graphic href for Springer figure '{caption_id}' in {doi}"
+                    )
+                    continue
+
+                # Try Springer CDN URL patterns
+                doi_encoded = urllib.parse.quote(doi, safe="")
+                candidate_urls = [
+                    f"https://media.springernature.com/full/springer-static/image/art:{doi_encoded}/{href}",
+                    f"https://media.springernature.com/lw{685}/springer-static/image/art:{doi_encoded}/{href}",
+                ]
+                downloaded = False
+                for url in candidate_urls:
+                    try:
+                        resp = requests.get(url, timeout=20)
+                        if resp.status_code == 200:
+                            saved = FigureExtractor.save_figure_from_bytes(
+                                resp.content, doi, caption_id, base_path
+                            )
+                            if saved:
+                                logger.info(
+                                    f"Saved Springer figure '{caption_id}' for {doi}"
+                                )
+                            downloaded = True
+                            break
+                    except Exception:
+                        continue
+                if not downloaded:
+                    logger.warning(
+                        f"Could not download Springer figure '{caption_id}' for {doi} "
+                        f"(href={href}); caption saved to info.json only."
+                    )
+        except Exception as e:
+            logger.warning(f"Error extracting figures from Springer XML for {doi}: {e}")
 
     def _extract_paragraphs(self, element):
         """
@@ -926,6 +1020,7 @@ class SpringerArticleProcessor:
                 if root is None:
                     logger.error(f"Failed to parse XML...skipping {row["doi"]}...")
                     continue
+                self._extract_and_save_figures(root, row["doi"])
                 if self.is_save_xml:
                     self._save_xml(response, row["doi"])
                 tables = root.xpath('.//*[local-name()="table"]')

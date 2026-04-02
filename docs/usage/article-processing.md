@@ -102,9 +102,20 @@ Overlap size between chunks for creating vector databases for RAG.
 
 Name of the embedding model to use for creating vector databases for RAG.
 
+#### :material-square-medium:`caption_keywords` _(dict)_
+
+Dictionary of keyword lists used to filter figures during article processing. Only figures whose captions match these keywords are saved for later VLM-based graph extraction. If not provided, defaults to `property_keywords`.
+
+```python
+caption_keywords = {
+    "exact_keywords": ["d33"],
+    "substring_keywords": [" d 33 "]
+}
+```
+
 !!! info "Default Values"
 
-    :material-square-small:**`source_list`** = ["elsevier", "wiley", "iop", "springer"]<br>:material-square-small:**`folder_path`** = None<br>:material-square-small:**`doi_list`** = None<br>:material-square-small:**`is_sql_db`** = False<br>:material-square-small:**`is_save_xml`** = False<br>:material-square-small:**`is_save_pdf`** = False<br>:material-square-small:**`rag_db_path`** = "db"<br>:material-square-small:**`chunk_size`** = 1000<br>:material-square-small:**`chunk_overlap`** = 25<br>:material-square-small:**`embedding_model`** = "huggingface:thellert/physbert_cased"
+    :material-square-small:**`source_list`** = ["elsevier", "wiley", "iop", "springer"]<br>:material-square-small:**`folder_path`** = None<br>:material-square-small:**`doi_list`** = None<br>:material-square-small:**`is_sql_db`** = False<br>:material-square-small:**`is_save_xml`** = False<br>:material-square-small:**`is_save_pdf`** = False<br>:material-square-small:**`rag_db_path`** = "db"<br>:material-square-small:**`chunk_size`** = 1000<br>:material-square-small:**`chunk_overlap`** = 25<br>:material-square-small:**`embedding_model`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`caption_keywords`** = `property_keywords`
 
 ## Processing Workflow
 
@@ -117,6 +128,9 @@ graph TB
     D --> E
     E --> F{Is Keyword Present?}
     F --> |Yes| G[Save Article's<br>Full Text to CSV<br>and Vector DB]
+    F --> |Yes| I{Caption Keywords<br>Provided?}
+    I --> |Yes| J[Extract & Save<br>Matching Figures]
+    I --> |No| K[Skip Figure Extraction]
     F --> |No| H[Skip Article]
 ```
 
@@ -203,6 +217,25 @@ scanner.process_articles(
     doi_list=doi_list
 )
 ```
+
+### Figure Extraction for VLM-Based Graph Analysis
+
+When `caption_keywords` are provided, figures whose captions match those keywords are automatically extracted and saved during article processing. These saved figures are later used by the `GraphExtractorTool` during data extraction to read composition-property values directly from graphs and charts using a vision LLM.
+
+```python
+caption_keywords = {
+    "exact_keywords": ["d33"],
+    "substring_keywords": [" d 33 "]
+}
+
+scanner.process_articles(
+    property_keywords=property_keywords,
+    caption_keywords=caption_keywords,
+    source_list=["elsevier", "springer", "wiley", "iop", "pdfs"]
+)
+```
+
+Saved figures are stored under `results/extracted_data/{main_property_keyword}/related_figures/{doi}/` alongside an `info.json` file that maps each figure to its caption text.
 
 ### RAG Vector Database
 
