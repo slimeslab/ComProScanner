@@ -123,7 +123,7 @@ scanner.extract_composition_property_data(
 scanner.extract_composition_property_data(
     main_extraction_keyword="d33",
     rag_db_path="embeddings/piezo",
-    rag_chat_model="deepseek-chat",
+    rag_chat_model="deepseek/deepseek-chat",
     rag_max_tokens=1024,
     rag_top_k=4,
 )
@@ -178,7 +178,7 @@ scanner.extract_composition_property_data(
 scanner.extract_composition_property_data(
     main_extraction_keyword="d33",
     rag_db_path="embeddings/piezo",
-    rag_chat_model="together_ai/meta-llama/Llama-3-70b-chat-hf",
+    rag_chat_model="together/meta-llama/Llama-3-70b-chat-hf",
     rag_max_tokens=1024,
     rag_top_k=4,
 )
@@ -220,7 +220,7 @@ scanner.extract_composition_property_data(
 scanner.extract_composition_property_data(
     main_extraction_keyword="d33",
     rag_db_path="embeddings/piezo",
-    rag_chat_model="fireworks_ai/accounts/fireworks/models/llama-v3-8b-instruct",
+    rag_chat_model="fireworks/accounts/fireworks/models/llama-v3-8b-instruct",
     rag_max_tokens=1024,
     rag_top_k=4,
 )
