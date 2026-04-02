@@ -1,6 +1,42 @@
-﻿## Unreleased
+# Unreleased
+- New `value_error_thresholds` parameter added to both `evaluate_semantic()` and `evaluate_agentic()` for range-based absolute error tolerances on numeric property value comparisons:
+
+  - Accepts a dict mapping `(min, max)` tuples to absolute error thresholds. When a ground-truth value falls inside a range, the extracted value is accepted if `|extracted - ground_truth| ≤ threshold`. Values outside all configured ranges fall back to exact comparison.
+
+  - **Semantic evaluation**: handled inside `_is_value_in_range()` via the new `_get_error_threshold()` helper in `MaterialsDataSemanticEvaluator`.
+
+  - **Agentic evaluation**: a new `GetValueErrorThresholdTool` (CrewAI `BaseTool`) is added to the composition evaluator agent when thresholds are configured. The agent calls this tool with the reference value to retrieve the tolerance before deciding on each numeric match. No tool is added and no prompt changes are made when no thresholds are provided.
+
+- Exposed `value_error_thresholds` in public evaluation methods: `ComProScanner.evaluate_semantic()`, `ComProScanner.evaluate_agentic()`, `comproscanner.evaluate_semantic()`, and `comproscanner.evaluate_agentic()`.
+
+- VLM-based graph data extraction added across all publishers and PDF processors:
+
+  - New `GraphExtractorTool` — a CrewAI agent tool that reads saved figures for a given DOI and uses a vision LLM to extract composition-property value pairs from graphs and charts. Default VLM: `gemini/gemini-3-flash-preview`.
+
+  - New `FigureExtractor` utility — shared helper for caption keyword-based figure filtering and saving, used by all article processors.
+
+  - New `caption_keywords` parameter in `process_articles()` and `extract_composition_property_data()`, and new `vlm_model` and `related_figures_base_path` parameters in `extract_composition_property_data()`.
+
+- New unit tests added for all three agent tools in `tests/test_agent_tools/`.
+
+### Fixed
+
+- `process_articles()` now routes user-provided `doi_list` by `general_publisher` from metadata and sends each DOI only to its matching source processor.
+
+---
+## [0.1.6] - 2026-04-02
+### Changed
+- Updated [README.md](README.md), [CITATION.cff](CITATION.cff) and docs with the published version (advance article) of the ComProScanner paper in _Digital Discovery_ as fully open access:
+  - [ComProScanner: a multi-agent based framework for composition-property structured data extraction from scientific literature](https://doi.org/10.1039/D5DD00521C) 
 
 ### Added
+- Guide for API key creation for various LLM providers and publisher APIs added to the documentation at `docs/getting-started/api-key-guide.md` with detailed instructions for each provider.
+
+---
+## [0.1.5] - 2026-02-08
+
+### Added
+- Data related to comparison with other agentic data extraction frameworks added for the ComProScanner paper in the `examples/piezo_test/comparing_existing_frameworks` folder.
 
 - New parameter `apply_advanced_cleaning` added to data cleaning methods in `data_cleaner.py`. When set to `True`, it triggers the advanced cleaning pipeline.
 
@@ -37,9 +73,12 @@
 
 - [CITATION.cff](https://github.com/slimeslab/ComProScanner/blob/main/CITATION.cff) added for standardized citation information based on the latest release and arXiv preprint.
 
-- Exposed `value_error_thresholds` in public evaluation methods: `ComProScanner.evaluate_semantic()`, `ComProScanner.evaluate_agentic()`, `comproscanner.evaluate_semantic()`, and `comproscanner.evaluate_agentic()`.
-
 ### Fixed
+- OAWorks API is replaced with OpenAlex API as OAWorks is no longer available.
+
+- Empty/corrupted PDF handled in `pdf_processor.py` and `wiley_processor.py` to avoid having GLYPH errors during text extraction.
+
+- Data extraction failures fixed if composition-property text data is empty.
 
 - CSV progress tracking in `elsevier_processor.py`:
 
@@ -61,13 +100,12 @@
 - GitHub Actions CI disk space issue:
   - Added `--no-cache-dir` flag to pip install to reduce disk usage
 
-- `process_articles()` now routes user-provided `doi_list` by `general_publisher` from metadata and sends each DOI only to its matching source processor.
-
 ### Changed
 
 - README badges section converted from HTML to markdown format for better compatibility across platforms.
 
-## [0.1.4] - 02-12-2025
+---
+## [0.1.4] - 2025-12-02
 
 ### Added
 
@@ -98,9 +136,12 @@
 
 ### Changed
 
-- README images updated with raw GitHub links for better reliability: [ComProScanner Logo](https://raw.githubusercontent.com/aritraroy24/ComProScanner/main/assets/comproscanner_logo.png), [ComProScanner Workflow](https://raw.githubusercontent.com/aritraroy24/ComProScanner/main/assets/overall_workflow.png)
+- README images updated with raw GitHub links for better reliability:
+  - [ComProScanner Logo](https://raw.githubusercontent.com/aritraroy24/ComProScanner/main/assets/comproscanner_logo.png)
+  - [ComProScanner Workflow](https://raw.githubusercontent.com/aritraroy24/ComProScanner/main/assets/overall_workflow.png)
 
-## [0.1.3] - 04-11-2025
+---
+## [0.1.3] - 2025-11-04
 
 ### Fixed
 
@@ -108,22 +149,26 @@
   - Changed from `from langchain.text_splitter import RecursiveCharacterTextSplitter`
   - To `from langchain.text_splitter.recursive_character import RecursiveCharacterTextSplitter`
 
-## [0.1.2] - 24-10-2025
+---
+## [0.1.2] - 2025-10-24
 
 ### Added
 
-- Link to ComProScanner preprint on arXiv in the documentation index page and README.md: [arXiv:2510.20362](https://arxiv.org/abs/2510.20362)
+- Link to ComProScanner preprint on arXiv in the documentation index page and README.md:
+  - [arXiv:2510.20362](https://arxiv.org/abs/2510.20362)
 
-## [0.1.1] - 22-10-2025
+---
+## [0.1.1] - 2025-10-22
 
 ### Fixed
 
-- README images updated with external image link to fix PyPI rendering issue. [ComProScanner Logo](https://i.ibb.co/whHSbGvT/comproscanner-logo.png), [ComProScanner Workflow](https://i.ibb.co/QWd2qd3/overall-workflow.png)
+- README images updated with external image link to fix PyPI rendering issue.
+  - [ComProScanner Logo](https://i.ibb.co/whHSbGvT/comproscanner-logo.png)
+  - [ComProScanner Workflow](https://i.ibb.co/QWd2qd3/overall-workflow.png)
 
-## [0.1.0] - 22-10-2025
+---
+## [0.1.0] - 2025-10-22
 
 ### Added
 
 - Initial release of ComProScanner.
-
-

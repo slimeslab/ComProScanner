@@ -16,7 +16,7 @@ contact:
   - family-names: Roy
     given-names: Aritra
     orcid: "https://orcid.org/0000-0002-4928-2935"
-message: If you use this software, please cite our article on arXiv.
+message: If you use this software, please cite our article in Digital Discovery.
 preferred-citation:
   authors:
     - family-names: Roy
@@ -31,21 +31,28 @@ preferred-citation:
     - family-names: Gattinoni
       given-names: Chiara
       orcid: "https://orcid.org/0000-0002-3376-6374"
-  date-published: 2025-10-23
+  doi: "10.1039/D5DD00521C"
   identifiers:
+    - type: doi
+      value: "10.1039/D5DD00521C"
+      description: "Peer-reviewed article"
     - type: other
       value: "arXiv:2510.20362"
       description: "arXiv preprint"
-  title: "ComProScanner: A multi-agent based framework for composition-property structured data extraction from scientific literature"
+  journal: "Digital Discovery"
+  publisher:
+    name: "RSC"
+  status: advance-online
+  title: "ComProScanner: a multi-agent based framework for composition-property structured data extraction from scientific literature"
   type: article
-  url: "https://arxiv.org/abs/2510.20362"
+  url: "https://doi.org/10.1039/D5DD00521C"
 repository-code: "https://github.com/slimeslab/ComProScanner"
 license: MIT
 title: "ComProScanner: A multi-agent based framework for composition-property structured data extraction from scientific literature"
 type: software
 url: "https://slimeslab.github.io/ComProScanner/"
-version: "0.1.4"
-date-released: 2025-12-03
+version: "0.1.6"
+date-released: 2026-04-02
 keywords:
   - materials science
   - data extraction

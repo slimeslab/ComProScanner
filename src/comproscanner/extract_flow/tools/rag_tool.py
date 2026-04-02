@@ -82,28 +82,28 @@ class RAGTool(BaseTool):
             "callbacks": callbacks,
         }
         # OpenAI models
-        if model.startswith(("gpt-", "text-", "o1", "o3")):
+        if model.startswith(("openai/", "gpt-", "text-", "o1", "o3")):
             self._check_package_exists("langchain_openai", model)
             from langchain_openai import ChatOpenAI
 
             return ChatOpenAI(model=model, request_timeout=1000, **common_params)
 
         # Deepseek models
-        if model.startswith("deepseek"):
+        if model.startswith("deepseek/"):
             self._check_package_exists("langchain_deepseek", model)
             from langchain_deepseek import ChatDeepSeek
 
             return ChatDeepSeek(model=model, request_timeout=1000, **common_params)
 
         # Google Gemini models
-        elif model.startswith("gemini-"):
+        elif model.startswith("gemini/"):
             self._check_package_exists("langchain_google_genai", model)
             from langchain_google_genai import ChatGoogleGenerativeAI
 
             return ChatGoogleGenerativeAI(model=model, **common_params)
 
         # Anthropic Claude models
-        elif model.startswith("claude-"):
+        elif model.startswith("claude/"):
             self._check_package_exists("langchain_anthropic", model)
             from langchain_anthropic import ChatAnthropic
 
@@ -143,7 +143,7 @@ class RAGTool(BaseTool):
             return ChatCohere(model=model_name, **common_params)
 
         # Fireworks models
-        elif model.startswith(("fireworks/", "accounts/fireworks")):
+        elif model.startswith(("fireworks/")):
             self._check_package_exists("langchain_fireworks", model)
             from langchain_fireworks import ChatFireworks
 
