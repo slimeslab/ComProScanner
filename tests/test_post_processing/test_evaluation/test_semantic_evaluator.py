@@ -186,6 +186,71 @@ class TestMaterialsDataSemanticEvaluator:
         assert evaluator_no_model._is_value_in_range(None, 10) is False
         assert evaluator_no_model._is_value_in_range(10, None) is False
 
+    def test_is_value_in_range_with_error_thresholds(self, evaluator_no_model):
+        """Test numeric comparison using per-range absolute error tolerances"""
+        thresholds = {(0, 200): 5, (201, 500): 10}
+
+        # Within tolerance
+        assert evaluator_no_model._is_value_in_range(100.0, 104.0, thresholds) is True
+        assert evaluator_no_model._is_value_in_range(100.0, 95.5, thresholds) is True
+
+        # Outside tolerance
+        assert evaluator_no_model._is_value_in_range(100.0, 110.0, thresholds) is False
+
+        # Exact boundary of tolerance
+        assert evaluator_no_model._is_value_in_range(100.0, 105.0, thresholds) is True
+        assert evaluator_no_model._is_value_in_range(100.0, 105.1, thresholds) is False
+
+        # Value in second range
+        assert evaluator_no_model._is_value_in_range(300.0, 308.0, thresholds) is True
+        assert evaluator_no_model._is_value_in_range(300.0, 315.0, thresholds) is False
+
+        # No matching range — falls back to epsilon comparison
+        assert evaluator_no_model._is_value_in_range(600.0, 600.0, thresholds) is True
+        assert evaluator_no_model._is_value_in_range(600.0, 605.0, thresholds) is False
+
+    def test_evaluate_uses_value_error_thresholds_from_constructor(
+        self, temp_json_files
+    ):
+        """value_error_thresholds set at construction time is used during evaluate()"""
+        gt_file, test_file, output_file = temp_json_files
+
+        # Evaluator with loose tolerance: allow ±5 for values in [0, 10]
+        evaluator = MaterialsDataSemanticEvaluator(
+            use_semantic_model=False,
+            value_error_thresholds={(0, 10): 5},
+        )
+        assert evaluator.value_error_thresholds == {(0, 10): 5}
+
+        results = evaluator.evaluate(
+            ground_truth_file=gt_file,
+            test_data_file=test_file,
+            extraction_agent_model_name="test_model",
+            output_file=output_file,
+        )
+        assert "overall_accuracy" in results
+
+    def test_evaluate_value_error_thresholds_per_call_override(self, temp_json_files):
+        """value_error_thresholds passed to evaluate() overrides the instance-level one"""
+        gt_file, test_file, output_file = temp_json_files
+
+        evaluator = MaterialsDataSemanticEvaluator(
+            use_semantic_model=False,
+            value_error_thresholds={(0, 10): 1},
+        )
+
+        # Pass a different threshold via the evaluate() call
+        results = evaluator.evaluate(
+            ground_truth_file=gt_file,
+            test_data_file=test_file,
+            extraction_agent_model_name="test_model",
+            output_file=output_file,
+            value_error_thresholds={(0, 10): 5},
+        )
+        # After the call the instance-level threshold should have been updated
+        assert evaluator.value_error_thresholds == {(0, 10): 5}
+        assert "overall_accuracy" in results
+
     def test_calculate_text_similarity_sequence_matcher(self, evaluator_no_model):
         """Test text similarity with sequence matcher fallback"""
         similarity = evaluator_no_model._calculate_text_similarity(

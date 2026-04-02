@@ -48,6 +48,22 @@ Whether to evaluate synthesis-related information.
 
 An instance of the LiteLLM class. Read more about LiteLLM instance from CrewAI [here](https://docs.crewai.com/en/concepts/llms).
 
+#### :material-square-medium:`value_error_thresholds` _(dict)_
+
+Optional mapping of ground-truth value ranges to absolute error tolerances for numeric property value comparisons. When provided, a custom tool is added to the evaluation agent that it calls before deciding whether a numeric value matches. The agent is instructed to accept the extracted value if the absolute difference does not exceed the threshold for the range that the ground-truth value falls in.
+
+Keys must be **tuples** `(min, max)`; `float('inf')` and `float('-inf')` are supported for open-ended bounds.
+
+```python
+value_error_thresholds = {
+    (-200, 200):           5,   # |ref| ≤ 200  →  tolerance ±5
+    (201, 500):            8,   # ref in (200, 500]  →  tolerance ±8
+    (-500, -201):          8,   # ref in [-500, -200)  →  tolerance ±8
+    (501, float('inf')):  10,   # ref > 500  →  tolerance ±10
+    (float('-inf'), -501): 10,  # ref < -500  →  tolerance ±10
+}
+```
+
 !!! info "Default Values"
 
     :material-square-small:**`weights`** = {
@@ -58,7 +74,7 @@ An instance of the LiteLLM class. Read more about LiteLLM instance from CrewAI [
         "precursors": 0.15,
         "characterization_techniques": 0.15,
         "steps": 0.1
-    }<br>:material-square-small:**`output_file`** = "agentic_evaluation_result.json"<br>:material-square-small:**`extraction_agent_model_name`** = "gpt-4o-mini"<br>:material-square-small:**`is_synthesis_evaluation`** = True<br>:material-square-small:**`llm`** = LLM(model="o3-mini")
+    }<br>:material-square-small:**`output_file`** = "agentic_evaluation_result.json"<br>:material-square-small:**`extraction_agent_model_name`** = "gpt-4o-mini"<br>:material-square-small:**`is_synthesis_evaluation`** = True<br>:material-square-small:**`llm`** = LLM(model="o3-mini")<br>:material-square-small:**`value_error_thresholds`** = `None` (exact comparison)
 
 ## How It Works
 
@@ -91,6 +107,33 @@ results = evaluate_agentic(
     llm=gpt4_llm
 )
 ```
+
+## Value Error Tolerances
+
+By default, numeric property values must match exactly. You can allow a tolerance so that values within a specified absolute range of the ground-truth are still accepted as correct.
+
+When `value_error_thresholds` is set, a `get_value_error_threshold` tool is automatically added to the evaluation agent. The agent calls this tool with the ground-truth value before making each numeric value decision, then applies the returned threshold.
+
+```python
+from comproscanner import evaluate_agentic
+
+results = evaluate_agentic(
+    ground_truth_file="ground_truth.json",
+    test_data_file="test_data.json",
+    value_error_thresholds={
+        (-200, 200):           5,   # small values: allow ±5
+        (201, 500):            8,   # medium values: allow ±8
+        (-500, -201):          8,
+        (501, float('inf')):  10,   # large values: allow ±10
+        (float('-inf'), -501): 10,
+    }
+)
+```
+
+!!! note
+    - Keys must be **tuples** `(min, max)` — Python lists cannot be used as dict keys.
+    - Key ordering does not matter; `min`/`max` is resolved internally.
+    - When no thresholds are configured the parameter has zero overhead — no extra tool is added to the agent and the task prompt is unchanged.
 
 ## Output Format
 

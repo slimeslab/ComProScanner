@@ -184,6 +184,7 @@ if not _is_testing:
         primary_model_name="thellert/physbert_cased",
         fallback_model_name="all-mpnet-base-v2",
         similarity_thresholds=None,
+        value_error_thresholds=None,
     ):
         """
         Evaluate the extracted data using semantic evaluation.
@@ -199,6 +200,8 @@ if not _is_testing:
             primary_model_name (str, optional): Name of the primary model for semantic evaluation. Defaults to "thellert/physbert_cased".
             fallback_model_name (str, optional): Name of the fallback model for semantic evaluation. Defaults to "all-mpnet-base-v2".
             similarity_thresholds (dict, optional): Similarity thresholds for evaluation. Defaults to 0.8 for each metric.
+            value_error_thresholds (dict, optional): Mapping of ``(min, max)`` tuples to
+                absolute error tolerances for numeric property-value comparisons.
         """
         scanner = ComProScanner(main_property_keyword="placeholder")
         return scanner.evaluate_semantic(
@@ -206,22 +209,24 @@ if not _is_testing:
             test_data_file=test_data_file,
             weights=weights,
             output_file=output_file,
-            agent_model_name=extraction_agent_model_name,
+            extraction_agent_model_name=extraction_agent_model_name,
             is_synthesis_evaluation=is_synthesis_evaluation,
             use_semantic_model=use_semantic_model,
             primary_model_name=primary_model_name,
             fallback_model_name=fallback_model_name,
             similarity_thresholds=similarity_thresholds,
+            value_error_thresholds=value_error_thresholds,
         )
 
     def evaluate_agentic(
         ground_truth_file=None,
         test_data_file=None,
-        output_file="detailed_evaluation.json",
+        output_file="agentic_evaluation_result.json",
         extraction_agent_model_name="gpt-4o-mini",
         is_synthesis_evaluation=True,
         weights=None,
         llm=None,
+        value_error_thresholds=None,
     ):
         """
         Evaluate the extracted data using agentic evaluation.
@@ -229,21 +234,24 @@ if not _is_testing:
         Args:
             ground_truth_file (str, optional): Path to the ground truth file. Defaults to None.
             test_data_file (str, optional): Path to the test data file. Defaults to None.
-            output_file (str, optional): Path to the output file for saving the evaluation results. Defaults to "detailed_evaluation.json".
+            output_file (str, optional): Path to the output file for saving the evaluation results. Defaults to "agentic_evaluation_result.json".
             extraction_agent_model_name (str, optional): Name of the agent model used for extraction. Defaults to "GPT-4o-mini".
             is_synthesis_evaluation (bool, optional): A flag to indicate if synthesis evaluation is required. Defaults to True.
             weights (dict, optional): Weights for the evaluation metrics. Defaults to None.
             llm (LLM, optional): An instance of the LLM class. Defaults to None.
+            value_error_thresholds (dict, optional): Mapping of ``(min, max)`` tuples to
+                absolute error tolerances for numeric property-value comparisons.
         """
         scanner = ComProScanner(main_property_keyword="placeholder")
         return scanner.evaluate_agentic(
             ground_truth_file=ground_truth_file,
             test_data_file=test_data_file,
             output_file=output_file,
-            agent_model_name=extraction_agent_model_name,
+            extraction_agent_model_name=extraction_agent_model_name,
             is_synthesis_evaluation=is_synthesis_evaluation,
             weights=weights,
             llm=llm,
+            value_error_thresholds=value_error_thresholds,
         )
 
     # Add convenience functions to __all__

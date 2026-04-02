@@ -60,6 +60,22 @@ Name of the fallback model which will be used if the primary model fails for sem
 
 Dictionary specifying similarity thresholds for each metric when using semantic evaluation.
 
+#### :material-square-medium:`value_error_thresholds` _(dict)_
+
+Optional mapping of ground-truth value ranges to absolute error tolerances for numeric property value comparisons. When provided, a property value is accepted as a match if the absolute difference between the extracted value and the ground-truth value does not exceed the threshold for the range that the ground-truth value falls in. If no range matches, exact comparison is used.
+
+Keys must be **tuples** `(min, max)` representing the range; `float('inf')` and `float('-inf')` are supported for open-ended bounds.
+
+```python
+value_error_thresholds = {
+    (-200, 200):           5,   # |ref| ≤ 200  →  tolerance ±5
+    (201, 500):            8,   # ref in (200, 500]  →  tolerance ±8
+    (-500, -201):          8,   # ref in [-500, -200)  →  tolerance ±8
+    (501, float('inf')):  10,   # ref > 500  →  tolerance ±10
+    (float('-inf'), -501): 10,  # ref < -500  →  tolerance ±10
+}
+```
+
 !!! info "Default Values"
 
     :material-square-small:**`weights`** = {
@@ -79,7 +95,7 @@ Dictionary specifying similarity thresholds for each metric when using semantic 
         "precursors": 0.8,
         "characterization_techniques": 0.8,
         "steps": 0.8
-    }
+    }<br>:material-square-small:**`value_error_thresholds`** = `None` (exact comparison)
 
 ## How It Works
 
@@ -166,6 +182,32 @@ results = evaluate_semantic(
     weights=custom_weights
 )
 ```
+
+## Value Error Tolerances
+
+By default, numeric property values must match exactly (within floating-point precision). You can relax this for properties where a small deviation is acceptable — for example, when comparing values read from a figure against a table.
+
+Tolerances are defined as a mapping of ground-truth value **ranges** to **absolute error** thresholds. The range that contains the ground-truth value determines the tolerance applied for that comparison.
+
+```python
+results = evaluate_semantic(
+    ground_truth_file="ground_truth.json",
+    test_data_file="test_data.json",
+    value_error_thresholds={
+        (-200, 200):           5,   # small values: allow ±5
+        (201, 500):            8,   # medium values: allow ±8
+        (-500, -201):          8,
+        (501, float('inf')):  10,   # large values: allow ±10
+        (float('-inf'), -501): 10,
+    }
+)
+```
+
+!!! note
+    - Keys must be **tuples** `(min, max)` — Python lists cannot be used as dict keys.
+    - Key ordering does not matter; `min`/`max` is resolved internally.
+    - This tolerance applies only to `compositions_property_values` numeric comparisons. Non-numeric values always use exact matching.
+    - If no range contains the ground-truth value, exact comparison is used for that value.
 
 ## Output Format
 

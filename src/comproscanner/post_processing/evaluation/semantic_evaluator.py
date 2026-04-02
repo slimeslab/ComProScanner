@@ -34,6 +34,7 @@ class MaterialsDataSemanticEvaluator:
         primary_model_name="thellert/physbert_cased",
         fallback_model_name="all-mpnet-base-v2",
         similarity_thresholds=None,
+        value_error_thresholds=None,
     ):
         """
         Initialize the evaluator with optional semantic models.
@@ -43,12 +44,30 @@ class MaterialsDataSemanticEvaluator:
             primary_model_name (str, optional): Name of the primary model to use
             fallback_model_name (str, optional): Name of the fallback sentence transformer model
             similarity_thresholds (dict, optional): Custom thresholds for similarity scoring
+            value_error_thresholds (dict, optional): Mapping of ground-truth value ranges to
+                absolute error tolerances. Keys must be 2-element tuples (min, max); values
+                are the allowed absolute difference between the ground-truth and extracted
+                numeric property value.  Use float('inf') / float('-inf') for open-ended
+                ranges.  Example::
+
+                    {
+                        (-200, 200): 5,
+                        (201, 500): 8,
+                        (-500, -201): 8,
+                        (501, float('inf')): 10,
+                        (float('-inf'), -501): 10,
+                    }
+
+                When a ground-truth value falls inside one of the ranges the extracted
+                value is accepted if ``|extracted - ground_truth| <= threshold``.
+                If no range matches, exact comparison (epsilon 1e-6) is used.
         """
         self.use_semantic_model = use_semantic_model
         self.primary_model_name = primary_model_name
         self.fallback_model_name = fallback_model_name
         self.physbert_available = False
         self.model_available = False
+        self.value_error_thresholds = value_error_thresholds or {}
 
         # Load models if requested
         if self.use_semantic_model:
@@ -184,16 +203,41 @@ class MaterialsDataSemanticEvaluator:
 
         return " ".join(filtered_words)
 
-    def _is_value_in_range(self, ref_val, test_val):
+    def _get_error_threshold(self, ref_val, error_thresholds):
         """
-        Check if test_val is within the range specified by ref_val.
+        Return the absolute error threshold for *ref_val* from *error_thresholds*.
+
+        Args:
+            ref_val (float): Ground-truth numeric value.
+            error_thresholds (dict): Mapping of ``(min, max)`` tuples to absolute
+                thresholds.  Infinity values are supported.
+
+        Returns:
+            float or None: Threshold if a range contains *ref_val*, else ``None``.
+        """
+        for range_key, threshold in error_thresholds.items():
+            lo = min(range_key)
+            hi = max(range_key)
+            if lo <= ref_val <= hi:
+                return threshold
+        return None
+
+    def _is_value_in_range(self, ref_val, test_val, error_thresholds=None):
+        """
+        Check if test_val is within the range specified by ref_val, optionally
+        using a per-range absolute error tolerance.
 
         Args:
             ref_val: Reference value, which can be a number or a list [min, max]
             test_val: Test value to check against the reference
+            error_thresholds (dict, optional): Mapping of ``(min, max)`` tuples to
+                absolute error tolerances (see class docstring).  When provided and a
+                matching range is found the comparison becomes
+                ``|ref_val - test_val| <= threshold`` instead of an exact check.
 
         Returns:
-            bool: True if the test value matches or falls within the reference range, False otherwise
+            bool: True if the test value matches or falls within the reference range,
+                False otherwise.
         """
         # Handle case where either value is None
         if ref_val is None or test_val is None:
@@ -212,7 +256,15 @@ class MaterialsDataSemanticEvaluator:
         # Case 2: ref_val is not a range, do regular comparison
         try:
             if isinstance(test_val, (int, float)) and isinstance(ref_val, (int, float)):
-                return abs(float(ref_val) - float(test_val)) < 1e-6
+                ref_num = float(ref_val)
+                test_num = float(test_val)
+                # Use error threshold dict if provided and a range matches
+                if error_thresholds:
+                    threshold = self._get_error_threshold(ref_num, error_thresholds)
+                    if threshold is not None:
+                        return abs(ref_num - test_num) <= threshold
+                # Default: floating-point epsilon comparison
+                return abs(ref_num - test_num) < 1e-6
             else:
                 return ref_val == test_val
         except (ValueError, TypeError):
@@ -374,7 +426,7 @@ class MaterialsDataSemanticEvaluator:
             # Check if values match exactly
             ref_val = ref_values[key]
             test_val = test_values[key]
-            value_match = self._is_value_in_range(ref_val, test_val)
+            value_match = self._is_value_in_range(ref_val, test_val, self.value_error_thresholds)
             value_matches[key] = value_match
 
             if value_match:
@@ -458,7 +510,7 @@ class MaterialsDataSemanticEvaluator:
 
                 ref_val = ref_values[ref_key]
                 test_val = test_values[test_key]
-                value_match = self._is_value_in_range(ref_val, test_val)
+                value_match = self._is_value_in_range(ref_val, test_val, self.value_error_thresholds)
                 value_matches[ref_key] = value_match
 
                 if value_match:
@@ -1172,6 +1224,7 @@ class MaterialsDataSemanticEvaluator:
         weights=None,
         output_file="detailed_evaluation.json",
         is_synthesis_evaluation=True,
+        value_error_thresholds=None,
     ):
         """
         Evaluate materials science data using normalized weights to ensure fair comparison
@@ -1184,10 +1237,15 @@ class MaterialsDataSemanticEvaluator:
             weights (dict, optional): Custom weights for different components
             output_file (str, optional): Path to save the detailed evaluation results
             is_synthesis_evaluation (bool, optional): Whether to evaluate synthesis data
+            value_error_thresholds (dict, optional): Per-call override for the instance-level
+                ``value_error_thresholds``.  Mapping of ``(min, max)`` tuples to absolute
+                error tolerances for numeric property value comparisons (see class docstring).
 
         Returns:
             dict: Evaluation results with scores and details including F1 metrics
         """
+        if value_error_thresholds is not None:
+            self.value_error_thresholds = value_error_thresholds
         if not ground_truth_file or not test_data_file:
             raise ValueErrorHandler(
                 "Both ground truth and test data files are required"

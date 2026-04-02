@@ -24,7 +24,8 @@ evaluate_composition_data_task:
           Note: The ground truth values can be given in a range (inside []) or as a single value.
           - If the test value is inside the range, it is considered a match.
           - Many times keys can't match exactly but the value will match - so while matching value be less strict about the finding the associated key.
-       
+          {value_error_threshold_instructions}
+
     You must return your evaluation results in the following exact format (Use only {} JSON data, don't use markdown ```json format):
     {
       "composition_data": {

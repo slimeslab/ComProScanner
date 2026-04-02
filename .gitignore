@@ -189,3 +189,10 @@ examples/vlm_piezo_test
 # Claude files
 CLAUDE.md
 .claude
+
+# Test results
+db
+results
+elsevier_test.xml
+springer_test.xml
+wiley_test.pdf
