@@ -193,7 +193,7 @@ We welcome contributions! Please see our [Contributing Guidelines](https://slime
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Copyright © 2025 SLIMES Lab
+Copyright © 2025-2026 SLIMES Lab
 
 ## Contact
 
