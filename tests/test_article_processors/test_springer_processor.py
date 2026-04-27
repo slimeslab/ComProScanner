@@ -155,6 +155,36 @@ def processor(mock_environment, property_keywords, mock_csv_data, monkeypatch):
 class TestSpringerArticleProcessor:
     """Test class for SpringerArticleProcessor"""
 
+    def test_append_sections_to_df_keeps_article_when_caption_matches(self, processor):
+        """Caption keyword matches should preserve article text even without body hits"""
+        processor.vector_db_manager = MagicMock()
+        processor.vector_db_manager.database_exists.return_value = False
+        abstract = [etree.fromstring("<abstract><p>No target term here.</p></abstract>")]
+        req_sections = [
+            etree.fromstring(
+                "<sec><title>Introduction</title><p>General background only.</p></sec>"
+            ),
+            etree.fromstring(
+                "<sec><title>Results and Discussion</title><p>General results only.</p></sec>"
+            ),
+        ]
+
+        result_df = processor._append_sections_to_df(
+            abstract,
+            req_sections,
+            "10.1007/test-doi",
+            [],
+            "Sample Article Title",
+            "Sample Journal",
+            "Springer Nature",
+            has_caption_keyword_match=True,
+        )
+
+        assert result_df.iloc[0]["is_property_mentioned"] == "1"
+        assert result_df.iloc[0]["abstract"] != ""
+        assert result_df.iloc[0]["results_discussion"] != ""
+        processor.vector_db_manager.create_database.assert_not_called()
+
     def test_initialization(self, mock_environment, property_keywords):
         """Test initialization of SpringerArticleProcessor with correct parameters"""
 

@@ -1,4 +1,7 @@
 # Unreleased
+
+### Added
+
 - New `value_error_thresholds` parameter added to both `evaluate_semantic()` and `evaluate_agentic()` for range-based absolute error tolerances on numeric property value comparisons:
 
   - Accepts a dict mapping `(min, max)` tuples to absolute error thresholds. When a ground-truth value falls inside a range, the extracted value is accepted if `|extracted - ground_truth| ≤ threshold`. Values outside all configured ranges fall back to exact comparison.
@@ -19,9 +22,35 @@
 
 - New unit tests added for all three agent tools in `tests/test_agent_tools/`.
 
+- Added `save_failed_pdf_report` and `failed_pdf_report_path` to `process_articles()`, with filename-derived DOI validation and failed-PDF reporting for local PDF workflows.
+
+- Added `save_failed_automated_report` and `failed_automated_report_path` to `process_articles()` for automated publisher sources (Elsevier, Springer Nature, IOP, Wiley), mirroring the existing PDF failure report. Failed articles are written as tab-separated `doi`, `publisher`, `reason` entries to `results/failed_automated_articles.txt` by default.
+
+- Added image-aware fallback in `DataExtractionFlow.identify_materials_data_presence()`:
+
+  - The Materials Data Identifier still runs text RAG first.
+  - If RAG returns `no`, the flow now checks saved DOI figures with VLM and upgrades the decision to `yes` when relevant graph/figure evidence is found (including doping concentration vs property plots where full formulas are absent).
+
+- Added explicit Equation Tool model control:
+
+  - New `equation_model` parameter in `extract_composition_property_data()` (threaded through `DataExtractionFlow` and `CompositionExtractionCrew` into `EquationTool`).
+  - New optional environment variable `EQUATION_TOOL_MODEL` for global override.
+  - EquationTool model precedence is now: `equation_model` argument -> `EQUATION_TOOL_MODEL` -> API-key-based auto-selection.
+
+- Clarified Equation Tool instruction customization in extraction docs and API:
+
+  - `formula_instruction` remains available in `extract_composition_property_data()` for domain-specific formula-derivation guidance, while preserving the built-in default instruction when unset.
+
 ### Fixed
 
 - `process_articles()` now routes user-provided `doi_list` by `general_publisher` from metadata and sends each DOI only to its matching source processor.
+
+- PNG, GIF, and WEBP figures now convert correctly to JPEG: transparent images are composited onto a white background, animated GIFs are pinned to frame 0, and two additional Springer Nature CDN URL patterns are tried to improve download success for these formats.
+
+- Added and updated tests for new extraction-flow behavior:
+
+  - EquationTool model selection tests now cover explicit arg override, env override, and updated model defaults.
+  - DataExtractionFlow tests now cover figure-based materials-data fallback and `equation_model` forwarding into `CompositionExtractionCrew`.
 
 ---
 ## [0.1.6] - 2026-04-02

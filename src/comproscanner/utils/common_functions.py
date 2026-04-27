@@ -8,6 +8,7 @@ Date: 23-02-2025
 """
 
 # Standard library imports
+import re
 import requests
 import os
 import time
@@ -77,6 +78,56 @@ def return_error_message(missing_variable: str):
             return "WILEY_API_KEY is not set in the environment variables. Please set it before running the script. Exiting..."
         if missing_variable == "springer_open_access_api_key":
             return "SPRINGER_OPENACCESS_API_KEY is not set in the environment variables. Please set it before running the script. Exiting..."
+
+
+@staticmethod
+def get_doi_from_crossref(text: str):
+    """Try to get DOI from CrossRef API using the title extracted from markdown text.
+
+    Extracts the first heading from the markdown and queries CrossRef's
+    bibliographic search. Only returns a DOI when the relevance score is
+    high enough to be trustworthy.
+
+    Args:
+        text (str): Markdown text of the article.
+
+    Returns:
+        str: DOI if found with sufficient confidence, empty string otherwise.
+    """
+    try:
+        title_match = re.search(r"^#{1,3}\s+(.+)$", text, re.MULTILINE)
+        if not title_match:
+            return ""
+
+        title = title_match.group(1).strip()
+        if not title or len(title) < 10:
+            return ""
+
+        url = "https://api.crossref.org/works"
+        params = {
+            "query.bibliographic": title,
+            "select": "DOI,title,score",
+            "rows": 1,
+        }
+        response = requests.get(url, params=params, timeout=10)
+        if response.status_code != 200:
+            return ""
+
+        data = response.json()
+        items = data.get("message", {}).get("items", [])
+        if not items:
+            return ""
+
+        item = items[0]
+        score = item.get("score", 0)
+        doi = item.get("DOI", "")
+
+        if score >= 50 and doi:
+            return doi
+
+        return ""
+    except Exception:
+        return ""
 
 
 @staticmethod

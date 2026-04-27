@@ -297,6 +297,29 @@ def test_process_xml(elsevier_processor, sample_xml_content):
         assert "Conclusion" in section_titles
 
 
+def test_append_sections_to_df_reads_full_elsevier_abstract_text(elsevier_processor):
+    """Nested abstract text should still participate in property matching"""
+    elsevier_processor.vector_db_manager = MagicMock()
+    elsevier_processor.vector_db_manager.database_exists.return_value = False
+    abstract_xml = etree.fromstring(
+        "<description>Lead-free ceramic <italic>d33</italic>=583 pC/N is reported.</description>"
+    )
+
+    result_df = elsevier_processor._append_sections_to_df(
+        [abstract_xml],
+        [],
+        "10.1016/j.ceramint.2014.02.008",
+        [],
+        "Sample Article",
+        "Ceramics International",
+        "Elsevier Ltd",
+    )
+
+    assert "d33" in result_df.iloc[0]["abstract"]
+    assert result_df.iloc[0]["is_property_mentioned"] == "1"
+    elsevier_processor.vector_db_manager.create_database.assert_called_once()
+
+
 def test_extract_paragraphs(elsevier_processor):
     """Test extracting paragraphs from a section"""
     section_xml = """

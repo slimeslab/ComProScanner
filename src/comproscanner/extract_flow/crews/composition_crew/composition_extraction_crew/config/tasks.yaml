@@ -20,6 +20,15 @@ extract_composition_property:
     - FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
 
     *Other Points to Consider*
+    - Before extracting final compositions, you MUST call Equation Tool once with doi={doi}.
+    - For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+    - The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+    - Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+    - If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+    - Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+    - Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+    - Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+    - Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
     - If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
     {expected_variable_composition_property_example}
     Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.

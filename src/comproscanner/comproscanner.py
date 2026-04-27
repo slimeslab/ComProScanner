@@ -120,6 +120,10 @@ class ComProScanner:
         chunk_overlap: int = 25,
         embedding_model: str = "huggingface:thellert/physbert_cased",
         caption_keywords: Optional[Dict] = None,
+        save_failed_pdf_report: bool = True,
+        failed_pdf_report_path: Optional[str] = None,
+        save_failed_automated_report: bool = True,
+        failed_automated_report_path: Optional[str] = None,
     ):
         """Process articles for the main property keyword.
 
@@ -145,6 +149,10 @@ class ComProScanner:
             chunk_overlap (int, optional): Overlap between the chunks. Defaults to 25.
             embedding_model (str, optional): Name of the embedding model. Defaults to 'thellert/physbert_cased'.
             caption_keywords (dict, optional): Keywords to match figure captions for figure extraction. Same format as property_keywords with "exact_keywords" and "substring_keywords" keys. Defaults to None (no figure extraction).
+            save_failed_pdf_report (bool, optional): For `pdfs` source only. If True, save skipped/failed filename-based DOI fallback cases to a text report. Defaults to True.
+            failed_pdf_report_path (str, optional): For `pdfs` source only. Custom path for failed PDF filename report. Defaults to None (uses `{folder_path}/failed_pdf_filenames.txt`).
+            save_failed_automated_report (bool, optional): For automated publisher sources (elsevier, springer, iop, wiley). If True, save failed/unparseable articles to a report. Defaults to True.
+            failed_automated_report_path (str, optional): Custom path for the automated failure report. Defaults to None (uses `results/failed_automated_articles.txt`).
 
         Raises:
             ValueErrorHandler: If property_keywords is not provided.
@@ -261,6 +269,8 @@ class ComProScanner:
                 is_save_xml=is_save_xml,
                 rag_config=rag_config,
                 caption_keywords=caption_keywords,
+                save_failed_automated_report=save_failed_automated_report,
+                failed_automated_report_path=failed_automated_report_path,
             )
             elsevier_processor.process_elsevier_articles()
 
@@ -282,6 +292,8 @@ class ComProScanner:
                 is_save_xml=is_save_xml,
                 rag_config=rag_config,
                 caption_keywords=caption_keywords,
+                save_failed_automated_report=save_failed_automated_report,
+                failed_automated_report_path=failed_automated_report_path,
             )
             springer_processor.process_springer_articles()
 
@@ -303,6 +315,8 @@ class ComProScanner:
                 is_save_pdf=is_save_pdf,
                 rag_config=rag_config,
                 caption_keywords=caption_keywords,
+                save_failed_automated_report=save_failed_automated_report,
+                failed_automated_report_path=failed_automated_report_path,
             )
             wiley_processor.process_wiley_articles()
 
@@ -323,6 +337,8 @@ class ComProScanner:
                 is_sql_db=is_sql_db,
                 rag_config=rag_config,
                 caption_keywords=caption_keywords,
+                save_failed_automated_report=save_failed_automated_report,
+                failed_automated_report_path=failed_automated_report_path,
             )
             iop_processor.process_iop_articles()
 
@@ -339,6 +355,8 @@ class ComProScanner:
                 is_sql_db=is_sql_db,
                 rag_config=rag_config,
                 caption_keywords=caption_keywords,
+                save_failed_pdf_report=save_failed_pdf_report,
+                failed_pdf_report_path=failed_pdf_report_path,
             )
             pdf_processor.process_pdfs()
 
@@ -380,6 +398,8 @@ class ComProScanner:
         rag_base_url: Optional[str] = None,
         vlm_model: str = "gemini/gemini-3-flash-preview",
         related_figures_base_path: Optional[str] = None,
+        formula_instruction: Optional[str] = None,
+        equation_model: Optional[str] = None,
         **flow_optional_args,
     ):
         """Extract the composition-property data and synthesis data if the property is present in the article.
@@ -422,6 +442,11 @@ class ComProScanner:
             vlm_model (str, optional): Vision LLM model for graph data extraction from saved figures. Defaults to "gemini/gemini-3-flash-preview".
             related_figures_base_path (str, optional): Base path where saved figures are stored. Defaults to
                 "results/extracted_data/{main_property_keyword}/related_figures".
+            formula_instruction (str, optional): Custom instruction for the EquationTool used to derive
+                doped chemical formulas. When None the tool's built-in perovskite instruction is used.
+            equation_model (str, optional): Explicit litellm model name for EquationTool (for example,
+                "openai/gpt-4o-mini", "gemini/gemini-3-flash-preview"). When None, EquationTool auto-selects
+                based on available API keys.
             **flow_optional_args (Any): Optional keyword arguments for the MaterialsFlow class.
 
         Raises:
@@ -555,6 +580,8 @@ class ComProScanner:
                         is_extract_synthesis_data=is_extract_synthesis_data,
                         vlm_model=vlm_model,
                         related_figures_base_path=related_figures_base_path,
+                        formula_instruction=formula_instruction,
+                        equation_model=equation_model,
                         rag_config=rag_config,
                         output_log_folder=output_log_folder,
                         task_output_folder=task_output_folder,

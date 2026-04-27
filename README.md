@@ -131,6 +131,18 @@ scanner.process_articles(
 )
 ```
 
+### Process Local PDFs With Failed-Filename Report
+
+```python
+scanner.process_articles(
+    property_keywords=property_keywords,
+    source_list=["pdfs"],
+    folder_path="/home/user/papers",
+    save_failed_pdf_report=True,
+    failed_pdf_report_path="/home/user/papers/failed_pdf_filenames.txt"
+)
+```
+
 ### Customize RAG Configuration
 
 ```python

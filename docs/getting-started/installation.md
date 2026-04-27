@@ -38,7 +38,7 @@ The `-e` flag installs the package in editable mode, allowing you to make change
 
 ## Environment Variables
 
-ComProScanner requires several API keys to function properly. Create a `.env` file in your project directory:
+ComProScanner requires several API keys or provider credentials depending on your workflow. Create a `.env` file in your project directory:
 
 ```bash
 # Publisher TDM API Keys (for direct article access)
@@ -52,7 +52,7 @@ IOP_papers_path=local_path_to_iop_papers # IOP Publishing provides XML articles 
 OPENAI_API_KEY=your_openai_api_key
 DEEPSEEK_API_KEY=your_deepseek_api_key
 ANTHROPIC_API_KEY=your_anthropic_api_key
-GEMINI_API_KEY=your_google_api_key
+GEMINI_API_KEY=your_gemini_api_key
 OPENROUTER_API_KEY=your_openrouter_api_key
 
 # Hugging Face API Key (for accessing thellert/physbert_cased model for embeddings)
@@ -67,6 +67,8 @@ NEO4J_DATABASE=neo4j
 ```
 
 !!! warning "Keep your API keys secure and never commit them to version control!"
+
+For a provider-by-provider guide on how to obtain these credentials, see the [API Key Guide](api-key-guide.md).
 
 ## Optional Dependencies
 

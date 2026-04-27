@@ -77,14 +77,16 @@ class MaterialParserTool(BaseTool):
                     compositions = data["compositions"]
                 elif "compositions_property_values" in data:
                     compositions = data["compositions_property_values"]
+                else:
+                    # Agent passed raw composition-value pairs without a wrapper key;
+                    # treat the whole dict as compositions, excluding known metadata fields.
+                    non_comp_keys = {"property_unit", "family", "abbreviations"}
+                    compositions = {k: v for k, v in data.items() if k not in non_comp_keys}
 
-            # Get unit information, checking various possible field names
+            # Get unit information
             unit = ""
-            if isinstance(data, dict):
-                if "{composition_property_text_data}_unit" in data:
-                    unit = data["{composition_property_text_data}_unit"]
-                elif "property_unit" in data:
-                    unit = data["property_unit"]
+            if isinstance(data, dict) and "property_unit" in data:
+                unit = data["property_unit"]
 
             # Get family information
             family = ""

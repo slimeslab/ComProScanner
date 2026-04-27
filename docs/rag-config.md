@@ -4,7 +4,7 @@ Customize Retrieval-Augmented Generation (RAG) settings for improved data extrac
 
 !!! note "RAG is Used by Materials Data Identifier Agent"
 
-    RAG is automatically used during data extraction to retrieve relevant context from article text before querying the LLM to understand whether the article has material compositions and corresponding property values for screening. The parameters below allow you to customize RAG behavior based on your specific requirements, such as article length, domain-specific models, or extraction complexity.
+    RAG is automatically used during data extraction to retrieve relevant context from article text before querying the LLM to understand whether the article has material compositions and corresponding property values for screening. If text-RAG returns `no`, the flow can additionally check saved figures using the configured VLM (`vlm_model`) as a fallback. The parameters below allow you to customize RAG behavior based on your specific requirements, such as article length, domain-specific models, or extraction complexity.
 
 ## Configuration Parameters
 

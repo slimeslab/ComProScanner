@@ -105,11 +105,28 @@ class FigureExtractor:
             # Sanitize caption_id for use as filename
             safe_id = _sanitize_filename(caption_id)
             out_path = os.path.join(fig_dir, f"{safe_id}.jpg")
-            # If image is already JPEG, write directly; otherwise convert via PIL
+            # Convert image to JPEG via PIL; handles PNG, GIF, WEBP, etc.
             try:
                 from PIL import Image
+
                 img = Image.open(BytesIO(image_bytes))
-                img = img.convert("RGB")
+                # For animated GIF/WEBP, use the first frame
+                try:
+                    img.seek(0)
+                except (AttributeError, EOFError):
+                    pass
+                # Composite transparent images (RGBA/LA/palette) onto white background
+                if img.mode in ("RGBA", "LA"):
+                    background = Image.new("RGB", img.size, (255, 255, 255))
+                    background.paste(img, mask=img.split()[-1])
+                    img = background
+                elif img.mode == "P":
+                    img = img.convert("RGBA")
+                    background = Image.new("RGB", img.size, (255, 255, 255))
+                    background.paste(img, mask=img.split()[-1])
+                    img = background
+                else:
+                    img = img.convert("RGB")
                 img.save(out_path, "JPEG")
             except Exception:
                 # Fallback: write bytes as-is
@@ -145,7 +162,9 @@ class FigureExtractor:
             return None
 
     @classmethod
-    def update_info_json(cls, doi: str, caption_id: str, caption_text: str, base_path: str = None):
+    def update_info_json(
+        cls, doi: str, caption_id: str, caption_text: str, base_path: str = None
+    ):
         """
         Add or update an entry in {base_path}/{doi_}/info.json.
         The JSON maps caption_id → caption_text string.
@@ -171,6 +190,35 @@ class FigureExtractor:
                 json.dump(info, f, ensure_ascii=False, indent=2)
         except Exception:
             pass
+
+
+def record_failed_article(
+    doi: str,
+    publisher: str,
+    reason: str,
+    report_path: str,
+    enabled: bool = True,
+) -> None:
+    """Append a tab-separated (doi, publisher, reason) entry to the automated failure report.
+
+    Args:
+        doi (str): Article DOI.
+        publisher (str): Publisher name (e.g. "elsevier", "springer").
+        reason (str): Short failure reason (e.g. "download_failed", "xml_parse_failed").
+        report_path (str): Path to the report file.
+        enabled (bool): When False, the function is a no-op. Defaults to True.
+    """
+    if not enabled:
+        return
+    entry = f"{doi}\t{publisher}\t{reason}"
+    try:
+        dir_name = os.path.dirname(report_path)
+        if dir_name:
+            os.makedirs(dir_name, exist_ok=True)
+        with open(report_path, "a", encoding="utf-8") as f:
+            f.write(entry + "\n")
+    except Exception:
+        pass
 
 
 def _sanitize_filename(name: str) -> str:

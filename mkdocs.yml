@@ -154,6 +154,7 @@ nav:
   - Home: index.md
   - Getting Started:
       - Installation: getting-started/installation.md
+      - API Key Guide: getting-started/api-key-guide.md
       - Quick Start: getting-started/quick-start.md
   - User Guide:
       - Metadata Collection: usage/metadata-collection.md

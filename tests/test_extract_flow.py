@@ -398,6 +398,65 @@ class TestDataExtractionFlowCore:
 
         assert result == "no"
 
+    @patch(
+        "comproscanner.extract_flow.main_extraction_flow.MaterialsDataIdentifierCrew"
+    )
+    def test_identify_materials_data_presence_uses_figure_fallback_when_rag_no(
+        self,
+        mock_crew_class,
+        sample_doi,
+        sample_main_extraction_keyword,
+        sample_composition_property_text,
+    ):
+        """Test image-based fallback flips result to yes when text RAG returns no"""
+        mock_crew_instance = MagicMock()
+        mock_crew_class.return_value.crew.return_value = mock_crew_instance
+        mock_result = MagicMock()
+        mock_result.raw = json.dumps({"answer": "no"})
+        mock_crew_instance.kickoff.return_value = mock_result
+
+        flow = DataExtractionFlow(
+            doi=sample_doi,
+            main_extraction_keyword=sample_main_extraction_keyword,
+            composition_property_text_data=sample_composition_property_text,
+        )
+
+        with patch.object(flow, "_check_figures_for_data", return_value=True):
+            result = flow.identify_materials_data_presence()
+
+        assert result == "yes"
+
+    @patch(
+        "comproscanner.extract_flow.main_extraction_flow.MaterialsDataIdentifierCrew"
+    )
+    def test_identify_materials_data_presence_skips_figure_fallback_when_rag_yes(
+        self,
+        mock_crew_class,
+        sample_doi,
+        sample_main_extraction_keyword,
+        sample_composition_property_text,
+    ):
+        """Test image-based fallback is not called when text RAG already returns yes"""
+        mock_crew_instance = MagicMock()
+        mock_crew_class.return_value.crew.return_value = mock_crew_instance
+        mock_result = MagicMock()
+        mock_result.raw = json.dumps({"answer": "yes"})
+        mock_crew_instance.kickoff.return_value = mock_result
+
+        flow = DataExtractionFlow(
+            doi=sample_doi,
+            main_extraction_keyword=sample_main_extraction_keyword,
+            composition_property_text_data=sample_composition_property_text,
+        )
+
+        with patch.object(
+            flow, "_check_figures_for_data", return_value=True
+        ) as mock_check:
+            result = flow.identify_materials_data_presence()
+
+        assert result == "yes"
+        mock_check.assert_not_called()
+
     @patch("comproscanner.extract_flow.main_extraction_flow.CompositionExtractionCrew")
     def test_extract_composition_property_data_with_llm(
         self,
@@ -438,6 +497,8 @@ class TestDataExtractionFlowCore:
             vlm_model="gemini/gemini-3-flash-preview",
             related_figures_base_path="results/related_figures",
             main_extraction_keyword=sample_main_extraction_keyword,
+            formula_instruction=None,
+            equation_model=None,
         )
 
         # Verify kickoff was called with correct inputs
@@ -456,6 +517,37 @@ class TestDataExtractionFlowCore:
         assert result == sample_composition_extracted_data
         assert (
             flow.state.composition_extracted_data == sample_composition_extracted_data
+        )
+
+    @patch("comproscanner.extract_flow.main_extraction_flow.CompositionExtractionCrew")
+    def test_extract_composition_property_data_forwards_equation_model(
+        self,
+        mock_crew_class,
+        sample_doi,
+        sample_main_extraction_keyword,
+        sample_composition_property_text,
+        sample_composition_extracted_data,
+        mock_llm,
+    ):
+        """Test explicit equation_model is forwarded to CompositionExtractionCrew"""
+        mock_crew_instance = MagicMock()
+        mock_crew_class.return_value.crew.return_value = mock_crew_instance
+        mock_result = MagicMock()
+        mock_result.raw = json.dumps(sample_composition_extracted_data)
+        mock_crew_instance.kickoff.return_value = mock_result
+
+        flow = DataExtractionFlow(
+            doi=sample_doi,
+            main_extraction_keyword=sample_main_extraction_keyword,
+            composition_property_text_data=sample_composition_property_text,
+            llm=mock_llm,
+            equation_model="openai/gpt-5.4-mini",
+        )
+        flow.extract_composition_property_data()
+
+        assert (
+            mock_crew_class.call_args.kwargs["equation_model"]
+            == "openai/gpt-5.4-mini"
         )
 
     @patch("comproscanner.extract_flow.main_extraction_flow.CompositionFormatCrew")

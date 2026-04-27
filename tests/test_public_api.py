@@ -116,6 +116,32 @@ def test_extract_composition_property_data_public_api_smoke_with_no_papers(tmp_p
     mock_cleaner_cls.return_value.get_useful_data.assert_called_once_with()
 
 
+def test_process_articles_forwards_pdf_failed_report_args():
+    scanner = ComProScanner(main_property_keyword="piezoelectric")
+    mock_pdfs_cls = MagicMock()
+    fake_modules = {
+        "comproscanner.article_processors.pdfs_processor": types.SimpleNamespace(
+            PDFsProcessor=mock_pdfs_cls
+        )
+    }
+
+    with patch.dict(sys.modules, fake_modules, clear=False):
+        scanner.process_articles(
+            property_keywords={"exact_keywords": ["d33"], "substring_keywords": []},
+            source_list=["pdfs"],
+            folder_path="/tmp/pdfs",
+            save_failed_pdf_report=False,
+            failed_pdf_report_path="/tmp/failed_pdf_report.txt",
+        )
+
+    assert mock_pdfs_cls.call_args.kwargs["save_failed_pdf_report"] is False
+    assert (
+        mock_pdfs_cls.call_args.kwargs["failed_pdf_report_path"]
+        == "/tmp/failed_pdf_report.txt"
+    )
+    mock_pdfs_cls.return_value.process_pdfs.assert_called_once_with()
+
+
 def test_clean_data_public_api_forwards_to_cleaner(tmp_path):
     scanner = ComProScanner(main_property_keyword="piezoelectric")
     input_file = tmp_path / "input.json"

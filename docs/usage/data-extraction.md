@@ -74,7 +74,7 @@ Flag to indicate if only papers with composition-property data should be saved. 
 
 #### :material-square-medium:`materials_data_identifier_query` _(str)_
 
-Custom query to identify if materials data is present in the paper. **Must be designed to expect a 'yes/no' answer.** If not provided, defaults to a query asking about material chemical composition and the corresponding property value.
+Custom query to identify if materials data is present in the paper. **Must be designed to expect a 'yes/no' answer.** If not provided, defaults to a query asking about material chemical composition and the corresponding property value from text. If text-RAG returns `no`, the flow also checks saved figures with a VLM as a fallback before deciding.
 
 #### :material-square-medium:`model` _(str)_
 
@@ -160,13 +160,21 @@ Name of the vision LLM model used by `GraphExtractorTool` to read composition-pr
 
 Path to the directory where figures were saved during article processing. Defaults to `results/extracted_data/{main_property_keyword}/related_figures`.
 
+#### :material-square-medium:`formula_instruction` _(str)_
+
+Custom instruction passed to the `Equation Tool` that guides the LLM when determining whether doping produces a single-phase compound and deriving the general doped chemical formula. When `None`, the tool uses its built-in default instruction which covers a broad range of crystal structures (perovskites, spinels, fluorites, rocksalts, etc.) and charge-compensation mechanisms. Provide a custom string here to tailor the formula-derivation logic for a specific materials system or notation convention.
+
+#### :material-square-medium:`equation_model` _(str)_
+
+Explicit LiteLLM model name for `Equation Tool`. Use this when you want deterministic model control for formula derivation (for example, `openai/gpt-5.4-mini` or `gemini/gemini-3-flash-preview`). If `None`, the tool first checks `EQUATION_TOOL_MODEL` from environment variables, then falls back to API-key based auto-selection.
+
 #### :material-square-medium:`**flow_optional_args` _(dict)_
 
 Optional arguments for the MaterialsFlow class to customize extraction behavior by giving additional notes, examples, and allowed methods/techniques.
 
 !!! info "Default Values"
 
-    :material-square-small:**`start_row`** = 0<br>:material-square-small:**`num_rows`** = All rows<br>:material-square-small:**`is_test_data_preparation`** = False<br>:material-square-small:**`test_doi_list_file`** = None<br>:material-square-small:**`total_test_data`** = 50<br>:material-square-small:**`is_only_consider_test_doi_list`** = False<br>:material-square-small:**`test_random_seed`** = 42<br>:material-square-small:**`checked_doi_list_file`** = "checked_dois.txt"<br>:material-square-small:**`json_results_file`** = "results.json"<br>:material-square-small:**`csv_results_file`** = "results.csv"<br>:material-square-small:**`is_extract_synthesis_data`** = True<br>:material-square-small:**`is_save_csv`** = False<br>:material-square-small:**`is_save_relevant`** = True<br>:material-square-small:**`materials_data_identifier_query`** = "Is there any material chemical composition and corresponding {main_property_keyword} value mentioned in the paper? Give one word answer. Either yes or no."<br>:material-square-small:**`model`** = "gpt-4o-mini"<br>:material-square-small:**`api_base`** = None<br>:material-square-small:**`base_url`** = None<br>:material-square-small:**`api_key`** = None<br>:material-square-small:**`output_log_folder`** = None<br>:material-square-small:**`is_log_json`** = False<br>:material-square-small:**`task_output_folder`** = None<br>:material-square-small:**`verbose`** = True<br>:material-square-small:**`temperature`** = 0.1<br>:material-square-small:**`top_p`** = 0.9<br>:material-square-small:**`timeout`** = 60<br>:material-square-small:**`frequency_penalty`** = None<br>:material-square-small:**`max_tokens`** = 2048<br>:material-square-small:**`rag_db_path`** = "db"<br>:material-square-small:**`embedding_model`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`rag_chat_model`** = "gpt-4o-mini"<br>:material-square-small:**`rag_max_tokens`** = 512<br>:material-square-small:**`rag_top_k`** = 3<br>:material-square-small:**`rag_base_url`** = None<br>:material-square-small:**`vlm_model`** = "gemini/gemini-3-flash-preview"<br>:material-square-small:**`related_figures_base_path`** = "results/extracted_data/{main_property_keyword}/related_figures"<br>:material-square-small:**`flow_optional_args`** = {}
+    :material-square-small:**`start_row`** = 0<br>:material-square-small:**`num_rows`** = All rows<br>:material-square-small:**`is_test_data_preparation`** = False<br>:material-square-small:**`test_doi_list_file`** = None<br>:material-square-small:**`total_test_data`** = 50<br>:material-square-small:**`is_only_consider_test_doi_list`** = False<br>:material-square-small:**`test_random_seed`** = 42<br>:material-square-small:**`checked_doi_list_file`** = "checked_dois.txt"<br>:material-square-small:**`json_results_file`** = "results.json"<br>:material-square-small:**`csv_results_file`** = "results.csv"<br>:material-square-small:**`is_extract_synthesis_data`** = True<br>:material-square-small:**`is_save_csv`** = False<br>:material-square-small:**`is_save_relevant`** = True<br>:material-square-small:**`materials_data_identifier_query`** = "Is there any material chemical composition and corresponding {main_property_keyword} value mentioned in the paper? Give one word answer. Either yes or no."<br>:material-square-small:**`model`** = "gpt-4o-mini"<br>:material-square-small:**`api_base`** = None<br>:material-square-small:**`base_url`** = None<br>:material-square-small:**`api_key`** = None<br>:material-square-small:**`output_log_folder`** = None<br>:material-square-small:**`is_log_json`** = False<br>:material-square-small:**`task_output_folder`** = None<br>:material-square-small:**`verbose`** = True<br>:material-square-small:**`temperature`** = 0.1<br>:material-square-small:**`top_p`** = 0.9<br>:material-square-small:**`timeout`** = 60<br>:material-square-small:**`frequency_penalty`** = None<br>:material-square-small:**`max_tokens`** = 2048<br>:material-square-small:**`rag_db_path`** = "db"<br>:material-square-small:**`embedding_model`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`rag_chat_model`** = "gpt-4o-mini"<br>:material-square-small:**`rag_max_tokens`** = 512<br>:material-square-small:**`rag_top_k`** = 3<br>:material-square-small:**`rag_base_url`** = None<br>:material-square-small:**`vlm_model`** = "gemini/gemini-3-flash-preview"<br>:material-square-small:**`related_figures_base_path`** = "results/extracted_data/{main_property_keyword}/related_figures"<br>:material-square-small:**`formula_instruction`** = None (uses built-in default instruction)<br>:material-square-small:**`equation_model`** = None (uses `EQUATION_TOOL_MODEL` env var if set; otherwise API-key based auto-selection)<br>:material-square-small:**`flow_optional_args`** = {}
 
 ## Extraction Agents
 
@@ -174,7 +182,7 @@ The extraction process involves five specialized agents working in sequence to i
 
 ### 1. Materials Data Identifier (1️⃣)
 
-**Purpose**: `Materials Data Identifier` determines if article text contains target material composition and property data.
+**Purpose**: `Materials Data Identifier` first uses text RAG to determine if target material composition/property data exists. If text RAG returns `no`, it then checks saved figures with the configured VLM to catch graph-only evidence (for example, doping concentration on one axis and property values on the other).
 
 **Default Query**:
 
@@ -190,9 +198,13 @@ Is there any material chemical composition and corresponding {main_property_keyw
 
     Retrieval-Augmented Generation (RAG) is used to query the vector database of property-mentioned articles which were created during article processing to provide relevant context to the LLM for accurate identification.
 
+!!! example "VLM Figure Fallback"
+
+    When the RAG result is `no`, the flow checks saved `.jpg` figures for the DOI using the configured `vlm_model`. Graphs are treated as relevant even when full formulas are absent, as long as property values are associated with composition variables or doping concentrations (e.g., `x`, mol%, at%).
+
 ### 2. Composition-Property Data Extractor (2️⃣) & Composition-Property Data Formatter (3️⃣)
 
-**Purpose**: `Composition-Property Data Extractor` extracts compositions and property values along with their corresponding unit and material family from the article text and finally `Composition-Property Data Formatter` formats the extracted data into structured JSON similar to the following example.
+**Purpose**: `Composition-Property Data Extractor` extracts compositions and property values along with their corresponding unit and material family from the article text. It first calls `Equation Tool` to determine whether doping produces a single-phase compound and to retrieve the general doped formula, then calls `Graph Extractor Tool` to supplement text-derived values with data read from saved figures. Finally, `Composition-Property Data Formatter` formats the extracted data into structured JSON similar to the following example.
 
 **Output Format**:
 
@@ -211,13 +223,46 @@ Is there any material chemical composition and corresponding {main_property_keyw
 ```
 
 **Used Tools**:
-!!! example "MaterialParser Tool"
 
-    MaterialParser Tool is used by the `Composition-Property Data Formatter` agent. Material-parser is a deep learning model, developed by [Foppiano et al.](https://doi.org/10.1080/27660400.2022.2153633), specifically designed for parsing chemical compositions with multiple fractions denoted as variables e.g., $Na_{(1-x)}Li_xTiO_3$ where x = 0.1, 0.3, and 0.4. This tool incorporates the material-parser model to accurately extract and standardize complex chemical compositions with variable fractions into the final compositions. For e.g., the previous example would be parsed into three distinct compositions: **Na(0.9)Li(0.1)TiO3**, **Na(0.7)Li(0.3)TiO3**, and **Na(0.6)Li(0.4)TiO3**.
+!!! example "Equation Tool"
+
+    Equation Tool is used **first** by the `Composition-Property Data Extractor` agent. It sends the paper text — along with any crystal structure characterisation figures saved for the DOI (XRD, SEM, TEM, Rietveld, etc.) — to an LLM and applies a multi-step reasoning procedure to:
+
+    1. Identify the host crystal structure and sublattice occupancies.
+    2. Check XRD/diffraction evidence for single-phase formation.
+    3. Identify the dopant, its valence, and substitution site.
+    4. Determine the charge compensation mechanism (cation vacancies, anion vacancies, anion stoichiometry adjustment, etc.).
+    5. Construct and charge-balance the general doped formula in algebraic form.
+
+    If the paper confirms a single-phase compound the tool returns the general formula (e.g. `(Na_0.53(1-x)K_0.404(1-x)Li_0.066(1-x)Ca_x)(Nb_0.92(1-x)Sb_0.08(1-x)Al_2x)O3`). If secondary phases or phase separation are reported it returns the literal string `single compound is not being synthesized`, and the agent falls back to text-only extraction.
+
+    **LLM selection** — the tool automatically picks the model based on which API key is found in the environment, in this priority order:
+
+    | Priority | Environment Variable | Model used |
+    |----------|---------------------|------------|
+    | 1 (default) | `ANTHROPIC_API_KEY` | `anthropic/claude-sonnet-4-6` |
+    | 2 | `GEMINI_API_KEY` | `gemini/gemini-3-flash-preview` |
+    | 3 | `OPENAI_API_KEY` | `openai/gpt-5.4-mini` |
+    | 4 | `DEEPSEEK_API_KEY` | `deepseek/deepseek-chat` |
+    | 5 | `OPENROUTER_API_KEY` | `openrouter/google/gemini-2.0-flash` |
+    | 6 | `TOGETHER_API_KEY` | `together_ai/meta-llama/Llama-3.3-70B-Instruct-Turbo` |
+    | 7 | `COHERE_API_KEY` | `cohere/command-r-plus` |
+    | 8 | `FIREWORKS_API_KEY` | `fireworks_ai/accounts/fireworks/models/llama-v3p1-70b-instruct` |
+
+    Model precedence is:
+    1. `equation_model` argument in `extract_composition_property_data()`
+    2. `EQUATION_TOOL_MODEL` environment variable
+    3. API-key based auto-selection table above
+
+    The default instruction can be replaced with a domain-specific one via the `formula_instruction` parameter of `extract_composition_property_data()`.
 
 !!! example "Graph Extractor Tool"
 
-    Graph Extractor Tool is used by the `Composition-Property Data Extractor` agent when figures have been saved during article processing. It scans the saved figure directory for the given DOI, sends each image to a configurable vision LLM (default: `gemini/gemini-3-flash-preview`), and extracts composition-property value pairs directly from graphs and charts. The extracted data is returned as structured JSON and used alongside the text-based extraction to improve coverage of graphical data. For graph extraction, the figures are saved during article processing (using `caption_keywords` in `process_articles`) and specify the VLM model at extraction time:
+    Graph Extractor Tool is used by the `Composition-Property Data Extractor` agent **after** the Equation Tool when figures have been saved during article processing. It scans the saved figure directory for the given DOI, sends each image to a configurable vision LLM (default: `gemini/gemini-3-flash-preview`), and extracts composition-property value pairs directly from graphs and charts. The extracted data is returned as structured JSON and used alongside the text-based extraction to improve coverage of graphical data. For graph extraction, the figures are saved during article processing (using `caption_keywords` in `process_articles`) and specify the VLM model at extraction time:
+
+!!! example "MaterialParser Tool"
+
+    MaterialParser Tool is used by the `Composition-Property Data Formatter` agent. Material-parser is a deep learning model, developed by [Foppiano et al.](https://doi.org/10.1080/27660400.2022.2153633), specifically designed for parsing chemical compositions with multiple fractions denoted as variables e.g., $Na_{(1-x)}Li_xTiO_3$ where x = 0.1, 0.3, and 0.4. This tool incorporates the material-parser model to accurately extract and standardize complex chemical compositions with variable fractions into the final compositions. For e.g., the previous example would be parsed into three distinct compositions: **Na(0.9)Li(0.1)TiO3**, **Na(0.7)Li(0.3)TiO3**, and **Na(0.6)Li(0.4)TiO3**.
 
 ### 3. Synthesis Data Extractor (4️⃣) & Synthesis Data Formatter (5️⃣)
 

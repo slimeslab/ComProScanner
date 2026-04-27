@@ -14,6 +14,7 @@ from crewai.project import CrewBase, agent, crew, task
 from pydantic import BaseModel
 from .....utils.configs.llm_config import LLMConfig
 from ....tools.graph_extractor_tool import GraphExtractorTool
+from ....tools.equation_tool import EquationTool
 
 
 class DetailedCompositionPropertyData(BaseModel):
@@ -51,6 +52,8 @@ class CompositionExtractionCrew:
         vlm_model: str = "gemini/gemini-3-flash-preview",
         related_figures_base_path: str = "results/related_figures",
         main_extraction_keyword: str = "",
+        formula_instruction: str = None,
+        equation_model: str = None,
     ):
         """
         Initialize the MaterialsDataIdentifierCrew.
@@ -65,6 +68,7 @@ class CompositionExtractionCrew:
         - vlm_model (str, optional): Vision LLM model for graph extraction. Defaults to "gemini/gemini-3-flash-preview".
         - related_figures_base_path (str, optional): Base path for saved figures. Defaults to "results/related_figures".
         - main_extraction_keyword (str, optional): Property keyword used to label axes in the VLM extraction prompt. Defaults to "".
+        - equation_model (str, optional): Explicit litellm model name for EquationTool. Defaults to None (auto-select).
         """
         if doi is None:
             raise ValueError("DOI must be provided")
@@ -78,6 +82,8 @@ class CompositionExtractionCrew:
         self.vlm_model = vlm_model
         self.related_figures_base_path = related_figures_base_path
         self.main_extraction_keyword = main_extraction_keyword
+        self.formula_instruction = formula_instruction
+        self.equation_model = equation_model
 
         # Initialize output file paths as None
         self.output_log_file = None
@@ -109,6 +115,14 @@ class CompositionExtractionCrew:
     # Agents
     @agent
     def composition_property_extractor(self) -> Agent:
+        equation_tool_kwargs = {
+            "related_figures_base_path": self.related_figures_base_path,
+        }
+        if self.formula_instruction is not None:
+            equation_tool_kwargs["formula_instruction"] = self.formula_instruction
+        if self.equation_model is not None:
+            equation_tool_kwargs["equation_model"] = self.equation_model
+        equation_tool = EquationTool(**equation_tool_kwargs)
         graph_tool = GraphExtractorTool(
             vlm_model=self.vlm_model,
             related_figures_base_path=self.related_figures_base_path,
@@ -116,7 +130,7 @@ class CompositionExtractionCrew:
         )
         return Agent(
             config=self.agents_config["composition_property_extractor"],
-            tools=[graph_tool],
+            tools=[equation_tool, graph_tool],
             llm=self.llm,
             verbose=self.verbose,
         )
