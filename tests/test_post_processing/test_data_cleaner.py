@@ -274,6 +274,26 @@ class TestDataCleanerPrivateMethods:
             "0.006" in second_result or "0.0060" in second_result
         )  # 0.03 * 0.2 = 0.006
 
+    def test_convert_fractions_element_coefficient_multiplications(self, data_cleaner):
+        """Test that ElementCoeff*Multiplier patterns inside brackets are resolved."""
+        dict_list = [
+            {"Ba0.85Ca0.15(Zr0.1*1Ti0.9*1Ta*0)O3": "value1"},
+            {"(K0.5Na0.5)(Nb0.9*0.999Ta0.1*0.999)O3": "value2"},
+        ]
+        result = data_cleaner._convert_fractions_and_resolve_compositions(dict_list)
+
+        first_key = list(result[0].keys())[0]
+        # Ta*0 should be removed; Zr0.1*1 -> Zr0.1, Ti0.9*1 -> Ti0.9
+        assert "Ta" not in first_key
+        assert "Zr" in first_key
+        assert "Ti" in first_key
+        assert "*" not in first_key
+
+        second_key = list(result[1].keys())[0]
+        assert "*" not in second_key
+        assert "Ta" in second_key
+        assert "Nb" in second_key
+
     def test_return_in_dict(self, data_cleaner):
         """Test _return_in_dict method."""
         dict_list = [{"key1": "value1"}, {"key2": "value2"}, {"key3": "value3"}]
@@ -404,6 +424,39 @@ class TestDataCleanerPublicMethods:
             cleaner = DataCleaner(temp_file_path)
             result = cleaner.clean_data_with_relevant_compositions()
             assert result == {}
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_unresolved_compositions_collected(self):
+        """Test that unresolved compositions (still containing brackets/math ops after cleaning) are accumulated in unresolved_compositions."""
+        data = {
+            "10.x/good": {
+                "composition_data": {
+                    "compositions_property_values": {"BaTiO3": 100, "PbZrO3": 200}
+                },
+                "synthesis_data": {"method": "", "precursors": [], "steps": [], "characterization_techniques": []},
+                "article_metadata": {"doi": "", "title": "", "journal": "", "year": "", "isOpenAccess": False, "authors": [], "keywords": []},
+            },
+            "10.x/bad": {
+                "composition_data": {
+                    "compositions_property_values": {"(Ba0.5Na0.5)(0.9*x)TiO3": 50}
+                },
+                "synthesis_data": {"method": "", "precursors": [], "steps": [], "characterization_techniques": []},
+                "article_metadata": {"doi": "", "title": "", "journal": "", "year": "", "isOpenAccess": False, "authors": [], "keywords": []},
+            },
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            assert cleaner.filtered_compositions == {}
+            assert cleaner.unresolved_compositions == {}
+            cleaner.clean_data_with_relevant_compositions()
+            # filtered and unresolved dicts are populated after cleaning
+            assert isinstance(cleaner.filtered_compositions, dict)
+            assert isinstance(cleaner.unresolved_compositions, dict)
         finally:
             os.unlink(temp_file_path)
 

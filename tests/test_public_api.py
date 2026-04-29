@@ -164,6 +164,40 @@ def test_clean_data_public_api_forwards_to_cleaner(tmp_path):
     )
 
 
+def test_clean_data_stores_unresolved_compositions(tmp_path):
+    scanner = ComProScanner(main_property_keyword="piezoelectric")
+    input_file = tmp_path / "input.json"
+    input_file.write_text('{"10.x/a": {"composition_data": {"compositions_property_values": {"BaTiO3": 1}}, "synthesis_data": {}, "article_metadata": {}}}', encoding="utf-8")
+    unresolved_file = tmp_path / "unresolved.txt"
+
+    cleaner = MagicMock()
+    cleaner.clean_data_with_relevant_compositions.return_value = {
+        "10.x/a": {"composition_data": {"compositions_property_values": {"BaTiO3": 1}}}
+    }
+    cleaner.filtered_compositions = {"10.x/a": ["ABBREVIATION", "INVALID"]}
+    cleaner.unresolved_compositions = {"10.x/a": ["(BadComp)TiO3", "Na(0.5*x)NbO3"]}
+    cleaner.all_data = {"10.x/a": {"composition_data": {"compositions_property_values": {"BaTiO3": 1, "(BadComp)TiO3": 2}}}}
+
+    with patch("comproscanner.comproscanner.DataCleaner", return_value=cleaner):
+        scanner.clean_data(
+            json_results_file=str(input_file),
+            is_save_separate_results=False,
+            is_save_composition_property_file=True,
+            composition_property_file=str(tmp_path / "comp_prop.json"),
+            cleaning_strategy="full",
+            is_store_unresolved_compositions=True,
+            unresolved_compositions_file=str(unresolved_file),
+        )
+
+    assert unresolved_file.exists()
+    import json as _json
+    report = _json.loads(unresolved_file.read_text(encoding="utf-8"))
+    assert "filtered" in report
+    assert "unresolved" in report
+    assert report["filtered"]["10.x/a"] == ["ABBREVIATION", "INVALID"]
+    assert report["unresolved"]["10.x/a"] == ["(BadComp)TiO3", "Na(0.5*x)NbO3"]
+
+
 def test_evaluate_semantic_public_api_supports_value_error_thresholds():
     scanner = ComProScanner(main_property_keyword="piezoelectric")
     thresholds = {

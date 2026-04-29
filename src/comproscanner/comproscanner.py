@@ -715,6 +715,8 @@ class ComProScanner:
         is_save_composition_property_file: bool = True,
         composition_property_file: str = "composition_property.json",
         cleaning_strategy: str = "full",
+        is_store_unresolved_compositions: bool = False,
+        unresolved_compositions_file: str = "unresolved_compositions.json",
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Removes extra information (key-value pairs) provided by extracted agents. Finally, cleans the composition-property data based on periodic elements, abbreviations and resolves arithmetic calculations, fractions etc.
@@ -726,6 +728,8 @@ class ComProScanner:
             is_save_composition_property_file (bool, optional): Whether to save composition-property values to a separate file. Defaults to True.
             composition_property_file (str, optional): Path to the composition-property file containing a dictionary of composition-property data. Defaults to "composition_property.json".
             cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
+            is_store_unresolved_compositions (bool, optional): Whether to log resolution statistics and save unresolved composition keys to a file. Requires is_save_composition_property_file=True. Defaults to False.
+            unresolved_compositions_file (str, optional): Path to the file where unresolved composition keys will be saved. Used only when is_store_unresolved_compositions=True. Defaults to "unresolved_compositions.txt".
 
         Returns:
             tuple: A tuple containing:
@@ -754,6 +758,12 @@ class ComProScanner:
                 message=f"Invalid cleaning strategy: {cleaning_strategy}. Please choose either 'full' or 'basic'."
             )
         data_cleaner = DataCleaner(results_file=json_results_file)
+        if is_store_unresolved_compositions and is_save_composition_property_file:
+            source_composition_count = sum(
+                len(article_data.get("composition_data", {}).get("compositions_property_values", {}))
+                for article_data in data_cleaner.all_data.values()
+                if isinstance(article_data, dict)
+            )
         final_data = data_cleaner.clean_data_with_relevant_compositions(
             strategy=cleaning_strategy
         )
@@ -776,6 +786,25 @@ class ComProScanner:
                         "compositions_property_values", {}
                     )
                     all_composition_property_values.update(compositions_property_values)
+            if is_store_unresolved_compositions:
+                resolved_count = len(all_composition_property_values)
+                filtered_count = sum(len(v) for v in data_cleaner.filtered_compositions.values())
+                unresolved_count = sum(len(v) for v in data_cleaner.unresolved_compositions.values())
+                logger.info(
+                    f"Composition-property pairs — source: {source_composition_count}, "
+                    f"filtered: {filtered_count}, unresolved: {unresolved_count}, "
+                    f"resolved: {resolved_count}"
+                )
+                if data_cleaner.filtered_compositions or data_cleaner.unresolved_compositions:
+                    dropped_report = {
+                        "filtered": data_cleaner.filtered_compositions,
+                        "unresolved": data_cleaner.unresolved_compositions,
+                    }
+                    with open(unresolved_compositions_file, "w", encoding="utf-8") as file:
+                        json.dump(dropped_report, file, indent=2)
+                    logger.info(
+                        f"Filtered and unresolved compositions saved to {unresolved_compositions_file}."
+                    )
             # Save all composition-property values to a separate JSON file
             with open(composition_property_file, "w", encoding="utf-8") as file:
                 json.dump(all_composition_property_values, file, indent=2, default=str)

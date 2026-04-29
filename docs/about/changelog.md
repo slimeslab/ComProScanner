@@ -31,6 +31,8 @@
   - The Materials Data Identifier still runs text RAG first.
   - If RAG returns `no`, the flow now checks saved DOI figures with VLM and upgrades the decision to `yes` when relevant graph/figure evidence is found (including doping concentration vs property plots where full formulas are absent).
 
+- Added `is_store_unresolved_compositions` and `unresolved_compositions_file` parameters to `clean_data()` to optionally log split composition-property resolution statistics (`source`, `filtered`, `unresolved`, `resolved` counts) and persist filtered and unresolved composition keys in a JSON file keyed by DOI under `"filtered"` and `"unresolved"` top-level keys.
+
 - Added explicit Equation Tool model control:
 
   - New `equation_model` parameter in `extract_composition_property_data()` (threaded through `DataExtractionFlow` and `CompositionExtractionCrew` into `EquationTool`).
