@@ -104,7 +104,7 @@ Name of the embedding model to use for creating vector databases for RAG.
 
 #### :material-square-medium:`caption_keywords` _(dict)_
 
-Dictionary of keyword lists used to filter figures during article processing. Only figures whose captions match these keywords are saved for later VLM-based graph extraction. If not provided, defaults to `property_keywords`.
+Dictionary of keyword lists used to filter figures during article processing. If not provided (`None`), **all figures are saved** for later VLM-based graph extraction. If provided, only figures whose captions match these keywords are saved.
 
 ```python
 caption_keywords = {
@@ -139,7 +139,7 @@ Custom output path for the automated failure report. If not provided, defaults t
 
 !!! info "Default Values"
 
-    :material-square-small:**`source_list`** = ["elsevier", "wiley", "iop", "springer"]<br>:material-square-small:**`folder_path`** = None<br>:material-square-small:**`doi_list`** = None<br>:material-square-small:**`is_sql_db`** = False<br>:material-square-small:**`is_save_xml`** = False<br>:material-square-small:**`is_save_pdf`** = False<br>:material-square-small:**`rag_db_path`** = "db"<br>:material-square-small:**`chunk_size`** = 1000<br>:material-square-small:**`chunk_overlap`** = 25<br>:material-square-small:**`embedding_model`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`caption_keywords`** = `property_keywords`<br>:material-square-small:**`save_failed_pdf_report`** = True<br>:material-square-small:**`failed_pdf_report_path`** = None (auto: `{folder_path}/failed_pdf_filenames.txt`)<br>:material-square-small:**`save_failed_automated_report`** = True<br>:material-square-small:**`failed_automated_report_path`** = None (auto: `results/failed_automated_articles.txt`)
+    :material-square-small:**`source_list`** = ["elsevier", "wiley", "iop", "springer"]<br>:material-square-small:**`folder_path`** = None<br>:material-square-small:**`doi_list`** = None<br>:material-square-small:**`is_sql_db`** = False<br>:material-square-small:**`is_save_xml`** = False<br>:material-square-small:**`is_save_pdf`** = False<br>:material-square-small:**`rag_db_path`** = "db"<br>:material-square-small:**`chunk_size`** = 1000<br>:material-square-small:**`chunk_overlap`** = 25<br>:material-square-small:**`embedding_model`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`caption_keywords`** = None (saves all figures)<br>:material-square-small:**`save_failed_pdf_report`** = True<br>:material-square-small:**`failed_pdf_report_path`** = None (auto: `{folder_path}/failed_pdf_filenames.txt`)<br>:material-square-small:**`save_failed_automated_report`** = True<br>:material-square-small:**`failed_automated_report_path`** = None (auto: `results/failed_automated_articles.txt`)
 
 ## Processing Workflow
 

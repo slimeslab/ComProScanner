@@ -255,17 +255,19 @@ class PDFToMarkdownText:
                 raise KeyboardInterruptHandler()
 
     def extract_and_save_figures(
-        self, doi: str, caption_keywords: dict, base_path: str = None
+        self, doi: str, caption_keywords: dict = None, base_path: str = None
     ):
         """
-        Extract figures/tables from converted PDF using Docling item images and save
-        those whose captions match caption_keywords.
+        Extract figures/tables from converted PDF using Docling item images and save them.
+        If caption_keywords is provided, only figures whose captions match are saved;
+        if None, all figures are saved.
 
         Must be called after convert_to_markdown() so that self._document is populated.
 
         Args:
             doi (str): Article DOI.
-            caption_keywords (dict): Dict with "exact_keywords" and/or "substring_keywords".
+            caption_keywords (dict, optional): Dict with "exact_keywords" and/or
+                "substring_keywords". If None, all figures are saved.
             base_path (str, optional): Base directory for saving figures. Defaults to
                 FigureExtractor.BASE_PATH ("results/related_figures").
         """
@@ -273,8 +275,6 @@ class PDFToMarkdownText:
             logger.warning(
                 "extract_and_save_figures called before convert_to_markdown(); skipping."
             )
-            return False
-        if not caption_keywords:
             return False
 
         try:
@@ -286,7 +286,7 @@ class PDFToMarkdownText:
 
                 caption_text = self._extract_caption_text(element)
 
-                if not FigureExtractor.keyword_matches_caption(
+                if caption_keywords and not FigureExtractor.keyword_matches_caption(
                     caption_text, caption_keywords
                 ):
                     continue

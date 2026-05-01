@@ -523,7 +523,8 @@ class SpringerArticleProcessor:
 
     def _extract_and_save_figures(self, root, doi: str):
         """
-        Extract figures from Springer JATS XML whose captions match self.caption_keywords.
+        Extract figures from Springer JATS XML and save them. If self.caption_keywords is
+        provided only figures whose captions match are saved; if None, all figures are saved.
         Attempts to download images from the Springer CDN and saves them to
         results/extracted_data/{keyword}/related_figures/{doi_}/{caption_id}.jpg
         alongside info.json.
@@ -532,8 +533,6 @@ class SpringerArticleProcessor:
             root: lxml root element of the parsed Springer JATS XML.
             doi (str): Article DOI.
         """
-        if not self.caption_keywords:
-            return False
         base_path = f"results/extracted_data/{self.keyword}/related_figures"
         try:
             import urllib.parse
@@ -562,7 +561,7 @@ class SpringerArticleProcessor:
                 ).strip()
                 caption_text = f"{label_text} {para_text}".strip()
 
-                if not FigureExtractor.keyword_matches_caption(
+                if self.caption_keywords and not FigureExtractor.keyword_matches_caption(
                     caption_text, self.caption_keywords
                 ):
                     continue

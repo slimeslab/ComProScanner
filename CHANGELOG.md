@@ -45,6 +45,8 @@
 
 ### Fixed
 
+- `_parse_json_output()` now recovers JSON from mixed-text crew outputs (e.g. `Thought: … { "json": "here" }`) by scanning for the first `{` / `[` and last `}` / `]` and retrying `json.loads()` on the extracted substring, before falling back to `ast.literal_eval()`.
+
 - Composition formatter agent now verifies `MaterialParserTool` output for incomplete variable substitution (e.g. `(1-x-y)` partially resolved as `(0.9-0.010)`) and overrides with the correct fully-substituted BODMAS expression when the tool is wrong.
 
 - `process_articles()` now routes user-provided `doi_list` by `general_publisher` from metadata and sends each DOI only to its matching source processor.

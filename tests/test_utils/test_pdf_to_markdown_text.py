@@ -173,6 +173,47 @@ class TestPDFToMarkdownText:
         mock_update.assert_called_once()
         mock_save.assert_called_once()
 
+    @patch("comproscanner.utils.pdf_to_markdown_text.TableItem")
+    @patch("comproscanner.utils.pdf_to_markdown_text.PictureItem")
+    @patch("comproscanner.utils.pdf_to_markdown_text.DocumentConverter")
+    def test_extract_and_save_figures_saves_all_when_no_caption_keywords(
+        self, mock_converter, mock_picture_item, mock_table_item
+    ):
+        """When caption_keywords is None all figures should be saved regardless of caption"""
+        pdf_converter = PDFToMarkdownText(source="test.pdf")
+
+        fake_picture_base = type("FakePictureBase", (), {})
+        fake_element = fake_picture_base()
+        fake_element.caption_text = MagicMock(return_value="")
+        fake_element.captions = [_FakeCaptionNode("some unrelated caption")]
+        fake_image = MagicMock()
+        fake_image.save = MagicMock()
+        fake_element.get_image = MagicMock(return_value=fake_image)
+
+        fake_document = MagicMock()
+        fake_document.iterate_items.return_value = [(fake_element, 0)]
+        pdf_converter._document = fake_document
+
+        with patch(
+            "comproscanner.utils.pdf_to_markdown_text.PictureItem", fake_picture_base
+        ), patch(
+            "comproscanner.utils.pdf_to_markdown_text.TableItem", type(
+                "FakeTableBase", (), {}
+            )
+        ), patch(
+            "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.update_info_json"
+        ) as mock_update, patch(
+            "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.save_figure_from_bytes",
+            return_value="saved.jpg",
+        ) as mock_save:
+            result = pdf_converter.extract_and_save_figures(
+                "10.1000/test.doi", caption_keywords=None, base_path="results/test_figures"
+            )
+
+        assert result is True
+        mock_update.assert_called_once()
+        mock_save.assert_called_once()
+
     def test_clean_text_with_image_placeholders(self):
         """Test clean_text method with image placeholders"""
         markdown_text = """# Title

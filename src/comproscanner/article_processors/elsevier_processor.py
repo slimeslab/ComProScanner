@@ -488,7 +488,8 @@ class ElsevierArticleProcessor:
 
     def _extract_and_save_figures(self, root, doi: str):
         """
-        Extract figures from Elsevier XML whose captions match self.caption_keywords.
+        Extract figures from Elsevier XML and save them. If self.caption_keywords is
+        provided only figures whose captions match are saved; if None, all figures are saved.
         Downloads images from the Elsevier API and saves them to
         results/extracted_data/{keyword}/related_figures/{doi_}/{caption_id}.jpg
         alongside info.json.
@@ -497,8 +498,6 @@ class ElsevierArticleProcessor:
             root: lxml root element of the parsed Elsevier XML.
             doi (str): Article DOI.
         """
-        if not self.caption_keywords:
-            return False
         base_path = f"results/extracted_data/{self.keyword}/related_figures"
         try:
             # Build ref → URL map from <objects> element
@@ -533,10 +532,9 @@ class ElsevierArticleProcessor:
                         "".join(el.itertext()) for el in caption_els
                     ).strip()
 
-                caption_matches = FigureExtractor.keyword_matches_caption(
+                if self.caption_keywords and not FigureExtractor.keyword_matches_caption(
                     caption_text, self.caption_keywords
-                )
-                if not caption_matches:
+                ):
                     continue
 
                 has_caption_keyword_match = True

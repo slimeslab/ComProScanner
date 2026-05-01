@@ -162,8 +162,6 @@ class ComProScanner:
                 message="Please provide property_keywords dictionary to proceed."
             )
         source_list = [source.lower() for source in source_list]
-        if caption_keywords is None:
-            caption_keywords = property_keywords
         rag_config = RAGConfig(
             rag_db_path=rag_db_path,
             chunk_size=chunk_size,

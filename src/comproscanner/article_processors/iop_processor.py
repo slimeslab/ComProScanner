@@ -392,7 +392,8 @@ class IOPArticleProcessor:
 
     def _extract_and_save_figures(self, root, doi: str, xml_dir: str):
         """
-        Extract figures from IOP JATS XML whose captions match self.caption_keywords.
+        Extract figures from IOP JATS XML and save them. If self.caption_keywords is
+        provided only figures whose captions match are saved; if None, all figures are saved.
         Tries local image files first (co-located with the XML), then IOP CDN as fallback.
         Saves to results/extracted_data/{keyword}/related_figures/{doi_}/.
 
@@ -401,8 +402,6 @@ class IOPArticleProcessor:
             doi (str): Article DOI.
             xml_dir (str): Directory containing the XML file (for local image lookup).
         """
-        if not self.caption_keywords:
-            return False
         base_path = f"results/extracted_data/{self.keyword}/related_figures"
         try:
             XLINK = "http://www.w3.org/1999/xlink"
@@ -433,7 +432,7 @@ class IOPArticleProcessor:
                 ).strip()
                 caption_text = f"{label_text} {para_text}".strip()
 
-                if not FigureExtractor.keyword_matches_caption(
+                if self.caption_keywords and not FigureExtractor.keyword_matches_caption(
                     caption_text, self.caption_keywords
                 ):
                     continue

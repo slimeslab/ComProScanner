@@ -452,7 +452,25 @@ class DataExtractionFlow(Flow[MaterialsState]):
             except json.JSONDecodeError as e:
                 logger.debug(f"{log_prefix} - json.loads() failed: {str(e)[:100]}")
 
-            # Case 6: Try Python literal evaluation (handles escape sequences)
+            # Case 6: Extract JSON from mixed text (LLM reasoning + JSON output)
+            # Handles outputs like "Thought: ... reasoning ... { actual json }"
+            if parsed_output is None:
+                for start_char, end_char in [('{', '}'), ('[', ']')]:
+                    start_idx = cleaned_output.find(start_char)
+                    end_idx = cleaned_output.rfind(end_char)
+                    if start_idx != -1 and end_idx > start_idx:
+                        candidate = cleaned_output[start_idx:end_idx + 1]
+                        try:
+                            parsed_output = json.loads(candidate)
+                            logger.debug(
+                                f"{log_prefix} - Extracted JSON from mixed text using brace search"
+                            )
+                            cleaned_output = candidate
+                            break
+                        except json.JSONDecodeError:
+                            pass
+
+            # Case 7: Try Python literal evaluation (handles escape sequences)
             if parsed_output is None:
                 try:
                     # Convert JSON booleans/null to Python equivalents
@@ -470,7 +488,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
                         f"{log_prefix} - ast.literal_eval() failed: {str(e)[:100]}"
                     )
 
-            # Case 7: Parsing successful, now check if we need to extract from schema
+            # Case 8: Parsing successful, now check if we need to extract from schema
             if parsed_output is not None:
                 if isinstance(parsed_output, dict) and expected_keys:
                     # Check if this looks like a schema
@@ -498,7 +516,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
 
                 return parsed_output
 
-            # Case 8: All parsing methods failed
+            # Case 8 (final fallback): All parsing methods failed
             logger.error(f"{log_prefix} - All parsing methods failed")
             logger.error(f"{log_prefix} - First 300 chars: {cleaned_output[:300]}")
             return default_value
