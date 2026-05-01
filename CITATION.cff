@@ -41,8 +41,12 @@ preferred-citation:
       description: "arXiv preprint"
   journal: "Digital Discovery"
   publisher:
-    name: "RSC"
-  status: advance-online
+    name: "Royal Society of Chemistry"
+  volume: 5
+  issue: 4
+  start: 1794
+  end: 1808
+  year: 2026
   title: "ComProScanner: a multi-agent based framework for composition-property structured data extraction from scientific literature"
   type: article
   url: "https://doi.org/10.1039/D5DD00521C"

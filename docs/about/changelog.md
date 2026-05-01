@@ -45,6 +45,8 @@
 
 ### Fixed
 
+- Composition formatter agent now verifies `MaterialParserTool` output for incomplete variable substitution (e.g. `(1-x-y)` partially resolved as `(0.9-0.010)`) and overrides with the correct fully-substituted BODMAS expression when the tool is wrong.
+
 - `process_articles()` now routes user-provided `doi_list` by `general_publisher` from metadata and sends each DOI only to its matching source processor.
 
 - PNG, GIF, and WEBP figures now convert correctly to JPEG: transparent images are composited onto a white background, animated GIFs are pinned to frame 0, and two additional Springer Nature CDN URL patterns are tried to improve download success for these formats.
