@@ -123,6 +123,39 @@ def test_init_without_property_keywords(monkeypatch, share_scopus_api_key):
     assert "property_keywords" in str(exc_info.value)
 
 
+def test_initialization_with_inst_token(monkeypatch, share_scopus_api_key):
+    """Test that X-ELS-Insttoken header is included when SCIENCEDIRECT_INSTTOKEN is set"""
+    monkeypatch.setenv("SCOPUS_API_KEY", share_scopus_api_key)
+    monkeypatch.setenv("SCIENCEDIRECT_INSTTOKEN", "dummy_inst_token")
+    property_keywords = {"exact_keywords": ["d33"], "substring_keywords": [" d33 "]}
+
+    with patch("os.path.exists", return_value=False), patch("os.makedirs"):
+        processor = ElsevierArticleProcessor(
+            main_property_keyword="piezoelectric", property_keywords=property_keywords
+        )
+
+    assert processor.inst_token == "dummy_inst_token"
+    assert "X-ELS-Insttoken" in processor.headers
+    assert processor.headers["X-ELS-Insttoken"] == "dummy_inst_token"
+    assert processor.headers["X-ELS-APIKey"] == share_scopus_api_key
+
+
+def test_initialization_without_inst_token(monkeypatch, share_scopus_api_key):
+    """Test that X-ELS-Insttoken header is omitted when SCIENCEDIRECT_INSTTOKEN is not set"""
+    monkeypatch.setenv("SCOPUS_API_KEY", share_scopus_api_key)
+    monkeypatch.delenv("SCIENCEDIRECT_INSTTOKEN", raising=False)
+    property_keywords = {"exact_keywords": ["d33"], "substring_keywords": [" d33 "]}
+
+    with patch("os.path.exists", return_value=False), patch("os.makedirs"):
+        processor = ElsevierArticleProcessor(
+            main_property_keyword="piezoelectric", property_keywords=property_keywords
+        )
+
+    assert processor.inst_token is None
+    assert "X-ELS-Insttoken" not in processor.headers
+    assert processor.headers["X-ELS-APIKey"] == share_scopus_api_key
+
+
 def test_load_and_preprocess_data(elsevier_processor, sample_df, monkeypatch):
     """Test load and preprocess data method"""
     monkeypatch.setattr(pd, "read_csv", lambda *args, **kwargs: sample_df)

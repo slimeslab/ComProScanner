@@ -2,6 +2,8 @@
 
 ### Added
 
+- Added `SCIENCEDIRECT_INSTTOKEN` environment variable support in `ElsevierArticleProcessor` for off-campus remote access to subscription-based Elsevier articles and figures. When set, the token is sent as the `X-ELS-Insttoken` header in all ScienceDirect API requests and figure downloads. The variable is optional; omitting it does not affect on-campus access.
+
 - New `value_error_thresholds` parameter added to both `evaluate_semantic()` and `evaluate_agentic()` for range-based absolute error tolerances on numeric property value comparisons:
 
   - Accepts a dict mapping `(min, max)` tuples to absolute error thresholds. When a ground-truth value falls inside a range, the extracted value is accepted if `|extracted - ground_truth| ≤ threshold`. Values outside all configured ranges fall back to exact comparison.
