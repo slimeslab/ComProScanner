@@ -6,7 +6,7 @@
 
 - New `value_error_thresholds` parameter added to both `evaluate_semantic()` and `evaluate_agentic()` for range-based absolute error tolerances on numeric property value comparisons:
 
-  - Accepts a dict mapping `(min, max)` tuples to absolute error thresholds. When a ground-truth value falls inside a range, the extracted value is accepted if `|extracted - ground_truth| ≤ threshold`. Values outside all configured ranges fall back to exact comparison.
+  - Accepts a dict mapping `(min, max)` tuples to absolute error thresholds. Ranges are interpreted as **layers**: the narrowest range containing the ground-truth value determines the tolerance. For example, `(-150, 150): 1` applies only to values in (-150, -50) and (50, 150) when `(-50, 50): 0.5` is also present — no need for separate positive/negative sub-ranges. Tuple element order is irrelevant: `(-150, 150)` and `(150, -150)` are equivalent. Values outside all configured ranges fall back to exact comparison.
 
   - **Semantic evaluation**: handled inside `_is_value_in_range()` via the new `_get_error_threshold()` helper in `MaterialsDataSemanticEvaluator`.
 

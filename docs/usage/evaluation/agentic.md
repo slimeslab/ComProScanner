@@ -50,17 +50,16 @@ An instance of the LiteLLM class. Read more about LiteLLM instance from CrewAI [
 
 #### :material-square-medium:`value_error_thresholds` _(dict)_
 
-Optional mapping of ground-truth value ranges to absolute error tolerances for numeric property value comparisons. When provided, a custom tool is added to the evaluation agent that it calls before deciding whether a numeric value matches. The agent is instructed to accept the extracted value if the absolute difference does not exceed the threshold for the range that the ground-truth value falls in.
+Optional mapping of ground-truth value ranges to absolute error tolerances for numeric property value comparisons. When provided, a custom tool is added to the evaluation agent that it calls before deciding whether a numeric value matches. Ranges are interpreted as **layers**: the narrowest range containing the ground-truth value determines the tolerance, so wider ranges implicitly cover the gaps left by narrower ones. If no range matches, exact comparison is used.
 
-Keys must be **tuples** `(min, max)`; `float('inf')` and `float('-inf')` are supported for open-ended bounds.
+Keys must be **tuples** `(a, b)` — element order does not matter, `(-150, 150)` and `(150, -150)` are treated identically. `float('inf')` and `float('-inf')` are supported for open-ended bounds.
 
 ```python
 value_error_thresholds = {
-    (-200, 200):           5,   # |ref| ≤ 200  →  tolerance ±5
-    (201, 500):            8,   # ref in (200, 500]  →  tolerance ±8
-    (-500, -201):          8,   # ref in [-500, -200)  →  tolerance ±8
-    (501, float('inf')):  10,   # ref > 500  →  tolerance ±10
-    (float('-inf'), -501): 10,  # ref < -500  →  tolerance ±10
+    (-50, 50):                        0.5,  # |ref| ≤ 50  →  tolerance ±0.5
+    (-150, 150):                        1,  # |ref| in (50, 150]  →  tolerance ±1
+    (-1000, 1000):                      2,  # |ref| in (150, 1000]  →  tolerance ±2
+    (float('-inf'), float('inf')):      5,  # |ref| > 1000  →  tolerance ±5
 }
 ```
 
@@ -121,18 +120,18 @@ results = evaluate_agentic(
     ground_truth_file="ground_truth.json",
     test_data_file="test_data.json",
     value_error_thresholds={
-        (-200, 200):           5,   # small values: allow ±5
-        (201, 500):            8,   # medium values: allow ±8
-        (-500, -201):          8,
-        (501, float('inf')):  10,   # large values: allow ±10
-        (float('-inf'), -501): 10,
+        (-50, 50):                       0.5,  # small values: allow ±0.5
+        (-150, 150):                       1,  # medium values: allow ±1
+        (-1000, 1000):                     2,  # large values: allow ±2
+        (float('-inf'), float('inf')):     5,  # very large values: allow ±5
     }
 )
 ```
 
 !!! note
-    - Keys must be **tuples** `(min, max)` — Python lists cannot be used as dict keys.
-    - Key ordering does not matter; `min`/`max` is resolved internally.
+    - Keys must be **tuples** — Python lists cannot be used as dict keys.
+    - Tuple element order does not matter; `(-150, 150)` and `(150, -150)` are identical.
+    - Ranges behave as layers: the narrowest range wins, so there is no need to split positive and negative sub-ranges separately.
     - When no thresholds are configured the parameter has zero overhead — no extra tool is added to the agent and the task prompt is unchanged.
 
 ## Output Format

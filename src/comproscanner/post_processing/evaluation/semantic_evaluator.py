@@ -16,7 +16,6 @@ from difflib import SequenceMatcher
 from ...utils.configs import CustomDictionary
 from ...utils.error_handler import ValueErrorHandler
 
-
 class MaterialsDataSemanticEvaluator:
     """
     A class to evaluate materials science data against reference data using semantic matching and exact matching (for specific items).
@@ -210,12 +209,20 @@ class MaterialsDataSemanticEvaluator:
         Args:
             ref_val (float): Ground-truth numeric value.
             error_thresholds (dict): Mapping of ``(min, max)`` tuples to absolute
-                thresholds.  Infinity values are supported.
+                thresholds.  Infinity values are supported.  Ranges are interpreted
+                as layers: the narrowest range that contains ``ref_val`` wins, so
+                ``(-150, 150): 8`` matches values in (-150, -50) and (50, 150) when
+                ``(-50, 50): 0.5`` is also present.  Tuple order does not matter —
+                ``(-150, 150)`` and ``(150, -150)`` are equivalent.
 
         Returns:
             float or None: Threshold if a range contains *ref_val*, else ``None``.
         """
-        for range_key, threshold in error_thresholds.items():
+        sorted_ranges = sorted(
+            error_thresholds.items(),
+            key=lambda item: max(item[0]) - min(item[0]),
+        )
+        for range_key, threshold in sorted_ranges:
             lo = min(range_key)
             hi = max(range_key)
             if lo <= ref_val <= hi:

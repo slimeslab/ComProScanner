@@ -29,6 +29,9 @@ from comproscanner.post_processing.evaluation.eval_flow.eval_flow import (
     MaterialsDataAgenticEvaluatorFlow,
     AgentEvaluationState,
 )
+from comproscanner.post_processing.evaluation.eval_flow.crews.composition_evaluation_crew.composition_evaluation_crew import (
+    GetValueErrorThresholdTool,
+)
 from comproscanner.utils.error_handler import ValueErrorHandler, BaseError
 from crewai import LLM
 
@@ -1092,6 +1095,57 @@ class TestMaterialsDataAgenticEvaluatorFlow:
         )
 
         assert flow.state.value_error_thresholds == {}
+
+    def test_get_value_error_threshold_tool_layered(self):
+        """GetValueErrorThresholdTool returns the narrowest matching range's threshold."""
+        # thresholds_list must be pre-sorted by span (lo, hi, threshold) — mirrors
+        # what CompositionEvaluationCrew.__init__ produces from value_error_thresholds.
+        tool = GetValueErrorThresholdTool(
+            thresholds_list=[
+                (-50.0, 50.0, 0.5),           # span 100
+                (-150.0, 150.0, 1.0),          # span 300
+                (-1000.0, 1000.0, 2.0),        # span 2000
+                (float("-inf"), float("inf"), 5.0),  # span inf
+            ]
+        )
+
+        # Inner range wins
+        assert tool._run("30") == "threshold:0.5"
+        assert tool._run("-30") == "threshold:0.5"
+
+        # Middle range wins for values outside the inner range
+        assert tool._run("75") == "threshold:1.0"
+        assert tool._run("-100") == "threshold:1.0"
+
+        # Third range wins beyond ±150
+        assert tool._run("500") == "threshold:2.0"
+        assert tool._run("-500") == "threshold:2.0"
+
+        # Outer (infinite) range catches everything beyond ±1000
+        assert tool._run("2000") == "threshold:5.0"
+        assert tool._run("-2000") == "threshold:5.0"
+
+        # Non-numeric falls back to exact
+        assert tool._run("not_a_number").startswith("exact")
+
+    def test_get_value_error_threshold_tool_reversed_tuple_via_crew(self):
+        """CompositionEvaluationCrew normalises reversed tuples identically to canonical order."""
+        import inspect
+        from comproscanner.post_processing.evaluation.eval_flow.crews.composition_evaluation_crew.composition_evaluation_crew import (
+            CompositionEvaluationCrew,
+        )
+
+        def _build_list(thresholds):
+            triples = []
+            for range_key, threshold in thresholds.items():
+                lo = min(range_key)
+                hi = max(range_key)
+                triples.append((lo, hi, float(threshold)))
+            return sorted(triples, key=lambda t: t[1] - t[0])
+
+        normal = _build_list({(-50, 50): 0.5, (-150, 150): 1})
+        reversed_ = _build_list({(-50, 50): 0.5, (150, -150): 1})
+        assert normal == reversed_
 
     def test_missing_dois_handling(self, temp_files):
         """Test handling of DOIs missing from test data"""

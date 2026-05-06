@@ -209,6 +209,36 @@ class TestMaterialsDataSemanticEvaluator:
         assert evaluator_no_model._is_value_in_range(600.0, 600.0, thresholds) is True
         assert evaluator_no_model._is_value_in_range(600.0, 605.0, thresholds) is False
 
+    def test_is_value_in_range_layered_thresholds(self, evaluator_no_model):
+        """Nested/layered ranges: narrowest matching range always wins."""
+        thresholds = {
+            (-50, 50): 0.5,
+            (-150, 150): 8,
+            (float("-inf"), float("inf")): 10,
+        }
+        # Inner range (-50..50) wins for values inside it
+        assert evaluator_no_model._is_value_in_range(30.0, 30.3, thresholds) is True   # within 0.5
+        assert evaluator_no_model._is_value_in_range(30.0, 31.0, thresholds) is False  # exceeds 0.5
+
+        # Middle range wins for values in 50..150 / -150..-50
+        assert evaluator_no_model._is_value_in_range(75.0, 82.0, thresholds) is True   # within 8
+        assert evaluator_no_model._is_value_in_range(75.0, 84.0, thresholds) is False  # exceeds 8
+        assert evaluator_no_model._is_value_in_range(-100.0, -107.0, thresholds) is True
+        assert evaluator_no_model._is_value_in_range(-100.0, -109.0, thresholds) is False
+
+        # Outer (infinite) range wins for values beyond ±150
+        assert evaluator_no_model._is_value_in_range(300.0, 309.0, thresholds) is True  # within 10
+        assert evaluator_no_model._is_value_in_range(300.0, 311.0, thresholds) is False
+
+        # Reversed tuple notation is equivalent
+        thresholds_reversed = {
+            (-50, 50): 0.5,
+            (150, -150): 8,
+            (float("-inf"), float("inf")): 10,
+        }
+        assert evaluator_no_model._is_value_in_range(75.0, 82.0, thresholds_reversed) is True
+        assert evaluator_no_model._is_value_in_range(75.0, 84.0, thresholds_reversed) is False
+
     def test_evaluate_uses_value_error_thresholds_from_constructor(
         self, temp_json_files
     ):
