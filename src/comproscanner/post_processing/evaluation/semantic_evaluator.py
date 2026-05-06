@@ -11,6 +11,7 @@ Date: 16-04-2025
 import json
 import string
 from difflib import SequenceMatcher
+from pathlib import Path
 
 # Custom imports
 from ...utils.configs import CustomDictionary
@@ -1599,7 +1600,9 @@ class MaterialsDataSemanticEvaluator:
                 )
 
         # Save results to file
-        with open(output_file, "w", encoding="utf-8") as file:
+        output_path = Path(output_file)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_path, "w", encoding="utf-8") as file:
             json.dump(accumulated_results, file, indent=2)
 
         return accumulated_results
