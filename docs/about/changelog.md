@@ -63,7 +63,7 @@
 ---
 ## [0.1.6] - 2026-04-02
 ### Changed
-- Updated [README.md](README.md), [CITATION.cff](CITATION.cff) and docs with the published version (advance article) of the ComProScanner paper in _Digital Discovery_ as fully open access:
+- Updated [README.md](https://github.com/slimeslab/ComProScanner/blob/main/README.md), [CITATION.cff](https://github.com/slimeslab/ComProScanner/blob/main/CITATION.cff) and docs with the published version (advance article) of the ComProScanner paper in _Digital Discovery_ as fully open access:
   - [ComProScanner: a multi-agent based framework for composition-property structured data extraction from scientific literature](https://doi.org/10.1039/D5DD00521C) 
 
 ### Added

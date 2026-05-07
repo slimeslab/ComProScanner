@@ -58,6 +58,11 @@ theme:
 plugins:
   - search:
       separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+  - blog:
+      blog_dir: blogs
+      post_date_format: long
+      post_url_format: "{slug}"
+      post_excerpt: optional
   - minify:
       minify_html: true
   - mkdocstrings:
@@ -171,6 +176,7 @@ nav:
           - Evaluation Visualization: usage/visualization/eval-viz.md
   - RAG Configuration: rag-config.md
   - API Overview: api.md
+  - Blog: blogs/index.md
   - About:
       - Project Structure: about/project-structure.md
       - License: about/license.md
