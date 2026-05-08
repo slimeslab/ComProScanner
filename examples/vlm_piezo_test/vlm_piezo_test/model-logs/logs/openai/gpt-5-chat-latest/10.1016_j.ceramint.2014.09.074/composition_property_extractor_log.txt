@@ -1,0 +1,280 @@
+2026-05-01 10:45:23: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2014.09.074.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2014.09.074 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+shows a typical TEM micrograph of the double calcined (K0.5Na0.5)1\u2212x Li x (Nb0.96Sb0.04)O3 powders which have been high-energy milled for 5h at 300rpm. The micrograph shows a narrow particle size distribution with the average particle size of about 30nm. shows the compositional dependence of bulk density for (K0.5Na0.5)1\u2212x Li x (Nb0.96Sb0.04)O3 ceramics obtained under different sintering conditions. As seen in , for each set of sintering parameters (1050\xb0C for 3h), (1070\xb0C for 3h), (1080\xb0C for 3h) and (1090\xb0C for 3h), the ceramic compositions exhibit a wide range of density with its values reaching below 4.00g/cmE^{3}. However, for the set 1080\xb0C for 2h, all the compositions attain their highest density values in a narrow range from 4.19g/cmE^{3} to 4.28g/cmE^{3} which correspond respectively to 92.9% and 95.8% of the theoretical density, except for (K0.49Na0.49Li0.02)(Nb0.96Sb0.04)O3 ceramic which reaches its highest density value of 4.38g/cmE^{3} when sintered at 1090\xb0C for 3h. The (K0.5Na0.5)1\u2212x Li x (Nb0.96Sb0.04)O3 ceramics with x=0, 0.02, 0.03, 0.04, 0.05, and 0.06 (KNLNS), possessing the highest densities, will be abbreviated KNLNS0, KNLNS2, KNLNS3, KNLNS4, KNLNS5, and KNLNS6 respectively. The optimum sintering temperatures or/and durations observed for KNLNS are comparatively lower than those reported for such ceramic systems. The reduction in the particle size has led to an improvement in the densification of the ceramic system, as the driving force for sintering is inversely proportional to the initial particle size. shows the room temperature XRD profiles of KNLNS with 2\u03b8 ranging from 20E^{o} to 80E^{o}. This indicates that LiE^{+} ions have diffused into the lattice of KNLNS to form a solid solution. Indexing of the XRD pattern was carried out using the structure of KNbO3 with JCPDF card no. 01-071-0946 in the ICDD database as a reference, since it is structurally similar to our present compositions. The splitting of peaks (022) and (200) around 46E^{o} confirms the existence of orthorhombic symmetry of the crystal structure at room temperature. This shifting is attributed to the fact that volume of the crystal cell decreases with increasing Li content as ionic radius of Li (0.76\xc5) is less than that of K (1.38\xc5) and Na (1.02\xc5). This observation further confirms the incorporation of LiE^{+} ions into KNLNS crystals forming a solid solution. shows the plots of lattice parameters and unit cell volume versus Li content in KNLNS. As seen in a, the lattice parameters a, b and c decrease slightly when Li content increases from 0 to 0.02, then rapidly as Li content increases further to 0.04, and finally again less rapidly for Li content above 0.04. Similar decreasing trend is more appreciably exhibited by the cell volume plot of b. shows the SEM micrographs of the fractured surfaces of KNLNS. KNLNS0 has inhomogeneous microstructure with bimodal grain size distribution; the weighted average grain size being about 5.5\u03bcm for the larger grains, 1.6\u03bcm for the smaller grains, and 3.2\u03bcm for the entire sample. Such bimodal size distribution of grains was also observed in Sb substituted KNN ceramics. In KNLNS2, the small amount of Li (x=0.02) added produces a microstructure consisting of only the smaller grains, thereby reducing the overall average grain size to 1.6\u03bcm. It is thus evident that the presence of Li suppresses the grain growth, giving rise to a more homogeneous microstructure of smaller grains in the size range of 1\u20133\u03bcm. Moreover, the addition of Li2CO3 with a low melting point (618\xb0C) promotes the formation of the liquid phase during sintering, resulting in a further increase in the density of the ceramics. Most of the initial quantity of Li added exists in the form of a Li-rich liquid phase around the interface of grains aiding the densification process while a small fraction of LiE^{+} substitute (K0.5Na0.5)E^{+} in the lattice. This idea receives support from the little change observed in lattice parameters and unit cell volume in when the Li addition is limited to 2mol%. The density of the ceramics reaches a maximum value of ~4.38g/cmE^{3} at x=0.02. However, Li substitution over 2mol% is seen to have promoted grain growth (c\u2013f). Reports of Li addition promoting grain growth in KNN are available in literatures. The micrographs for x>0.02 also show abnormal grain growth behavior, especially in the compositions with x=0.04, 0.05 and 0.06, consequent upon excessive Li addition. Besides contributing to the grain growth, Li added in excess of x=0.02 also enters into the lattice in large proportion, as substantiated by the observed significant fall in unit cell volume. The grain growth and increasing substitution of LiE^{+} for (K0.5Na0.5)E^{+} ions contribute to poorer density of the ceramics with higher Li content beyond 2mol%. The temperature dependences of dielectric constant (\u03b5) for KNLNS measured at 100kHz are shown in a. Similar to pure KNN , the \u03b5\u2013T curves for all the ceramic samples exhibit two sharp peaks: one corresponding to the paraelectric cubic\u2013ferroelectric tetragonal phase transition at T c and the other to the ferroelectric tetragonal\u2013ferroelectric orthorhombic phase transition at T ot. For KNLNS0, with no Li content, both transition temperatures (T c=315\xb0C and T ot=165\xb0C) are observed to be lower than those results reported for pure KNN (T c= 412\xb0C and T ot=202\xb0C). Shifting of T c and T ot to lower temperatures due to Sb substitution in KNN has also been observed by other workers. For other ceramics, increasing Li substitution causes T c and T ot to shift towards the higher and lower temperature regions respectively, in consistent with other results on Li substitution in KNN system. The temperature dependences of dielectric loss (tan \u03b4) measured at 100kHz for KNLNS are shown in b. For all the samples, the dielectric loss observed is smaller than 0.08 in the temperature range from 25\xb0C to 200\xb0C. As the temperature increases above T c, a sharp increase in tan \u03b4 is observed which is attributed to the conductive losses at higher temperatures, at which the ceramics become electrically conductive. Compared with other ceramics, KNLNS2 shows the lowest dielectric loss at room temperature and the loss remains appreciably low till ~350\xb0C. The low value of dielectric loss at higher temperatures is very important for high-temperature application of the ceramics. shows the dependence of T ot and T c on Li concentration in KNLNS. The observed gradual increase in T c with increasing Li content is attributed to the formation of an intermediate LiNbO3 phase in addition to the (K,Na,Li)NbO3 phase which eventually disappears after sintering at higher temperature. LiNbO3 has an illumenite crystal structure with large anisotropy and a high T c of 1200\xb0C. However, KNbO3 and NaNbO3 have perovskite crystal structure with relatively low T c. Due to this large difference in crystal structures, forming a solid solution of (K,Na,Li)NbO3 is normally difficult and requires sufficiently high temperature. Such a solid solution has, however, been formed in the present work, as evident from the XRD study. Similar increase in T c with Li content has also been observed in other KNN systems and attributed to the existence of LiNbO3. The T ot observed for KNLNS in the present work lies within the range of 150\u2013170\xb0C, which are lower than those reported (200\u2013210\xb0C) for unmodified KNN. The observed reduction of T ot with increasing Li content in the ceramics is in agreement with results reported in literature. shows the dependence of room temperature dielectric constant \u03b5 r and dielectric loss (tan \u03b4) on Li concentration in KNLNS. As shown in this figure, \u03b5 r first rises from 348 to 445 and then falls to 192 as Li content increases from 0 to 0.02 and then further to 0.06, respectively. The observed nature of dielectric constant variation can also be related to the strong influence Li has on the microstructure of KNLNS, discussed earlier. Similar effect might also be present in KNLNS which produces maximum dielectric constant at a Li concentration of x=0.02. As seen in , the variation of tan \u03b4 as a function of Li concentration follows a trend just opposite to that of \u03b5 r. This observation is in agreement with the density variation of the ceramics, the higher the density the lower the dielectric loss. a shows the polarization\u2013electric field (P\u2013E) hysteresis loops for KNLNS with different molar concentrations of Li, measured at 25\xb0C and 50Hz. For the base composition KNLNS0, P r is 10.1\u03bcC/cmE^{2} and E c is 14.9kV/cm. With increasing Li content, P r increases to a maximum value of ~14.9\u03bcC/cmE^{2} at 2mol% Li content and then decreases to 9.5\u03bcC/cmE^{2} at 6mol% Li content. This observation reveals that ferroelectricity of KNLNS improves when the Li content is optimized at 2mol%. On the other hand, E c reduces to a minimum value of 9.8kV/cm when the amount of Li increases to 2mol%. Further addition of Li beyond 2mol% however increases E c thereby indicating hardening of the ceramics. The slightly distorted P\u2013E loops for KNLNS5 and KNLNS6 indicate the weakening of ferroelectricity when the Li content is higher. shows the variation of piezoelectric coefficient d 33 of (K0.5Na0.5)1\u2212x Li x (Nb0.96Sb0.04)O3 ceramics with Li content. As the Li content increases from 0 to 0.02, d 33 increases from 144 to 180pC/N. Further increase of Li content results in a gradual decrease of d 33 to 123pC/N corresponding to x=0.06. The d 33 values of 123\u2013180pC/N obtained in the present work are higher than those reported for pure KNN samples sintered under atmospheric conditions. According to the thermodynamic theory, the piezoelectric charge constant d 33 of a material can generally be expressed as a function of its dielectric constant \u03b5 r and spontaneous polarization P s: where Q 11 is the electrostrictive coefficient which is related to the domain structure and should not change significantly by doping. The observed decrease (or increase) in d 33 for increasing x  in KNLNS system can be mainly attributed to the associated change in \u03b5 r and P s (a). The nature of such changes in \u03b5 r and P s, and in turn d 33 is in consistent with that of the density change. Hennings et al. found that BT ceramics prepared from nanopowders had larger dielectric constant than those fabricated from conventionally synthesized powders. Karaki et al. also remarked that the large dielectric constant could be the most likely origin of the high d 33 of the ceramics prepared from hydrothermally synthesized BT nano-particles of 100nm. From the study of dielectric constants of BT nanopowder at different particle sizes, a maximum dielectric constant of over 16,000 was predicted around the room temperature at a critical size of ~70nm. It is also reported that there exists an appropriate grain size for better piezoelectric properties in BT. The optimum value of d 33 (=180pC/N) observed for KNLNS2 may thus be due to a combined effect of the optimum Li content which enhances densification on one hand and the existence of an optimum grain size for dielectric maximum on the other. The leakage current which results from the lower density and higher dielectric loss may be responsible for the decrease in d 33 on further addition of Li above x=0.02.
+
+# TITLE
+Piezoelectric properties of (K0.5Na0.5)1-xLix(Nb0.96Sb0.04)O3 ceramics prepared from nanocrystalline powders
+
+# ABSTRACT
+Lead-free (K0.5Na0.5)1−x
+                     Li
+                        x
+                     (Nb0.96Sb0.04)O3 (x=0, 0.02, 0.03, 0.04, 0.05, 0.06) nanocrystalline powders were synthesized by conventional solid state reaction followed by high-energy milling. The powders were sintered for 2–3h within the temperature range of 1050–1090°C. A small amount of Li content (x=0.02) suppresses the coarse grains of the bimodal grain size distribution of the ceramic with no Li content, resulting in a significant enhancement in its bulk density. Consequently, the bulk density (ρ), room temperature dielectric constant (ε
+                     r), remnant polarization (P
+                     r) and piezoelectric charge coefficient (d
+                     33) were found to be optimum for the (K0.49Na0.49Li0.02)(Nb0.96Sb0.04)O3 ceramic, with ρ=4.38g/cm3, ε
+                     r=445, P
+                     r=14.9μC/cm2 and d
+                     33=180pC/N.
+
+# INTRODUCTION
+For many decades, lead zirconium titanate Pb(Zr,Ti)O3 (PZT) has been one of the most widely used piezoelectric materials in electronic industry, due to its high piezoelectric properties close to a morphotropic phase boundary (MPB) between tetragonal and rhombohedral phases. However in recent times, due to environmental concerns about the harmful effects of lead, there has been a strong urge to find lead-free alternatives to PZT which has lead content of about 60wt%. As a consequence, efforts have been made towards improving the piezoelectric properties of various lead-free systems such as BaTiO3 (BT) , KNaNbO3 , Bi0.5Na0.5TiO3 , (Bi0.5Na0.5)TiO3\u2013BaTiO3 and (Ba0.95Sr0.05)(Zr0.05Ti0.95)O3. Among all the lead-free alternatives, potassium sodium niobate [(K,Na)NbO3] system is considered to be one of the best possible candidates because of its relatively high Curie temperature (T c), good ferroelectric properties and high electromechanical coupling coefficients, especially when produced by hot pressing or other unconventional sintering techniques like spark plasma sintering (SPS) and cold isostatic pressing (CIP). The hot pressed (K,Na)NbO3 ceramics have been reported to possess high T c (420\xb0C), \u03c1 (4.46g/cmE^{3}), d 33 (160pC/N) and a large electromechanical coupling coefficient k p (0.45). However, their electrical properties were degraded (d 33~80pC/N and k p ~0.36) in conventional sintering due to the highly volatile nature of the alkali members present in the composition that leads to poor densification and disorder in the stoichiometric ratio. Improvements in densification and piezoelectric properties have been observed for potassium sodium niobate system modified with LiNbO3 , LiTaO3 , SrTiO3 , BiFeO3 , LiSbO3 and CaTiO3. Among the potassium sodium niobate based contenders, the composition K0.5Na0.5NbO3 (KNN) has been paid much attention since the discovery of KNN-based textured ceramics with properties comparable to those of unmodified PZT ceramics. Combined modification of KNN ceramics with Li, Ta, and Sb has yielded high d 33 of 400pC/N which is much higher than that of unmodified KNN (80pC/N). KNN ceramics modified with Li and Sb have been reported to produce various changes in their electrical and piezoelectric properties. Since the Pauling electronegativity of Sb is much higher than that of Nb (2.05 versus 1.5), partial substitution of SbE^{5+} for NbE^{5+} induces a strong covalency in the KNN perovskite, which promotes ferroelectricity and piezoelectricity. Detailed literature survey on Sb modified KNN ceramics (K0.5Na0.5) (Nb1\u2212x Sb x )O3 shows that the optimum piezoelectric properties occur for SbE^{5+} content of 4mol%. There is however a lack of systematic study about the effect of Li on the dielectric and piezoelectric properties of this particular composition, (K0.5Na0.5)(Nb0.96Sb0.04)O3.
+
+# CONCLUSION
+In the present work, alkaline niobate based lead-free (K0.5Na0.5)1\u2212x Li x (Nb0.96Sb0.04)O3 piezoceramics with x=0, 0.02, 0.03, 0.04, 0.05, and 0.06 were synthesized by conventional ceramic processing using nanoscale powders. The phase transition temperatures exhibited strong dependence on the Li content, with T c value shifting from 315\xb0C to 332\xb0C and T ot from 165\xb0C to 133\xb0C as Li content increases from 0 to 0.06. The bulk density, room temperature dielectric constant, remnant polarization and piezoelectric charge coefficient were found to be optimum for the ceramic composition (K0.49Na0.49Li0.02)(Nb0.96Sb0.04)O3, with the values 4.38g/cmE^{3}, 445, 14.9\u03bcC/cmE^{2} and 180pC/N respectively. A homogeneous grain size distribution with the average grain size of about 1.6\u03bcm was observed for this composition. The lead-free (K0.5Na0.5)1\u2212x Li x (Nb0.96Sb0.04)O3 ceramics modified with optimum Li content and prepared from nanocrystalline powders can thus result in, without the use of any sintering agent, improved dielectric, ferroelectric and piezoelectric properties of the KNN system.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 10:46:07: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2014.09.074.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2014.09.074 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+shows a typical TEM micrograph of the double calcined (K0.5Na0.5)1\u2212x Li x (Nb0.96Sb0.04)O3 powders which have been high-energy milled for 5h at 300rpm. The micrograph shows a narrow particle size distribution with the average particle size of about 30nm. shows the compositional dependence of bulk density for (K0.5Na0.5)1\u2212x Li x (Nb0.96Sb0.04)O3 ceramics obtained under different sintering conditions. As seen in , for each set of sintering parameters (1050\xb0C for 3h), (1070\xb0C for 3h), (1080\xb0C for 3h) and (1090\xb0C for 3h), the ceramic compositions exhibit a wide range of density with its values reaching below 4.00g/cmE^{3}. However, for the set 1080\xb0C for 2h, all the compositions attain their highest density values in a narrow range from 4.19g/cmE^{3} to 4.28g/cmE^{3} which correspond respectively to 92.9% and 95.8% of the theoretical density, except for (K0.49Na0.49Li0.02)(Nb0.96Sb0.04)O3 ceramic which reaches its highest density value of 4.38g/cmE^{3} when sintered at 1090\xb0C for 3h. The (K0.5Na0.5)1\u2212x Li x (Nb0.96Sb0.04)O3 ceramics with x=0, 0.02, 0.03, 0.04, 0.05, and 0.06 (KNLNS), possessing the highest densities, will be abbreviated KNLNS0, KNLNS2, KNLNS3, KNLNS4, KNLNS5, and KNLNS6 respectively. The optimum sintering temperatures or/and durations observed for KNLNS are comparatively lower than those reported for such ceramic systems. The reduction in the particle size has led to an improvement in the densification of the ceramic system, as the driving force for sintering is inversely proportional to the initial particle size. shows the room temperature XRD profiles of KNLNS with 2\u03b8 ranging from 20E^{o} to 80E^{o}. This indicates that LiE^{+} ions have diffused into the lattice of KNLNS to form a solid solution. Indexing of the XRD pattern was carried out using the structure of KNbO3 with JCPDF card no. 01-071-0946 in the ICDD database as a reference, since it is structurally similar to our present compositions. The splitting of peaks (022) and (200) around 46E^{o} confirms the existence of orthorhombic symmetry of the crystal structure at room temperature. This shifting is attributed to the fact that volume of the crystal cell decreases with increasing Li content as ionic radius of Li (0.76\xc5) is less than that of K (1.38\xc5) and Na (1.02\xc5). This observation further confirms the incorporation of LiE^{+} ions into KNLNS crystals forming a solid solution. shows the plots of lattice parameters and unit cell volume versus Li content in KNLNS. As seen in a, the lattice parameters a, b and c decrease slightly when Li content increases from 0 to 0.02, then rapidly as Li content increases further to 0.04, and finally again less rapidly for Li content above 0.04. Similar decreasing trend is more appreciably exhibited by the cell volume plot of b. shows the SEM micrographs of the fractured surfaces of KNLNS. KNLNS0 has inhomogeneous microstructure with bimodal grain size distribution; the weighted average grain size being about 5.5\u03bcm for the larger grains, 1.6\u03bcm for the smaller grains, and 3.2\u03bcm for the entire sample. Such bimodal size distribution of grains was also observed in Sb substituted KNN ceramics. In KNLNS2, the small amount of Li (x=0.02) added produces a microstructure consisting of only the smaller grains, thereby reducing the overall average grain size to 1.6\u03bcm. It is thus evident that the presence of Li suppresses the grain growth, giving rise to a more homogeneous microstructure of smaller grains in the size range of 1\u20133\u03bcm. Moreover, the addition of Li2CO3 with a low melting point (618\xb0C) promotes the formation of the liquid phase during sintering, resulting in a further increase in the density of the ceramics. Most of the initial quantity of Li added exists in the form of a Li-rich liquid phase around the interface of grains aiding the densification process while a small fraction of LiE^{+} substitute (K0.5Na0.5)E^{+} in the lattice. This idea receives support from the little change observed in lattice parameters and unit cell volume in when the Li addition is limited to 2mol%. The density of the ceramics reaches a maximum value of ~4.38g/cmE^{3} at x=0.02. However, Li substitution over 2mol% is seen to have promoted grain growth (c\u2013f). Reports of Li addition promoting grain growth in KNN are available in literatures. The micrographs for x>0.02 also show abnormal grain growth behavior, especially in the compositions with x=0.04, 0.05 and 0.06, consequent upon excessive Li addition. Besides contributing to the grain growth, Li added in excess of x=0.02 also enters into the lattice in large proportion, as substantiated by the observed significant fall in unit cell volume. The grain growth and increasing substitution of LiE^{+} for (K0.5Na0.5)E^{+} ions contribute to poorer density of the ceramics with higher Li content beyond 2mol%. The temperature dependences of dielectric constant (\u03b5) for KNLNS measured at 100kHz are shown in a. Similar to pure KNN , the \u03b5\u2013T curves for all the ceramic samples exhibit two sharp peaks: one corresponding to the paraelectric cubic\u2013ferroelectric tetragonal phase transition at T c and the other to the ferroelectric tetragonal\u2013ferroelectric orthorhombic phase transition at T ot. For KNLNS0, with no Li content, both transition temperatures (T c=315\xb0C and T ot=165\xb0C) are observed to be lower than those results reported for pure KNN (T c= 412\xb0C and T ot=202\xb0C). Shifting of T c and T ot to lower temperatures due to Sb substitution in KNN has also been observed by other workers. For other ceramics, increasing Li substitution causes T c and T ot to shift towards the higher and lower temperature regions respectively, in consistent with other results on Li substitution in KNN system. The temperature dependences of dielectric loss (tan \u03b4) measured at 100kHz for KNLNS are shown in b. For all the samples, the dielectric loss observed is smaller than 0.08 in the temperature range from 25\xb0C to 200\xb0C. As the temperature increases above T c, a sharp increase in tan \u03b4 is observed which is attributed to the conductive losses at higher temperatures, at which the ceramics become electrically conductive. Compared with other ceramics, KNLNS2 shows the lowest dielectric loss at room temperature and the loss remains appreciably low till ~350\xb0C. The low value of dielectric loss at higher temperatures is very important for high-temperature application of the ceramics. shows the dependence of T ot and T c on Li concentration in KNLNS. The observed gradual increase in T c with increasing Li content is attributed to the formation of an intermediate LiNbO3 phase in addition to the (K,Na,Li)NbO3 phase which eventually disappears after sintering at higher temperature. LiNbO3 has an illumenite crystal structure with large anisotropy and a high T c of 1200\xb0C. However, KNbO3 and NaNbO3 have perovskite crystal structure with relatively low T c. Due to this large difference in crystal structures, forming a solid solution of (K,Na,Li)NbO3 is normally difficult and requires sufficiently high temperature. Such a solid solution has, however, been formed in the present work, as evident from the XRD study. Similar increase in T c with Li content has also been observed in other KNN systems and attributed to the existence of LiNbO3. The T ot observed for KNLNS in the present work lies within the range of 150\u2013170\xb0C, which are lower than those reported (200\u2013210\xb0C) for unmodified KNN. The observed reduction of T ot with increasing Li content in the ceramics is in agreement with results reported in literature. shows the dependence of room temperature dielectric constant \u03b5 r and dielectric loss (tan \u03b4) on Li concentration in KNLNS. As shown in this figure, \u03b5 r first rises from 348 to 445 and then falls to 192 as Li content increases from 0 to 0.02 and then further to 0.06, respectively. The observed nature of dielectric constant variation can also be related to the strong influence Li has on the microstructure of KNLNS, discussed earlier. Similar effect might also be present in KNLNS which produces maximum dielectric constant at a Li concentration of x=0.02. As seen in , the variation of tan \u03b4 as a function of Li concentration follows a trend just opposite to that of \u03b5 r. This observation is in agreement with the density variation of the ceramics, the higher the density the lower the dielectric loss. a shows the polarization\u2013electric field (P\u2013E) hysteresis loops for KNLNS with different molar concentrations of Li, measured at 25\xb0C and 50Hz. For the base composition KNLNS0, P r is 10.1\u03bcC/cmE^{2} and E c is 14.9kV/cm. With increasing Li content, P r increases to a maximum value of ~14.9\u03bcC/cmE^{2} at 2mol% Li content and then decreases to 9.5\u03bcC/cmE^{2} at 6mol% Li content. This observation reveals that ferroelectricity of KNLNS improves when the Li content is optimized at 2mol%. On the other hand, E c reduces to a minimum value of 9.8kV/cm when the amount of Li increases to 2mol%. Further addition of Li beyond 2mol% however increases E c thereby indicating hardening of the ceramics. The slightly distorted P\u2013E loops for KNLNS5 and KNLNS6 indicate the weakening of ferroelectricity when the Li content is higher. shows the variation of piezoelectric coefficient d 33 of (K0.5Na0.5)1\u2212x Li x (Nb0.96Sb0.04)O3 ceramics with Li content. As the Li content increases from 0 to 0.02, d 33 increases from 144 to 180pC/N. Further increase of Li content results in a gradual decrease of d 33 to 123pC/N corresponding to x=0.06. The d 33 values of 123\u2013180pC/N obtained in the present work are higher than those reported for pure KNN samples sintered under atmospheric conditions. According to the thermodynamic theory, the piezoelectric charge constant d 33 of a material can generally be expressed as a function of its dielectric constant \u03b5 r and spontaneous polarization P s: where Q 11 is the electrostrictive coefficient which is related to the domain structure and should not change significantly by doping. The observed decrease (or increase) in d 33 for increasing x  in KNLNS system can be mainly attributed to the associated change in \u03b5 r and P s (a). The nature of such changes in \u03b5 r and P s, and in turn d 33 is in consistent with that of the density change. Hennings et al. found that BT ceramics prepared from nanopowders had larger dielectric constant than those fabricated from conventionally synthesized powders. Karaki et al. also remarked that the large dielectric constant could be the most likely origin of the high d 33 of the ceramics prepared from hydrothermally synthesized BT nano-particles of 100nm. From the study of dielectric constants of BT nanopowder at different particle sizes, a maximum dielectric constant of over 16,000 was predicted around the room temperature at a critical size of ~70nm. It is also reported that there exists an appropriate grain size for better piezoelectric properties in BT. The optimum value of d 33 (=180pC/N) observed for KNLNS2 may thus be due to a combined effect of the optimum Li content which enhances densification on one hand and the existence of an optimum grain size for dielectric maximum on the other. The leakage current which results from the lower density and higher dielectric loss may be responsible for the decrease in d 33 on further addition of Li above x=0.02.
+
+# TITLE
+Piezoelectric properties of (K0.5Na0.5)1-xLix(Nb0.96Sb0.04)O3 ceramics prepared from nanocrystalline powders
+
+# ABSTRACT
+Lead-free (K0.5Na0.5)1−x
+                     Li
+                        x
+                     (Nb0.96Sb0.04)O3 (x=0, 0.02, 0.03, 0.04, 0.05, 0.06) nanocrystalline powders were synthesized by conventional solid state reaction followed by high-energy milling. The powders were sintered for 2–3h within the temperature range of 1050–1090°C. A small amount of Li content (x=0.02) suppresses the coarse grains of the bimodal grain size distribution of the ceramic with no Li content, resulting in a significant enhancement in its bulk density. Consequently, the bulk density (ρ), room temperature dielectric constant (ε
+                     r), remnant polarization (P
+                     r) and piezoelectric charge coefficient (d
+                     33) were found to be optimum for the (K0.49Na0.49Li0.02)(Nb0.96Sb0.04)O3 ceramic, with ρ=4.38g/cm3, ε
+                     r=445, P
+                     r=14.9μC/cm2 and d
+                     33=180pC/N.
+
+# INTRODUCTION
+For many decades, lead zirconium titanate Pb(Zr,Ti)O3 (PZT) has been one of the most widely used piezoelectric materials in electronic industry, due to its high piezoelectric properties close to a morphotropic phase boundary (MPB) between tetragonal and rhombohedral phases. However in recent times, due to environmental concerns about the harmful effects of lead, there has been a strong urge to find lead-free alternatives to PZT which has lead content of about 60wt%. As a consequence, efforts have been made towards improving the piezoelectric properties of various lead-free systems such as BaTiO3 (BT) , KNaNbO3 , Bi0.5Na0.5TiO3 , (Bi0.5Na0.5)TiO3\u2013BaTiO3 and (Ba0.95Sr0.05)(Zr0.05Ti0.95)O3. Among all the lead-free alternatives, potassium sodium niobate [(K,Na)NbO3] system is considered to be one of the best possible candidates because of its relatively high Curie temperature (T c), good ferroelectric properties and high electromechanical coupling coefficients, especially when produced by hot pressing or other unconventional sintering techniques like spark plasma sintering (SPS) and cold isostatic pressing (CIP). The hot pressed (K,Na)NbO3 ceramics have been reported to possess high T c (420\xb0C), \u03c1 (4.46g/cmE^{3}), d 33 (160pC/N) and a large electromechanical coupling coefficient k p (0.45). However, their electrical properties were degraded (d 33~80pC/N and k p ~0.36) in conventional sintering due to the highly volatile nature of the alkali members present in the composition that leads to poor densification and disorder in the stoichiometric ratio. Improvements in densification and piezoelectric properties have been observed for potassium sodium niobate system modified with LiNbO3 , LiTaO3 , SrTiO3 , BiFeO3 , LiSbO3 and CaTiO3. Among the potassium sodium niobate based contenders, the composition K0.5Na0.5NbO3 (KNN) has been paid much attention since the discovery of KNN-based textured ceramics with properties comparable to those of unmodified PZT ceramics. Combined modification of KNN ceramics with Li, Ta, and Sb has yielded high d 33 of 400pC/N which is much higher than that of unmodified KNN (80pC/N). KNN ceramics modified with Li and Sb have been reported to produce various changes in their electrical and piezoelectric properties. Since the Pauling electronegativity of Sb is much higher than that of Nb (2.05 versus 1.5), partial substitution of SbE^{5+} for NbE^{5+} induces a strong covalency in the KNN perovskite, which promotes ferroelectricity and piezoelectricity. Detailed literature survey on Sb modified KNN ceramics (K0.5Na0.5) (Nb1\u2212x Sb x )O3 shows that the optimum piezoelectric properties occur for SbE^{5+} content of 4mol%. There is however a lack of systematic study about the effect of Li on the dielectric and piezoelectric properties of this particular composition, (K0.5Na0.5)(Nb0.96Sb0.04)O3.
+
+# CONCLUSION
+In the present work, alkaline niobate based lead-free (K0.5Na0.5)1\u2212x Li x (Nb0.96Sb0.04)O3 piezoceramics with x=0, 0.02, 0.03, 0.04, 0.05, and 0.06 were synthesized by conventional ceramic processing using nanoscale powders. The phase transition temperatures exhibited strong dependence on the Li content, with T c value shifting from 315\xb0C to 332\xb0C and T ot from 165\xb0C to 133\xb0C as Li content increases from 0 to 0.06. The bulk density, room temperature dielectric constant, remnant polarization and piezoelectric charge coefficient were found to be optimum for the ceramic composition (K0.49Na0.49Li0.02)(Nb0.96Sb0.04)O3, with the values 4.38g/cmE^{3}, 445, 14.9\u03bcC/cmE^{2} and 180pC/N respectively. A homogeneous grain size distribution with the average grain size of about 1.6\u03bcm was observed for this composition. The lead-free (K0.5Na0.5)1\u2212x Li x (Nb0.96Sb0.04)O3 ceramics modified with optimum Li content and prepared from nanocrystalline powders can thus result in, without the use of any sintering agent, improved dielectric, ferroelectric and piezoelectric properties of the KNN system.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="Thought: The Graph Data Extractor returned d33 values from the graph for x=0, 0.02, 0.03, 0.04, and 0.06. However, the text explicitly states d33 values: for x=0, d33=144 pC/N; for x=0.02, d33=180 pC/N; for x=0.06, d33=123 pC/N. The text also mentions the range 123-180 pC/N. The graph values are slightly different (140, 183, 172, 152, 125). According to the conflict resolution rule, I must keep the text-extracted values and ignore the graph values for compositions that appear in both. The text does not explicitly give d33 values for x=0.03, 0.04, and 0.05, so I can use the graph values for those missing compositions.
+
+From the text:
+- x=0: d33 = 144 pC/N
+- x=0.02: d33 = 180 pC/N
+- x=0.06: d33 = 123 pC/N
+
+From the graph (for missing compositions):
+- x=0.03: d33 = 172 pC/N
+- x=0.04: d33 = 152 pC/N
+- x=0.05: d33 = ? (graph didn't extract x=0.05, but the text says "gradual decrease" so I can infer from the graph trend. The graph extracted x=0.06 as 125, but text says 123. I'll use text for x=0.06. For x=0.05, the graph didn't extract a point, but the text says "gradual decrease" - I can estimate from the graph trend that it would be around 135-140. However, I should only use data that is explicitly extracted. Since the graph didn't extract x=0.05, I'll leave it out.
+
+Now, I need to write the compositions using the canonical formula from Equation Tool: (K0.5*(1-x)Na0.5*(1-x)Li(x))(Nb0.96Sb0.04)O3. For each x value, I substitute and simplify.
+
+For x=0: (K0.5*(1-0)Na0.5*(1-0)Li(0))(Nb0.96Sb0.04)O3 = (K0.5Na0.5)(Nb0.96Sb0.04)O3
+For x=0.02: (K0.5*(0.98)Na0.5*(0.98)Li(0.02))(Nb0.96Sb0.04)O3 = (K0.49Na0.49Li0.02)(Nb0.96Sb0.04)O3
+For x=0.03: (K0.5*(0.97)Na0.5*(0.97)Li(0.03))(Nb0.96Sb0.04)O3 = (K0.485Na0.485Li0.03)(Nb0.96Sb0.04)O3
+For x=0.04: (K0.5*(0.96)Na0.5*(0.96)Li(0.04))(Nb0.96Sb0.04)O3 = (K0.48Na0.48Li0.04)(Nb0.96Sb0.04)O3
+For x=0.06: (K0.5*(0.94)Na0.5*(0.94)Li(0.06))(Nb0.96Sb0.04)O3 = (K0.47Na0.47Li0.06)(Nb0.96Sb0.04)O3
+
+The text also mentions abbreviations: KNLNS0, KNLNS2, KNLNS3, KNLNS4, KNLNS5, KNLNS6 for the compositions with x=0, 0.02, 0.03, 0.04, 0.05, 0.06 respectively. Also, KNLNS is an abbreviation for the whole system.
+
+The family is KNN (potassium sodium niobate) or more specifically (K,Na)NbO3.
+
+Now, I'll construct the final JSON.
+
+For the compositions, I'll use the canonical formula with the variable notation for the general case, but for specific x values, I'll write the explicit formula.
+
+The text also mentions the specific composition (K0.49Na0.49Li0.02)(Nb0.96Sb0.04)O3 which is the same as x=0.02.
+
+Let me write the compositions with the proper notation. The Equation Tool returned (K0.5*(1-x)Na0.5*(1-x)Li(x))(Nb0.96Sb0.04)O3. I'll use this as the template.
+
+For the final output, I need to include abbreviations.
+
+Abbreviations:
+- KNLNS: (K0.5Na0.5)(1-x)Li(x)(Nb0.96Sb0.04)O3 (the whole system)
+- KNLNS0: (K0.5Na0.5)(Nb0.96Sb0.04)O3 (x=0)
+- KNLNS2: (K0.49Na0.49Li0.02)(Nb0.96Sb0.04)O3 (x=0.02)
+- KNLNS3: (K0.485Na0.485Li0.03)(Nb0.96Sb0.04)O3 (x=0.03)
+- KNLNS4: (K0.48Na0.48Li0.04)(Nb0.96Sb0.04)O3 (x=0.04)
+- KNLNS5: (K0.475Na0.475Li0.05)(Nb0.96Sb0.04)O3 (x=0.05)
+- KNLNS6: (K0.47Na0.47Li0.06)(Nb0.96Sb0.04)O3 (x=0.06)
+
+Now, for the compositions_property_values, I'll use the explicit formulas for each x value.
+
+For x=0.05, I don't have a d33 value from text or graph, so I'll skip it.
+
+Let me compile the final answer.{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(K0.5Na0.5)(Nb0.96Sb0.04)O3": 144,
+      "(K0.49Na0.49Li0.02)(Nb0.96Sb0.04)O3": 180,
+      "(K0.485Na0.485Li0.03)(Nb0.96Sb0.04)O3": 172,
+      "(K0.48Na0.48Li0.04)(Nb0.96Sb0.04)O3": 152,
+      "(K0.47Na0.47Li0.06)(Nb0.96Sb0.04)O3": 123
+    },
+    "abbreviations": {
+      "KNLNS": "(K0.5Na0.5)(1-x)Li(x)(Nb0.96Sb0.04)O3",
+      "KNLNS0": "(K0.5Na0.5)(Nb0.96Sb0.04)O3",
+      "KNLNS2": "(K0.49Na0.49Li0.02)(Nb0.96Sb0.04)O3",
+      "KNLNS3": "(K0.485Na0.485Li0.03)(Nb0.96Sb0.04)O3",
+      "KNLNS4": "(K0.48Na0.48Li0.04)(Nb0.96Sb0.04)O3",
+      "KNLNS5": "(K0.475Na0.475Li0.05)(Nb0.96Sb0.04)O3",
+      "KNLNS6": "(K0.47Na0.47Li0.06)(Nb0.96Sb0.04)O3"
+    },
+    "property_unit": "pC/N",
+    "family": "(K,Na)NbO3"
+  }
+}"

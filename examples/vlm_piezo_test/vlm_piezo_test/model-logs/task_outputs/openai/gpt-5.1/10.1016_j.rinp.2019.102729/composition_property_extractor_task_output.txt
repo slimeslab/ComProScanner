@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"PbZr0.52Ti0.48O3":137,"PbZr0.52Ti0.48O3:La":112,"PbZr0.52Ti0.48O3:Nd":149,"PbZr0.52Ti0.48O3:Dy":125},"abbreviations":{"PZT":"PbZr0.52Ti0.48O3"},"property_unit":"pC/N","family":"PZT"}}

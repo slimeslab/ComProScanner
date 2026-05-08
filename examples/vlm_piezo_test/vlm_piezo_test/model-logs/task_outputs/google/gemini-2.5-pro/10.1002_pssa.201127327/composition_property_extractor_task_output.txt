@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"K1/2Bi1/2Ti0.90Zr0.10O3":2.4,"K1/2Bi1/2Ti0.60Zr0.40O3":0.3},"abbreviations":{"KBT":"K1/2Bi1/2TiO3","KBZ":"K1/2Bi1/2ZrO3"},"property_unit":"pC/N","family":"KBT-KBZ"}}

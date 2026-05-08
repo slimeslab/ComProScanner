@@ -178,17 +178,9 @@ cython_debug/
 .claude
 CLAUDE.md
 
-# Remove example directory primarily
+# Remove db directory related files to avoid accidentally committing large files
 examples/db/10.*
-tests example/
+examples/vlm_piezo_test/db/10.*
+examples/vlm_piezo_test/db/chroma.sqlite3
 
 applications
-vlm_test
-examples/vlm_piezo_test
-
-# Test results
-db
-results
-elsevier_test.xml
-springer_test.xml
-wiley_test.pdf

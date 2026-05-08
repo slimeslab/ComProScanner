@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Ba(Ti0.9Sn0.1)O3":460,"(Ba0.98Ca0.02)(Ti0.9Sn0.1)O3":510,"(Ba0.96Ca0.04)(Ti0.9Sn0.1)O3":480,"(Ba0.94Ca0.06)(Ti0.9Sn0.1)O3":445,"(Ba0.92Ca0.08)(Ti0.9Sn0.1)O3":410,"(Ba0.90Ca0.10)(Ti0.9Sn0.1)O3":385},"abbreviations":{"BCTS":"(Ba1-xCax)(Ti0.9Sn0.1)O3"},"property_unit":"pC/N","family":"BaTiO3"}}

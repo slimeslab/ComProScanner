@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(Ba0.86Sr0.14)TiO3":210,"(Ba0.86Sr0.14)(Ti0.98Zr0.02)O3":290,"(Ba0.86Sr0.14)(Ti0.96Zr0.04)O3":380,"(Ba0.86Sr0.14)(Ti0.94Zr0.06)O3":430,"(Ba0.86Sr0.14)(Ti0.92Zr0.08)O3":620,"(Ba0.86Sr0.14)(Ti0.90Zr0.10)O3":360},"property_unit":"pC/N","family":"BaTiO3"}}

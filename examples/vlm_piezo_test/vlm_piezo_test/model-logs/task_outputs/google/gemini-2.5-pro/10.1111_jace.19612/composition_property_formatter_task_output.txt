@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"((K0.5Na0.5)(1-0)Sm0)NbO3":61,"((K0.5Na0.5)(1-0.015)Sm0.005)NbO3":94,"((K0.5Na0.5)(1-0.03)Sm0.01)NbO3":75,"((K0.5Na0.5)(1-0.045)Sm0.015)NbO3":48,"((K0.5Na0.5)(1-0.06)Sm0.02)NbO3":22},"property_unit":"pC/N","family":"KNN"}}

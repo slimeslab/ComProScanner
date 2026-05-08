@@ -1,0 +1,214 @@
+2026-05-01 12:15:08: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2016.09.125.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2016.09.125 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+shows the XRD patterns obtained for the KNNSx ceramics sintered at 1080\xb0C for 3h. All samples were found to exhibit a single perovskite phase, implying that the SbE^{5+} ions seem to have completely diffused into the ABO3 perovskite structure, forming a continuous solid solution. Here, the two diffraction peaks, (002)/(200) and (020), gradually merged together with increasing x, as shown in b, indicating that the crystal structure of KNNSx underwent a structural change. This structural change is likely to be caused by the substitution of NbE^{5+} with SbE^{5+}, since the ionic radius of SbE^{5+}(0.69\xc5) is similar to that of NbE^{5+}(0.72\xc5). The structure of (K,Na)NbO3 is orthorhombic at room temperature, and the symmetry of the phase structure is represented by the I 002/I 020 intensity ratio. The XRD results demonstrate that the degree of structural symmetry increased with x and that the crystal structure of the KNNSx ceramics gradually transformed from an orthorhombic to a pseudocubic (or rhombohedral) structure, which is similar to the phase change reported for the substitution of B-site NbE^{5+} ions in the KNN ceramics with TaE^{5+}.. Recently, through Raman spectroscopy investigations performed on KNN-based systems, the vibrations of the NbO6 octahedron were found to be sensitive to the occurrence of a phase change. The Raman spectra obtained for the prepared KNNSx ceramics are shown in , where v 1 (around 600cmE^{\u22121}) represents a double-degenerated symmetric O-Nb-O stretching vibration and v 5 (around 250cmE^{\u22121}) represents a triply degenerated symmetric O-Nb-O bending vibration. Both of these two bands were observed to shift to lower wavenumbers with increasing Sb content, especially the one centered at v 5, as indicated in b. At the same time, the shoulder beside the band centered at v 1 gradually disappeared with increasing x. These variations are considered to be closely related to the disorder at the B-site and the distortion of corner-sharing NbO6 octahedron clusters caused by the substitution of Sb for Nb. The Pauling electronegativity of Sb (2.05) is higher than that of Nb (1.60), making the bonds in the KNN ceramics more covalent. On the other hand, because the ionic radius of SbE^{5+} is slightly smaller than that of NbE^{5+}, the substitution of Nb with Sb at the B site in the perovskite structure may give rise to a larger off-centering of the cation, which would cause a distortion of the crystal lattice. Both of the reasons mentioned above would lead to a lower [BO6] force constant in the lattice and a lower stability of the central ion in the oxygen octahedron, finally resulting in a shift of the bands to a lower wavenumber.. The microstructure of the KNNSx ceramics sintered at 1080\xb0C for 3h in air was investigated by SEM, and the results are shown in. The crystal grains of the KNNSx ceramic samples with x=0.04 and 0.06 showed an abnormal grain growth (the size of some grains was even bigger than 20 \u03bcm), and some distinct pores were observed along the grain boundary in the samples with x=0.02 and 0.04. For the prepared KNNSx ceramics with x>0.06, especially for the sample with x=0.1, the average grain size was found to be lower than 500nm, and the grain size was highly homogeneous. The SEM micrographs shown in indicate that selecting an appropriate Sb content could allow for controlling the grain size of the KNN ceramics and result in a homogenous grain size.. The results presented above provide a good guidance for the development of piezoelectric devices based on KNN-based ceramics. Meanwhile, it should be pointed out that the small average grain size may lead to a deterioration of the piezoelectricity of such KNN-based ceramics and more effort is indeed needed to find a balance between these two aspects. Meanwhile, the elemental composition of all these samples was analyzed by EDS. EDS is not a very precise tool for quantitatively determining the element concentration, especially for elements with small atomic number and low concentrations. However, the intensity of the characteristic Sb peak in the EDS spectrum and thus the atomic percentage obviously increased with x. shows representative results of the EDS analysis which were obtained for the (K0.49Na0.51)(Nb1\u2212x Sb x )O3 piezoceramic samples with x=0 and x=0.04. The EDS analysis was performed on the circular regions indicated by a yellow arrow in the inset of the SEM images, and the results confirmed the existence of Sb in the matrix phase.. illustrates the variation of the dielectric constant with the temperature for the as-sintered KNNSx ceramics at 1kHz. The relative dielectric constant of the KNNSx ceramics at room temperature was found to increase with the SbE^{5+} content. Previous studies showed that, for pure KNN, the orthorhombic-tetragonal phase transition (T O-T) occurs at around 200\xb0C. In the present work, one dielectric anomaly identified as the orthorhombic-tetragonal transition was observed in the range from 120 to 170\xb0C for KNNSx ceramics with 0<x<0.1. Regarding the sample with x=0.1, only an ascending curve was observed within the measured temperature range. According to the XRD and Raman results, the crystalline symmetry of the sample with x=0.1 was very close to a cubic structure. Thus, in this case, T O-T may be far below the measured temperature range and could therefore not be detected.. shows the variation of the piezoelectric coefficient d 33, the electromechanical planar coefficient k p, and the dielectric properties with the Sb content observed for the prepared KNNSx ceramics at room temperature. The d 33 and k p curves in a exhibit almost the same trend, the values first increase and then decrease. The maximum value of 182 pC/N for d 33 and 41% for k p were observed for the sample with x=0.06. Further increasing x to 0.1 resulted in a rapid decrease to d 33=152 pC/N and k p=36%. According to the above analysis, the XRD and Raman results indicate a gradual transition from an orthorhombic to a pseudocubic structure with increasing x. Hence, the above SEM results could provide an explanation for the better d 33 and k p values in the sample with x=0.06 and the poor piezoelectricity of the sample with x=0.1. Furthermore, the dielectric loss tan\u03b4 first showed a slight increase to 0.065 at x=0.02, then it decreased to 0.034 at x=0.06. From then onwards, it increased to 0.054 at x=0.1 which is attributed the obvious increase in the number of grain boundaries due to the lower grain size. Among the prepared samples, the sample with x=0.06 showed the best overall properties: a high piezoelectric constant of d 33=182 pC/N, a low dielectric loss of tan\u03b4=0.034, a high dielectric constant of \u03b5 33 T/ \u03b5 0=658, and a high planar electromechanical coupling coefficient of k p=41%. Furthermore, the electrical properties observed in this study are better than those reported in previous studies , while the influence of the sintering aid (such as MnO2 and CuO) on the properties of the KNN ceramics was eliminated and the effect of the substitution of SbE^{5+} for NbE^{5+} could be clearly isolated. To investigate the influence of the Sb content on the ferroelectric properties, the P-E hysteresis loops were measured for the prepared KNNSx ceramics with 0<x<0.1 at room temperature and are shown in. Obviously, the P-E loops obtained for the samples with x=0.02 and 0.04 are well developed. A maximum remnant polarization P r of 26.8 \u03bcC/cmE^{2} and a relatively low coercive field E c of 1.47kV/mm were observed for the sample with x=0.04.
+
+# TITLE
+The effect of B-site substitution on the structural evolution and electrical properties of lead-free (K,Na)NbO3 ceramics
+
+# ABSTRACT
+Lead-free (K0.49Na0.51)(Nb1−xSbx)O3 piezoelectric ceramics were prepared via the conventional sintering method and the effect of the substitution of Nb with Sb on the phase structure, microstructure and electrical properties of the prepared (K0.49Na0.51)(Nb1−xSbx)O3 ceramics was systematically investigated. The prepared ceramics exhibited a single-phase perovskite structure which changed from a standard orthorhombic structure to a pseudocubic structure as x was increased from 0 to 0.1. Substituting an appropriate amount of Sb5+ for Nb5+ was found to improve the microstructure and thereby enhance the piezoelectric/ferroelectric properties. The peak values of the piezoelectric constant d
+                     33 (182 pC/N) and the electromechanical coupling coefficient k
+                     p (41%) were obtained for the ceramic with x=0.06.
+
+# INTRODUCTION
+Lead-free (K0.5Na0.5)NbO3 (KNN)-based piezoceramics have attracted much attention since the breakthrough reported by Saito et al. and are regarded as one of the most promising candidates for replacing (Pb, Zr)TiO3 ceramics. However, the piezoelectric constant d 33 of KNN is pretty low. For KNN ceramics fabricated via conventional sintering, a d 33 of about 100 pC/N was reported, which could be increased to the highest currently reported value of around 160 pC/N when changing the fabrication technique to hot pressing. Researchers have made tremendous efforts to improve the properties of KNN-based ceramics through optimizing their composition. Recently, due to its high Pauling electronegativity, Sb has been used to improve the dielectric and piezoelectric properties of KNN-based ceramics. The combined doping of the ceramics with Sb and other elements such as Li and Ta was shown to lead to the formation of orthorhombic-tetragonal phase boundaries in KNN-based ceramics at room temperature, which was found to improve the performance of KNN-based ceramics due to the effect of a polymorphic phase transition (PPT). Therefore, the temperature stability of KNN-based ceramics could be significantly improved, and they have since become a very attractive lead-free material for the fabrication of transducers, sensors, etc. To improve the sinterability of KNN-based ceramics, sintering aids such as CuO and MnO2 are often used along with Sb substitution. However, so far, little attention has been paid on the isolated effect of a substitution of Sb for Nb on the phase transition behavior of KNN ceramics, especially at temperatures close to room temperature , and the reason for the enhancement of the piezoelectricity reported for Sb-modified KNN. Recently, Sb-modified K0.52Na0.48NbO3 ceramics with 1mol% CuO added as sintering aid were found to exhibit an ultra-high electro-strain in a relatively low driving electric field range, which is promising for actuator applications. Hence, investigating the isolated effect of the substitution of Sb for Nb on the properties of pure KNN ceramics in more detail seems promising. Considering the effect of the Na/K content on the phase structure and the composition range for the occurrence of a morphotropic phase boundary (MPB) in (K, Na)NbO3 ceramics, we selected (K0.49Na0.51)NbO3 as target material and explored the effect of the substitution of Sb for Nb at the B-site on the crystal structure, microstructure, and piezoelectric and dielectric properties of KNN ceramics, especially focusing on the relationship between the structure and the macroscopic properties. It was found that the enhancement of the piezoelectric behavior of Sb-modified KNN ceramics is not caused by a PPT, but instead is closely related to an improvement of the microstructure induced by the substitution of Sb for Nb.
+
+# CONCLUSION
+In summary, the substitution of SbE^{5+} for NbE^{5+} at the B site of the KNN perovskite structure was found to increase the degree of structural symmetry. Adding an appropriate amount of Sb2O3 was found to promote the grain growth and enhance the degree of densification, thereby improving the piezoelectricity of the prepared KNN ceramics. The sample with x=0.06 showed a dense microstructure and the best ferroelectric properties with a piezoelectric constant d 33 of 182 pC/N, a planar electromechanical coupling factor k p of 41%, a remnant polarization P r of 24 \u03bcC/cmE^{2} and a coercive field E c of 1.06kV/mm.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 12:15:40: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2016.09.125.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2016.09.125 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+shows the XRD patterns obtained for the KNNSx ceramics sintered at 1080\xb0C for 3h. All samples were found to exhibit a single perovskite phase, implying that the SbE^{5+} ions seem to have completely diffused into the ABO3 perovskite structure, forming a continuous solid solution. Here, the two diffraction peaks, (002)/(200) and (020), gradually merged together with increasing x, as shown in b, indicating that the crystal structure of KNNSx underwent a structural change. This structural change is likely to be caused by the substitution of NbE^{5+} with SbE^{5+}, since the ionic radius of SbE^{5+}(0.69\xc5) is similar to that of NbE^{5+}(0.72\xc5). The structure of (K,Na)NbO3 is orthorhombic at room temperature, and the symmetry of the phase structure is represented by the I 002/I 020 intensity ratio. The XRD results demonstrate that the degree of structural symmetry increased with x and that the crystal structure of the KNNSx ceramics gradually transformed from an orthorhombic to a pseudocubic (or rhombohedral) structure, which is similar to the phase change reported for the substitution of B-site NbE^{5+} ions in the KNN ceramics with TaE^{5+}.. Recently, through Raman spectroscopy investigations performed on KNN-based systems, the vibrations of the NbO6 octahedron were found to be sensitive to the occurrence of a phase change. The Raman spectra obtained for the prepared KNNSx ceramics are shown in , where v 1 (around 600cmE^{\u22121}) represents a double-degenerated symmetric O-Nb-O stretching vibration and v 5 (around 250cmE^{\u22121}) represents a triply degenerated symmetric O-Nb-O bending vibration. Both of these two bands were observed to shift to lower wavenumbers with increasing Sb content, especially the one centered at v 5, as indicated in b. At the same time, the shoulder beside the band centered at v 1 gradually disappeared with increasing x. These variations are considered to be closely related to the disorder at the B-site and the distortion of corner-sharing NbO6 octahedron clusters caused by the substitution of Sb for Nb. The Pauling electronegativity of Sb (2.05) is higher than that of Nb (1.60), making the bonds in the KNN ceramics more covalent. On the other hand, because the ionic radius of SbE^{5+} is slightly smaller than that of NbE^{5+}, the substitution of Nb with Sb at the B site in the perovskite structure may give rise to a larger off-centering of the cation, which would cause a distortion of the crystal lattice. Both of the reasons mentioned above would lead to a lower [BO6] force constant in the lattice and a lower stability of the central ion in the oxygen octahedron, finally resulting in a shift of the bands to a lower wavenumber.. The microstructure of the KNNSx ceramics sintered at 1080\xb0C for 3h in air was investigated by SEM, and the results are shown in. The crystal grains of the KNNSx ceramic samples with x=0.04 and 0.06 showed an abnormal grain growth (the size of some grains was even bigger than 20 \u03bcm), and some distinct pores were observed along the grain boundary in the samples with x=0.02 and 0.04. For the prepared KNNSx ceramics with x>0.06, especially for the sample with x=0.1, the average grain size was found to be lower than 500nm, and the grain size was highly homogeneous. The SEM micrographs shown in indicate that selecting an appropriate Sb content could allow for controlling the grain size of the KNN ceramics and result in a homogenous grain size.. The results presented above provide a good guidance for the development of piezoelectric devices based on KNN-based ceramics. Meanwhile, it should be pointed out that the small average grain size may lead to a deterioration of the piezoelectricity of such KNN-based ceramics and more effort is indeed needed to find a balance between these two aspects. Meanwhile, the elemental composition of all these samples was analyzed by EDS. EDS is not a very precise tool for quantitatively determining the element concentration, especially for elements with small atomic number and low concentrations. However, the intensity of the characteristic Sb peak in the EDS spectrum and thus the atomic percentage obviously increased with x. shows representative results of the EDS analysis which were obtained for the (K0.49Na0.51)(Nb1\u2212x Sb x )O3 piezoceramic samples with x=0 and x=0.04. The EDS analysis was performed on the circular regions indicated by a yellow arrow in the inset of the SEM images, and the results confirmed the existence of Sb in the matrix phase.. illustrates the variation of the dielectric constant with the temperature for the as-sintered KNNSx ceramics at 1kHz. The relative dielectric constant of the KNNSx ceramics at room temperature was found to increase with the SbE^{5+} content. Previous studies showed that, for pure KNN, the orthorhombic-tetragonal phase transition (T O-T) occurs at around 200\xb0C. In the present work, one dielectric anomaly identified as the orthorhombic-tetragonal transition was observed in the range from 120 to 170\xb0C for KNNSx ceramics with 0<x<0.1. Regarding the sample with x=0.1, only an ascending curve was observed within the measured temperature range. According to the XRD and Raman results, the crystalline symmetry of the sample with x=0.1 was very close to a cubic structure. Thus, in this case, T O-T may be far below the measured temperature range and could therefore not be detected.. shows the variation of the piezoelectric coefficient d 33, the electromechanical planar coefficient k p, and the dielectric properties with the Sb content observed for the prepared KNNSx ceramics at room temperature. The d 33 and k p curves in a exhibit almost the same trend, the values first increase and then decrease. The maximum value of 182 pC/N for d 33 and 41% for k p were observed for the sample with x=0.06. Further increasing x to 0.1 resulted in a rapid decrease to d 33=152 pC/N and k p=36%. According to the above analysis, the XRD and Raman results indicate a gradual transition from an orthorhombic to a pseudocubic structure with increasing x. Hence, the above SEM results could provide an explanation for the better d 33 and k p values in the sample with x=0.06 and the poor piezoelectricity of the sample with x=0.1. Furthermore, the dielectric loss tan\u03b4 first showed a slight increase to 0.065 at x=0.02, then it decreased to 0.034 at x=0.06. From then onwards, it increased to 0.054 at x=0.1 which is attributed the obvious increase in the number of grain boundaries due to the lower grain size. Among the prepared samples, the sample with x=0.06 showed the best overall properties: a high piezoelectric constant of d 33=182 pC/N, a low dielectric loss of tan\u03b4=0.034, a high dielectric constant of \u03b5 33 T/ \u03b5 0=658, and a high planar electromechanical coupling coefficient of k p=41%. Furthermore, the electrical properties observed in this study are better than those reported in previous studies , while the influence of the sintering aid (such as MnO2 and CuO) on the properties of the KNN ceramics was eliminated and the effect of the substitution of SbE^{5+} for NbE^{5+} could be clearly isolated. To investigate the influence of the Sb content on the ferroelectric properties, the P-E hysteresis loops were measured for the prepared KNNSx ceramics with 0<x<0.1 at room temperature and are shown in. Obviously, the P-E loops obtained for the samples with x=0.02 and 0.04 are well developed. A maximum remnant polarization P r of 26.8 \u03bcC/cmE^{2} and a relatively low coercive field E c of 1.47kV/mm were observed for the sample with x=0.04.
+
+# TITLE
+The effect of B-site substitution on the structural evolution and electrical properties of lead-free (K,Na)NbO3 ceramics
+
+# ABSTRACT
+Lead-free (K0.49Na0.51)(Nb1−xSbx)O3 piezoelectric ceramics were prepared via the conventional sintering method and the effect of the substitution of Nb with Sb on the phase structure, microstructure and electrical properties of the prepared (K0.49Na0.51)(Nb1−xSbx)O3 ceramics was systematically investigated. The prepared ceramics exhibited a single-phase perovskite structure which changed from a standard orthorhombic structure to a pseudocubic structure as x was increased from 0 to 0.1. Substituting an appropriate amount of Sb5+ for Nb5+ was found to improve the microstructure and thereby enhance the piezoelectric/ferroelectric properties. The peak values of the piezoelectric constant d
+                     33 (182 pC/N) and the electromechanical coupling coefficient k
+                     p (41%) were obtained for the ceramic with x=0.06.
+
+# INTRODUCTION
+Lead-free (K0.5Na0.5)NbO3 (KNN)-based piezoceramics have attracted much attention since the breakthrough reported by Saito et al. and are regarded as one of the most promising candidates for replacing (Pb, Zr)TiO3 ceramics. However, the piezoelectric constant d 33 of KNN is pretty low. For KNN ceramics fabricated via conventional sintering, a d 33 of about 100 pC/N was reported, which could be increased to the highest currently reported value of around 160 pC/N when changing the fabrication technique to hot pressing. Researchers have made tremendous efforts to improve the properties of KNN-based ceramics through optimizing their composition. Recently, due to its high Pauling electronegativity, Sb has been used to improve the dielectric and piezoelectric properties of KNN-based ceramics. The combined doping of the ceramics with Sb and other elements such as Li and Ta was shown to lead to the formation of orthorhombic-tetragonal phase boundaries in KNN-based ceramics at room temperature, which was found to improve the performance of KNN-based ceramics due to the effect of a polymorphic phase transition (PPT). Therefore, the temperature stability of KNN-based ceramics could be significantly improved, and they have since become a very attractive lead-free material for the fabrication of transducers, sensors, etc. To improve the sinterability of KNN-based ceramics, sintering aids such as CuO and MnO2 are often used along with Sb substitution. However, so far, little attention has been paid on the isolated effect of a substitution of Sb for Nb on the phase transition behavior of KNN ceramics, especially at temperatures close to room temperature , and the reason for the enhancement of the piezoelectricity reported for Sb-modified KNN. Recently, Sb-modified K0.52Na0.48NbO3 ceramics with 1mol% CuO added as sintering aid were found to exhibit an ultra-high electro-strain in a relatively low driving electric field range, which is promising for actuator applications. Hence, investigating the isolated effect of the substitution of Sb for Nb on the properties of pure KNN ceramics in more detail seems promising. Considering the effect of the Na/K content on the phase structure and the composition range for the occurrence of a morphotropic phase boundary (MPB) in (K, Na)NbO3 ceramics, we selected (K0.49Na0.51)NbO3 as target material and explored the effect of the substitution of Sb for Nb at the B-site on the crystal structure, microstructure, and piezoelectric and dielectric properties of KNN ceramics, especially focusing on the relationship between the structure and the macroscopic properties. It was found that the enhancement of the piezoelectric behavior of Sb-modified KNN ceramics is not caused by a PPT, but instead is closely related to an improvement of the microstructure induced by the substitution of Sb for Nb.
+
+# CONCLUSION
+In summary, the substitution of SbE^{5+} for NbE^{5+} at the B site of the KNN perovskite structure was found to increase the degree of structural symmetry. Adding an appropriate amount of Sb2O3 was found to promote the grain growth and enhance the degree of densification, thereby improving the piezoelectricity of the prepared KNN ceramics. The sample with x=0.06 showed a dense microstructure and the best ferroelectric properties with a piezoelectric constant d 33 of 182 pC/N, a planar electromechanical coupling factor k p of 41%, a remnant polarization P r of 24 \u03bcC/cmE^{2} and a coercive field E c of 1.06kV/mm.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(K0.49Na0.51)(Nb(1-x)*Sb(x))O3 where x=0": 115,
+      "(K0.49Na0.51)(Nb(1-x)*Sb(x))O3 where x=0.02": 138,
+      "(K0.49Na0.51)(Nb(1-x)*Sb(x))O3 where x=0.04": 158,
+      "(K0.49Na0.51)(Nb(1-x)*Sb(x))O3 where x=0.06": 182,
+      "(K0.49Na0.51)(Nb(1-x)*Sb(x))O3 where x=0.08": 173,
+      "(K0.49Na0.51)(Nb(1-x)*Sb(x))O3 where x=0.10": 152
+    },
+    "abbreviations": {
+      "KNN": "(K,Na)NbO3"
+    },
+    "property_unit": "pC/N",
+    "family": "KNN"
+  }
+}"

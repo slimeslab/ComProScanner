@@ -1,0 +1,270 @@
+2026-05-01 12:50:23: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1007/s10854-017-7616-9.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1007/s10854-017-7616-9 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Figure shows the room temperature XRD patterns of BNLyTHx ceramics sintered at 1180 \xb0C. This result indicated that Hf and Li well diffused into the lattice of BNT ceramics and formed a solid solution with a rhombohedral symmetry. As shown in Fig. b, after the partial HfE^{4+} substitution for TiE^{4+}, the crystal structure of BNT ceramics doesn\u2019t change obviously except for a slight shift of (200) peak to a lower angle. The shifts of diffraction peaks suggested that the lattices of BNLyTHx ceramics can expand or shrink by introducing ions. During the whole doping processes, no splitting of (200) peak was observed, indicating the involvement of rhombohedral symmetry. Fig. 1XRD patterns of BNLyTHx ceramics with different Hf contents measured at a 2\u03b8 = 20\xb0\u201370\xb0 and b 2\u03b8 = 46\xb0\u201348\xb0, and the ceramics with different Li contents measured at c 2\u03b8 = 20\xb0\u201370\xb0 and d 2\u03b8 = 46\xb0\u201348\xb0 XRD patterns of BNLyTHx ceramics with different Hf contents measured at a 2\u03b8 = 20\xb0\u201370\xb0 and b 2\u03b8 = 46\xb0\u201348\xb0, and the ceramics with different Li contents measured at c 2\u03b8 = 20\xb0\u201370\xb0 and d 2\u03b8 = 46\xb0\u201348\xb0 Figure a\u2013i show the SEM images of cross section of the ceramics. However, the addition of Hf can suppress the large grain growth significantly, and the large grains disappeared and the grain sizes became uniform for x = 0.02. When x = 0.12, the grain size is far <2 \u03bcm because the addition of excessive Hf leads to the decreased grain sizes. As a result, the addition of Hf and Li can refine the grain sizes of BNT ceramics. Fig. 2SEM images of surface micrographs of the ceramics with different Li contents: ax = 0, bx = 0.02, cx = 0.03, dx = 0.04, ex = 0.08, fx = 0.12, and with different Hf contents: gy = 0.05, x = 0.03, hy = 0.10, x = 0.03, iy = 0.15, x = 0.03 SEM images of surface micrographs of the ceramics with different Li contents: ax = 0, bx = 0.02, cx = 0.03, dx = 0.04, ex = 0.08, fx = 0.12, and with different Hf contents: gy = 0.05, x = 0.03, hy = 0.10, x = 0.03, iy = 0.15, x = 0.03 Figure a, c show the P\u2013E loops of the ceramics as a function of HfE^{4+} and LiE^{+} contents, measured at f = 10 Hz and room temperature. The variations of remnant polarization (Pr) and coercive field (EC) values with x(y) were shown in Fig. b, d. It can be found from Fig. a, b that pure BNT ceramic possesses a better ferroelectric behavior with the maximum values of Pr and EC, while the values still appear too small as compared with previous report , which is due to excessive bismuth volatilization and low applied electric field. As a matter of fact, excellent ferroelectricity of BNT-based solutions are mainly attributed to BiE^{3+} [, ], and then the loss of bismuth are strongly against to the poling process. Therefore, their EC and Pr cannot achieve the ideal values. It was also found that both Pr and EC show a descending trend with the addition of Hf. Although Li doping has almost no impact on the ferroelectric hysteresis loop, a slight reduction of Pr and EC is discernible. Therefore, the doping with HfE^{4+}/LiE^{+} weakens the ferroelectricity of the ceramics, and the coercive field was decreased. Compared to the effects of LiE^{+}, the shape of P\u2013E loops was greatly influenced by the addition of HfE^{4+}. Fig. 3P\u2013E loops of the ceramics as a function of a Hf (0Li) and b Li (0.03Hf) contents. Pr and EC as a function of c Hf (0Li) and d Li (0.03Hf) P\u2013E loops of the ceramics as a function of a Hf (0Li) and b Li (0.03Hf) contents. Pr and EC as a function of c Hf (0Li) and d Li (0.03Hf) Figure shows the piezoelectric constant d33 of BNLyTHx as functions of Hf (y = 0) and Li (x = 0.03) contents, measured at room temperature. As shown in Fig. a, d33 increased slowly with the increasing contents of Hf and then decreased rapidly for x > 0.04, showing the maximum value of 86 pC/N at x = 0.04. In addition, the varied trend of d33 for LiE^{+} is very similar to the former, getting the maximum value of ~100 pC/N at y = 0.1 (x = 0.03) (Fig. b). Previous studies showed that it is easy to effectively enhance d33 of BNT-based ceramics except for the construction of MPB [, \u2013]. In this work, all the ceramics show pure rhombohedral symmetry, and then the promotion of d33 may be caused by expansion or shrink of lattice to a certain degree. Fig. 4d33 of the ceramics as functions of a Hf (0Li) and b Li (0.03Hf) d33 of the ceramics as functions of a Hf (0Li) and b Li (0.03Hf) Figure shows the dielectric constant (\u03b5r) and dielectric dissipation (tan \u03b4) of BNLyTHx as a function of Hf (y = 0) and Li (x = 0.03) contents, measured at room temperature and 1 kHz. As shown in Fig. a, there is a strong composition dependence of \u03b5r and tan \u03b4 when Hf was doped. The \u03b5r increased quickly with the increase of Hf, while the tan \u03b4 decreased significantly. As shown in Fig. b, the \u03b5r increased drastically at the beginning and then remained a slowly upward trend when Li was introduced. It is worth noting that tan \u03b4 initially decreased and then increased with the further addition of Li. Fig. 5\u03b5r and tan \u03b4 of the ceramics as a function of a Hf (y = 0) and b Li (x = 0.03) content \u03b5r and tan \u03b4 of the ceramics as a function of a Hf (y = 0) and b Li (x = 0.03) content The temperature dependence of dielectric properties (\u03b5r\u2013T and tan \u03b4\u2013T) of BNLyTHx ceramics was measured at 100 kHz, as shown in Fig. a, c. The left one occurred at the depolarization temperature Td, corresponding to the temperature at the first tan \u03b4 peak. The right one appeared at the temperature Tm, the maximum temperature, at which \u03b5r reaches a maximum value. Td of pure BNT ceramic is 202 \xb0C and decreased to 52 \xb0C with the increase of Hf contents from 0 to 0.12, as shown in Fig. b. As a matter of fact, the enhancement of the piezoelectricity of BNT-based ceramics through modification is always accompanied by a significant decrease in Td [, ]. As indicated by the influences of HfE^{4+} on Td and Tm, the addition of Li also leads to the obvious decrease of Td of BNT and somewhat increase of Tm, as shown in Fig. c, d. As shown in Fig. d, Td decreased from 138 to 55 \xb0C, while Tm increased from 349 to 409 \xb0C. As a result, the introduction of Li and Hf can show different effects on the Td and Tm values of BNT ceramics. Fig. 6\u03b5r\u2013T and tan \u03b4\u2013T (30\u2013450 \xb0C) curves of BNLyTHx ceramics with ax and cy. Their Td and Tm values as a function of bx and dy \u03b5r\u2013T and tan \u03b4\u2013T (30\u2013450 \xb0C) curves of BNLyTHx ceramics with ax and cy. Their Td and Tm values as a function of bx and dy Figure shows the unipolar strain curves of BNLyTHx ceramics as a function of Hf (y = 0) and Li (x = 0.03) contents, measured at room temperature and 10 Hz. It can be seen from Fig. a, b that the strain of pure BNT ceramics is ~0.07%, which is consistent with its ferroelectric nature. For the BNT-based ceramics, high strain always belongs to relaxor ferroelectrics [, \u2013]. With the addition of Hf, the strain values kept a decreasing trend and almost decreased to zero for x = 0.12 (Fig. b). This result can be proved by the XRD patterns and P\u2013E loops at a certain degree. However, when LiE^{+} is dissolved into the solid solution of BNT0.97H0.03, the strain curves almost kept unchanged (Fig. c, d), and accordingly their Pr only decreased a little. Fig. 7Unipolar strain curves of the ceramics as a function of a Hf (y = 0) and c Li (x = 0.03), and strain values versus contents of the ceramics with b Hf (y = 0) and d Li (x = 0.03) Unipolar strain curves of the ceramics as a function of a Hf (y = 0) and c Li (x = 0.03), and strain values versus contents of the ceramics with b Hf (y = 0) and d Li (x = 0.03)
+
+# TITLE
+Effect of Hf and Li on the structure and electrical properties of Bi0.5Na0.5TiO3 lead-free ceramics
+
+# ABSTRACT
+With the increase of HfE^{4+} or LiE^{+}, their  values gradually decreased. Their piezoelectric and dielectric properties can be effectively enhanced by optimizing the amount of HfE^{4+} and LiE^{+}, and maximum  value of ~100 pC/N and  value of ~850 were achieved for  = 0.03,  = 0.1 and  = 0.12,  = 0, respectively.
+
+# INTRODUCTION
+Pb(Zr, Ti)O3-based ceramics with excellent electrical properties have been widely utilized in various electronic and microelectronic devices, e.g., sensors, actuators, and ultrasonic transducers [, ]. Because of the strong ferroelectricity with large remnant polarization of 38 \u03bcC/cmE^{2} , Bi0.5Na0.5TiO3 (BNT) ceramics are regarded as one of the most potential candidates for lead-free piezoelectric materials. However, the performance of pure BNT ceramics is still not enough for practical applications. For example, because of the high coercive field of 7.3 kV/mm  and high electrical conductivity, it is difficult to pole pure BNT ceramics. In order to improve the electrical properties of BNT and increase the possibility of practicability, several kinds of attempts have been employed to improve the electrical properties of BNT ceramics, including ion substitution and solid solution [, , , \u2013]. Among these attempts, ion substitutions have been utilized to modify electrical properties of BNT ceramics [, , ]. Previously, it was reported that the addition of Li can promote the electrical properties of BNT ceramics [, ]. However, only limited investigations on the effects of Hf on the physical properties of BNT ceramics were reported. As a result, it is highly expected to study the influences of Li and Hf on the structure and properties of BNT-based ceramics. In this work, HfE^{4+} and LiE^{+} were added to BNT ceramics [(Bi0.5Na0.5\u2212yLiy)(Ti1\u2212xHfx)O3 (BNLyTHx)] in order to improve the electrical properties, and the influences of Li and Hf contents on the structure and electrical properties were importantly investigated.
+
+# CONCLUSION
+Here, we investigated the effects of Hf and Li on the structure and electrical properties of BNT ceramics, and then the addition of appropriate Hf and Li can benefit the improvement of piezoelectric and dielectric properties. As a result, our investigation can further understand the effects of site engineering (Hf and Li) on structure and properties of BNT materials.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 12:51:19: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1007/s10854-017-7616-9.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1007/s10854-017-7616-9 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Figure shows the room temperature XRD patterns of BNLyTHx ceramics sintered at 1180 \xb0C. This result indicated that Hf and Li well diffused into the lattice of BNT ceramics and formed a solid solution with a rhombohedral symmetry. As shown in Fig. b, after the partial HfE^{4+} substitution for TiE^{4+}, the crystal structure of BNT ceramics doesn\u2019t change obviously except for a slight shift of (200) peak to a lower angle. The shifts of diffraction peaks suggested that the lattices of BNLyTHx ceramics can expand or shrink by introducing ions. During the whole doping processes, no splitting of (200) peak was observed, indicating the involvement of rhombohedral symmetry. Fig. 1XRD patterns of BNLyTHx ceramics with different Hf contents measured at a 2\u03b8 = 20\xb0\u201370\xb0 and b 2\u03b8 = 46\xb0\u201348\xb0, and the ceramics with different Li contents measured at c 2\u03b8 = 20\xb0\u201370\xb0 and d 2\u03b8 = 46\xb0\u201348\xb0 XRD patterns of BNLyTHx ceramics with different Hf contents measured at a 2\u03b8 = 20\xb0\u201370\xb0 and b 2\u03b8 = 46\xb0\u201348\xb0, and the ceramics with different Li contents measured at c 2\u03b8 = 20\xb0\u201370\xb0 and d 2\u03b8 = 46\xb0\u201348\xb0 Figure a\u2013i show the SEM images of cross section of the ceramics. However, the addition of Hf can suppress the large grain growth significantly, and the large grains disappeared and the grain sizes became uniform for x = 0.02. When x = 0.12, the grain size is far <2 \u03bcm because the addition of excessive Hf leads to the decreased grain sizes. As a result, the addition of Hf and Li can refine the grain sizes of BNT ceramics. Fig. 2SEM images of surface micrographs of the ceramics with different Li contents: ax = 0, bx = 0.02, cx = 0.03, dx = 0.04, ex = 0.08, fx = 0.12, and with different Hf contents: gy = 0.05, x = 0.03, hy = 0.10, x = 0.03, iy = 0.15, x = 0.03 SEM images of surface micrographs of the ceramics with different Li contents: ax = 0, bx = 0.02, cx = 0.03, dx = 0.04, ex = 0.08, fx = 0.12, and with different Hf contents: gy = 0.05, x = 0.03, hy = 0.10, x = 0.03, iy = 0.15, x = 0.03 Figure a, c show the P\u2013E loops of the ceramics as a function of HfE^{4+} and LiE^{+} contents, measured at f = 10 Hz and room temperature. The variations of remnant polarization (Pr) and coercive field (EC) values with x(y) were shown in Fig. b, d. It can be found from Fig. a, b that pure BNT ceramic possesses a better ferroelectric behavior with the maximum values of Pr and EC, while the values still appear too small as compared with previous report , which is due to excessive bismuth volatilization and low applied electric field. As a matter of fact, excellent ferroelectricity of BNT-based solutions are mainly attributed to BiE^{3+} [, ], and then the loss of bismuth are strongly against to the poling process. Therefore, their EC and Pr cannot achieve the ideal values. It was also found that both Pr and EC show a descending trend with the addition of Hf. Although Li doping has almost no impact on the ferroelectric hysteresis loop, a slight reduction of Pr and EC is discernible. Therefore, the doping with HfE^{4+}/LiE^{+} weakens the ferroelectricity of the ceramics, and the coercive field was decreased. Compared to the effects of LiE^{+}, the shape of P\u2013E loops was greatly influenced by the addition of HfE^{4+}. Fig. 3P\u2013E loops of the ceramics as a function of a Hf (0Li) and b Li (0.03Hf) contents. Pr and EC as a function of c Hf (0Li) and d Li (0.03Hf) P\u2013E loops of the ceramics as a function of a Hf (0Li) and b Li (0.03Hf) contents. Pr and EC as a function of c Hf (0Li) and d Li (0.03Hf) Figure shows the piezoelectric constant d33 of BNLyTHx as functions of Hf (y = 0) and Li (x = 0.03) contents, measured at room temperature. As shown in Fig. a, d33 increased slowly with the increasing contents of Hf and then decreased rapidly for x > 0.04, showing the maximum value of 86 pC/N at x = 0.04. In addition, the varied trend of d33 for LiE^{+} is very similar to the former, getting the maximum value of ~100 pC/N at y = 0.1 (x = 0.03) (Fig. b). Previous studies showed that it is easy to effectively enhance d33 of BNT-based ceramics except for the construction of MPB [, \u2013]. In this work, all the ceramics show pure rhombohedral symmetry, and then the promotion of d33 may be caused by expansion or shrink of lattice to a certain degree. Fig. 4d33 of the ceramics as functions of a Hf (0Li) and b Li (0.03Hf) d33 of the ceramics as functions of a Hf (0Li) and b Li (0.03Hf) Figure shows the dielectric constant (\u03b5r) and dielectric dissipation (tan \u03b4) of BNLyTHx as a function of Hf (y = 0) and Li (x = 0.03) contents, measured at room temperature and 1 kHz. As shown in Fig. a, there is a strong composition dependence of \u03b5r and tan \u03b4 when Hf was doped. The \u03b5r increased quickly with the increase of Hf, while the tan \u03b4 decreased significantly. As shown in Fig. b, the \u03b5r increased drastically at the beginning and then remained a slowly upward trend when Li was introduced. It is worth noting that tan \u03b4 initially decreased and then increased with the further addition of Li. Fig. 5\u03b5r and tan \u03b4 of the ceramics as a function of a Hf (y = 0) and b Li (x = 0.03) content \u03b5r and tan \u03b4 of the ceramics as a function of a Hf (y = 0) and b Li (x = 0.03) content The temperature dependence of dielectric properties (\u03b5r\u2013T and tan \u03b4\u2013T) of BNLyTHx ceramics was measured at 100 kHz, as shown in Fig. a, c. The left one occurred at the depolarization temperature Td, corresponding to the temperature at the first tan \u03b4 peak. The right one appeared at the temperature Tm, the maximum temperature, at which \u03b5r reaches a maximum value. Td of pure BNT ceramic is 202 \xb0C and decreased to 52 \xb0C with the increase of Hf contents from 0 to 0.12, as shown in Fig. b. As a matter of fact, the enhancement of the piezoelectricity of BNT-based ceramics through modification is always accompanied by a significant decrease in Td [, ]. As indicated by the influences of HfE^{4+} on Td and Tm, the addition of Li also leads to the obvious decrease of Td of BNT and somewhat increase of Tm, as shown in Fig. c, d. As shown in Fig. d, Td decreased from 138 to 55 \xb0C, while Tm increased from 349 to 409 \xb0C. As a result, the introduction of Li and Hf can show different effects on the Td and Tm values of BNT ceramics. Fig. 6\u03b5r\u2013T and tan \u03b4\u2013T (30\u2013450 \xb0C) curves of BNLyTHx ceramics with ax and cy. Their Td and Tm values as a function of bx and dy \u03b5r\u2013T and tan \u03b4\u2013T (30\u2013450 \xb0C) curves of BNLyTHx ceramics with ax and cy. Their Td and Tm values as a function of bx and dy Figure shows the unipolar strain curves of BNLyTHx ceramics as a function of Hf (y = 0) and Li (x = 0.03) contents, measured at room temperature and 10 Hz. It can be seen from Fig. a, b that the strain of pure BNT ceramics is ~0.07%, which is consistent with its ferroelectric nature. For the BNT-based ceramics, high strain always belongs to relaxor ferroelectrics [, \u2013]. With the addition of Hf, the strain values kept a decreasing trend and almost decreased to zero for x = 0.12 (Fig. b). This result can be proved by the XRD patterns and P\u2013E loops at a certain degree. However, when LiE^{+} is dissolved into the solid solution of BNT0.97H0.03, the strain curves almost kept unchanged (Fig. c, d), and accordingly their Pr only decreased a little. Fig. 7Unipolar strain curves of the ceramics as a function of a Hf (y = 0) and c Li (x = 0.03), and strain values versus contents of the ceramics with b Hf (y = 0) and d Li (x = 0.03) Unipolar strain curves of the ceramics as a function of a Hf (y = 0) and c Li (x = 0.03), and strain values versus contents of the ceramics with b Hf (y = 0) and d Li (x = 0.03)
+
+# TITLE
+Effect of Hf and Li on the structure and electrical properties of Bi0.5Na0.5TiO3 lead-free ceramics
+
+# ABSTRACT
+With the increase of HfE^{4+} or LiE^{+}, their  values gradually decreased. Their piezoelectric and dielectric properties can be effectively enhanced by optimizing the amount of HfE^{4+} and LiE^{+}, and maximum  value of ~100 pC/N and  value of ~850 were achieved for  = 0.03,  = 0.1 and  = 0.12,  = 0, respectively.
+
+# INTRODUCTION
+Pb(Zr, Ti)O3-based ceramics with excellent electrical properties have been widely utilized in various electronic and microelectronic devices, e.g., sensors, actuators, and ultrasonic transducers [, ]. Because of the strong ferroelectricity with large remnant polarization of 38 \u03bcC/cmE^{2} , Bi0.5Na0.5TiO3 (BNT) ceramics are regarded as one of the most potential candidates for lead-free piezoelectric materials. However, the performance of pure BNT ceramics is still not enough for practical applications. For example, because of the high coercive field of 7.3 kV/mm  and high electrical conductivity, it is difficult to pole pure BNT ceramics. In order to improve the electrical properties of BNT and increase the possibility of practicability, several kinds of attempts have been employed to improve the electrical properties of BNT ceramics, including ion substitution and solid solution [, , , \u2013]. Among these attempts, ion substitutions have been utilized to modify electrical properties of BNT ceramics [, , ]. Previously, it was reported that the addition of Li can promote the electrical properties of BNT ceramics [, ]. However, only limited investigations on the effects of Hf on the physical properties of BNT ceramics were reported. As a result, it is highly expected to study the influences of Li and Hf on the structure and properties of BNT-based ceramics. In this work, HfE^{4+} and LiE^{+} were added to BNT ceramics [(Bi0.5Na0.5\u2212yLiy)(Ti1\u2212xHfx)O3 (BNLyTHx)] in order to improve the electrical properties, and the influences of Li and Hf contents on the structure and electrical properties were importantly investigated.
+
+# CONCLUSION
+Here, we investigated the effects of Hf and Li on the structure and electrical properties of BNT ceramics, and then the addition of appropriate Hf and Li can benefit the improvement of piezoelectric and dielectric properties. As a result, our investigation can further understand the effects of site engineering (Hf and Li) on structure and properties of BNT materials.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="Thought: Now I have data from both the text and the graph. Let me reconcile:
+
+From the text:
+- d33 maximum of 86 pC/N at x = 0.04 (Hf doping, y=0)
+- d33 maximum of ~100 pC/N at y = 0.1 (Li doping, x=0.03)
+
+From the graph (Fig 4):
+- For Hf series (y=0): x=0.00 → 61, x=0.02 → 79, x=0.04 → 91, x=0.05 → 63, x=0.06 → 32, x=0.08 → 9, x=0.12 → 3
+- For Li series (x=0.03): y=0.00 → 81, y=0.07 → 92, y=0.10 → 98, y=0.15 → 31, y=0.20 → 26, y=0.25 → 18
+
+Conflict resolution: For the composition with x=0.04, y=0 (Hf series), text says 86 pC/N, graph says 91 pC/N. I keep the text value (86 pC/N).
+For the composition with x=0.03, y=0.1 (Li series), text says ~100 pC/N, graph says 98 pC/N. I keep the text value (100 pC/N).
+
+Now I need to construct the full formulas. The base formula from the paper is (Bi0.5Na(0.5-y)Li(y))(Ti(1-x)Hf(x))O3.
+
+For the Hf series (y=0): (Bi0.5Na0.5)(Ti(1-x)Hf(x))O3
+- x=0.00: (Bi0.5Na0.5)TiO3 → d33=61 (from graph, no text conflict)
+- x=0.02: (Bi0.5Na0.5)(Ti0.98Hf0.02)O3 → d33=79 (from graph)
+- x=0.04: (Bi0.5Na0.5)(Ti0.96Hf0.04)O3 → d33=86 (text value, overrides graph's 91)
+- x=0.05: (Bi0.5Na0.5)(Ti0.95Hf0.05)O3 → d33=63 (from graph)
+- x=0.06: (Bi0.5Na0.5)(Ti0.94Hf0.06)O3 → d33=32 (from graph)
+- x=0.08: (Bi0.5Na0.5)(Ti0.92Hf0.08)O3 → d33=9 (from graph)
+- x=0.12: (Bi0.5Na0.5)(Ti0.88Hf0.12)O3 → d33=3 (from graph)
+
+For the Li series (x=0.03): (Bi0.5Na(0.5-y)Li(y))(Ti0.97Hf0.03)O3
+- y=0.00: (Bi0.5Na0.5)(Ti0.97Hf0.03)O3 → d33=81 (from graph)
+- y=0.07: (Bi0.5Na0.43Li0.07)(Ti0.97Hf0.03)O3 → d33=92 (from graph)
+- y=0.10: (Bi0.5Na0.40Li0.10)(Ti0.97Hf0.03)O3 → d33=100 (text value, overrides graph's 98)
+- y=0.15: (Bi0.5Na0.35Li0.15)(Ti0.97Hf0.03)O3 → d33=31 (from graph)
+- y=0.20: (Bi0.5Na0.30Li0.20)(Ti0.97Hf0.03)O3 → d33=26 (from graph)
+- y=0.25: (Bi0.5Na0.25Li0.25)(Ti0.97Hf0.03)O3 → d33=18 (from graph)
+
+Now I need to check for abbreviations. The paper uses "BNT" for Bi0.5Na0.5TiO3 and "BNLyTHx" for (Bi0.5Na(0.5-y)Li(y))(Ti(1-x)Hf(x))O3. These are all CAPITAL abbreviations.
+
+Let me also check the text for the x=0.03, y=0 composition (pure BNT with 0.03 Hf). The text mentions "BNT0.97H0.03" which is (Bi0.5Na0.5)(Ti0.97Hf0.03)O3.
+
+Now I'll construct the final JSON. I need to write the formulas following the notation rules. The paper's formula uses (Bi0.5Na(0.5-y)Li(y))(Ti(1-x)Hf(x))O3. For specific values, I substitute directly.
+
+For the Hf series (y=0), the formula becomes (Bi0.5Na0.5)(Ti(1-x)Hf(x))O3. For x=0.04, this is (Bi0.5Na0.5)(Ti0.96Hf0.04)O3.
+
+For the Li series (x=0.03), the formula becomes (Bi0.5Na(0.5-y)Li(y))(Ti0.97Hf0.03)O3. For y=0.1, this is (Bi0.5Na0.4Li0.1)(Ti0.97Hf0.03)O3.
+
+Let me write the final answer.
+
+Abbreviations:
+- BNT: Bi0.5Na0.5TiO3
+- BNLyTHx: (Bi0.5Na(0.5-y)Li(y))(Ti(1-x)Hf(x))O3
+
+Family: Bi0.5Na0.5TiO3 (BNT)
+
+Property unit: pC/N```
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(Bi0.5Na0.5)TiO3": 61,
+      "(Bi0.5Na0.5)(Ti0.98Hf0.02)O3": 79,
+      "(Bi0.5Na0.5)(Ti0.96Hf0.04)O3": 86,
+      "(Bi0.5Na0.5)(Ti0.95Hf0.05)O3": 63,
+      "(Bi0.5Na0.5)(Ti0.94Hf0.06)O3": 32,
+      "(Bi0.5Na0.5)(Ti0.92Hf0.08)O3": 9,
+      "(Bi0.5Na0.5)(Ti0.88Hf0.12)O3": 3,
+      "(Bi0.5Na0.5)(Ti0.97Hf0.03)O3": 81,
+      "(Bi0.5Na0.43Li0.07)(Ti0.97Hf0.03)O3": 92,
+      "(Bi0.5Na0.4Li0.1)(Ti0.97Hf0.03)O3": 100,
+      "(Bi0.5Na0.35Li0.15)(Ti0.97Hf0.03)O3": 31,
+      "(Bi0.5Na0.3Li0.2)(Ti0.97Hf0.03)O3": 26,
+      "(Bi0.5Na0.25Li0.25)(Ti0.97Hf0.03)O3": 18
+    },
+    "abbreviations": {
+      "BNT": "Bi0.5Na0.5TiO3",
+      "BNLyTHx": "(Bi0.5Na(0.5-y)Li(y))(Ti(1-x)Hf(x))O3"
+    },
+    "property_unit": "pC/N",
+    "family": "Bi0.5Na0.5TiO3"
+  }
+}
+```"

@@ -1,0 +1,29 @@
+{
+  "filtered": {
+    "10.1016/j.ceramint.2018.02.163": [
+      "K0.5Na0.5NbO3 - SPS",
+      "K0.5Na0.5Nb0.95Ta0.05O3 - SPS",
+      "K0.5Na0.5Nb0.90Ta0.10O3 - SPS",
+      "K0.5Na0.5Nb0.80Ta0.20O3 - SPS",
+      "K0.5Na0.5Nb0.70Ta0.30O3 - SPS",
+      "K0.5Na0.5Nb0.50Ta0.50O3 - SPS",
+      "K0.5Na0.5NbO3 - Conventional Sintering",
+      "K0.5Na0.5Nb0.95Ta0.05O3 - Conventional Sintering",
+      "K0.5Na0.5Nb0.90Ta0.10O3 - Conventional Sintering",
+      "K0.5Na0.5Nb0.80Ta0.20O3 - Conventional Sintering",
+      "K0.5Na0.5Nb0.70Ta0.30O3 - Conventional Sintering",
+      "K0.5Na0.5Nb0.50Ta0.50O3 - Conventional Sintering"
+    ]
+  },
+  "unresolved": {
+    "10.1016/j.ceramint.2012.12.086": [
+      "[K0.4851Na0.5049Li0.01Nb0.9Ta0.04Sb0.06O3",
+      "[K0.4802Na0.4998Li0.02Nb0.9Ta0.04Sb0.06O3",
+      "[K0.4753Na0.4947Li0.03Nb0.9Ta0.04Sb0.06O3",
+      "[K0.4704Na0.4896Li0.04Nb0.9Ta0.04Sb0.06O3",
+      "[K0.4655Na0.4845Li0.05Nb0.9Ta0.04Sb0.06O3",
+      "[K0.4606Na0.4794Li0.06Nb0.9Ta0.04Sb0.06O3",
+      "[K0.4508Na0.4692Li0.08Nb0.9Ta0.04Sb0.06O3"
+    ]
+  }
+}

@@ -1,0 +1,279 @@
+2026-05-01 13:50:30: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.jeurceramsoc.2015.09.043.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.jeurceramsoc.2015.09.043 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Structure parameters of x =0 and x =0.020 obtained from rietveld refinement.
+|Parameters|| x =0| x =0.020|
+|---|---|---|---|
+|Lattice parameters (\xc5)|a = b|5.517339|5.519778|
+||c|3.905571|3.907389|
+|Angle (\xb0)|\u03b1 = \u03b2 = \u03b3|90|90|
+|Space group||P4bm|P4bm|
+|Rwp (%)||8.68|8.47|
+|Rp (%)||4.97|4.83|
+|\u03c7 E^{2}||3.12|2.68|
+
+Table 2. Comparison of field-induced strain and normalized strain of BNBT-x FN ceramics with other BNT-based systems.
+|Materials| S max (%)| E (kV/cm)| S max/E max (pm/V)|References|
+|---|---|---|---|---|
+|BNBT-x FN|0.422|50|844|Current work|
+|BNKTN-BST|0.38|60|634|[26]|
+|BNKT-NN|0.445|55|810|[27]|
+|BNBT-BST|0.428|60|713|[28]|
+|BNT7.5BT-xZr|0.353|60|588|[29]|
+|BNKT-KNN|0.46|80|575|[30]|
+|BNT-BAS|0.48|90|532|[31]|
+|BNBT-La|0.35|70|500|[32]|
+
+# RESULTS AND DISCUSSION
+The XRD patterns with a 2\u03b8 ranging from 20\xb0 to 70\xb0 for BNBT-x FN samples are demonstrated in (a). This implied that the doped (Fe1/2Nb1/2)E^{4+} have diffused into the crystal lattice and formed a stable solid solution with BNBT. (b) shows the expanded XRD patterns in the 2\u03b8 range of 45\u201348\xb0. The positions of (202) peak shift slightly to the lower angle with the increase of (Fe1/2Nb1/2)E^{4+} content, suggesting the expansion of lattice constant. This was attributed to the differences in ionic radii of FeE^{3+} (0.645\xc5, CN=6), NbE^{5+} (0.64\xc5, CN=6) and TiE^{4+} (0.605\xc5, CN=6) , The results indicated that the (Fe1/2Nb1/2)E^{4+} is entered into the B-site of BNT to substitute TiE^{4+} for the radius matching, while the differences in ionic radii resulting in the lattice deformation at the same time. In order to determine the crystal structures of BNBT-x FN ceramics more accurately, the XRD Rietveld refinements for BNBT and BNBT-0.020FN were carried out with P4bm space group at room temperature by using the GSAS-EXPGUI program. The XRD data were collected in a 2\u03b8 range of 20\u201380\xb0 with a step size of 0.02\xb0. The final refined profiles for BNBT and BNBT-0.020FN are presented in. The final factors, Rwp, Rp, chi-squared values (\u03c7 E^{2}) are 8.68%, 4.97%, 3.12 for BNBT, and 8.47%, 4.83%, 2.68 for BNBT-0.020FN, respectively. The observed lattice parameters are in close agreement to the already published reports on BNT. The SEM micrographs of the polished and thermally etched BNBT-x FN ceramics are displayed in. All ceramics have uniform structures and the grain size decreases slightly with increasing the (Fe1/2Nb1/2)E^{4+} contents. Using a linear intercept method, the grain sizes decrease gradually from 5.21 to 4.12\u03bcm, implying the role of (Fe1/2Nb1/2)E^{4+} in BNBT-x FN systems as a grain growth inhibitor. It is also revealed that the density and relative density of the material are strongly influenced by (Fe1/2Nb1/2)E^{4+} contents. See , the apparent density and relative density reach their peaks values at x =0.010. However,the minimum of the relative densities is still above 94.6%, which indicates that all the BNBT-x FN ceramics are well sintered. (a)\u2013(d) shows the SEM micrographs of the fracture surface of BNBT-x FN ceramics with x =0, 0.010, 0.015, and 0.020. Hysteresis loops (P\u2013E) of BNBT-x FN ceramics measured at 10Hz are depicted in. The P\u2013E shape strongly rests with the composition of the ceramics. The response of Pr and Ec of BNBT-x FN ceramics as a function of x is provided in. The BNBT ceramic exhibits typical ferroelectric behavior with a remnant polarization (Pr ) of 32.3\u03bcC/cmE^{2} and a coercive field (Ec ) 32.1kV/cm, respectively. At x =0.010, the value of Pr arrives at the peak of 35.6\u03bcC/cmE^{2} with Ec of 25.2kV/cm, while Ec drops dramatically with increasing x. The high ferroelectric performance observed at x =0.010 might be attributed to the coexistence of ferroelectric and relaxor ferroelectric phase. At high doping level of (Fe1/2Nb1/2)E^{4+} ( \u22650.020), the loops become much narrower, suggesting that excessive (Fe1/2Nb1/2)E^{4+} hinders the domain-wall switching. A change in the shape of P\u2013E loops from \u201cslim\u201d to \u201cwell-saturated\u201d implies that the domain structure of the ceramics undergoes a macrodomain\u2013microdomain transition with the increasing (Fe1/2Nb1/2)E^{4+} amount, which also confirms the appearance of a typical relaxor behavior at high doping level of (Fe1/2Nb1/2)E^{4+} ( \u22650.020). Pure BNBT ceramic exhibits a typical butterfly-shaped curve with a maximum strain (S max) of 0.18% and negative strain (S neg) of 0.06%, which is typical for ferroelectric material. With increasing x, the measured strain increased significantly, reached the top (S max =0.42%) at x =0.020, and then decreased slowly, while S neg increases and then drops down sharply. The large bipolar strain in x =0.020 indicates that the reduction in S neg is interrelated with domain back-switching during bipolar cycling. Hence, the significant enhancement in bipolar strain can be attributed to the ferroelectrics to relaxor ferroelectrics phase transition, which is supported by the polarization versus electric field (P\u2013E) hysteresis loops shown in. Similar results were also reported in SrZrO3-modified Bi0.5Na0.5TiO3-BaTiO3 ceramics and Zr-doped Bi1/2Na1/2TiO3-BaTiO3 ceramics. summarizes the variation of S neg and d33 with (Fe1/2Nb1/2)E^{4+} content. Similar to the variation of S neg, the d33 has a maximum value of 213pC/N at x =0.010. The observed trends of d33 are in good agreement with polarization hysteresis loops in. The significant improvement observed in d33 at x =0.010 is attributed to a large Pr and a lower Ec. The highest strain value (S max =0.422%) is obtained at x =0.020. Moreover, one may find that sample of x =0.020 seemed to exhibit an obvious remanent strain (Sr ) in the unipolar loops. It can be obviously observed that the first-cycle strain loop showed a much larger Sr value (0.2%) ( x =0.020) than those ( , 0.06%, and , 0.12%) for the non-first cycles. The difference of the remanent strains of the x =0.02 sample in should be attributed to the really occurred irreversible process during electric cycling. However, a further increase in the (Fe1/2Nb1/2)E^{4+} contents (x >0.02) drops the strain level. The field-induced strain S max and the normalized strain d E^{*} 33 of BNBT-x FN ceramics are presented in as a function of x. The enhanced strain (S max =0.422%), nearly three times more than that of pure BNBT, and the normalized strain (dE^{*} 33 = S max/E max =844 pm/V) are obtained for x =0.020 at an applied electric field of 50kV/cm. The field-induced strain level and its corresponding normalized strain of the materials are much higher than those of the non-textured BNT-based systems. The field-induced strain and the corresponding normalized strain of BNBT-x FN ceramic and some other lead-free BNT-based systems are summarized in for reference. It is clear that (Fe1/2Nb1/2)E^{4+} is of benefit to the ferroelectric and piezoelectric properties of BNT-based ceramics. Another exciting result is the temperature insensitive strain behavior of the composition with x =0.020. This behavior was observed from room temperature up to 120\xb0C. It can be seen from that the unipolar strain retains a high value of 0.3% at 50kV/cm (S max /E max =\u223c600pm/V) from room temperature up to 90\xb0C. The decreasing of such a large strain value is about 28% of its room-temperature value up to a high temperature of 90\xb0C within a wide working temperature range, implying that the x =0.020 ceramic sample exhibits a good temperature-stable strain behavior. shows unipolar field-induced strain curves measured at room temperature and at 10Hz as a function of switching cycles for BNBT-0.020 FN. It can be observed that no decrease of the unipolar field-induced strain value within 10E^{5} switching cycles, as illustrated in the inset of. Electric field dependence of the relative dielectric constant of BNBT-x FN ceramics is manifested in. Compositions with x <0.020 exhibit evident hysteretic behavior, which is closely connected to switching of ferroelectric domains. On the contrary, BNBT-x FN samples (x \u22650.02) display indiscernible hysteretic behavior, implying little domain switching. Judging from the evolution of \u03f5r (E), it is evident that compositions with x =0.02 and x =0.03 keep permittivity high as in the undoped BNBT at zero electric field. In addition, it reduces the effect of the electric bias field on the permittivity, so that the relative deviation calculated through the maximum permittivity \u03f5 max, the minimum permittivity \u03f5 min, and the permittivity at zero field \u03f5 0kV according to Eq. changes from 47% (x =0) to 50% (x =0.005), 65% (x =0.010), 64% (x =0.015), 40% (x =0.020) and eventually to 24% (x =0.030).  shows the temperature dependence of the dielectric constant (\u03f5r ) and loss (tan \u03b4) of the BNBT-x FN ceramics with x =0.00, 0.005, 0.010, 0.015, 0.020 and 0.030 measured at different frequencies (0.1, 1, 10 and 100kHz). It is clear from the dielectric response that samples with low (Fe1/2Nb1/2)E^{4+} contents (x =0.00, 0.005 and 0.010) exhibit two anomalies commonly known as depolarization temperature (Td ) corresponding to ferroelectric-to-relaxor phase transition, and maximum temperature (Tm ), at which the dielectric constant reaches its maximum value. However, a clear change for samples x <0.015 at low temperature region with a relatively weak frequency-dependent dispersion and decreasing dielectric permittivity takes place. It is suggested that BNBT-x FN ceramics with x <0.015 are nonergodic relaxor ferroelectrics state undergoing a field-induced phase transition to a long-range ordered state, which is consistent with the previous results of BNT-BT ceramics. The dielectric constant decreases with increase in frequency from 0.1kHz to 100kHz. The enhancement in the field-induced strain and corresponding dE^{*} 33 is due to the distortion of (Fe1/2Nb1/2)E^{4+} entering into B-site in BNT-based ceramics. Furthermore, the relaxor ferroelectric phase dominated at higher (Fe1/2Nb1/2)E^{4+} (i.e., x =0.020 and above), which delays the transformation from the relaxor ferroelectric phase to the ferroelectric phase based on the significant decrease in the polarization response. The results of this study suggest that high unipolar strain, located only in a narrow region around x =0.020 in which both ferroelectric and relaxor ferroelectric phase coexist in the BNT-based ceramics system. The remnant polarization together with the noticeable pinched polarization hysteresis loop and large strain at x =0.020 were suggested to originate from the coexistence of the ferroelectric and relaxor ferroelectric phase. In other words, during each cycle, the residual and field-induced ferroelectric phase are fully poled and depoled again, resulting in large strain due to the repeated switching and back-switching of non-180-domains.
+
+# TITLE
+Electric field-induced ultrahigh strain and large piezoelectric effect in Bi1/2Na1/2TiO3-based lead-free piezoceramics
+
+# ABSTRACT
+Lead-free piezoelectric ceramics, (Bi1/2Na1/2)0.935Ba0.065Ti1−x
+                     (Fe1/2Nb1/2)
+                        x
+                     O3, were prepared by the conventional solid-state reaction method. A highest unipolar strain of ∼0.422% and corresponding normalized strain, d
+                     *
+                     33 (= 
+                     S
+                     max/E
+                     max) of 844pm/V under an applied field of 50kV/cm were observed at x
+                     =0.020, due to the destabilization of the ferroelectric order. It is observed that the unipolar strain of BNBT-0.02FN is temperature insensitive, and the d
+                     *
+                     33 maintains a high value of ∼600pm/V at 90°C.
+
+# INTRODUCTION
+Lead-based ferroelectric materials such as lead zirconate titanate (PZT) have been widely utilized for piezoelectric or dielectric components and other electromechanical devices. Since the bismuth-based perovskite ceramics, Bi1/2Na1/2TiO3 (BNT) was found to possess promising piezoelectric and ferroelectric properties, various promising BNT-based solid solutions have been proposed: examples including the binary Bi1/2Na1/2TiO3-BaTiO3 (BNT-BT) , Bi1/2Na1/2TiO3-K0.5Na0.5NbO3 (BNT-KNN) , the ternary Bi1/2Na1/2TiO3-Bi1/2K1/2TiO3-BaTiO3 (BNT-BKT-BT) , Bi1/2Na1/2TiO3-BaTiO3-(K0.5Na0.5)NbO3 (BNT-BT-KNN) and Bi1/2Na1/2TiO3-BaTiO3-BiAlO3 (BNT-BT-BA). Zhang et al. reported a Bi1/2Na1/2TiO3-BaTiO3-K0.5Na0.5NbO3 (BNT-BT-KNN) ceramics having a giant strain response of 0.45% at 80kV/cm driving field equivalently 560pm/V. Pham et al. studied a Nb-doped Bi1/2(Na0.82K0.18)1/2TiO3 (BNKTN) ceramics near the morphotropic phase boundary (MPB) and reported a large unipolar strain of 0.448% at 70kV/cm. The subsequent researches on the mechanism of the giant strain in BNT-based systems, as well as new BNT-based compositions further accelerated studies on BNT-based ceramics. However, the practical application of BNT-based ceramics is hindered due to the fact that large strain response needs a high electric field to trigger. Jin et al. introduced (Al0.5Nb0.5)E^{4+} into the B-site of BNT and found a large strain S max/E max of 575pm/V and high piezoelectric constant d33 of 210 pC/N. Li et al. prepared Fe-modified 0.875Bi0.5Na0.5TiO3-0.06Bi0.5Li0.5TiO3-0.065BaTiO3-0.005Mn ceramic with a large unipolar strain of 0.4% under 40kV/cm. In light of these observations, a new ternary solid solution was designed and characterized through introducing B-site complex-ion (Fe1/2Nb1/2)E^{4+} into the MPB solid solution (Bi1/2Na1/2)0.935Ba0.065TiO3 (BNBT). It is expected that (Fe1/2Nb1/2)E^{4+} modification in BNBT ceramics can enhance the electromechanical properties. In this work, we fabricated BNBT-based ceramics with (Fe1/2Nb1/2)E^{4+} addition using a conventional solid-state reaction method and systematically studied the influence of compositional modification on the crystal structure, ferroelectric and piezoelectric properties and field-induced strain behaviors.
+
+# CONCLUSION
+In summary, lead-free BNBT-x FN piezoelectric ceramics were prepared by the conventional solid-state reaction method and the crystal structure, microstructure and electrical properties were systematically investigated. All BNBT-x FN ceramics form the pure perovskite phase structure, and no obvious change in the crystal structure is observed. A large field-induced strain of 0.422% at a low applied field of 50kV/cm was observed at the critical composition of x =0.020 which corresponds to the S max/E max of 844 pm/V. The dielectric, ferroelectric, and piezoelectric properties of BNBT-x FN ceramics were enhanced by a proper amount of (Fe1/2Nb1/2)E^{4+}. Improved Pr =35.6\u03bcC/cmE^{2}, low Ec of 25.2kV/cm, and high d33 =213pC/N were observed at x =0.010. These results show our research can benefit the developments of Bi1/2Na1/2TiO3 ceramics and widen their applications range.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 13:54:40: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.jeurceramsoc.2015.09.043.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.jeurceramsoc.2015.09.043 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Structure parameters of x =0 and x =0.020 obtained from rietveld refinement.
+|Parameters|| x =0| x =0.020|
+|---|---|---|---|
+|Lattice parameters (\xc5)|a = b|5.517339|5.519778|
+||c|3.905571|3.907389|
+|Angle (\xb0)|\u03b1 = \u03b2 = \u03b3|90|90|
+|Space group||P4bm|P4bm|
+|Rwp (%)||8.68|8.47|
+|Rp (%)||4.97|4.83|
+|\u03c7 E^{2}||3.12|2.68|
+
+Table 2. Comparison of field-induced strain and normalized strain of BNBT-x FN ceramics with other BNT-based systems.
+|Materials| S max (%)| E (kV/cm)| S max/E max (pm/V)|References|
+|---|---|---|---|---|
+|BNBT-x FN|0.422|50|844|Current work|
+|BNKTN-BST|0.38|60|634|[26]|
+|BNKT-NN|0.445|55|810|[27]|
+|BNBT-BST|0.428|60|713|[28]|
+|BNT7.5BT-xZr|0.353|60|588|[29]|
+|BNKT-KNN|0.46|80|575|[30]|
+|BNT-BAS|0.48|90|532|[31]|
+|BNBT-La|0.35|70|500|[32]|
+
+# RESULTS AND DISCUSSION
+The XRD patterns with a 2\u03b8 ranging from 20\xb0 to 70\xb0 for BNBT-x FN samples are demonstrated in (a). This implied that the doped (Fe1/2Nb1/2)E^{4+} have diffused into the crystal lattice and formed a stable solid solution with BNBT. (b) shows the expanded XRD patterns in the 2\u03b8 range of 45\u201348\xb0. The positions of (202) peak shift slightly to the lower angle with the increase of (Fe1/2Nb1/2)E^{4+} content, suggesting the expansion of lattice constant. This was attributed to the differences in ionic radii of FeE^{3+} (0.645\xc5, CN=6), NbE^{5+} (0.64\xc5, CN=6) and TiE^{4+} (0.605\xc5, CN=6) , The results indicated that the (Fe1/2Nb1/2)E^{4+} is entered into the B-site of BNT to substitute TiE^{4+} for the radius matching, while the differences in ionic radii resulting in the lattice deformation at the same time. In order to determine the crystal structures of BNBT-x FN ceramics more accurately, the XRD Rietveld refinements for BNBT and BNBT-0.020FN were carried out with P4bm space group at room temperature by using the GSAS-EXPGUI program. The XRD data were collected in a 2\u03b8 range of 20\u201380\xb0 with a step size of 0.02\xb0. The final refined profiles for BNBT and BNBT-0.020FN are presented in. The final factors, Rwp, Rp, chi-squared values (\u03c7 E^{2}) are 8.68%, 4.97%, 3.12 for BNBT, and 8.47%, 4.83%, 2.68 for BNBT-0.020FN, respectively. The observed lattice parameters are in close agreement to the already published reports on BNT. The SEM micrographs of the polished and thermally etched BNBT-x FN ceramics are displayed in. All ceramics have uniform structures and the grain size decreases slightly with increasing the (Fe1/2Nb1/2)E^{4+} contents. Using a linear intercept method, the grain sizes decrease gradually from 5.21 to 4.12\u03bcm, implying the role of (Fe1/2Nb1/2)E^{4+} in BNBT-x FN systems as a grain growth inhibitor. It is also revealed that the density and relative density of the material are strongly influenced by (Fe1/2Nb1/2)E^{4+} contents. See , the apparent density and relative density reach their peaks values at x =0.010. However,the minimum of the relative densities is still above 94.6%, which indicates that all the BNBT-x FN ceramics are well sintered. (a)\u2013(d) shows the SEM micrographs of the fracture surface of BNBT-x FN ceramics with x =0, 0.010, 0.015, and 0.020. Hysteresis loops (P\u2013E) of BNBT-x FN ceramics measured at 10Hz are depicted in. The P\u2013E shape strongly rests with the composition of the ceramics. The response of Pr and Ec of BNBT-x FN ceramics as a function of x is provided in. The BNBT ceramic exhibits typical ferroelectric behavior with a remnant polarization (Pr ) of 32.3\u03bcC/cmE^{2} and a coercive field (Ec ) 32.1kV/cm, respectively. At x =0.010, the value of Pr arrives at the peak of 35.6\u03bcC/cmE^{2} with Ec of 25.2kV/cm, while Ec drops dramatically with increasing x. The high ferroelectric performance observed at x =0.010 might be attributed to the coexistence of ferroelectric and relaxor ferroelectric phase. At high doping level of (Fe1/2Nb1/2)E^{4+} ( \u22650.020), the loops become much narrower, suggesting that excessive (Fe1/2Nb1/2)E^{4+} hinders the domain-wall switching. A change in the shape of P\u2013E loops from \u201cslim\u201d to \u201cwell-saturated\u201d implies that the domain structure of the ceramics undergoes a macrodomain\u2013microdomain transition with the increasing (Fe1/2Nb1/2)E^{4+} amount, which also confirms the appearance of a typical relaxor behavior at high doping level of (Fe1/2Nb1/2)E^{4+} ( \u22650.020). Pure BNBT ceramic exhibits a typical butterfly-shaped curve with a maximum strain (S max) of 0.18% and negative strain (S neg) of 0.06%, which is typical for ferroelectric material. With increasing x, the measured strain increased significantly, reached the top (S max =0.42%) at x =0.020, and then decreased slowly, while S neg increases and then drops down sharply. The large bipolar strain in x =0.020 indicates that the reduction in S neg is interrelated with domain back-switching during bipolar cycling. Hence, the significant enhancement in bipolar strain can be attributed to the ferroelectrics to relaxor ferroelectrics phase transition, which is supported by the polarization versus electric field (P\u2013E) hysteresis loops shown in. Similar results were also reported in SrZrO3-modified Bi0.5Na0.5TiO3-BaTiO3 ceramics and Zr-doped Bi1/2Na1/2TiO3-BaTiO3 ceramics. summarizes the variation of S neg and d33 with (Fe1/2Nb1/2)E^{4+} content. Similar to the variation of S neg, the d33 has a maximum value of 213pC/N at x =0.010. The observed trends of d33 are in good agreement with polarization hysteresis loops in. The significant improvement observed in d33 at x =0.010 is attributed to a large Pr and a lower Ec. The highest strain value (S max =0.422%) is obtained at x =0.020. Moreover, one may find that sample of x =0.020 seemed to exhibit an obvious remanent strain (Sr ) in the unipolar loops. It can be obviously observed that the first-cycle strain loop showed a much larger Sr value (0.2%) ( x =0.020) than those ( , 0.06%, and , 0.12%) for the non-first cycles. The difference of the remanent strains of the x =0.02 sample in should be attributed to the really occurred irreversible process during electric cycling. However, a further increase in the (Fe1/2Nb1/2)E^{4+} contents (x >0.02) drops the strain level. The field-induced strain S max and the normalized strain d E^{*} 33 of BNBT-x FN ceramics are presented in as a function of x. The enhanced strain (S max =0.422%), nearly three times more than that of pure BNBT, and the normalized strain (dE^{*} 33 = S max/E max =844 pm/V) are obtained for x =0.020 at an applied electric field of 50kV/cm. The field-induced strain level and its corresponding normalized strain of the materials are much higher than those of the non-textured BNT-based systems. The field-induced strain and the corresponding normalized strain of BNBT-x FN ceramic and some other lead-free BNT-based systems are summarized in for reference. It is clear that (Fe1/2Nb1/2)E^{4+} is of benefit to the ferroelectric and piezoelectric properties of BNT-based ceramics. Another exciting result is the temperature insensitive strain behavior of the composition with x =0.020. This behavior was observed from room temperature up to 120\xb0C. It can be seen from that the unipolar strain retains a high value of 0.3% at 50kV/cm (S max /E max =\u223c600pm/V) from room temperature up to 90\xb0C. The decreasing of such a large strain value is about 28% of its room-temperature value up to a high temperature of 90\xb0C within a wide working temperature range, implying that the x =0.020 ceramic sample exhibits a good temperature-stable strain behavior. shows unipolar field-induced strain curves measured at room temperature and at 10Hz as a function of switching cycles for BNBT-0.020 FN. It can be observed that no decrease of the unipolar field-induced strain value within 10E^{5} switching cycles, as illustrated in the inset of. Electric field dependence of the relative dielectric constant of BNBT-x FN ceramics is manifested in. Compositions with x <0.020 exhibit evident hysteretic behavior, which is closely connected to switching of ferroelectric domains. On the contrary, BNBT-x FN samples (x \u22650.02) display indiscernible hysteretic behavior, implying little domain switching. Judging from the evolution of \u03f5r (E), it is evident that compositions with x =0.02 and x =0.03 keep permittivity high as in the undoped BNBT at zero electric field. In addition, it reduces the effect of the electric bias field on the permittivity, so that the relative deviation calculated through the maximum permittivity \u03f5 max, the minimum permittivity \u03f5 min, and the permittivity at zero field \u03f5 0kV according to Eq. changes from 47% (x =0) to 50% (x =0.005), 65% (x =0.010), 64% (x =0.015), 40% (x =0.020) and eventually to 24% (x =0.030).  shows the temperature dependence of the dielectric constant (\u03f5r ) and loss (tan \u03b4) of the BNBT-x FN ceramics with x =0.00, 0.005, 0.010, 0.015, 0.020 and 0.030 measured at different frequencies (0.1, 1, 10 and 100kHz). It is clear from the dielectric response that samples with low (Fe1/2Nb1/2)E^{4+} contents (x =0.00, 0.005 and 0.010) exhibit two anomalies commonly known as depolarization temperature (Td ) corresponding to ferroelectric-to-relaxor phase transition, and maximum temperature (Tm ), at which the dielectric constant reaches its maximum value. However, a clear change for samples x <0.015 at low temperature region with a relatively weak frequency-dependent dispersion and decreasing dielectric permittivity takes place. It is suggested that BNBT-x FN ceramics with x <0.015 are nonergodic relaxor ferroelectrics state undergoing a field-induced phase transition to a long-range ordered state, which is consistent with the previous results of BNT-BT ceramics. The dielectric constant decreases with increase in frequency from 0.1kHz to 100kHz. The enhancement in the field-induced strain and corresponding dE^{*} 33 is due to the distortion of (Fe1/2Nb1/2)E^{4+} entering into B-site in BNT-based ceramics. Furthermore, the relaxor ferroelectric phase dominated at higher (Fe1/2Nb1/2)E^{4+} (i.e., x =0.020 and above), which delays the transformation from the relaxor ferroelectric phase to the ferroelectric phase based on the significant decrease in the polarization response. The results of this study suggest that high unipolar strain, located only in a narrow region around x =0.020 in which both ferroelectric and relaxor ferroelectric phase coexist in the BNT-based ceramics system. The remnant polarization together with the noticeable pinched polarization hysteresis loop and large strain at x =0.020 were suggested to originate from the coexistence of the ferroelectric and relaxor ferroelectric phase. In other words, during each cycle, the residual and field-induced ferroelectric phase are fully poled and depoled again, resulting in large strain due to the repeated switching and back-switching of non-180-domains.
+
+# TITLE
+Electric field-induced ultrahigh strain and large piezoelectric effect in Bi1/2Na1/2TiO3-based lead-free piezoceramics
+
+# ABSTRACT
+Lead-free piezoelectric ceramics, (Bi1/2Na1/2)0.935Ba0.065Ti1−x
+                     (Fe1/2Nb1/2)
+                        x
+                     O3, were prepared by the conventional solid-state reaction method. A highest unipolar strain of ∼0.422% and corresponding normalized strain, d
+                     *
+                     33 (= 
+                     S
+                     max/E
+                     max) of 844pm/V under an applied field of 50kV/cm were observed at x
+                     =0.020, due to the destabilization of the ferroelectric order. It is observed that the unipolar strain of BNBT-0.02FN is temperature insensitive, and the d
+                     *
+                     33 maintains a high value of ∼600pm/V at 90°C.
+
+# INTRODUCTION
+Lead-based ferroelectric materials such as lead zirconate titanate (PZT) have been widely utilized for piezoelectric or dielectric components and other electromechanical devices. Since the bismuth-based perovskite ceramics, Bi1/2Na1/2TiO3 (BNT) was found to possess promising piezoelectric and ferroelectric properties, various promising BNT-based solid solutions have been proposed: examples including the binary Bi1/2Na1/2TiO3-BaTiO3 (BNT-BT) , Bi1/2Na1/2TiO3-K0.5Na0.5NbO3 (BNT-KNN) , the ternary Bi1/2Na1/2TiO3-Bi1/2K1/2TiO3-BaTiO3 (BNT-BKT-BT) , Bi1/2Na1/2TiO3-BaTiO3-(K0.5Na0.5)NbO3 (BNT-BT-KNN) and Bi1/2Na1/2TiO3-BaTiO3-BiAlO3 (BNT-BT-BA). Zhang et al. reported a Bi1/2Na1/2TiO3-BaTiO3-K0.5Na0.5NbO3 (BNT-BT-KNN) ceramics having a giant strain response of 0.45% at 80kV/cm driving field equivalently 560pm/V. Pham et al. studied a Nb-doped Bi1/2(Na0.82K0.18)1/2TiO3 (BNKTN) ceramics near the morphotropic phase boundary (MPB) and reported a large unipolar strain of 0.448% at 70kV/cm. The subsequent researches on the mechanism of the giant strain in BNT-based systems, as well as new BNT-based compositions further accelerated studies on BNT-based ceramics. However, the practical application of BNT-based ceramics is hindered due to the fact that large strain response needs a high electric field to trigger. Jin et al. introduced (Al0.5Nb0.5)E^{4+} into the B-site of BNT and found a large strain S max/E max of 575pm/V and high piezoelectric constant d33 of 210 pC/N. Li et al. prepared Fe-modified 0.875Bi0.5Na0.5TiO3-0.06Bi0.5Li0.5TiO3-0.065BaTiO3-0.005Mn ceramic with a large unipolar strain of 0.4% under 40kV/cm. In light of these observations, a new ternary solid solution was designed and characterized through introducing B-site complex-ion (Fe1/2Nb1/2)E^{4+} into the MPB solid solution (Bi1/2Na1/2)0.935Ba0.065TiO3 (BNBT). It is expected that (Fe1/2Nb1/2)E^{4+} modification in BNBT ceramics can enhance the electromechanical properties. In this work, we fabricated BNBT-based ceramics with (Fe1/2Nb1/2)E^{4+} addition using a conventional solid-state reaction method and systematically studied the influence of compositional modification on the crystal structure, ferroelectric and piezoelectric properties and field-induced strain behaviors.
+
+# CONCLUSION
+In summary, lead-free BNBT-x FN piezoelectric ceramics were prepared by the conventional solid-state reaction method and the crystal structure, microstructure and electrical properties were systematically investigated. All BNBT-x FN ceramics form the pure perovskite phase structure, and no obvious change in the crystal structure is observed. A large field-induced strain of 0.422% at a low applied field of 50kV/cm was observed at the critical composition of x =0.020 which corresponds to the S max/E max of 844 pm/V. The dielectric, ferroelectric, and piezoelectric properties of BNBT-x FN ceramics were enhanced by a proper amount of (Fe1/2Nb1/2)E^{4+}. Improved Pr =35.6\u03bcC/cmE^{2}, low Ec of 25.2kV/cm, and high d33 =213pC/N were observed at x =0.010. These results show our research can benefit the developments of Bi1/2Na1/2TiO3 ceramics and widen their applications range.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="Thought: I now have the data. The text explicitly states d33 values: "the d33 has a maximum value of 213pC/N at x =0.010". The graph (gr9) also provides d33 values for various x. According to the conflict resolution rule, if the same composition appears in both text and graph with different values, keep the text-derived value. For x=0.010, text says 213 pC/N, graph says 215 pC/N. I will keep the text value (213). For other compositions (x=0, 0.005, 0.015, 0.020, 0.030), the text does not provide explicit d33 values, so I will use the graph-derived values from gr9. The graph gr9 gives d33 values for x=0.000 (140 pC/N), x=0.005 (198 pC/N), x=0.010 (215 pC/N, but text says 213, so use 213), x=0.015 (211 pC/N), x=0.020 (15 pC/N), x=0.030 (10 pC/N). The unit is pC/N. The family is Bi1/2Na1/2TiO3 (BNT) based. The abbreviation BNBT is used for (Bi1/2Na1/2)0.935Ba0.065TiO3. I need to include abbreviations. The canonical formula from the abstract is (Bi1/2Na1/2)0.935Ba0.065Ti(1-x)(Fe1/2Nb1/2)(x)O3. I will write the compositions by substituting x values. For x=0, the formula is (Bi1/2Na1/2)0.935Ba0.065TiO3. For x=0.005, it is (Bi1/2Na1/2)0.935Ba0.065Ti0.995(Fe1/2Nb1/2)0.005O3. For x=0.010, it is (Bi1/2Na1/2)0.935Ba0.065Ti0.99(Fe1/2Nb1/2)0.01O3. For x=0.015, it is (Bi1/2Na1/2)0.935Ba0.065Ti0.985(Fe1/2Nb1/2)0.015O3. For x=0.020, it is (Bi1/2Na1/2)0.935Ba0.065Ti0.98(Fe1/2Nb1/2)0.02O3. For x=0.030, it is (Bi1/2Na1/2)0.935Ba0.065Ti0.97(Fe1/2Nb1/2)0.03O3. The family is Bi1/2Na1/2TiO3 (BNT). I will also include the abbreviation BNBT for (Bi1/2Na1/2)0.935Ba0.065TiO3.
+
+Now I will construct the final JSON.
+
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(Bi1/2Na1/2)0.935Ba0.065TiO3": 140,
+      "(Bi1/2Na1/2)0.935Ba0.065Ti0.995(Fe1/2Nb1/2)0.005O3": 198,
+      "(Bi1/2Na1/2)0.935Ba0.065Ti0.99(Fe1/2Nb1/2)0.01O3": 213,
+      "(Bi1/2Na1/2)0.935Ba0.065Ti0.985(Fe1/2Nb1/2)0.015O3": 211,
+      "(Bi1/2Na1/2)0.935Ba0.065Ti0.98(Fe1/2Nb1/2)0.02O3": 15,
+      "(Bi1/2Na1/2)0.935Ba0.065Ti0.97(Fe1/2Nb1/2)0.03O3": 10
+    },
+    "abbreviations": {
+      "BNBT": "(Bi1/2Na1/2)0.935Ba0.065TiO3",
+      "FN": "(Fe1/2Nb1/2)"
+    },
+    "property_unit": "pC/N",
+    "family": "Bi1/2Na1/2TiO3"
+  }
+}"

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi0.5(Na0.8K0.2)0.5TiO3":130,"Bi0.5(Na0.8K0.2)0.5(Ti0.99Sn0.01)O3":150,"Bi0.5(Na0.8K0.2)0.5(Ti0.98Sn0.02)O3":171,"Bi0.5(Na0.8K0.2)0.5(Ti0.97Sn0.03)O3":170,"Bi0.5(Na0.8K0.2)0.5(Ti0.96Sn0.04)O3":155},"abbreviations":{"BNKT":"Bi0.5(Na0.8K0.2)0.5TiO3"},"property_unit":"pC/N","family":"Bi0.5(Na0.8K0.2)0.5TiO3"}}

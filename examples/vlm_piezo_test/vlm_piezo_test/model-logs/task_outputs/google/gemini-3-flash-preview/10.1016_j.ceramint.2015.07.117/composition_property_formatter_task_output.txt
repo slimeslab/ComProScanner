@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(K0.5Na0.5)(Nb(1-0.2)Ta(0.2))O3":160,"(K0.5Na0.5)(Nb(1-0.3)Ta(0.3))O3":233,"(K0.5Na0.5)(Nb(1-0.4)Ta(0.4))O3":197},"property_unit":"pC/N","family":"KNN"}}

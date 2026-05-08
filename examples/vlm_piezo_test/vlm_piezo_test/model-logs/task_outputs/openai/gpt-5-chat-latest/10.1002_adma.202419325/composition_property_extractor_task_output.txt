@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Ba(Sn0.11Ti0.89)O3":433,"Ba(Sn(0.11*(1-0.005))Ti(0.89*(1-0.005))Mn(0.005))O3":710,"Ba(Sn(0.11*(1-0.01))Ti(0.89*(1-0.01))Mn(0.01))O3":614},"abbreviations":{"BST":"Ba(Sn,Ti)O3"},"property_unit":"pC/N","family":"BaTiO3"}}

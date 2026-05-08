@@ -1,0 +1,340 @@
+2026-05-01 13:55:12: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/S0167-577X(03)00580-9.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/S0167-577X(03)00580-9 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The dielectric, piezoelectric and physical properties of some typical ceramics in [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 system
+|Ceramic composition| d 33 (pC/N)| k p (%)| \u03b5 33 E^{T}/\u03b5 0|tan\u03b4 (%)|Poisson's ratio|
+|---|---|---|---|---|---|
+|[Bi0.5(Na0.6K0.35Li0.05)0.5]O3|120|26.4|1753|5.7|0.174|
+|[Bi0.5(Na0.7K0.25Li0.05)0.5]O3|145|22.1|1276|4.1|0.285|
+|[Bi0.5(Na0.65K0.25Li0.1)0.5]O3|100|17.3|1109|4.9|0.295|
+
+# RESULTS AND DISCUSSION
+shows X-ray diffraction patterns of the synthesized [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics. The patterns in indicate that the ceramics possess almost pure single phase of perovskite structure with a little unknown phase when y\u22640.20. A small peak in the patterns of of the ceramics with y\u22650.30 at two-theta equal to 30\xb0 is detected, which suggests that there is a second phase in these solid solutions while y\u22650.30. shows the measured resonance\u2013antiresonance curve of the [Bi0.5(Na0.7K0.25Li0.05)0.5]TiO3 ceramics. From , one can see that the piezoelectric resonance curve of the ceramics is excellent, which indicates that the ceramics has good piezoelectric response. shows the dependences of the piezoelectric charge constant (d 33) and planar electromechanical coupling factor (k p) of the synthesized [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics on the amount of LiE^{+}. With the increasing of the amount of LiE^{+}, both d 33 and k p decrease. shows the dependences of the piezoelectric charge constant (d 33) and planar electromechanical coupling factor (k p) of the synthesized [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics on the value of KE^{+}/LiE^{+} ratio. With the increasing value of KE^{+}/LiE^{+} ratio, both d 33 and k p increase. That is, the ceramics with relatively high amount of KE^{+} and low amount of LiE^{+} have relatively large piezoelectricity. gives the dielectric, piezoelectric and physical properties of some compositions of these systems. The amount of KE^{+} greatly influences the dielectric constant of the ceramics. With the amount of KE^{+} increasing, the dielectric constant of the ceramics has an increasing trend. At present, the best properties obtained in this system are d 33=180 pC/N and k p=35%, respectively.
+
+# TITLE
+Synthesis and piezoelectric properties of lead-free piezoelectric [Bi 0.5(Na1-x-yKxLiy) 0.5]TiO3 ceramics
+
+# ABSTRACT
+A new group of lead-free piezoelectric ceramics, [Bi0.5(Na1−x−y
+                     K
+                        x
+                     Li
+                        y
+                     )0.5]TiO3, were invented. The results of X-ray diffraction (XRD) data show that the ceramics possess almost pure perovskite phase with a little unknown phase when y≤0.20. The measurements of dielectric and piezoelectric properties reveal that the ceramics with high amount of K+ and low amount of Li+ provide relatively high piezoelectric charge constant d
+                     33 (up to 180 pC/N) and high planar electromechanical coupling factor k
+                     p (up to 35.0%).
+
+# INTRODUCTION
+However, most widely used piezoelectric ceramic materials at present are lead-based piezoelectric ceramics such as PbTiO3\u2013PbZrO3(PZT), which is opposite to the needs of environmental protection because of the toxicity of lead oxide and its high vapor pressure during sintering processing. Bismuth sodium titanate, Bi0.5Na0.5TiO3 (abbreviated as BNT), which was found by Smolensky et al., is considered to be an excellent candidate of lead-free piezoelectric ceramics with its relatively large remanent polarization (P r=38 \u03bcC/cmE^{2}) and high curie temperature (T c=300 \xb0C). However, pure BNT piezoelectric ceramics are difficult to pole because of its relatively large coercive field (E c=73 kV/cm) and high electrical conductivity. Since the early of 1990s, BNT-based solid solutions have been extensively studied by some groups , which have reported some BNT-based lead-free piezoelectric ceramic systems with high piezoelectric properties, such as BNT\u2013BaTiO3 , BNT\u2013Bi0.5K0.5TiO3 , BNT\u2013BiFeO3 , BNT\u2013NaNbO3 , and so on. Recently the authors' group did further investigation on Bi0.5Na0.5TiO3 system, i.e. NaE^{+} in Bi0.5Na0.5TiO3 solid solutions was partially substituted by KE^{+} and LiE^{+}, and finally invented [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics as a new group of BNT-based lead-free piezoelectric ceramics. In this paper, the [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics synthesized by conventional ceramic sintering technique and their piezoelectric properties are reported.
+
+# CONCLUSION
+Practical lead-free piezoelectric [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics were invented. The results of X-ray diffraction (XRD) data show that the ceramics possess almost pure single perovskite phase with a little unknown phase when y\u22640.20. The measurements of dielectric and piezoelectric properties reveal that the ceramics with high amount of KE^{+} and low amount of LiE^{+} provide relatively high piezoelectric charge constant d 33 (up to 180 pC/N) and high planar electromechanical coupling factor k p (up to 35.0%).
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 15:44:50: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/S0167-577X(03)00580-9.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/S0167-577X(03)00580-9 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The dielectric, piezoelectric and physical properties of some typical ceramics in [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 system
+|Ceramic composition| d 33 (pC/N)| k p (%)| \u03b5 33 E^{T}/\u03b5 0|tan\u03b4 (%)|Poisson's ratio|
+|---|---|---|---|---|---|
+|[Bi0.5(Na0.6K0.35Li0.05)0.5]O3|120|26.4|1753|5.7|0.174|
+|[Bi0.5(Na0.7K0.25Li0.05)0.5]O3|145|22.1|1276|4.1|0.285|
+|[Bi0.5(Na0.65K0.25Li0.1)0.5]O3|100|17.3|1109|4.9|0.295|
+
+# RESULTS AND DISCUSSION
+shows X-ray diffraction patterns of the synthesized [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics. The patterns in indicate that the ceramics possess almost pure single phase of perovskite structure with a little unknown phase when y\u22640.20. A small peak in the patterns of of the ceramics with y\u22650.30 at two-theta equal to 30\xb0 is detected, which suggests that there is a second phase in these solid solutions while y\u22650.30. shows the measured resonance\u2013antiresonance curve of the [Bi0.5(Na0.7K0.25Li0.05)0.5]TiO3 ceramics. From , one can see that the piezoelectric resonance curve of the ceramics is excellent, which indicates that the ceramics has good piezoelectric response. shows the dependences of the piezoelectric charge constant (d 33) and planar electromechanical coupling factor (k p) of the synthesized [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics on the amount of LiE^{+}. With the increasing of the amount of LiE^{+}, both d 33 and k p decrease. shows the dependences of the piezoelectric charge constant (d 33) and planar electromechanical coupling factor (k p) of the synthesized [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics on the value of KE^{+}/LiE^{+} ratio. With the increasing value of KE^{+}/LiE^{+} ratio, both d 33 and k p increase. That is, the ceramics with relatively high amount of KE^{+} and low amount of LiE^{+} have relatively large piezoelectricity. gives the dielectric, piezoelectric and physical properties of some compositions of these systems. The amount of KE^{+} greatly influences the dielectric constant of the ceramics. With the amount of KE^{+} increasing, the dielectric constant of the ceramics has an increasing trend. At present, the best properties obtained in this system are d 33=180 pC/N and k p=35%, respectively.
+
+# TITLE
+Synthesis and piezoelectric properties of lead-free piezoelectric [Bi 0.5(Na1-x-yKxLiy) 0.5]TiO3 ceramics
+
+# ABSTRACT
+A new group of lead-free piezoelectric ceramics, [Bi0.5(Na1−x−y
+                     K
+                        x
+                     Li
+                        y
+                     )0.5]TiO3, were invented. The results of X-ray diffraction (XRD) data show that the ceramics possess almost pure perovskite phase with a little unknown phase when y≤0.20. The measurements of dielectric and piezoelectric properties reveal that the ceramics with high amount of K+ and low amount of Li+ provide relatively high piezoelectric charge constant d
+                     33 (up to 180 pC/N) and high planar electromechanical coupling factor k
+                     p (up to 35.0%).
+
+# INTRODUCTION
+However, most widely used piezoelectric ceramic materials at present are lead-based piezoelectric ceramics such as PbTiO3\u2013PbZrO3(PZT), which is opposite to the needs of environmental protection because of the toxicity of lead oxide and its high vapor pressure during sintering processing. Bismuth sodium titanate, Bi0.5Na0.5TiO3 (abbreviated as BNT), which was found by Smolensky et al., is considered to be an excellent candidate of lead-free piezoelectric ceramics with its relatively large remanent polarization (P r=38 \u03bcC/cmE^{2}) and high curie temperature (T c=300 \xb0C). However, pure BNT piezoelectric ceramics are difficult to pole because of its relatively large coercive field (E c=73 kV/cm) and high electrical conductivity. Since the early of 1990s, BNT-based solid solutions have been extensively studied by some groups , which have reported some BNT-based lead-free piezoelectric ceramic systems with high piezoelectric properties, such as BNT\u2013BaTiO3 , BNT\u2013Bi0.5K0.5TiO3 , BNT\u2013BiFeO3 , BNT\u2013NaNbO3 , and so on. Recently the authors' group did further investigation on Bi0.5Na0.5TiO3 system, i.e. NaE^{+} in Bi0.5Na0.5TiO3 solid solutions was partially substituted by KE^{+} and LiE^{+}, and finally invented [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics as a new group of BNT-based lead-free piezoelectric ceramics. In this paper, the [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics synthesized by conventional ceramic sintering technique and their piezoelectric properties are reported.
+
+# CONCLUSION
+Practical lead-free piezoelectric [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics were invented. The results of X-ray diffraction (XRD) data show that the ceramics possess almost pure single perovskite phase with a little unknown phase when y\u22640.20. The measurements of dielectric and piezoelectric properties reveal that the ceramics with high amount of KE^{+} and low amount of LiE^{+} provide relatively high piezoelectric charge constant d 33 (up to 180 pC/N) and high planar electromechanical coupling factor k p (up to 35.0%).
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 15:46:16: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/S0167-577X(03)00580-9.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/S0167-577X(03)00580-9 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The dielectric, piezoelectric and physical properties of some typical ceramics in [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 system
+|Ceramic composition| d 33 (pC/N)| k p (%)| \u03b5 33 E^{T}/\u03b5 0|tan\u03b4 (%)|Poisson's ratio|
+|---|---|---|---|---|---|
+|[Bi0.5(Na0.6K0.35Li0.05)0.5]O3|120|26.4|1753|5.7|0.174|
+|[Bi0.5(Na0.7K0.25Li0.05)0.5]O3|145|22.1|1276|4.1|0.285|
+|[Bi0.5(Na0.65K0.25Li0.1)0.5]O3|100|17.3|1109|4.9|0.295|
+
+# RESULTS AND DISCUSSION
+shows X-ray diffraction patterns of the synthesized [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics. The patterns in indicate that the ceramics possess almost pure single phase of perovskite structure with a little unknown phase when y\u22640.20. A small peak in the patterns of of the ceramics with y\u22650.30 at two-theta equal to 30\xb0 is detected, which suggests that there is a second phase in these solid solutions while y\u22650.30. shows the measured resonance\u2013antiresonance curve of the [Bi0.5(Na0.7K0.25Li0.05)0.5]TiO3 ceramics. From , one can see that the piezoelectric resonance curve of the ceramics is excellent, which indicates that the ceramics has good piezoelectric response. shows the dependences of the piezoelectric charge constant (d 33) and planar electromechanical coupling factor (k p) of the synthesized [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics on the amount of LiE^{+}. With the increasing of the amount of LiE^{+}, both d 33 and k p decrease. shows the dependences of the piezoelectric charge constant (d 33) and planar electromechanical coupling factor (k p) of the synthesized [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics on the value of KE^{+}/LiE^{+} ratio. With the increasing value of KE^{+}/LiE^{+} ratio, both d 33 and k p increase. That is, the ceramics with relatively high amount of KE^{+} and low amount of LiE^{+} have relatively large piezoelectricity. gives the dielectric, piezoelectric and physical properties of some compositions of these systems. The amount of KE^{+} greatly influences the dielectric constant of the ceramics. With the amount of KE^{+} increasing, the dielectric constant of the ceramics has an increasing trend. At present, the best properties obtained in this system are d 33=180 pC/N and k p=35%, respectively.
+
+# TITLE
+Synthesis and piezoelectric properties of lead-free piezoelectric [Bi 0.5(Na1-x-yKxLiy) 0.5]TiO3 ceramics
+
+# ABSTRACT
+A new group of lead-free piezoelectric ceramics, [Bi0.5(Na1−x−y
+                     K
+                        x
+                     Li
+                        y
+                     )0.5]TiO3, were invented. The results of X-ray diffraction (XRD) data show that the ceramics possess almost pure perovskite phase with a little unknown phase when y≤0.20. The measurements of dielectric and piezoelectric properties reveal that the ceramics with high amount of K+ and low amount of Li+ provide relatively high piezoelectric charge constant d
+                     33 (up to 180 pC/N) and high planar electromechanical coupling factor k
+                     p (up to 35.0%).
+
+# INTRODUCTION
+However, most widely used piezoelectric ceramic materials at present are lead-based piezoelectric ceramics such as PbTiO3\u2013PbZrO3(PZT), which is opposite to the needs of environmental protection because of the toxicity of lead oxide and its high vapor pressure during sintering processing. Bismuth sodium titanate, Bi0.5Na0.5TiO3 (abbreviated as BNT), which was found by Smolensky et al., is considered to be an excellent candidate of lead-free piezoelectric ceramics with its relatively large remanent polarization (P r=38 \u03bcC/cmE^{2}) and high curie temperature (T c=300 \xb0C). However, pure BNT piezoelectric ceramics are difficult to pole because of its relatively large coercive field (E c=73 kV/cm) and high electrical conductivity. Since the early of 1990s, BNT-based solid solutions have been extensively studied by some groups , which have reported some BNT-based lead-free piezoelectric ceramic systems with high piezoelectric properties, such as BNT\u2013BaTiO3 , BNT\u2013Bi0.5K0.5TiO3 , BNT\u2013BiFeO3 , BNT\u2013NaNbO3 , and so on. Recently the authors' group did further investigation on Bi0.5Na0.5TiO3 system, i.e. NaE^{+} in Bi0.5Na0.5TiO3 solid solutions was partially substituted by KE^{+} and LiE^{+}, and finally invented [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics as a new group of BNT-based lead-free piezoelectric ceramics. In this paper, the [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics synthesized by conventional ceramic sintering technique and their piezoelectric properties are reported.
+
+# CONCLUSION
+Practical lead-free piezoelectric [Bi0.5(Na1\u2212x\u2212y K x Li y )0.5]TiO3 ceramics were invented. The results of X-ray diffraction (XRD) data show that the ceramics possess almost pure single perovskite phase with a little unknown phase when y\u22640.20. The measurements of dielectric and piezoelectric properties reveal that the ceramics with high amount of KE^{+} and low amount of LiE^{+} provide relatively high piezoelectric charge constant d 33 (up to 180 pC/N) and high planar electromechanical coupling factor k p (up to 35.0%).
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "[Bi0.5(Na0.6K0.35Li0.05)0.5]TiO3": 120,
+      "[Bi0.5(Na0.7K0.25Li0.05)0.5]TiO3": 145,
+      "[Bi0.5(Na0.65K0.25Li0.1)0.5]TiO3": 100
+    },
+    "abbreviations": {
+      "BNT": "Bi0.5Na0.5TiO3"
+    },
+    "property_unit": "pC/N",
+    "family": "Bi0.5Na0.5TiO3"
+  }
+}"

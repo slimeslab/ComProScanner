@@ -1,0 +1,232 @@
+2026-05-01 11:05:13: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1007/s10854-007-9458-3.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1007/s10854-007-9458-3 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The XRD patterns of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics are shown in Fig.. As reported in literatures [, ], pure KNN ceramic exhibits an orthorhombic symmetry. Similar to a pure KNN ceramic, the ceramics possess a pure perovskite structure with the orthorhombic symmetry at x \u2264 0.20. This suggests that AgE^{+} has diffused into the KNN lattices to form a homogeneous solid solution. Generally, AgNbO3 is synthesized in O2 atmosphere. Therefore, the solubility of AgE^{+} into A-sites of KNN becomes difficult in air due to the poor thermal stability of Ag-containing compounds at high AgE^{+} concentration at high temperature. For the ceramics with x > 0.20, a number of small diffraction peaks are observed in the range of 2\u03b8 from 25\xb0 to 34\xb0, indicating the formation of a small amount of secondary phase (Ag2Nb8O21). Fig. 1XRD patterns of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics XRD patterns of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics The SEM micrographs of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.08, 0.16 and 0.24 are shown in Fig.. The grains have a diameter in the range of 2\u20132.5 \u03bcm. A high relative density (\u223c96%) of the ceramics proves that the ceramics can be well-sintered at 1,100\u20131,110 \xb0C. Fig. 2SEM micrographs of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics: (a) x = 0, sintered at 1,100 \xb0C for 4 h; (b) x = 0.08, sintered at 1,110 \xb0C for 4 h; (c) x = 0.16, sintered at 1,110 \xb0C for 4 h and (d) x = 0.24, sintered at 1,110 \xb0C for 4 h SEM micrographs of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics: (a) x = 0, sintered at 1,100 \xb0C for 4 h; (b) x = 0.08, sintered at 1,110 \xb0C for 4 h; (c) x = 0.16, sintered at 1,110 \xb0C for 4 h and (d) x = 0.24, sintered at 1,110 \xb0C for 4 h The temperature dependences of the relative permittivity \u03b5r at 1 kHz for the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.08, 0.16, 0.24 and 0.32 are shown in Fig. a, while the variations of Tc and TO\u2212T with x are shown in Fig. b. In agreement with the previous work [, ], two transition peaks are observed for the pure KNN ceramic at 421 \xb0C and 226 \xb0C, corresponding to the paraelectric cubic-ferroelectric tetragonal phase transition at TC and ferroelectric tetragonal-ferroelectric orthorhombic phase transition at TO\u2212T, respectively. The (K0.5Na0.5)1\u2212xAgxNbO3 ceramics exhibit similar temperature dependences of \u03b5r, but the transition peaks slightly shift to low temperatures. Similar to the pure KNN, the dielectric peaks of (K0.5Na0.5)1\u2212xAgxNbO3 ceramics are still sharp after the introduction of AgE^{+}, indicating that all the ceramics are normal ferroelectrics (Fig. a). From Fig. b, both Tc and TO\u2212T decrease slightly with increasing x and reach the minimum of 354 \xb0C and 205 \xb0C at x = 0.32 and 0.28, respectively. Since the lowest TO\u2212T of the (K0.5Na0.5)1\u2212xAgxNbO3 is 205 \xb0C, all the ceramics are of the orthorhombic phase at room temperature. This makes an agreement with the results of XRD measurements. Fig. 3(a) Temperature dependences of relative permittivity \u03b5r of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.08, 0.16, 0.24 and 0.32; (b) Variations of Tc and TO\u2212T of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x (a) Temperature dependences of relative permittivity \u03b5r of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.08, 0.16, 0.24 and 0.32; (b) Variations of Tc and TO\u2212T of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x The (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.16, 0.24 and 0.32 possess a single P-E loop as typical for ferroelectrics under an electric field of about 5 kV/mm as shown in Fig. a. Initially, the P-E loop of the ceramics with low AgE^{+} concentration (x \u2264 0.16) is well-saturated and square-like. As shown in Fig. b, Pr decreases slightly from 20.8 \u03bcC/cmE^{2} to 19.7 \u03bcC/cmE^{2} when x increases from 0 to 0.16. When x is further increased to 0.32, Pr decreases significantly to 4.44 \u03bcC/cmE^{2}. On the other hand, Ec is weakly dependent on the concentration of AgE^{+} (0.80\u20131.15 kV/mm). Fig. 4(a) P-E hysteresis loops of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.16, 0.24 and 0.32; (b) Variations of the remanent polarization Pr and coercive field Ec with x for the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics (a) P-E hysteresis loops of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.16, 0.24 and 0.32; (b) Variations of the remanent polarization Pr and coercive field Ec with x for the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics The variations of d33, kt, kp, \u03b5r and tan\u03b4 with x for the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics are shown in Fig.. The values of d33, kt and kp increase with x, giving peak values of 135 pC/N, 0.46 and 0.43 at x = 0.10, respectively. Unlike d33, kp and kt, \u03b5r (for the poled ceramics) increases from 400 to 492 as x increases from 0 to 0.04 and then retains a constant of 470 with a further increment of x. The tan\u03b4 of the ceramics is kept smaller than 4% with variations of x. Compared with pure KNN ceramic, the piezoelectric properties are enhanced after the formation of a solid solution of (K0.5Na0.5)1\u2212xAgxNbO3.Fig. 5Piezoelectric and dielectric properties of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics as a function of x Piezoelectric and dielectric properties of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics as a function of x
+
+# TITLE
+Electrical properties of (K 0.5Na 0.5) 1-x Ag xNbO 3 lead-free piezoelectric ceramics
+
+# ABSTRACT
+(KNa)AgNbO lead-free piezoelectric ceramics have been fabricated by an ordinary ceramic technique. The results of XRD reveal that AgE^{+} diffuses into the KNaNbOlattices to form a new solid solution with an orthorhombic perovskite structure and the solubility of AgE^{+} into A-sites of KNaNbO is about 0.20. The ceramics can be well-sintered at 1,100–1,110 °C. The partial substitution of AgE^{+} for A-site ion (KNa)E^{+} decreases slightly both paraelectric cubic-ferroelectric tetragonal () and ferroelectric tetragonal-ferroelectric orthorhombic phase transition temperatures (). The ceramic with  = 0.10 possesses optimum electrical properties:  = 135 pC/N,  = 0.43,  = 0.46,  = 470, tan = 3.39%, and = 394 °C.
+
+# INTRODUCTION
+Pb(Zr,Ti)O3 and Pb(Zr,Ti)O3-based multi-component ceramics with a perovskite structure are widely used in actuators, sensors as well as microelectronic devices because of their superior electrical properties. K0.5Na0.5NbO3 (KNN), a solid solution of ferroelectric KNbO3 and antiferroelectric NaNbO3, is considered as a good candidate for lead-free piezoelectric ceramics because of its high Curie temperature (\u223c420 \xb0C), good ferroelectric properties (Pr = 33 \u03bcC/cmE^{2}) and large electromechanical coupling factors [, ]. However, because of the high volatility of alkaline elements at high temperatures, it is very difficult to obtain dense and well-sintered KNN ceramics using ordinary sintering processes. Previously, a number of investigations have been carried out to improve the sintering performance and electrical properties of KNN ceramics, including the formation of solid solutions of KNN with other ABO3-type compounds, e.g. Li(Nb,Ta,Sb)O3[], CaTiO3 , BaTiO3 , SrTiO3 , LiTaO3 , LiSbO3 , the application of special fabrication techniques, e.g. cold-isostatic pressing , high-energy milling , spark plasma sintering , templated grain growth  and hot pressing , and the use of sintering aids, e.g. CuO  and MnO2. On the other hand, very recently, it has been proved that AgNbO3, an antiferroelectric at room temperature, has an extremely large polarization (52 \u03bcC/mE^{2}) and electromechanical response. In the present work, a new lead-free solid solution KNN-AgNbO3 was formed by introducing AgNbO3 into KNN and prepared in air by a simple pressureless processing without sintering aids, cold isostatic pressing or special power handing.
+
+# CONCLUSION
+New (K0.5Na0.5)1\u2212xAgxNbO3 lead-free piezoelectric ceramics have been successfully prepared by a conventional ceramic fabrication technique and their electrical properties have been studied. From the results of XRD, the ceramics possess a perovskite structure with an orthorhombic symmetry, indicating that AgE^{+} diffuses into the K0.5Na0.5NbO3 lattices to form a new solid solution with an orthorhombic perovskite structure. After the addition of AgNbO3 to KNN, both paraelectric cubic-ferroelectric tetragonal (TC) and ferroelectric tetragonal-ferroelectric orthorhombic phase transition temperatures (TO-T) decrease slightly. The ceramics with high AgE^{+} concentration (x > 0.16) exhibit the weak ferroelectricity because of the existence of a second phase. The electrical properties of the (K0.5Na0.5)0.90Ag0.10NbO3 ceramics are found to be optimum: d33 = 135 pC/N, kP = 0.43, kt = 0.46, \u03b5r = 470, tan\u03b4 = 3.39%, and TC = 394 \xb0C.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 11:05:48: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1007/s10854-007-9458-3.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1007/s10854-007-9458-3 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The XRD patterns of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics are shown in Fig.. As reported in literatures [, ], pure KNN ceramic exhibits an orthorhombic symmetry. Similar to a pure KNN ceramic, the ceramics possess a pure perovskite structure with the orthorhombic symmetry at x \u2264 0.20. This suggests that AgE^{+} has diffused into the KNN lattices to form a homogeneous solid solution. Generally, AgNbO3 is synthesized in O2 atmosphere. Therefore, the solubility of AgE^{+} into A-sites of KNN becomes difficult in air due to the poor thermal stability of Ag-containing compounds at high AgE^{+} concentration at high temperature. For the ceramics with x > 0.20, a number of small diffraction peaks are observed in the range of 2\u03b8 from 25\xb0 to 34\xb0, indicating the formation of a small amount of secondary phase (Ag2Nb8O21). Fig. 1XRD patterns of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics XRD patterns of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics The SEM micrographs of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.08, 0.16 and 0.24 are shown in Fig.. The grains have a diameter in the range of 2\u20132.5 \u03bcm. A high relative density (\u223c96%) of the ceramics proves that the ceramics can be well-sintered at 1,100\u20131,110 \xb0C. Fig. 2SEM micrographs of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics: (a) x = 0, sintered at 1,100 \xb0C for 4 h; (b) x = 0.08, sintered at 1,110 \xb0C for 4 h; (c) x = 0.16, sintered at 1,110 \xb0C for 4 h and (d) x = 0.24, sintered at 1,110 \xb0C for 4 h SEM micrographs of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics: (a) x = 0, sintered at 1,100 \xb0C for 4 h; (b) x = 0.08, sintered at 1,110 \xb0C for 4 h; (c) x = 0.16, sintered at 1,110 \xb0C for 4 h and (d) x = 0.24, sintered at 1,110 \xb0C for 4 h The temperature dependences of the relative permittivity \u03b5r at 1 kHz for the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.08, 0.16, 0.24 and 0.32 are shown in Fig. a, while the variations of Tc and TO\u2212T with x are shown in Fig. b. In agreement with the previous work [, ], two transition peaks are observed for the pure KNN ceramic at 421 \xb0C and 226 \xb0C, corresponding to the paraelectric cubic-ferroelectric tetragonal phase transition at TC and ferroelectric tetragonal-ferroelectric orthorhombic phase transition at TO\u2212T, respectively. The (K0.5Na0.5)1\u2212xAgxNbO3 ceramics exhibit similar temperature dependences of \u03b5r, but the transition peaks slightly shift to low temperatures. Similar to the pure KNN, the dielectric peaks of (K0.5Na0.5)1\u2212xAgxNbO3 ceramics are still sharp after the introduction of AgE^{+}, indicating that all the ceramics are normal ferroelectrics (Fig. a). From Fig. b, both Tc and TO\u2212T decrease slightly with increasing x and reach the minimum of 354 \xb0C and 205 \xb0C at x = 0.32 and 0.28, respectively. Since the lowest TO\u2212T of the (K0.5Na0.5)1\u2212xAgxNbO3 is 205 \xb0C, all the ceramics are of the orthorhombic phase at room temperature. This makes an agreement with the results of XRD measurements. Fig. 3(a) Temperature dependences of relative permittivity \u03b5r of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.08, 0.16, 0.24 and 0.32; (b) Variations of Tc and TO\u2212T of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x (a) Temperature dependences of relative permittivity \u03b5r of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.08, 0.16, 0.24 and 0.32; (b) Variations of Tc and TO\u2212T of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x The (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.16, 0.24 and 0.32 possess a single P-E loop as typical for ferroelectrics under an electric field of about 5 kV/mm as shown in Fig. a. Initially, the P-E loop of the ceramics with low AgE^{+} concentration (x \u2264 0.16) is well-saturated and square-like. As shown in Fig. b, Pr decreases slightly from 20.8 \u03bcC/cmE^{2} to 19.7 \u03bcC/cmE^{2} when x increases from 0 to 0.16. When x is further increased to 0.32, Pr decreases significantly to 4.44 \u03bcC/cmE^{2}. On the other hand, Ec is weakly dependent on the concentration of AgE^{+} (0.80\u20131.15 kV/mm). Fig. 4(a) P-E hysteresis loops of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.16, 0.24 and 0.32; (b) Variations of the remanent polarization Pr and coercive field Ec with x for the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics (a) P-E hysteresis loops of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics with x = 0, 0.16, 0.24 and 0.32; (b) Variations of the remanent polarization Pr and coercive field Ec with x for the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics The variations of d33, kt, kp, \u03b5r and tan\u03b4 with x for the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics are shown in Fig.. The values of d33, kt and kp increase with x, giving peak values of 135 pC/N, 0.46 and 0.43 at x = 0.10, respectively. Unlike d33, kp and kt, \u03b5r (for the poled ceramics) increases from 400 to 492 as x increases from 0 to 0.04 and then retains a constant of 470 with a further increment of x. The tan\u03b4 of the ceramics is kept smaller than 4% with variations of x. Compared with pure KNN ceramic, the piezoelectric properties are enhanced after the formation of a solid solution of (K0.5Na0.5)1\u2212xAgxNbO3.Fig. 5Piezoelectric and dielectric properties of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics as a function of x Piezoelectric and dielectric properties of the (K0.5Na0.5)1\u2212xAgxNbO3 ceramics as a function of x
+
+# TITLE
+Electrical properties of (K 0.5Na 0.5) 1-x Ag xNbO 3 lead-free piezoelectric ceramics
+
+# ABSTRACT
+(KNa)AgNbO lead-free piezoelectric ceramics have been fabricated by an ordinary ceramic technique. The results of XRD reveal that AgE^{+} diffuses into the KNaNbOlattices to form a new solid solution with an orthorhombic perovskite structure and the solubility of AgE^{+} into A-sites of KNaNbO is about 0.20. The ceramics can be well-sintered at 1,100–1,110 °C. The partial substitution of AgE^{+} for A-site ion (KNa)E^{+} decreases slightly both paraelectric cubic-ferroelectric tetragonal () and ferroelectric tetragonal-ferroelectric orthorhombic phase transition temperatures (). The ceramic with  = 0.10 possesses optimum electrical properties:  = 135 pC/N,  = 0.43,  = 0.46,  = 470, tan = 3.39%, and = 394 °C.
+
+# INTRODUCTION
+Pb(Zr,Ti)O3 and Pb(Zr,Ti)O3-based multi-component ceramics with a perovskite structure are widely used in actuators, sensors as well as microelectronic devices because of their superior electrical properties. K0.5Na0.5NbO3 (KNN), a solid solution of ferroelectric KNbO3 and antiferroelectric NaNbO3, is considered as a good candidate for lead-free piezoelectric ceramics because of its high Curie temperature (\u223c420 \xb0C), good ferroelectric properties (Pr = 33 \u03bcC/cmE^{2}) and large electromechanical coupling factors [, ]. However, because of the high volatility of alkaline elements at high temperatures, it is very difficult to obtain dense and well-sintered KNN ceramics using ordinary sintering processes. Previously, a number of investigations have been carried out to improve the sintering performance and electrical properties of KNN ceramics, including the formation of solid solutions of KNN with other ABO3-type compounds, e.g. Li(Nb,Ta,Sb)O3[], CaTiO3 , BaTiO3 , SrTiO3 , LiTaO3 , LiSbO3 , the application of special fabrication techniques, e.g. cold-isostatic pressing , high-energy milling , spark plasma sintering , templated grain growth  and hot pressing , and the use of sintering aids, e.g. CuO  and MnO2. On the other hand, very recently, it has been proved that AgNbO3, an antiferroelectric at room temperature, has an extremely large polarization (52 \u03bcC/mE^{2}) and electromechanical response. In the present work, a new lead-free solid solution KNN-AgNbO3 was formed by introducing AgNbO3 into KNN and prepared in air by a simple pressureless processing without sintering aids, cold isostatic pressing or special power handing.
+
+# CONCLUSION
+New (K0.5Na0.5)1\u2212xAgxNbO3 lead-free piezoelectric ceramics have been successfully prepared by a conventional ceramic fabrication technique and their electrical properties have been studied. From the results of XRD, the ceramics possess a perovskite structure with an orthorhombic symmetry, indicating that AgE^{+} diffuses into the K0.5Na0.5NbO3 lattices to form a new solid solution with an orthorhombic perovskite structure. After the addition of AgNbO3 to KNN, both paraelectric cubic-ferroelectric tetragonal (TC) and ferroelectric tetragonal-ferroelectric orthorhombic phase transition temperatures (TO-T) decrease slightly. The ceramics with high AgE^{+} concentration (x > 0.16) exhibit the weak ferroelectricity because of the existence of a second phase. The electrical properties of the (K0.5Na0.5)0.90Ag0.10NbO3 ceramics are found to be optimum: d33 = 135 pC/N, kP = 0.43, kt = 0.46, \u03b5r = 470, tan\u03b4 = 3.39%, and TC = 394 \xb0C.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="Thought: The Graph Data Extractor provided d33 values from Fig. 5 for various x values. The text explicitly states: "The values of d33, kt and kp increase with x, giving peak values of 135 pC/N, 0.46 and 0.43 at x = 0.10, respectively." This is a text-derived value for x=0.10. The graph gives 133 pC/N for x=0.10. According to the conflict resolution rule, I keep the text-extracted value (135 pC/N) for x=0.10. For other x values, the text does not provide explicit d33 values, so I will use the graph-derived values. The text also mentions "pure KNN ceramic" which corresponds to x=0. The graph gives 118 pC/N for x=0.00. The text does not give a d33 value for x=0.00 explicitly, so I use the graph value. The family is KNN or (K0.5Na0.5)NbO3. The abbreviation KNN is used in the text. I need to include it in abbreviations. The unit is pC/N.
+
+Now I will construct the final JSON.
+
+Compositions:
+- x=0.00: (K0.5Na0.5)NbO3 -> d33 = 118 pC/N (from graph)
+- x=0.02: (K0.5Na0.5)0.98Ag0.02NbO3 -> d33 = 128 pC/N (from graph)
+- x=0.05: (K0.5Na0.5)0.95Ag0.05NbO3 -> d33 = 134 pC/N (from graph)
+- x=0.10: (K0.5Na0.5)0.90Ag0.10NbO3 -> d33 = 135 pC/N (from text, overrides graph's 133)
+- x=0.15: (K0.5Na0.5)0.85Ag0.15NbO3 -> d33 = 128 pC/N (from graph)
+- x=0.20: (K0.5Na0.5)0.80Ag0.20NbO3 -> d33 = 120 pC/N (from graph)
+- x=0.25: (K0.5Na0.5)0.75Ag0.25NbO3 -> d33 = 108 pC/N (from graph)
+- x=0.30: (K0.5Na0.5)0.70Ag0.30NbO3 -> d33 = 96 pC/N (from graph)
+
+I need to write the compositions with the variable notation as per the instructions. The general formula is (K0.5Na0.5)(1-x)Ag(x)NbO3. For each specific x, I substitute the value.
+
+Abbreviations: KNN -> (K0.5Na0.5)NbO3
+
+Family: KNN or (K0.5Na0.5)NbO3. I'll use "KNN" as it's the common family name.
+
+Let me format the JSON.{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(K0.5Na0.5)NbO3": 118,
+      "(K0.5Na0.5)0.98Ag0.02NbO3": 128,
+      "(K0.5Na0.5)0.95Ag0.05NbO3": 134,
+      "(K0.5Na0.5)0.90Ag0.10NbO3": 135,
+      "(K0.5Na0.5)0.85Ag0.15NbO3": 128,
+      "(K0.5Na0.5)0.80Ag0.20NbO3": 120,
+      "(K0.5Na0.5)0.75Ag0.25NbO3": 108,
+      "(K0.5Na0.5)0.70Ag0.30NbO3": 96
+    },
+    "abbreviations": {
+      "KNN": "(K0.5Na0.5)NbO3"
+    },
+    "property_unit": "pC/N",
+    "family": "KNN"
+  }
+}"

@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"BiFeO3":35,"Bi0.875Sm0.125FeO3":42,"Bi0.8Sm0.2FeO3":9,"Bi0.75Sm0.25FeO3":0},"property_unit":"pC/N","family":"BiFeO3"}}

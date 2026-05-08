@@ -1,0 +1,19 @@
+{
+  "filtered": {
+    "10.1016/j.ceramint.2018.02.163": [
+      "K0.5Na0.5NbO3-SPS",
+      "K0.5Na0.5Nb0.95Ta0.05O3-SPS",
+      "K0.5Na0.5Nb0.9Ta0.1O3-SPS",
+      "K0.5Na0.5Nb0.8Ta0.2O3-SPS",
+      "K0.5Na0.5Nb0.7Ta0.3O3-SPS",
+      "K0.5Na0.5Nb0.5Ta0.5O3-SPS",
+      "K0.5Na0.5NbO3-Conventional",
+      "K0.5Na0.5Nb0.95Ta0.05O3-Conventional",
+      "K0.5Na0.5Nb0.9Ta0.1O3-Conventional",
+      "K0.5Na0.5Nb0.8Ta0.2O3-Conventional",
+      "K0.5Na0.5Nb0.7Ta0.3O3-Conventional",
+      "K0.5Na0.5Nb0.5Ta0.5O3-Conventional"
+    ]
+  },
+  "unresolved": {}
+}

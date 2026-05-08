@@ -1,0 +1,19 @@
+{
+  "filtered": {
+    "10.1016/j.ceramint.2018.02.163": [
+      "(K0.5Na0.5)(Nb(1-0.0)Ta(0.0))O3, SPS",
+      "(K0.5Na0.5)(Nb(1-0.1)Ta(0.1))O3, SPS",
+      "(K0.5Na0.5)(Nb(1-0.2)Ta(0.2))O3, SPS",
+      "(K0.5Na0.5)(Nb(1-0.3)Ta(0.3))O3, SPS",
+      "(K0.5Na0.5)(Nb(1-0.4)Ta(0.4))O3, SPS",
+      "(K0.5Na0.5)(Nb(1-0.5)Ta(0.5))O3, SPS",
+      "(K0.5Na0.5)(Nb(1-0.0)Ta(0.0))O3, Conventional",
+      "(K0.5Na0.5)(Nb(1-0.1)Ta(0.1))O3, Conventional",
+      "(K0.5Na0.5)(Nb(1-0.2)Ta(0.2))O3, Conventional",
+      "(K0.5Na0.5)(Nb(1-0.3)Ta(0.3))O3, Conventional",
+      "(K0.5Na0.5)(Nb(1-0.4)Ta(0.4))O3, Conventional",
+      "(K0.5Na0.5)(Nb(1-0.5)Ta(0.5))O3, Conventional"
+    ]
+  },
+  "unresolved": {}
+}

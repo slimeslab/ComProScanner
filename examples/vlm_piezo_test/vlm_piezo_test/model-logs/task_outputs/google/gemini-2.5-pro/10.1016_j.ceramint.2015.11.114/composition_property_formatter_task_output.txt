@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(Bi1/2Na1/2)0.935Ba0.065TiO3":121,"(Bi1/2Na1/2)0.9375Ba0.065Ti0.9975(Pr1/2Nb1/2)0.0025O3":199,"(Bi1/2Na1/2)0.94Ba0.065Ti0.995(Pr1/2Nb1/2)0.005O3":221,"(Bi1/2Na1/2)0.9425Ba0.065Ti0.9925(Pr1/2Nb1/2)0.0075O3":38,"(Bi1/2Na1/2)0.945Ba0.065Ti0.99(Pr1/2Nb1/2)0.01O3":38},"property_unit":"pC/N","family":"Bi0.5Na0.5TiO3"}}

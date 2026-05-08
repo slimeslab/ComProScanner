@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Bi0.5Na0.41K0.09TiO3":130,"Bi0.49La0.01Na0.41K0.09TiO3":124,"Bi0.48La0.02Na0.41K0.09TiO3":139,"Bi0.47La0.03Na0.41K0.09TiO3":62,"Bi0.46La0.04Na0.41K0.09TiO3":6,"Bi0.45La0.05Na0.41K0.09TiO3":5},"property_unit":"pC/N","family":"Bi0.5Na0.41K0.09TiO3"}}

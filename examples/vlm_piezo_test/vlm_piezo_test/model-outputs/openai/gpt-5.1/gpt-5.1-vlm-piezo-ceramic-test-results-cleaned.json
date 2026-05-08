@@ -1,0 +1,3727 @@
+{
+  "10.1007/s10854-015-2797-6": {
+    "composition_data": {
+      "compositions_property_values": {
+        "BaZr0.05Ti0.95O3": 210,
+        "Ba0.98Sr0.02Zr0.05Ti0.95O3": 140,
+        "Ba0.97Sr0.03Zr0.05Ti0.95O3": 250,
+        "Ba0.95Sr0.05Zr0.05Ti0.95O3": 190,
+        "Ba0.94Sr0.06Zr0.05Ti0.95O3": 320,
+        "Ba0.92Sr0.08Zr0.05Ti0.95O3": 260,
+        "Ba0.9Sr0.1Zr0.05Ti0.95O3": 370,
+        "Ba0.89Sr0.11Zr0.05Ti0.95O3": 380,
+        "Ba0.85Sr0.15Zr0.05Ti0.95O3": 320,
+        "Ba0.8Sr0.2Zr0.05Ti0.95O3": 270,
+        "Ba0.75Sr0.25Zr0.05Ti0.95O3": 210,
+        "Ba0.7Sr0.3Zr0.05Ti0.95O3": 120
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-015-2797-6",
+      "title": "Effects of Sr substitution on the structural, dielectric, ferroelectric, and piezoelectric properties of Ba(Zr,Ti)O3 lead-free ceramics",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2015,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Haoran Li",
+          "affiliation_id": "I19820366",
+          "affiliation_name": "Chinese Academy of Sciences",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Chunxia Chen",
+          "affiliation_id": "I46482218",
+          "affiliation_name": "Anqing Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Ren\u2010Kui Zheng",
+          "affiliation_id": "I4210163874",
+          "affiliation_name": "Shanghai Institute of Ceramics",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Curie temperature",
+        "Dielectric",
+        "Ferroelectricity",
+        "Piezoelectricity",
+        "Tetragonal crystal system",
+        "Orthorhombic crystal system",
+        "Analytical Chemistry (journal)",
+        "Piezoelectric coefficient",
+        "Doping",
+        "Ceramic",
+        "Microstructure",
+        "Crystal structure",
+        "Mineralogy",
+        "Electromechanical coupling coefficient",
+        "Crystallography",
+        "Condensed matter physics",
+        "Composite material",
+        "Chemistry",
+        "Ferromagnetism",
+        "Optoelectronics"
+      ]
+    }
+  },
+  "10.1002/pssa.201127327": {
+    "composition_data": {
+      "compositions_property_values": {
+        "K0.5Bi0.5TiO3": 31,
+        "K0.5Bi0.5Ti0.95Zr0.05O3": 10,
+        "K0.5Bi0.5Ti0.9Zr0.1O3": 2.4,
+        "K0.5Bi0.5Ti0.8Zr0.2O3": 2,
+        "K0.5Bi0.5Ti0.7Zr0.3O3": 3,
+        "K0.5Bi0.5Ti0.6Zr0.4O3": 0.3
+      },
+      "property_unit": "pC/N",
+      "family": "K1/2Bi1/2TiO3-K1/2Bi1/2ZrO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1002/pssa.201127327",
+      "title": "Structure and electrical properties in the K<sub>1/2</sub>Bi<sub>1/2</sub>TiO<sub>3</sub>\u2013K<sub>1/2</sub>Bi<sub>1/2</sub>ZrO<sub>3</sub> solid solution (KBT\u2013KBZ)",
+      "journal": "physica status solidi (a)",
+      "year": 2012,
+      "isOpenAccess": true,
+      "authors": [
+        {
+          "name": "M. Bengagi",
+          "affiliation_id": "I63596082",
+          "affiliation_name": "Tunis El Manar University",
+          "affiliation_country": "TN"
+        },
+        {
+          "name": "Fran\u00e7ois Morini",
+          "affiliation_id": "I4210142900",
+          "affiliation_name": "Centre Europ\u00e9en de la C\u00e9ramique",
+          "affiliation_country": "FR"
+        },
+        {
+          "name": "Mohamed El Maaoui",
+          "affiliation_id": "I63596082",
+          "affiliation_name": "Tunis El Manar University",
+          "affiliation_country": "TN"
+        },
+        {
+          "name": "Pascal Marchet",
+          "affiliation_id": "I1294671590",
+          "affiliation_name": "Centre National de la Recherche Scientifique",
+          "affiliation_country": "FR"
+        }
+      ],
+      "keywords": [
+        "Tetragonal crystal system",
+        "Materials science",
+        "Ionic radius",
+        "Solid solution",
+        "Crystallography",
+        "Crystal structure",
+        "Analytical Chemistry (journal)",
+        "Condensed matter physics",
+        "Ion",
+        "Chemistry",
+        "Physics",
+        "Metallurgy"
+      ]
+    }
+  },
+  "10.1007/s11664-023-10650-0": {
+    "composition_data": {
+      "compositions_property_values": {
+        "K0.48Na0.48Li0.04Nb0.92Ta0.07Sb0.01O3": 133,
+        "K0.48Na0.48Li0.04Nb0.92Ta0.06Sb0.02O3": 157,
+        "K0.48Na0.48Li0.04Nb0.92Ta0.05Sb0.03O3": 215,
+        "K0.48Na0.48Li0.04Nb0.92Ta0.04Sb0.04O3": 160,
+        "K0.48Na0.48Li0.04Nb0.92Ta0.03Sb0.05O3": 141
+      },
+      "property_unit": "pC/N",
+      "family": "KNN"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s11664-023-10650-0",
+      "title": "Phase Boundary Design and Electrical Properties of Sb/Ta/Li Co-doped KNN-Based Pb-Free Piezoelectric Ceramics",
+      "journal": "Journal of Electronic Materials",
+      "year": 2023,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Shengyan Yang",
+          "affiliation_id": "I46520130",
+          "affiliation_name": "Chaohu University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "N.L. Chang",
+          "affiliation_id": "I46520130",
+          "affiliation_name": "Chaohu University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Mengyuan Han",
+          "affiliation_id": "I46520130",
+          "affiliation_name": "Chaohu University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Yang Zhang",
+          "affiliation_id": "I46520130",
+          "affiliation_name": "Chaohu University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Phase boundary",
+        "Curie temperature",
+        "Ceramic",
+        "Doping",
+        "Piezoelectricity",
+        "Tetragonal crystal system",
+        "Orthorhombic crystal system",
+        "Analytical Chemistry (journal)",
+        "Mineralogy",
+        "Phase (matter)",
+        "Electrical resistivity and conductivity",
+        "Perovskite (structure)",
+        "Composite material",
+        "Condensed matter physics",
+        "Crystal structure",
+        "Crystallography",
+        "Chemistry",
+        "Optoelectronics",
+        "Electrical engineering"
+      ]
+    }
+  },
+  "10.1007/s10854-023-09943-1": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Na0.5Bi0.5TiO3": 80,
+        "Na0.35K0.15Bi0.5TiO3": 142,
+        "Na0.3K0.2Bi0.5TiO3": 192,
+        "Na0.275K0.225Bi0.5TiO3": 208,
+        "Na0.25K0.25Bi0.5TiO3": 123,
+        "Na0.2K0.3Bi0.5TiO3": 117
+      },
+      "property_unit": "pC/N",
+      "family": "Na0.5Bi0.5TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-023-09943-1",
+      "title": "Phase modified ferroelectricity in Na0.5-xKxBi0.5TiO3",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2023,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Pooja Sahlot",
+          "affiliation_id": "I162827531",
+          "affiliation_name": "Indian Institute of Technology Bombay",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Pravin Varade",
+          "affiliation_id": "I162827531",
+          "affiliation_name": "Indian Institute of Technology Bombay",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Ajit R. Kulkarni",
+          "affiliation_id": "I162827531",
+          "affiliation_name": "Indian Institute of Technology Bombay",
+          "affiliation_country": "IN"
+        }
+      ],
+      "keywords": [
+        "Ferroelectricity",
+        "Phase (matter)",
+        "Materials science",
+        "Physics",
+        "Optoelectronics",
+        "Dielectric"
+      ]
+    }
+  },
+  "10.1007/s10854-021-06215-8": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.5Na0.4K0.1TiO3": 118,
+        "Bi0.5Na0.4K0.1Ti0.99Sn0.01O3": 148,
+        "Bi0.5Na0.4K0.1Ti0.98Sn0.02O3": 171,
+        "Bi0.5Na0.4K0.1Ti0.97Sn0.03O3": 167,
+        "Bi0.5Na0.4K0.1Ti0.96Sn0.04O3": 153
+      },
+      "property_unit": "pC/N",
+      "family": "BNKT"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-021-06215-8",
+      "title": "Study on the strain behavior and piezoelectric properties of lead-free Bi0.5(Na0.8K0.2)0.5TiO3 ceramics modified with Sn4+ ions",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2021,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Nguyen Truong-Tho",
+          "affiliation_id": "I4210095101",
+          "affiliation_name": "Hue University",
+          "affiliation_country": "VN"
+        },
+        {
+          "name": "Dai Vuong",
+          "affiliation_id": "I4210101969",
+          "affiliation_name": "Dalat University",
+          "affiliation_country": "VN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Piezoelectricity",
+        "Ceramic",
+        "Dielectric",
+        "Microstructure",
+        "Ion",
+        "Piezoelectric coefficient",
+        "Composite material",
+        "Strain (injury)",
+        "Doping",
+        "Optoelectronics",
+        "Chemistry"
+      ]
+    }
+  },
+  "10.1007/s10854-015-3094-0": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.5Na0.5TiO3": 88,
+        "Bi0.5Na0.5Ti0.997Nd0.0015Ta0.0015O3": 99,
+        "Bi0.5Na0.5Ti0.994Nd0.003Ta0.003O3": 110,
+        "Bi0.5Na0.5Ti0.991Nd0.0045Ta0.0045O3": 105,
+        "Bi0.5Na0.5Ti0.988Nd0.006Ta0.006O3": 98
+      },
+      "property_unit": "pC/N",
+      "family": "Bi0.5Na0.5TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-015-3094-0",
+      "title": "Investigation of structural and electrical properties of B-site complex ion (Nd1/2Ta1/2)4+-doped Bi1/2Na1/2TiO3 lead-free piezoelectric ceramic",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2015,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Renfei Cheng",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Yuefeng Duan",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Ruiqing Chu",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jigong Hao",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Juan Du",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Zhijun Xu",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Guorong Li",
+          "affiliation_id": "I4210163874",
+          "affiliation_name": "Shanghai Institute of Ceramics",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Piezoelectricity",
+        "Ferroelectricity",
+        "Dielectric",
+        "Doping",
+        "Ceramic",
+        "Microstructure",
+        "Grain size",
+        "Analytical Chemistry (journal)",
+        "Polarization (electrochemistry)",
+        "Mineralogy",
+        "Composite material",
+        "Optoelectronics",
+        "Physical chemistry",
+        "Chemistry"
+      ]
+    }
+  },
+  "10.1007/s10854-014-2481-2": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Ba0.85Ca0.15Zr0.1Ti0.9O3": 289,
+        "Ba0.85Ca0.15Zr0.0998Ti0.8982Ta0.002O3": 260,
+        "Ba0.85Ca0.15Zr0.0997Ti0.8973Ta0.003O3": 303,
+        "Ba0.85Ca0.15Zr0.0995Ti0.8955Ta0.005O3": 120,
+        "Ba0.85Ca0.15Zr0.099Ti0.891Ta0.01O3": 110,
+        "Ba0.85Ca0.15Zr0.0985Ti0.8865Ta0.015O3": 90,
+        "Ba0.85Ca0.15Zr0.098Ti0.882Ta0.02O3": 80,
+        "Ba0.85Ca0.15Zr0.0975Ti0.8775Ta0.025O3": 70,
+        "Ba0.85Ca0.15Zr0.097Ti0.873Ta0.03O3": 60
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-014-2481-2",
+      "title": "Microstructure and electrical properties of tantalum doped (Ba0.85Ca0.15)(Zr0.10Ti0.90)O3 ceramics",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2014,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Donghui Zhang",
+          "affiliation_id": "I157773358",
+          "affiliation_name": "Sun Yat-sen University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Yueli Zhang",
+          "affiliation_id": "I157773358",
+          "affiliation_name": "Sun Yat-sen University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Shenghong Yang",
+          "affiliation_id": "I157773358",
+          "affiliation_name": "Sun Yat-sen University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Microstructure",
+        "Tantalum",
+        "Materials science",
+        "Doping",
+        "Ceramic",
+        "Metallurgy",
+        "Optoelectronics"
+      ]
+    }
+  },
+  "10.1007/s10854-007-9458-3": {
+    "composition_data": {
+      "compositions_property_values": {
+        "K0.5Na0.5NbO3": 95,
+        "K0.49Na0.49Ag0.02NbO3": 113,
+        "K0.48Na0.48Ag0.04NbO3": 122,
+        "K0.47Na0.47Ag0.06NbO3": 127,
+        "K0.46Na0.46Ag0.08NbO3": 126,
+        "K0.45Na0.45Ag0.1NbO3": 135,
+        "K0.425Na0.425Ag0.15NbO3": 118,
+        "K0.4Na0.4Ag0.2NbO3": 107,
+        "K0.375Na0.375Ag0.25NbO3": 93,
+        "K0.35Na0.35Ag0.3NbO3": 70
+      },
+      "property_unit": "pC/N",
+      "family": "KNN"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-007-9458-3",
+      "title": "Electrical properties of (K0.5Na0.5)1\u2212x Ag x NbO3 lead-free piezoelectric ceramics",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2007,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Chenggang Xu",
+          "affiliation_id": "I63354593",
+          "affiliation_name": "Sichuan Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Dunmin Lin",
+          "affiliation_id": "I63354593",
+          "affiliation_name": "Sichuan Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "K. W. Kwok",
+          "affiliation_id": "I14243506",
+          "affiliation_name": "Hong Kong Polytechnic University",
+          "affiliation_country": "HK"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Tetragonal crystal system",
+        "Ferroelectricity",
+        "Orthorhombic crystal system",
+        "Ceramic",
+        "Piezoelectricity",
+        "Dielectric",
+        "Solid solution",
+        "Perovskite (structure)",
+        "Phase transition",
+        "Phase (matter)",
+        "Ferroelectric ceramics",
+        "Crystallography",
+        "Analytical Chemistry (journal)",
+        "Mineralogy",
+        "Crystal structure",
+        "Condensed matter physics",
+        "Composite material",
+        "Optoelectronics",
+        "Metallurgy",
+        "Chemistry"
+      ]
+    }
+  },
+  "10.1016/j.ceramint.2015.02.154": {
+    "composition_data": {
+      "compositions_property_values": {
+        "BaTi0.98Zr0.02O3": 120,
+        "Ba0.99Mg0.01Ti0.98Zr0.02O3": 190,
+        "Ba0.98Mg0.02Ti0.98Zr0.02O3": 140,
+        "Ba0.97Mg0.03Ti0.98Zr0.02O3": 120,
+        "Ba0.99Ca0.01Ti0.98Zr0.02O3": 250,
+        "Ba0.98Ca0.02Ti0.98Zr0.02O3": 220,
+        "Ba0.97Ca0.03Ti0.98Zr0.02O3": 180,
+        "Ba0.99Sr0.01Ti0.98Zr0.02O3": 260,
+        "Ba0.985Sr0.015Ti0.98Zr0.02O3": 330,
+        "Ba0.98Sr0.02Ti0.98Zr0.02O3": 320,
+        "Ba0.97Sr0.03Ti0.98Zr0.02O3": 190
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.ceramint.2015.02.154",
+      "title": "Effect of dopants (A=Mg2+, Ca2+ and Sr2+) on ferroelectric, dielectric and piezoelectric properties of (Ba1\u2212xAx) (Ti0.98Zr0.02) O3 lead-free piezo ceramics",
+      "journal": "Ceramics International",
+      "year": 2015,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "M. Rama Chandraiah",
+          "affiliation_id": "I1286499117",
+          "affiliation_name": "National Aerospace Laboratories",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "P. K. Panda",
+          "affiliation_id": "I1286499117",
+          "affiliation_name": "National Aerospace Laboratories",
+          "affiliation_country": "IN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Dopant",
+        "Dielectric",
+        "Calcination",
+        "Scanning electron microscope",
+        "Analytical Chemistry (journal)",
+        "Ferroelectricity",
+        "Doping",
+        "Piezoelectricity",
+        "Mineralogy",
+        "Pellets",
+        "Sintering",
+        "Ceramic",
+        "Metallurgy",
+        "Composite material",
+        "Chemistry",
+        "Catalysis"
+      ]
+    }
+  },
+  "10.1007/s00339-023-06506-3": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.47Na0.47Ba0.06Ti0.995Nb0.0025Lu0.0025O3": 167,
+        "Bi0.47Na0.47Ba0.06Ti0.99Nb0.005Lu0.005O3": 172,
+        "Bi0.47Na0.47Ba0.06Ti0.985Nb0.0075Lu0.0075O3": 70,
+        "Bi0.47Na0.47Ba0.06Ti0.98Nb0.01Lu0.01O3": 32,
+        "Bi0.47Na0.47Ba0.06Ti0.97Nb0.015Lu0.015O3": 16,
+        "Bi0.47Na0.47Ba0.06Ti0.96Nb0.02Lu0.02O3": 12
+      },
+      "property_unit": "pC/N",
+      "family": "BNT-BT"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s00339-023-06506-3",
+      "title": "The contribution of nonlinear behavior for large piezoelectric response in BNT-BT-based ceramics",
+      "journal": "Applied Physics A",
+      "year": 2023,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Zijing Xiao",
+          "affiliation_id": "I5343935",
+          "affiliation_name": "Guilin University of Electronic Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Qingning Li",
+          "affiliation_id": "I5343935",
+          "affiliation_name": "Guilin University of Electronic Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Changrong Zhou",
+          "affiliation_id": "I5343935",
+          "affiliation_name": "Guilin University of Electronic Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Kai Yao",
+          "affiliation_id": "I5343935",
+          "affiliation_name": "Guilin University of Electronic Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Changlai Yuan",
+          "affiliation_id": "I5343935",
+          "affiliation_name": "Guilin University of Electronic Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jiwen Xu",
+          "affiliation_id": "I5343935",
+          "affiliation_name": "Guilin University of Electronic Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Guohua Chen",
+          "affiliation_id": "I5343935",
+          "affiliation_name": "Guilin University of Electronic Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Guanghui Rao",
+          "affiliation_id": "I5343935",
+          "affiliation_name": "Guilin University of Electronic Technology",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Piezoelectricity",
+        "Materials science",
+        "Ceramic",
+        "Piezoelectric coefficient",
+        "Phase transition",
+        "Bismuth",
+        "Rayleigh scattering",
+        "Phase (matter)",
+        "Composite material",
+        "Condensed matter physics",
+        "Optics",
+        "Chemistry",
+        "Physics"
+      ]
+    }
+  },
+  "10.1007/s10832-007-9152-0": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.5Na0.3875K0.075Li0.0375TiO3": 152,
+        "Bi0.49Na0.3775K0.075Li0.0375Ba0.02TiO3": 205,
+        "Bi0.48Na0.3675K0.075Li0.0375Ba0.04TiO3": 150,
+        "Bi0.47Na0.3575K0.075Li0.0375Ba0.06TiO3": 149,
+        "Bi0.46Na0.3475K0.075Li0.0375Ba0.08TiO3": 140,
+        "Bi0.45Na0.3375K0.075Li0.0375Ba0.1TiO3": 122
+      },
+      "property_unit": "pC/N",
+      "family": "Bi0.5Na0.5TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10832-007-9152-0",
+      "title": "Synthesis and piezoelectric properties of [Bi1-z(Na1-x-y-zKxLiy)]0.5BazTiO3 lead-free piezoelectric ceramics",
+      "journal": "Journal of Electroceramics",
+      "year": 2007,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Dunmin Lin",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Dingquan Xiao",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jianguo Zhu",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Ping Yu",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Piezoelectricity",
+        "Materials science",
+        "Coercivity",
+        "Ceramic",
+        "Polarization (electrochemistry)",
+        "Ferroelectricity",
+        "Piezoelectric coefficient",
+        "Perovskite (structure)",
+        "Phase (matter)",
+        "Diffraction",
+        "Analytical Chemistry (journal)",
+        "Mineralogy",
+        "Condensed matter physics",
+        "Composite material",
+        "Dielectric",
+        "Crystallography",
+        "Optics",
+        "Optoelectronics",
+        "Chemistry",
+        "Physics",
+        "Physical chemistry"
+      ]
+    }
+  },
+  "10.1016/j.jeurceramsoc.2015.09.043": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.4675Na0.4675Ba0.065TiO3": 135,
+        "Bi0.4675Na0.4675Ba0.065Ti0.995Fe0.0025Nb0.0025O3": 190,
+        "Bi0.4675Na0.4675Ba0.065Ti0.99Fe0.005Nb0.005O3": 213,
+        "Bi0.4675Na0.4675Ba0.065Ti0.985Fe0.0075Nb0.0075O3": 140,
+        "Bi0.4675Na0.4675Ba0.065Ti0.98Fe0.01Nb0.01O3": 95,
+        "Bi0.4675Na0.4675Ba0.065Ti0.975Fe0.0125Nb0.0125O3": 45,
+        "Bi0.4675Na0.4675Ba0.065Ti0.97Fe0.015Nb0.015O3": 25
+      },
+      "property_unit": "pC/N",
+      "family": "Bi1/2Na1/2TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.jeurceramsoc.2015.09.043",
+      "title": "Electric field-induced ultrahigh strain and large piezoelectric effect in Bi 1/2 Na 1/2 TiO 3 -based lead-free piezoceramics",
+      "journal": "Journal of the European Ceramic Society",
+      "year": 2015,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Renfei Cheng",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Zhijun Xu",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Ruiqing Chu",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jigong Hao",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Juan Du",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Guorong Li",
+          "affiliation_id": "I4210163874",
+          "affiliation_name": "Shanghai Institute of Ceramics",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Ferroelectricity",
+        "Piezoelectricity",
+        "Electric field",
+        "Strain (injury)",
+        "Phase transition",
+        "Condensed matter physics",
+        "Phase (matter)",
+        "Ceramic",
+        "Composite material",
+        "Ferroelectric ceramics",
+        "Piezoelectric coefficient",
+        "Lead (geology)",
+        "Analytical Chemistry (journal)",
+        "Dielectric",
+        "Optoelectronics",
+        "Chemistry",
+        "Physics"
+      ]
+    }
+  },
+  "10.1111/jace.19612": {
+    "composition_data": {
+      "compositions_property_values": {
+        "K0.5Na0.5NbO3": 61
+      },
+      "property_unit": "pC/N",
+      "family": "K0.5Na0.5NbO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1111/jace.19612",
+      "title": "Structural heterogeneity induced enhancement of physical properties in Sm\u2010modified K <sub>0.5</sub> Na <sub>0.5</sub> NbO <sub>3</sub>",
+      "journal": "Journal of the American Ceramic Society",
+      "year": 2023,
+      "isOpenAccess": true,
+      "authors": [
+        {
+          "name": "Satyaranjan Sahoo",
+          "affiliation_id": "I16292982",
+          "affiliation_name": "National Institute of Technology Rourkela",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Dhiren K. Pradhan",
+          "affiliation_id": "I16292982",
+          "affiliation_name": "National Institute of Technology Rourkela",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Dhiren K. Pradhan",
+          "affiliation_id": "I130769515",
+          "affiliation_name": "Pennsylvania State University",
+          "affiliation_country": "US"
+        },
+        {
+          "name": "Shalini Kumari",
+          "affiliation_id": "I130769515",
+          "affiliation_name": "Pennsylvania State University",
+          "affiliation_country": "US"
+        },
+        {
+          "name": "Koyal Suman Samantaray",
+          "affiliation_id": "I33003672",
+          "affiliation_name": "Indian Institute of Management Indore",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Charanjeet Singh",
+          "affiliation_id": "I59270414",
+          "affiliation_name": "Indian Institute of Science Bangalore",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Anupam Mishra",
+          "affiliation_id": "I59270414",
+          "affiliation_name": "Indian Institute of Science Bangalore",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "M. M. Rahaman",
+          "affiliation_id": "I112754052",
+          "affiliation_name": "Sambalpur University",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Banarji Behera",
+          "affiliation_id": "I112754052",
+          "affiliation_name": "Sambalpur University",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Ashok Kumar",
+          "affiliation_id": "I110360157",
+          "affiliation_name": "Lovely Professional University",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Reji Thomas",
+          "affiliation_id": "I110360157",
+          "affiliation_name": "Lovely Professional University",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Philip D. Rack",
+          "affiliation_id": "I16292982",
+          "affiliation_name": "National Institute of Technology Rourkela",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Dillip K. Pradhan",
+          "affiliation_id": "I16292982",
+          "affiliation_name": "National Institute of Technology Rourkela",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Dillip K. Pradhan",
+          "affiliation_id": "I16292982",
+          "affiliation_name": "National Institute of Technology Rourkela",
+          "affiliation_country": "IN"
+        }
+      ],
+      "keywords": [
+        "Orthorhombic crystal system",
+        "Ferroelectricity",
+        "Dielectric",
+        "Raman spectroscopy",
+        "Tetragonal crystal system",
+        "Phase boundary",
+        "Materials science",
+        "Analytical Chemistry (journal)",
+        "Ionic radius",
+        "Phase transition",
+        "Phase (matter)",
+        "Crystallography",
+        "Mineralogy",
+        "Chemistry",
+        "Ion",
+        "Crystal structure",
+        "Condensed matter physics",
+        "Optics"
+      ]
+    }
+  },
+  "10.1007/s10854-023-10014-8": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Pb0.925La0.04Sb0.035Zr0.5445Ti0.4455O3": 360,
+        "Pb0.905La0.04Sb0.035Sr0.02Zr0.5445Ti0.4455O3": 850,
+        "Pb0.885La0.04Sb0.035Sr0.04Zr0.5445Ti0.4455O3": 600,
+        "Pb0.865La0.04Sb0.035Sr0.06Zr0.5445Ti0.4455O3": 460
+      },
+      "property_unit": "pC/N",
+      "family": "Pb(Zr,Ti)O3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-023-10014-8",
+      "title": "Achieving superior energy harvesting performance in Sr-doped (Pb,La,Sb)(Zr,Ti)O3 ceramics based on optimization of FOM",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2023,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Xinyue Lu",
+          "affiliation_id": "I116953780",
+          "affiliation_name": "Tongji University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Yifan Hao",
+          "affiliation_id": "I116953780",
+          "affiliation_name": "Tongji University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Tongqing Yang",
+          "affiliation_id": "I116953780",
+          "affiliation_name": "Tongji University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Ceramic",
+        "Materials science",
+        "Piezoelectricity",
+        "Tetragonal crystal system",
+        "Phase boundary",
+        "Microelectronics",
+        "Doping",
+        "Energy harvesting",
+        "Figure of merit",
+        "Optoelectronics",
+        "Analytical Chemistry (journal)",
+        "Composite material",
+        "Power (physics)",
+        "Mineralogy",
+        "Phase (matter)",
+        "Thermodynamics",
+        "Chemistry",
+        "Physics"
+      ]
+    }
+  },
+  "10.1016/S0167-577X(03)00580-9": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.5Na0.3K0.175Li0.025O3": 120,
+        "Bi0.5Na0.35K0.125Li0.025O3": 145,
+        "Bi0.5Na0.325K0.125Li0.05O3": 100
+      },
+      "property_unit": "pC/N",
+      "family": "[Bi0.5(Na1-x-yKxLiy)0.5]TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/S0167-577X(03)00580-9",
+      "title": "Synthesis and piezoelectric properties of lead-free piezoelectric [Bi0.5(Na1\u2212x\u2212yKxLiy)0.5]TiO3 ceramics",
+      "journal": "Materials Letters",
+      "year": 2003,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Dunmin Lin",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Dingquan Xiao",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jianguo Zhu",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Ping Yu",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Hongjian Yan",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Ling-zhi Li",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Piezoelectricity",
+        "Ceramic",
+        "Dielectric",
+        "Sintering",
+        "Fabrication",
+        "Phase (matter)",
+        "Perovskite (structure)",
+        "Diffraction",
+        "Composite material",
+        "Ferroelectricity",
+        "Mineralogy",
+        "Optoelectronics",
+        "Chemical engineering",
+        "Optics"
+      ]
+    }
+  },
+  "10.1016/j.ceramint.2019.02.095": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Ba0.91Ca0.09Sn0.07Ti0.93O3": 102,
+        "Ba0.91Ca0.09Sn0.0693Ti0.9207Ho0.01O3": 48,
+        "Ba0.91Ca0.09Sn0.0686Ti0.9114Ho0.02O3": 38
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.ceramint.2019.02.095",
+      "title": "Impact of crystal structure and microstructure on electrical properties of Ho doped lead-free BCST piezoceramics",
+      "journal": "Ceramics International",
+      "year": 2019,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Chitra Chitra",
+          "affiliation_id": "I110166357",
+          "affiliation_name": "University of Delhi",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Ankit Khandelwal",
+          "affiliation_id": "I110166357",
+          "affiliation_name": "University of Delhi",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Rahil Gupta",
+          "affiliation_id": "I110166357",
+          "affiliation_name": "University of Delhi",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Radhapiyari Laishram",
+          "affiliation_id": "I140777494",
+          "affiliation_name": "Solid State Physics Laboratory",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "K. Chandramani Singh",
+          "affiliation_id": "I110166357",
+          "affiliation_name": "University of Delhi",
+          "affiliation_country": "IN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Tetragonal crystal system",
+        "Microstructure",
+        "Dielectric",
+        "Solid solution",
+        "Lattice constant",
+        "Grain size",
+        "Grain growth",
+        "Sintering",
+        "Analytical Chemistry (journal)",
+        "Crystal structure",
+        "Doping",
+        "Ceramic",
+        "Ion",
+        "Piezoelectricity",
+        "Mineralogy",
+        "Diffraction",
+        "Crystallography",
+        "Composite material",
+        "Metallurgy",
+        "Optics"
+      ]
+    }
+  },
+  "10.1016/j.rinp.2019.102729": {
+    "composition_data": {
+      "compositions_property_values": {
+        "PbZr0.52Ti0.48O3": 137,
+        "PbZr0.52Ti0.48O3:La": 112,
+        "PbZr0.52Ti0.48O3:Nd": 149,
+        "PbZr0.52Ti0.48O3:Dy": 125
+      },
+      "property_unit": "pC/N",
+      "family": "PZT"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.rinp.2019.102729",
+      "title": "Structural, dielectric, AC conductivity, piezoelectric and impedance spectroscopy studies on PbZr0.52Ti0.48O3:RE3+(RE3+: La3+, Nd3+ and Dy3+) ceramics",
+      "journal": "Results in Physics",
+      "year": 2019,
+      "isOpenAccess": true,
+      "authors": [
+        {
+          "name": "Rajesh Narayana Perumal",
+          "affiliation_id": "I916357946",
+          "affiliation_name": "Sri Sivasubramaniya Nadar College of Engineering",
+          "affiliation_country": null
+        },
+        {
+          "name": "S. Sadhasivam",
+          "affiliation_id": "I4076070",
+          "affiliation_name": "Bharathidasan University",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Venkatraj Athikesavan",
+          "affiliation_id": "I916357946",
+          "affiliation_name": "Sri Sivasubramaniya Nadar College of Engineering",
+          "affiliation_country": null
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Ceramic",
+        "Raman spectroscopy",
+        "Analytical Chemistry (journal)",
+        "Dielectric spectroscopy",
+        "Dielectric",
+        "Scanning electron microscope",
+        "Microstructure",
+        "Sintering",
+        "Powder diffraction",
+        "Perovskite (structure)",
+        "Crystallography",
+        "Chemistry",
+        "Optics",
+        "Composite material",
+        "Physical chemistry",
+        "Optoelectronics",
+        "Electrode",
+        "Electrochemistry"
+      ]
+    }
+  },
+  "10.1007/s10854-013-1691-3": {
+    "composition_data": {
+      "compositions_property_values": {
+        "K0.5Na0.5Nb0.891Ta0.099O3": 110,
+        "K0.5Na0.5Nb0.8955Ta0.0995O3": 130,
+        "K0.5Na0.5Nb0.9Ta0.1O3": 140,
+        "K0.5Na0.5Nb0.9045Ta0.1005O3": 167,
+        "K0.5Na0.5Nb0.909Ta0.101O3": 157
+      },
+      "property_unit": "pC/N",
+      "family": "KNN"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-013-1691-3",
+      "title": "Properties of B-site non-stoichiometric (K0.5Na0.5)(Nb0.9Ta0.1)1+x O3 lead-free piezoelectric ceramics",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2013,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Juan Du",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Limei Zheng",
+          "affiliation_id": "I204983213",
+          "affiliation_name": "Harbin Institute of Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Zhijun Xu",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Ruiqing Chu",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xiujie Yi",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Ceramic",
+        "Stoichiometry",
+        "Orthorhombic crystal system",
+        "Piezoelectricity",
+        "Materials science",
+        "Sintering",
+        "Scanning electron microscope",
+        "Analytical Chemistry (journal)",
+        "Perovskite (structure)",
+        "Grain growth",
+        "Mineralogy",
+        "Grain size",
+        "Crystallography",
+        "Composite material",
+        "Crystal structure",
+        "Chemistry",
+        "Physical chemistry",
+        "Chromatography"
+      ]
+    }
+  },
+  "10.1016/j.ceramint.2010.11.016": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Pb0.988La0.012Zr0.51516Ti0.45684Nb0.02O3": 508,
+        "Pb0.986La0.012Gd0.002Zr0.51516Ti0.45684Nb0.02O3": 520,
+        "Pb0.984La0.012Gd0.004Zr0.51516Ti0.45684Nb0.02O3": 535,
+        "Pb0.982La0.012Gd0.006Zr0.51516Ti0.45684Nb0.02O3": 574,
+        "Pb0.98La0.012Gd0.008Zr0.51516Ti0.45684Nb0.02O3": 550,
+        "Pb0.978La0.012Gd0.01Zr0.51516Ti0.45684Nb0.02O3": 525
+      },
+      "property_unit": "pC/N",
+      "family": "PLZT"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.ceramint.2010.11.016",
+      "title": "Dielectric and piezoelectric properties of rare-earth gadolinium modified lead lanthanum zirconium niobium titanate ceramics",
+      "journal": "Ceramics International",
+      "year": 2010,
+      "isOpenAccess": true,
+      "authors": [
+        {
+          "name": "Koduri Ramam",
+          "affiliation_id": "I172787465",
+          "affiliation_name": "University of Concepci\u00f3n",
+          "affiliation_country": "CL"
+        },
+        {
+          "name": "K. Chandramouli",
+          "affiliation_id": "I100887729",
+          "affiliation_name": "Andhra University",
+          "affiliation_country": "IN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Lanthanum",
+        "Gadolinium",
+        "Niobium",
+        "Ceramic",
+        "Zirconium",
+        "Piezoelectricity",
+        "Dielectric",
+        "Lead titanate",
+        "Electroceramics",
+        "Rare earth",
+        "Metallurgy",
+        "Ferroelectricity",
+        "Composite material",
+        "Inorganic chemistry",
+        "Optoelectronics",
+        "Fabrication"
+      ]
+    }
+  },
+  "10.1016/j.cap.2010.02.009": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.46Na0.46Ba0.06Sr0.02TiO3": 190,
+        "Bi0.46Na0.4475Li0.0125Ba0.06Sr0.02TiO3": 205,
+        "Bi0.46Na0.435Li0.025Ba0.06Sr0.02TiO3": 215,
+        "Bi0.46Na0.4225Li0.0375Ba0.06Sr0.02TiO3": 220,
+        "Bi0.46Na0.41Li0.05Ba0.06Sr0.02TiO3": 225,
+        "Bi0.46Na0.3975Li0.0625Ba0.06Sr0.02TiO3": 235,
+        "Bi0.46Na0.385Li0.075Ba0.06Sr0.02TiO3": 23
+      },
+      "property_unit": "pC/N",
+      "family": "Bi0.5Na0.5TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.cap.2010.02.009",
+      "title": "Effect of Li-substitution on piezoelectric and ferroelectric properties of (Bi0.92Na0.92\u2212Li )0.5Ba0.06Sr0.02TiO3 lead-free ceramics",
+      "journal": "Current Applied Physics",
+      "year": 2010,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Dunmin Lin",
+          "affiliation_id": "I14243506",
+          "affiliation_name": "Hong Kong Polytechnic University",
+          "affiliation_country": "HK"
+        },
+        {
+          "name": "K. W. Kwok",
+          "affiliation_id": "I14243506",
+          "affiliation_name": "Hong Kong Polytechnic University",
+          "affiliation_country": "HK"
+        }
+      ],
+      "keywords": [
+        "Piezoelectricity",
+        "Ceramic",
+        "Materials science",
+        "Ferroelectricity",
+        "Coercivity",
+        "Polar",
+        "Polarization (electrochemistry)",
+        "Substitution (logic)",
+        "Mineralogy",
+        "Perovskite (structure)",
+        "Diffraction",
+        "Crystallography",
+        "Dielectric",
+        "Chemistry",
+        "Composite material",
+        "Condensed matter physics",
+        "Optoelectronics",
+        "Physical chemistry",
+        "Optics",
+        "Physics"
+      ]
+    }
+  },
+  "10.1016/j.ceramint.2006.05.004": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.5Na0.39K0.1Ag0.01TiO3": 180,
+        "Bi0.5Na0.445K0.05Ag0.005TiO3": 98,
+        "Bi0.5Na0.425K0.07Ag0.005TiO3": 82,
+        "Bi0.5Na0.405K0.09Ag0.005TiO3": 52,
+        "Bi0.5Na0.385K0.11Ag0.005TiO3": 36,
+        "Bi0.5Na0.4425K0.05Ag0.0075TiO3": 110,
+        "Bi0.5Na0.4225K0.07Ag0.0075TiO3": 94,
+        "Bi0.5Na0.4025K0.09Ag0.0075TiO3": 68,
+        "Bi0.5Na0.3825K0.11Ag0.0075TiO3": 52,
+        "Bi0.5Na0.44K0.05Ag0.01TiO3": 122,
+        "Bi0.5Na0.42K0.07Ag0.01TiO3": 104,
+        "Bi0.5Na0.4K0.09Ag0.01TiO3": 78,
+        "Bi0.5Na0.38K0.11Ag0.01TiO3": 69,
+        "Bi0.5Na0.4375K0.05Ag0.0125TiO3": 136,
+        "Bi0.5Na0.4175K0.07Ag0.0125TiO3": 116,
+        "Bi0.5Na0.3975K0.09Ag0.0125TiO3": 92,
+        "Bi0.5Na0.3775K0.11Ag0.0125TiO3": 90,
+        "Bi0.5Na0.4125K0.0875TiO3": 128,
+        "Bi0.5Na0.405K0.0875Ag0.0075TiO3": 156,
+        "Bi0.5Na0.4K0.0875Ag0.0125TiO3": 112,
+        "Bi0.5Na0.3875K0.0875Ag0.025TiO3": 88,
+        "Bi0.5Na0.375K0.0875Ag0.0375TiO3": 66,
+        "Bi0.5Na0.3625K0.0875Ag0.05TiO3": 48
+      },
+      "property_unit": "pC/N",
+      "family": "Bi0.5Na0.5TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.ceramint.2006.05.004",
+      "title": "Synthesis and properties of Bi0.5(Na1\u2212x\u2212yKxAgy)0.5TiO3 lead-free piezoelectric ceramics",
+      "journal": "Ceramics International",
+      "year": 2006,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Yunwen Liao",
+          "affiliation_id": "I16351329",
+          "affiliation_name": "China West Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Dingquan Xiao",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Dunmin Lin",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jianguo Zhu",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Ping Yu",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Lang Wu",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xiaoping Wang",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Ferroelectricity",
+        "Dielectric",
+        "Piezoelectricity",
+        "Ceramic",
+        "Dissipation factor",
+        "Perovskite (structure)",
+        "Ion",
+        "Phase transition",
+        "Phase (matter)",
+        "Ferroelectric ceramics",
+        "Diffraction",
+        "Analytical Chemistry (journal)",
+        "Condensed matter physics",
+        "Composite material",
+        "Crystallography",
+        "Optoelectronics",
+        "Optics",
+        "Chemistry",
+        "Physics",
+        "Organic chemistry"
+      ]
+    }
+  },
+  "10.1007/s11664-021-09393-7": {
+    "composition_data": {
+      "compositions_property_values": {
+        "PbZr0.343Ti0.357Zn0.1Nb0.2O3": 420,
+        "Pb0.98Sr0.02Zr0.343Ti0.357Zn0.1Nb0.2O3": 470,
+        "Pb0.96Sr0.04Zr0.343Ti0.357Zn0.1Nb0.2O3": 496,
+        "Pb0.94Sr0.06Zr0.343Ti0.357Zn0.1Nb0.2O3": 455,
+        "Pb0.92Sr0.08Zr0.343Ti0.357Zn0.1Nb0.2O3": 435
+      },
+      "property_unit": "pC/N",
+      "family": "PZN-PZT"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s11664-021-09393-7",
+      "title": "Enhancement of Piezoelectric Properties in Low-Temperature Sintering PZN\u2013PZT Ceramics by Sr2+ Substitution",
+      "journal": "Journal of Electronic Materials",
+      "year": 2022,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Hao Chen",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Tao Pu",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Yaxia Luo",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Shibo Fan",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Qiang Chen",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Hong Liu",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jianguo Zhu",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Curie temperature",
+        "Rietveld refinement",
+        "Tetragonal crystal system",
+        "Dielectric",
+        "Ferroelectricity",
+        "Piezoelectricity",
+        "Perovskite (structure)",
+        "Microstructure",
+        "Sintering",
+        "Lattice constant",
+        "Ceramic",
+        "Piezoelectric coefficient",
+        "Analytical Chemistry (journal)",
+        "Mineralogy",
+        "Crystal structure",
+        "Crystallography",
+        "Composite material",
+        "Condensed matter physics",
+        "Chemistry",
+        "Ferromagnetism"
+      ]
+    }
+  },
+  "10.1007/s10854-020-04681-0": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Ba0.99Ca0.01Ti0.94Zr0.01Sn0.05O3": 235,
+        "Ba0.98Ca0.02Ti0.94Zr0.01Sn0.05O3": 332,
+        "Ba0.95Ca0.05Ti0.94Zr0.01Sn0.05O3": 361,
+        "Ba0.94Ca0.06Ti0.94Zr0.01Sn0.05O3": 438,
+        "Ba0.93Ca0.07Ti0.94Zr0.01Sn0.05O3": 442,
+        "Ba0.92Ca0.08Ti0.94Zr0.01Sn0.05O3": 396,
+        "Ba0.93Ca0.07Ti0.94Zr0.01Sn0.05O3-Ts1550C": 511
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-020-04681-0",
+      "title": "Enhanced electrical properties of lead-free (Ba1\u2212xCax)(Ti0.94Zr0.01Sn0.05)O3 piezoelectric ceramics by optimizing phase ratio and sintering temperature",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2020,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Ning Wang",
+          "affiliation_id": "I92403157",
+          "affiliation_name": "University of Science and Technology Beijing",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Yu-Cheng Tang",
+          "affiliation_id": "I92403157",
+          "affiliation_name": "University of Science and Technology Beijing",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Wen-Yuan Pan",
+          "affiliation_id": "I92403157",
+          "affiliation_name": "University of Science and Technology Beijing",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Bo\u2010Ping Zhang",
+          "affiliation_id": "I92403157",
+          "affiliation_name": "University of Science and Technology Beijing",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Sintering",
+        "Piezoelectricity",
+        "Materials science",
+        "Lead (geology)",
+        "Ceramic",
+        "Phase (matter)",
+        "Composite material",
+        "Chemistry"
+      ]
+    }
+  },
+  "10.1016/j.ceramint.2016.09.125": {
+    "composition_data": {
+      "compositions_property_values": {
+        "K0.49Na0.51NbO3": 115,
+        "K0.49Na0.51Nb0.98Sb0.02O3": 138,
+        "K0.49Na0.51Nb0.96Sb0.04O3": 158,
+        "K0.49Na0.51Nb0.94Sb0.06O3": 182,
+        "K0.49Na0.51Nb0.92Sb0.08O3": 173,
+        "K0.49Na0.51Nb0.9Sb0.1O3": 152
+      },
+      "property_unit": "pC/N",
+      "family": "KNN"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.ceramint.2016.09.125",
+      "title": "The effect of B-site substitution on the structural evolution and electrical properties of lead-free (K,Na)NbO3 ceramics",
+      "journal": "Ceramics International",
+      "year": 2016,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Rongxia Huang",
+          "affiliation_id": "I139024713",
+          "affiliation_name": "Guangdong University of Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Dong Yan",
+          "affiliation_id": "I99065089",
+          "affiliation_name": "Tsinghua University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Yuzhen Zhao",
+          "affiliation_id": "I4391767896",
+          "affiliation_name": "State Key Laboratory of New Ceramics and Fine Processing",
+          "affiliation_country": null
+        },
+        {
+          "name": "Heping Zhou",
+          "affiliation_id": "I4391767896",
+          "affiliation_name": "State Key Laboratory of New Ceramics and Fine Processing",
+          "affiliation_country": null
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Microstructure",
+        "Orthorhombic crystal system",
+        "Ceramic",
+        "Raman spectroscopy",
+        "Sintering",
+        "Piezoelectricity",
+        "Grain size",
+        "Phase (matter)",
+        "Electromechanical coupling coefficient",
+        "Ferroelectricity",
+        "Piezoelectric coefficient",
+        "Perovskite (structure)",
+        "Crystal structure",
+        "Composite material",
+        "Analytical Chemistry (journal)",
+        "Dielectric",
+        "Crystallography",
+        "Optoelectronics",
+        "Optics"
+      ]
+    }
+  },
+  "10.1016/j.matchemphys.2024.129965": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Ba0.92Ca0.08Zr0.05Ti0.95O3": 42,
+        "Ba0.91632Ca0.07968La0.004Zr0.05Ti0.95O3": 42,
+        "Ba0.91264Ca0.07936La0.008Zr0.05Ti0.95O3": 35,
+        "Ba0.90896Ca0.07904La0.012Zr0.05Ti0.95O3": 45,
+        "Ba0.90528Ca0.07872La0.016Zr0.05Ti0.95O3": 58,
+        "Ba0.9016Ca0.0784La0.02Zr0.05Ti0.95O3": 44,
+        "Ba0.89792Ca0.07808La0.024Zr0.05Ti0.95O3": 41
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.matchemphys.2024.129965",
+      "title": "Effects of electrical and mechanical properties of Ba0.92Ca0.08Zr0.05Ti0.95O3 ceramics with lanthanum dopants",
+      "journal": "Materials Chemistry and Physics",
+      "year": 2024,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Yongshang Tian",
+          "affiliation_id": "I130750295",
+          "affiliation_name": "Xinyang Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Mingyang Ma",
+          "affiliation_id": "I130750295",
+          "affiliation_name": "Xinyang Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xin Ma",
+          "affiliation_id": "I130750295",
+          "affiliation_name": "Xinyang Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jiayue Liu",
+          "affiliation_id": "I130750295",
+          "affiliation_name": "Xinyang Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xiongjie Hu",
+          "affiliation_id": "I38756568",
+          "affiliation_name": "Xinyang College of Agriculture and Forestry",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jinshuang Wang",
+          "affiliation_id": "I130750295",
+          "affiliation_name": "Xinyang Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Qiangshan Jing",
+          "affiliation_id": "I130750295",
+          "affiliation_name": "Xinyang Normal University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Lanthanum",
+        "Dopant",
+        "Ceramic",
+        "Materials science",
+        "Electrical resistivity and conductivity",
+        "Mineralogy",
+        "Composite material",
+        "Doping",
+        "Inorganic chemistry",
+        "Chemistry",
+        "Optoelectronics",
+        "Engineering",
+        "Electrical engineering"
+      ]
+    }
+  },
+  "10.1007/s41779-022-00785-4": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.47Na0.47Ba0.06TiO3": 122,
+        "Bi0.46La0.01Na0.47Ba0.06TiO3": 131
+      },
+      "property_unit": "pC/N",
+      "family": "NBT-BT"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s41779-022-00785-4",
+      "title": "Influence of A-site isovalent doping on structural and electrical properties of Bi-based lead-free piezoelectric ceramics",
+      "journal": "Journal of the Australian Ceramic Society",
+      "year": 2022,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Hinh T. Dinh",
+          "affiliation_id": "I4210111036",
+          "affiliation_name": "Phenikaa (Vietnam)",
+          "affiliation_country": "VN"
+        },
+        {
+          "name": "Vinh Le Van",
+          "affiliation_id": "I4210111036",
+          "affiliation_name": "Phenikaa (Vietnam)",
+          "affiliation_country": "VN"
+        },
+        {
+          "name": "Vu Diem Ngoc Tran",
+          "affiliation_id": "I94518387",
+          "affiliation_name": "Hanoi University of Science and Technology",
+          "affiliation_country": "VN"
+        },
+        {
+          "name": "Thi Thao Nguyen",
+          "affiliation_id": "I94518387",
+          "affiliation_name": "Hanoi University of Science and Technology",
+          "affiliation_country": "VN"
+        },
+        {
+          "name": "Ky Nam Pham",
+          "affiliation_id": "",
+          "affiliation_name": "",
+          "affiliation_country": ""
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Rietveld refinement",
+        "Piezoelectricity",
+        "Dielectric",
+        "Ceramic",
+        "Phase (matter)",
+        "Doping",
+        "Grain size",
+        "Phase transition",
+        "Microstructure",
+        "Diffraction",
+        "Analytical Chemistry (journal)",
+        "Condensed matter physics",
+        "Composite material",
+        "Optics",
+        "Optoelectronics"
+      ]
+    }
+  },
+  "10.1016/j.matchemphys.2018.01.073": {
+    "composition_data": {
+      "compositions_property_values": {
+        "PbTiO3": 190,
+        "PbZr0.3Ti0.7O3": 360,
+        "PbZr0.4Ti0.6O3": 528,
+        "PbZr0.8Ti0.2O3": 230
+      },
+      "property_unit": "pC/N",
+      "family": "PbTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.matchemphys.2018.01.073",
+      "title": "High piezoelectric properties of modified nano lead titanate zirconate ceramics",
+      "journal": "Materials Chemistry and Physics",
+      "year": 2018,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "A. Tawfik",
+          "affiliation_id": "I21376657",
+          "affiliation_name": "Tanta University",
+          "affiliation_country": "EG"
+        },
+        {
+          "name": "O. M. Hemeda",
+          "affiliation_id": "I21376657",
+          "affiliation_name": "Tanta University",
+          "affiliation_country": "EG"
+        },
+        {
+          "name": "A.M.A. Henaish",
+          "affiliation_id": "I21376657",
+          "affiliation_name": "Tanta University",
+          "affiliation_country": "EG"
+        },
+        {
+          "name": "A.M. Dorgham",
+          "affiliation_id": "I21376657",
+          "affiliation_name": "Tanta University",
+          "affiliation_country": "EG"
+        }
+      ],
+      "keywords": [
+        "Piezoelectricity",
+        "Lead zirconate titanate",
+        "Materials science",
+        "Ceramic",
+        "Zirconium",
+        "Nano-",
+        "Doping",
+        "Composite material",
+        "Grain size",
+        "Piezoelectric coefficient",
+        "Elastic modulus",
+        "Mineralogy",
+        "Ferroelectricity",
+        "Dielectric",
+        "Metallurgy",
+        "Chemistry",
+        "Optoelectronics"
+      ]
+    }
+  },
+  "10.1002/adma.202419325": {
+    "composition_data": {
+      "compositions_property_values": {
+        "BaSn0.11Ti0.89O3": 433,
+        "BaSn0.10945Ti0.88555Mn0.005O3": 710,
+        "BaSn0.1089Ti0.8811Mn0.01O3": 614
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1002/adma.202419325",
+      "title": "High\u2010Performance Lead\u2010Free Ceramics With Simultaneously High Piezoelectricity and High Mechanical Quality Factor",
+      "journal": "Advanced Materials",
+      "year": 2025,
+      "isOpenAccess": true,
+      "authors": [
+        {
+          "name": "Yang Yang",
+          "affiliation_id": "I87445476",
+          "affiliation_name": "Xi'an Jiaotong University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Ying Li",
+          "affiliation_id": "I87445476",
+          "affiliation_name": "Xi'an Jiaotong University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Dong Wang",
+          "affiliation_id": "I87445476",
+          "affiliation_name": "Xi'an Jiaotong University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Zhipeng Wang",
+          "affiliation_id": "I149594827",
+          "affiliation_name": "Xidian University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jiantuo Zhao",
+          "affiliation_id": "I87445476",
+          "affiliation_name": "Xi'an Jiaotong University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Yanshuang Hao",
+          "affiliation_id": "",
+          "affiliation_name": "",
+          "affiliation_country": ""
+        },
+        {
+          "name": "Yuanchao Ji",
+          "affiliation_id": "I87445476",
+          "affiliation_name": "Xi'an Jiaotong University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xiaobing Ren",
+          "affiliation_id": "I87445476",
+          "affiliation_name": "Xi'an Jiaotong University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Piezoelectricity",
+        "Ceramic",
+        "Lead (geology)",
+        "Doping",
+        "Scanning transmission electron microscopy",
+        "Nanotechnology",
+        "Composite material",
+        "Optoelectronics",
+        "Transmission electron microscopy"
+      ]
+    }
+  },
+  "10.1007/s10854-007-9419-x": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Pb0.961La0.012Ba0.015Sr0.012Zr0.5125Ti0.4545Nb0.02Zn0.01O3": 376,
+        "Pb0.961La0.012Ba0.015Sr0.012Zr0.5112Ti0.4533Nb0.02Zn0.01Mn0.005O3": 454,
+        "Pb0.961La0.012Ba0.015Sr0.012Zr0.5099Ti0.4521Nb0.02Zn0.01Mn0.01O3": 470,
+        "Pb0.961La0.012Ba0.015Sr0.012Zr0.5085Ti0.451Nb0.02Zn0.01Mn0.015O3": 486
+      },
+      "property_unit": "pC/N",
+      "family": "PLZT"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-007-9419-x",
+      "title": "Influence of Mn on dielectric and piezoelectric properties of A-site and B-site modified PLZT nano-ceramics for sensor and actuator applications",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2007,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Koduri Ramam",
+          "affiliation_id": "I172787465",
+          "affiliation_name": "University of Concepci\u00f3n",
+          "affiliation_country": "CL"
+        },
+        {
+          "name": "Marta L. Vidal",
+          "affiliation_id": "I172787465",
+          "affiliation_name": "University of Concepci\u00f3n",
+          "affiliation_country": "CL"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Dielectric",
+        "Curie temperature",
+        "Perovskite (structure)",
+        "Analytical Chemistry (journal)",
+        "Piezoelectricity",
+        "Microstructure",
+        "Tetragonal crystal system",
+        "Ceramic",
+        "Dielectric loss",
+        "Dopant",
+        "Acceptor",
+        "Grain size",
+        "Phase (matter)",
+        "Doping",
+        "Mineralogy",
+        "Crystallography",
+        "Crystal structure",
+        "Composite material",
+        "Optoelectronics",
+        "Condensed matter physics",
+        "Chemistry",
+        "Ferromagnetism",
+        "Organic chemistry"
+      ]
+    }
+  },
+  "10.1007/s10854-020-05179-5": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.5Na0.41K0.09TiO3": 130,
+        "Bi0.49La0.01Na0.41K0.09TiO3": 123,
+        "Bi0.48La0.02Na0.41K0.09TiO3": 139,
+        "Bi0.47La0.03Na0.41K0.09TiO3": 62,
+        "Bi0.46La0.04Na0.41K0.09TiO3": 6,
+        "Bi0.45La0.05Na0.41K0.09TiO3": 3
+      },
+      "property_unit": "pC/N",
+      "family": "Bi0.5Na0.41K0.09TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-020-05179-5",
+      "title": "Structure evolution and electrical properties of lead-free Bi0.5Na0.41K0.09TiO3 piezoceramics by isovalent La doping",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2021,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Vu Diem Ngoc Tran",
+          "affiliation_id": "I94518387",
+          "affiliation_name": "Hanoi University of Science and Technology",
+          "affiliation_country": "VN"
+        },
+        {
+          "name": "Lai Hoang Vu",
+          "affiliation_id": "I4210115718",
+          "affiliation_name": "Thai Nguyen University",
+          "affiliation_country": "VN"
+        },
+        {
+          "name": "Vinh Le Van",
+          "affiliation_id": "I4210111036",
+          "affiliation_name": "Phenikaa (Vietnam)",
+          "affiliation_country": "VN"
+        },
+        {
+          "name": "Nguyen Ba Hung",
+          "affiliation_id": "I94518387",
+          "affiliation_name": "Hanoi University of Science and Technology",
+          "affiliation_country": "VN"
+        },
+        {
+          "name": "Ky Nam Pham",
+          "affiliation_id": "",
+          "affiliation_name": "",
+          "affiliation_country": ""
+        },
+        {
+          "name": "Hinh T. Dinh",
+          "affiliation_id": "I4210111036",
+          "affiliation_name": "Phenikaa (Vietnam)",
+          "affiliation_country": "VN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Ferroelectricity",
+        "Dielectric",
+        "Tetragonal crystal system",
+        "Piezoelectricity",
+        "Ceramic",
+        "Doping",
+        "Grain size",
+        "Microstructure",
+        "Phase (matter)",
+        "Phase transition",
+        "Composite material",
+        "Mineralogy",
+        "Crystal structure",
+        "Analytical Chemistry (journal)",
+        "Condensed matter physics",
+        "Crystallography",
+        "Optoelectronics",
+        "Chemistry"
+      ]
+    }
+  },
+  "10.1007/s10854-017-7616-9": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.5Na0.5TiO3": 61,
+        "Bi0.5Na0.5Ti0.98Hf0.02O3": 79,
+        "Bi0.5Na0.5Ti0.96Hf0.04O3": 86,
+        "Bi0.5Na0.5Ti0.95Hf0.05O3": 63,
+        "Bi0.5Na0.5Ti0.94Hf0.06O3": 32,
+        "Bi0.5Na0.5Ti0.92Hf0.08O3": 9,
+        "Bi0.5Na0.5Ti0.88Hf0.12O3": 3,
+        "Bi0.5Na0.5Ti0.97Hf0.03O3": 81,
+        "Bi0.5Na0.43Li0.07Ti0.97Hf0.03O3": 92,
+        "Bi0.5Na0.4Li0.1Ti0.97Hf0.03O3": 100,
+        "Bi0.5Na0.35Li0.15Ti0.97Hf0.03O3": 31,
+        "Bi0.5Na0.3Li0.2Ti0.97Hf0.03O3": 26,
+        "Bi0.5Na0.25Li0.25Ti0.97Hf0.03O3": 18
+      },
+      "property_unit": "pC/N",
+      "family": "Bi0.5Na0.5TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-017-7616-9",
+      "title": "Effect of Hf and Li on the structure and electrical properties of Bi0.5Na0.5TiO3 lead-free ceramics",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2017,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Yuxing Zhang",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Chunlin Zhao",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jie Yin",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jiagang Wu",
+          "affiliation_id": "I24185976",
+          "affiliation_name": "Sichuan University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Piezoelectricity",
+        "Ceramic",
+        "Ferroelectricity",
+        "Dielectric",
+        "Bismuth",
+        "Trigonal crystal system",
+        "Bismuth titanate",
+        "Doping",
+        "Phase (matter)",
+        "Crystal structure",
+        "Mineralogy",
+        "Composite material",
+        "Crystallography",
+        "Metallurgy",
+        "Chemistry",
+        "Optoelectronics"
+      ]
+    }
+  },
+  "10.1016/j.ceramint.2014.09.074": {
+    "composition_data": {
+      "compositions_property_values": {
+        "K0.5Na0.5Nb0.96Sb0.04O3": 144,
+        "K0.49Na0.49Li0.02Nb0.96Sb0.04O3": 180,
+        "K0.48Na0.48Li0.04Nb0.96Sb0.04O3": 169,
+        "K0.475Na0.475Li0.05Nb0.96Sb0.04O3": 151,
+        "K0.47Na0.47Li0.06Nb0.96Sb0.04O3": 123
+      },
+      "property_unit": "pC/N",
+      "family": "KNN"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.ceramint.2014.09.074",
+      "title": "Piezoelectric properties of (K0.5Na0.5)1\u2212xLix(Nb0.96Sb0.04)O3 ceramics prepared from nanocrystalline powders",
+      "journal": "Ceramics International",
+      "year": 2014,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Roopam Gaur",
+          "affiliation_id": "I110166357",
+          "affiliation_name": "University of Delhi",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "K. Chandramani Singh",
+          "affiliation_id": "I110166357",
+          "affiliation_name": "University of Delhi",
+          "affiliation_country": "IN"
+        },
+        {
+          "name": "Radhapiyari Laishram",
+          "affiliation_id": "I140777494",
+          "affiliation_name": "Solid State Physics Laboratory",
+          "affiliation_country": "IN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Nanocrystalline material",
+        "Ceramic",
+        "Orthorhombic crystal system",
+        "Dielectric",
+        "Curie temperature",
+        "Sintering",
+        "Tetragonal crystal system",
+        "Grain size",
+        "Piezoelectricity",
+        "Analytical Chemistry (journal)",
+        "Perovskite (structure)",
+        "Grain growth",
+        "Atmospheric temperature range",
+        "Mineralogy",
+        "Composite material",
+        "Chemical engineering",
+        "Crystal structure",
+        "Crystallography",
+        "Nanotechnology",
+        "Condensed matter physics",
+        "Thermodynamics"
+      ]
+    }
+  },
+  "10.1007/s10853-023-08335-4": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Pb0.947Ba0.053Zr0.49Ti0.51O3": 280,
+        "Pb0.947Ba0.053Zr0.5Ti0.5O3": 320,
+        "Pb0.947Ba0.053Zr0.51Ti0.49O3": 370,
+        "Pb0.947Ba0.053Zr0.52Ti0.48O3": 410,
+        "Pb0.947Ba0.053Zr0.531Ti0.469O3": 453,
+        "Pb0.947Ba0.053Zr0.54Ti0.46O3": 430,
+        "Pb0.947Ba0.053Zr0.55Ti0.45O3": 390,
+        "Pb0.947Ba0.053Zr0.56Ti0.44O3": 350,
+        "Pb0.947Ba0.053Zr0.57Ti0.43O3": 310,
+        "Pb0.947Ba0.053Zr0.58Ti0.42O3": 280
+      },
+      "property_unit": "pC/N",
+      "family": "PZT"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10853-023-08335-4",
+      "title": "Optimisation of the Zr:Ti ratio in bulk lead zirconate titanate for templated grain growth using BaTiO3 seeds",
+      "journal": "Journal of Materials Science",
+      "year": 2023,
+      "isOpenAccess": true,
+      "authors": [
+        {
+          "name": "Edoardo F. Mantheakis",
+          "affiliation_id": "I91136226",
+          "affiliation_name": "University of Sheffield",
+          "affiliation_country": "GB"
+        },
+        {
+          "name": "Beecher H. Watson",
+          "affiliation_id": "I130769515",
+          "affiliation_name": "Pennsylvania State University",
+          "affiliation_country": "US"
+        },
+        {
+          "name": "Michael J. Brova",
+          "affiliation_id": "I130769515",
+          "affiliation_name": "Pennsylvania State University",
+          "affiliation_country": "US"
+        },
+        {
+          "name": "Gary L. Messing",
+          "affiliation_id": "I130769515",
+          "affiliation_name": "Pennsylvania State University",
+          "affiliation_country": "US"
+        },
+        {
+          "name": "Laura A. Stoica",
+          "affiliation_id": "I112048516",
+          "affiliation_name": "BG Group (United Kingdom)",
+          "affiliation_country": "GB"
+        },
+        {
+          "name": "Ian M. Reaney",
+          "affiliation_id": "I91136226",
+          "affiliation_name": "University of Sheffield",
+          "affiliation_country": "GB"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Lead zirconate titanate",
+        "Ceramic",
+        "Sintering",
+        "Ferroelectricity",
+        "Phase boundary",
+        "Dielectric",
+        "Grain growth",
+        "Texture (cosmology)",
+        "Phase (matter)",
+        "Electroceramics",
+        "Lead titanate",
+        "Curie temperature",
+        "Mineralogy",
+        "Composite material",
+        "Dissolution",
+        "Microstructure",
+        "Grain boundary",
+        "Analytical Chemistry (journal)",
+        "Chemical engineering",
+        "Fabrication"
+      ]
+    }
+  },
+  "10.1016/j.ceramint.2017.09.015": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.5Na0.4K0.1TiO3": 125,
+        "Bi0.5Na0.4K0.1Ti0.995Fe0.005O3": 131,
+        "Bi0.5Na0.4K0.1Ti0.99Fe0.01O3": 134,
+        "Bi0.5Na0.4K0.1Ti0.98Fe0.02O3": 141,
+        "Bi0.5Na0.4K0.1Ti0.97Fe0.03O3": 148,
+        "Bi0.5Na0.4K0.1Ti0.96Fe0.04O3": 134,
+        "Bi0.5Na0.4K0.1Ti0.95Fe0.05O3": 126
+      },
+      "property_unit": "pC/N",
+      "family": "Bi1/2Na1/2TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.ceramint.2017.09.015",
+      "title": "Enhanced piezoelectric property and promoted depolarization temperature in Fe doped Bi1/2(Na0.8K0.2)1/2TiO3 lead-free ceramics",
+      "journal": "Ceramics International",
+      "year": 2017,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Huazhang Zhang",
+          "affiliation_id": "I196699116",
+          "affiliation_name": "Wuhan University of Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jing Zhou",
+          "affiliation_id": "I196699116",
+          "affiliation_name": "Wuhan University of Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jie Shen",
+          "affiliation_id": "I196699116",
+          "affiliation_name": "Wuhan University of Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xiong Yang",
+          "affiliation_id": "I4210154338",
+          "affiliation_name": "Hubei Engineering University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Chenglong Wu",
+          "affiliation_id": "I196699116",
+          "affiliation_name": "Wuhan University of Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Kunkun Han",
+          "affiliation_id": "I196699116",
+          "affiliation_name": "Wuhan University of Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Zehong Zhao",
+          "affiliation_id": "I196699116",
+          "affiliation_name": "Wuhan University of Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Wen Chen",
+          "affiliation_id": "I196699116",
+          "affiliation_name": "Wuhan University of Technology",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Piezoelectricity",
+        "Materials science",
+        "Ferroelectricity",
+        "Thermal stability",
+        "Doping",
+        "Piezoelectric coefficient",
+        "Ceramic",
+        "Composite material",
+        "Condensed matter physics",
+        "Optoelectronics",
+        "Dielectric",
+        "Chemical engineering"
+      ]
+    }
+  },
+  "10.1016/j.ceramint.2014.02.008": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Ba0.91Ca0.09Ti0.92Sn0.08O3": 515,
+        "Ba0.91Ca0.08Sr0.01Ti0.92Sn0.08O3": 585,
+        "Ba0.91Ca0.075Sr0.015Ti0.92Sn0.08O3": 580,
+        "Ba0.91Ca0.07Sr0.02Ti0.92Sn0.08O3": 475,
+        "Ba0.91Ca0.06Sr0.03Ti0.92Sn0.08O3": 430
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.ceramint.2014.02.008",
+      "title": "Polymorphic phase transition and enhanced electrical properties of (Ba0.91Ca0.09\u2212xSrx)(Ti0.92Sn0.08)O3 lead-free ceramics",
+      "journal": "Ceramics International",
+      "year": 2014,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Xiaofang Wang",
+          "affiliation_id": "I88830068",
+          "affiliation_name": "Shaanxi Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xiaolian Chao",
+          "affiliation_id": "I88830068",
+          "affiliation_name": "Shaanxi Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Pengfei Liang",
+          "affiliation_id": "I88830068",
+          "affiliation_name": "Shaanxi Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Lingling Wei",
+          "affiliation_id": "I88830068",
+          "affiliation_name": "Shaanxi Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Zupei Yang",
+          "affiliation_id": "I88830068",
+          "affiliation_name": "Shaanxi Normal University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Orthorhombic crystal system",
+        "Tetragonal crystal system",
+        "Ceramic",
+        "Phase transition",
+        "Phase (matter)",
+        "Atmospheric temperature range",
+        "Piezoelectricity",
+        "Analytical Chemistry (journal)",
+        "Composite material",
+        "Crystallography",
+        "Crystal structure",
+        "Thermodynamics",
+        "Chemistry"
+      ]
+    }
+  },
+  "10.1007/s10832-007-9344-7": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.5Na0.5TiO3": 82,
+        "Bi0.5Na0.5Ti0.998Sb0.001Nb0.001O3": 88,
+        "Bi0.5Na0.5Ti0.996Sb0.002Nb0.002O3": 93,
+        "Bi0.5Na0.5Ti0.994Sb0.003Nb0.003O3": 96,
+        "Bi0.5Na0.5Ti0.992Sb0.004Nb0.004O3": 97,
+        "Bi0.5Na0.5Ti0.99Sb0.005Nb0.005O3": 95,
+        "Bi0.5Na0.5Ti0.987Sb0.0065Nb0.0065O3": 76
+      },
+      "property_unit": "pC/N",
+      "family": "Bi1/2Na1/2TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10832-007-9344-7",
+      "title": "Piezoelectric properties and dielectric behavior of Bi1/2Na1/2[Ti1\u2212x (Sb1/2Nb1/2) x ]O3 lead-free piezoelectric ceramics",
+      "journal": "Journal of Electroceramics",
+      "year": 2007,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Changrong Zhou",
+          "affiliation_id": "I139660479",
+          "affiliation_name": "Central South University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xinyu Liu",
+          "affiliation_id": "I5343935",
+          "affiliation_name": "Guilin University of Electronic Technology",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Dielectric",
+        "Dissipation factor",
+        "Perovskite (structure)",
+        "Piezoelectricity",
+        "Analytical Chemistry (journal)",
+        "Ferroelectricity",
+        "Ion",
+        "Dielectric loss",
+        "Pyrochlore",
+        "Phase (matter)",
+        "Mineralogy",
+        "Crystallography",
+        "Composite material",
+        "Chemistry"
+      ]
+    }
+  },
+  "10.1007/s10854-019-02187-y": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Ba0.86Sr0.14TiO3": 210,
+        "Ba0.86Sr0.14Ti0.98Zr0.02O3": 290,
+        "Ba0.86Sr0.14Ti0.96Zr0.04O3": 380,
+        "Ba0.86Sr0.14Ti0.94Zr0.06O3": 430,
+        "Ba0.86Sr0.14Ti0.92Zr0.08O3": 620,
+        "Ba0.86Sr0.14Ti0.9Zr0.1O3": 360
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-019-02187-y",
+      "title": "Large piezoelectric performance in zirconium doped Ba0.86Sr0.14TiO3 lead-free ceramics through utilizing multiphase coexistence",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2019,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Kui Chen",
+          "affiliation_id": "I6645349",
+          "affiliation_name": "Southwest Minzu University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jian Ma",
+          "affiliation_id": "I6645349",
+          "affiliation_name": "Southwest Minzu University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Wenjuan Wu",
+          "affiliation_id": "I6645349",
+          "affiliation_name": "Southwest Minzu University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Caiyun Shi",
+          "affiliation_id": "I6645349",
+          "affiliation_name": "Southwest Minzu University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Bo Wu",
+          "affiliation_id": "I24201400",
+          "affiliation_name": "Chengdu University of Information Technology",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Piezoelectricity",
+        "Materials science",
+        "Zirconium",
+        "Ceramic",
+        "Lead (geology)",
+        "Doping",
+        "Optoelectronics",
+        "Nanotechnology",
+        "Composite material",
+        "Metallurgy",
+        "Geology"
+      ]
+    }
+  },
+  "10.1007/s41779-018-00305-3": {
+    "composition_data": {
+      "compositions_property_values": {
+        "BaTi0.9Sn0.1O3": 460,
+        "Ba0.98Ca0.02Ti0.9Sn0.1O3": 510,
+        "Ba0.96Ca0.04Ti0.9Sn0.1O3": 480,
+        "Ba0.94Ca0.06Ti0.9Sn0.1O3": 445,
+        "Ba0.92Ca0.08Ti0.9Sn0.1O3": 410,
+        "Ba0.9Ca0.1Ti0.9Sn0.1O3": 385
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s41779-018-00305-3",
+      "title": "Effect of processing conditions on (Ba1-xCax)(Ti0.9Sn0.1)O3 lead-free ceramics for the enhancement of structural, humidity sensing and dielectric properties",
+      "journal": "Journal of the Australian Ceramic Society",
+      "year": 2019,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Abd El-razek Mahmoud",
+          "affiliation_id": "I189575948",
+          "affiliation_name": "South Valley University",
+          "affiliation_country": "EG"
+        },
+        {
+          "name": "Ahmed S. Afify",
+          "affiliation_id": "I142608572",
+          "affiliation_name": "Prince Sattam Bin Abdulaziz University",
+          "affiliation_country": "SA"
+        },
+        {
+          "name": "E. M. Saed",
+          "affiliation_id": "I189575948",
+          "affiliation_name": "South Valley University",
+          "affiliation_country": "EG"
+        },
+        {
+          "name": "M. K. Gergs",
+          "affiliation_id": "I189575948",
+          "affiliation_name": "South Valley University",
+          "affiliation_country": "EG"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Microstructure",
+        "Scanning electron microscope",
+        "Ceramic",
+        "Sintering",
+        "Tetragonal crystal system",
+        "Calcination",
+        "Analytical Chemistry (journal)",
+        "Dielectric",
+        "Perovskite (structure)",
+        "Composite material",
+        "Phase (matter)",
+        "Chemical engineering",
+        "Optoelectronics",
+        "Chromatography"
+      ]
+    }
+  },
+  "10.1007/s10854-017-8068-y": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Ba0.98Ca0.02Ti0.94Sn0.06O3": 405,
+        "Ba0.98Ca0.02Ti0.94Sn0.04Zr0.02O3": 545,
+        "Ba0.98Ca0.02Ti0.94Sn0.02Zr0.04O3": 455,
+        "Ba0.98Ca0.02Ti0.94Zr0.06O3": 425
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-017-8068-y",
+      "title": "Microstructure, phase structure, and electrical properties of Zr-modified BaTiO3-based lead-free ceramics",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2017,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Bo Wu",
+          "affiliation_id": "I24201400",
+          "affiliation_name": "Chengdu University of Information Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jian Ma",
+          "affiliation_id": "I6645349",
+          "affiliation_name": "Southwest Minzu University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Wenjuan Wu",
+          "affiliation_id": "I24201400",
+          "affiliation_name": "Chengdu University of Information Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Min Chen",
+          "affiliation_id": "I24201400",
+          "affiliation_name": "Chengdu University of Information Technology",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Microstructure",
+        "Tetragonal crystal system",
+        "Ceramic",
+        "Piezoelectricity",
+        "Orthorhombic crystal system",
+        "Curie temperature",
+        "Phase (matter)",
+        "Crystal structure",
+        "Mineralogy",
+        "Composite material",
+        "Crystallography",
+        "Condensed matter physics",
+        "Chemistry",
+        "Ferromagnetism"
+      ]
+    }
+  },
+  "10.1016/j.ceramint.2015.11.114": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.47Na0.47Ba0.065Ti0.995Pr0.0025Nb0.0025O3": 221
+      },
+      "property_unit": "pC/N",
+      "family": "Bi0.5Na0.5TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.ceramint.2015.11.114",
+      "title": "Electric field-induced giant strain and piezoelectricity enhancement effect in (Bi1/2Na1/2)0.935+Ba0.065Ti1\u2212(Pr1/2Nb1/2) O3 lead-free ceramics",
+      "journal": "Ceramics International",
+      "year": 2015,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Chunmei Wang",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Zhijun Xu",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Renfei Cheng",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Ruiqing Chu",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jigong Hao",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Wei Li",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Huaiyong Li",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Juan Du",
+          "affiliation_id": "I196934937",
+          "affiliation_name": "Liaocheng University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Guorong Li",
+          "affiliation_id": "I4210163874",
+          "affiliation_name": "Shanghai Institute of Ceramics",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Piezoelectricity",
+        "Electric field",
+        "Dielectric",
+        "Ceramic",
+        "Ferroelectricity",
+        "Diffraction",
+        "Piezoelectric coefficient",
+        "Composite material",
+        "Analytical Chemistry (journal)",
+        "Optoelectronics",
+        "Optics",
+        "Chromatography"
+      ]
+    }
+  },
+  "10.1007/s10854-015-3500-7": {
+    "composition_data": {
+      "compositions_property_values": {
+        "K0.48Na0.48Li0.04Nb0.9Ta0.04Sb0.06O3": 198,
+        "K0.4776Na0.4776Li0.0398Nb0.9Ta0.04Sb0.06O3": 210,
+        "K0.4752Na0.4752Li0.0396Nb0.9Ta0.04Sb0.06O3": 196,
+        "K0.4728Na0.4728Li0.0394Dy0.01Nb0.9Ta0.04Sb0.06O3": 125,
+        "K0.4704Na0.4704Li0.0392Dy0.01Nb0.9Ta0.04Sb0.06O3": 113,
+        "K0.468Na0.468Li0.039Dy0.01Nb0.9Ta0.04Sb0.06O3": 140,
+        "K0.4656Na0.4656Li0.0388Dy0.01Nb0.9Ta0.04Sb0.06O3": 52
+      },
+      "property_unit": "pC/N",
+      "family": "K0.5Na0.5NbO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-015-3500-7",
+      "title": "Phase transition, electrical and luminescent properties of Dy-doped K0.5Na0.5NbO3-based lead-free ceramics",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2015,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Rui Wen",
+          "affiliation_id": "I63354593",
+          "affiliation_name": "Sichuan Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Lin Zhou",
+          "affiliation_id": "I63354593",
+          "affiliation_name": "Sichuan Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xiao Zou",
+          "affiliation_id": "I63354593",
+          "affiliation_name": "Sichuan Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Lingling Luo",
+          "affiliation_id": "I63354593",
+          "affiliation_name": "Sichuan Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Na Jiang",
+          "affiliation_id": "I63354593",
+          "affiliation_name": "Sichuan Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Qiaoji Zheng",
+          "affiliation_id": "I63354593",
+          "affiliation_name": "Sichuan Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jie Liao",
+          "affiliation_id": "I63354593",
+          "affiliation_name": "Sichuan Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Chenggang Xu",
+          "affiliation_id": "I63354593",
+          "affiliation_name": "Sichuan Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Dunmin Lin",
+          "affiliation_id": "I63354593",
+          "affiliation_name": "Sichuan Normal University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Tetragonal crystal system",
+        "Orthorhombic crystal system",
+        "Ceramic",
+        "Ferroelectricity",
+        "Microstructure",
+        "Luminescence",
+        "Piezoelectricity",
+        "Doping",
+        "Dielectric",
+        "Phase transition",
+        "Phase (matter)",
+        "Perovskite (structure)",
+        "Analytical Chemistry (journal)",
+        "Crystal structure",
+        "Mineralogy",
+        "Crystallography",
+        "Composite material",
+        "Optoelectronics",
+        "Condensed matter physics",
+        "Chemistry",
+        "Physics"
+      ]
+    }
+  },
+  "10.1007/s10853-022-07901-6": {
+    "composition_data": {
+      "compositions_property_values": {
+        "K0.49Na0.49Li0.02Nb0.82Ta0.18O3": 82,
+        "K0.49Na0.49Li0.02Nb0.8159Ta0.1791Cu0.005O3": 180,
+        "K0.49Na0.49Li0.02Nb0.8118Ta0.1782Cu0.01O3": 180,
+        "K0.49Na0.49Li0.02Nb0.8077Ta0.1773Cu0.015O3": 168,
+        "K0.49Na0.49Li0.02Nb0.8036Ta0.1764Cu0.02O3": 160
+      },
+      "property_unit": "pC/N",
+      "family": "K0.5Na0.5NbO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10853-022-07901-6",
+      "title": "Significantly enhanced mechanical quality factor with favorable piezoelectricity in K0.5Na0.5NbO3-based ceramics",
+      "journal": "Journal of Materials Science",
+      "year": 2022,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Wenchao Chi",
+          "affiliation_id": "I139660479",
+          "affiliation_name": "Central South University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xuefan Zhou",
+          "affiliation_id": "I139660479",
+          "affiliation_name": "Central South University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jinzhu Zou",
+          "affiliation_id": "I139660479",
+          "affiliation_name": "Central South University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Zhiyuan Dai",
+          "affiliation_id": "I139660479",
+          "affiliation_name": "Central South University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Dou Zhang",
+          "affiliation_id": "I139660479",
+          "affiliation_name": "Central South University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Phase boundary",
+        "Orthorhombic crystal system",
+        "Ceramic",
+        "Doping",
+        "Tetragonal crystal system",
+        "Piezoelectricity",
+        "Hardening (computing)",
+        "Analytical Chemistry (journal)",
+        "Crystallography",
+        "Nanotechnology",
+        "Phase (matter)",
+        "Composite material",
+        "Crystal structure",
+        "Optoelectronics",
+        "Layer (electronics)"
+      ]
+    }
+  },
+  "10.1007/s10854-020-04660-5": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.47Na0.47Ba0.06TiO3": 123,
+        "Bi0.47Na0.47Ba0.06Ti0.99Nb0.01O3": 138,
+        "Bi0.47Na0.47Ba0.06Ti0.98Nb0.02O3": 110,
+        "Bi0.47Na0.47Ba0.06Ti0.97Nb0.03O3": 13
+      },
+      "property_unit": "pC/N",
+      "family": "BNBT"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-020-04660-5",
+      "title": "Dielectric and ferroelectric properties of (Bi0.5Na0.5)0.94-\u03b4Ba0.06Ti1\u2212xNbxO3 lead-free ceramics",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2020,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Han\u2010li Lian",
+          "affiliation_id": "I4210136859",
+          "affiliation_name": "Xi\u2019an University of Posts and Telecommunications",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jinyan Shi",
+          "affiliation_id": "I4210136859",
+          "affiliation_name": "Xi\u2019an University of Posts and Telecommunications",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Yan-zi Qiu",
+          "affiliation_id": "I88830068",
+          "affiliation_name": "Shaanxi Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xiao\u2010Ming Chen",
+          "affiliation_id": "I88830068",
+          "affiliation_name": "Shaanxi Normal University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Dielectric",
+        "Phase boundary",
+        "Ceramic",
+        "Ferroelectricity",
+        "Tetragonal crystal system",
+        "Dielectric loss",
+        "Microstructure",
+        "Hysteresis",
+        "Phase (matter)",
+        "Analytical Chemistry (journal)",
+        "Composite material",
+        "Mineralogy",
+        "Condensed matter physics",
+        "Optoelectronics",
+        "Chemistry",
+        "Physics"
+      ]
+    }
+  },
+  "10.1016/j.ceramint.2015.07.117": {
+    "composition_data": {
+      "compositions_property_values": {
+        "K0.5Na0.5Nb0.8Ta0.2O3": 173,
+        "K0.5Na0.5Nb0.7Ta0.3O3": 233,
+        "K0.5Na0.5Nb0.6Ta0.4O3": 207
+      },
+      "property_unit": "pC/N",
+      "family": "KNN"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.ceramint.2015.07.117",
+      "title": "(K0.5Na0.5)(Nb1\u2212xTax)O3 ceramics with a higher d33: Preparation from a two-stage microwave hydrothermal process",
+      "journal": "Ceramics International",
+      "year": 2015,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Liangping Chen",
+          "affiliation_id": "I92403157",
+          "affiliation_name": "University of Science and Technology Beijing",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Guibo Qiu",
+          "affiliation_id": "I4210161526",
+          "affiliation_name": "Beijing Building Construction Research Institute (China)",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Ben Peng",
+          "affiliation_id": "I4210161526",
+          "affiliation_name": "Beijing Building Construction Research Institute (China)",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Min Guo",
+          "affiliation_id": "I92403157",
+          "affiliation_name": "University of Science and Technology Beijing",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Mei Zhang",
+          "affiliation_id": "I92403157",
+          "affiliation_name": "University of Science and Technology Beijing",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Hydrothermal circulation",
+        "Materials science",
+        "Ceramic",
+        "Scanning electron microscope",
+        "Sintering",
+        "Microwave",
+        "Hydrothermal synthesis",
+        "Analytical Chemistry (journal)",
+        "Phase (matter)",
+        "Alkali metal",
+        "Doping",
+        "Piezoelectricity",
+        "Mineralogy",
+        "Chemical engineering",
+        "Nuclear chemistry",
+        "Nanotechnology",
+        "Composite material",
+        "Chromatography",
+        "Chemistry",
+        "Optoelectronics",
+        "Organic chemistry"
+      ]
+    }
+  },
+  "10.1007/s10854-017-8225-3": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Ba0.85Ca0.15Zr0.1Ti0.9O3": 349,
+        "Ba0.85Ca0.15Zr0.0995Ti0.8955Cu0.00165Nb0.00335O3": 480,
+        "Ba0.85Ca0.15Zr0.099Ti0.891Cu0.0033Nb0.0067O3": 550,
+        "Ba0.85Ca0.15Zr0.0985Ti0.8865Cu0.00495Nb0.01005O3": 450,
+        "Ba0.85Ca0.15Zr0.098Ti0.882Cu0.0066Nb0.0134O3": 265
+      },
+      "property_unit": "pC/N",
+      "family": "BaTiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1007/s10854-017-8225-3",
+      "title": "Low temperature sintering and role of room-temperature phase transition in the electrical properties of (Ba0.85Ca0.15)(Zr0.10Ti0.90)1\u2212x(Cu1/3Nb2/3)xO3 ceramics",
+      "journal": "Journal of Materials Science Materials in Electronics",
+      "year": 2017,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Huaidang Zhao",
+          "affiliation_id": "I162868743",
+          "affiliation_name": "Tianjin University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Weibing Ma",
+          "affiliation_id": "I162868743",
+          "affiliation_name": "Tianjin University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jingdong Guo",
+          "affiliation_id": "I162868743",
+          "affiliation_name": "Tianjin University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xiangrong Zang",
+          "affiliation_id": "I162868743",
+          "affiliation_name": "Tianjin University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Peishuang Miao",
+          "affiliation_id": "I162868743",
+          "affiliation_name": "Tianjin University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Minjie Ma",
+          "affiliation_id": "I162868743",
+          "affiliation_name": "Tianjin University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Feiyang Zhang",
+          "affiliation_id": "I162868743",
+          "affiliation_name": "Tianjin University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Sintering",
+        "Materials science",
+        "Ceramic",
+        "Phase transition",
+        "Phase (matter)",
+        "Transition temperature",
+        "Condensed matter physics",
+        "Composite material",
+        "Chemistry",
+        "Superconductivity",
+        "Physics"
+      ]
+    }
+  },
+  "10.1016/j.ceramint.2012.12.086": {
+    "composition_data": {
+      "compositions_property_values": {
+        "K0.49Na0.51Nb0.9Ta0.04Sb0.06O3": 140,
+        "K0.4802Na0.4998Li0.02Nb0.9Ta0.04Sb0.06O3": 160,
+        "K0.4704Na0.4896Li0.04Nb0.9Ta0.04Sb0.06O3": 215,
+        "K0.4655Na0.4845Li0.05Nb0.9Ta0.04Sb0.06O3": 228,
+        "K0.4606Na0.4794Li0.06Nb0.9Ta0.04Sb0.06O3": 215,
+        "K0.4508Na0.4692Li0.08Nb0.9Ta0.04Sb0.06O3": 175
+      },
+      "property_unit": "pC/N",
+      "family": "(K,Na)NbO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.ceramint.2012.12.086",
+      "title": "Structure and electrical properties of [(K0.49Na0.51)1\u2212xLix](Nb0.90Ta0.04Sb0.06)O3 lead-free piezoceramics",
+      "journal": "Ceramics International",
+      "year": 2013,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Haiwei Du",
+          "affiliation_id": "I3124059619",
+          "affiliation_name": "China University of Geosciences",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Yanqiu Huang",
+          "affiliation_id": "I3124059619",
+          "affiliation_name": "China University of Geosciences",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Tang Hongping",
+          "affiliation_id": "I3124059619",
+          "affiliation_name": "China University of Geosciences",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Wei Feng",
+          "affiliation_id": "I3124059619",
+          "affiliation_name": "China University of Geosciences",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Haina Qin",
+          "affiliation_id": "I3124059619",
+          "affiliation_name": "China University of Geosciences",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Xiufang Lu",
+          "affiliation_id": "I3124059619",
+          "affiliation_name": "China University of Geosciences",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Materials science",
+        "Tetragonal crystal system",
+        "Orthorhombic crystal system",
+        "Analytical Chemistry (journal)",
+        "Ceramic",
+        "Temperature coefficient",
+        "Electromechanical coupling coefficient",
+        "Solid solution",
+        "Relative permittivity",
+        "Curie temperature",
+        "Dissipation factor",
+        "Phase (matter)",
+        "Permittivity",
+        "Dielectric",
+        "Mineralogy",
+        "Crystal structure",
+        "Composite material",
+        "Crystallography",
+        "Condensed matter physics",
+        "Chemistry",
+        "Metallurgy",
+        "Physics"
+      ]
+    }
+  },
+  "10.1016/j.cap.2009.06.044": {
+    "composition_data": {
+      "compositions_property_values": {
+        "Bi0.48Nd0.01Na0.49Ba0.02TiO3": 70,
+        "Bi0.47Nd0.01Na0.48Ba0.04TiO3": 100,
+        "Bi0.46Nd0.01Na0.47Ba0.06TiO3": 150,
+        "Bi0.45Nd0.01Na0.46Ba0.08TiO3": 120,
+        "Bi0.44Nd0.01Na0.45Ba0.1TiO3": 120,
+        "Bi0.43Nd0.01Na0.44Ba0.12TiO3": 60,
+        "Bi0.47Nd0.02Na0.49Ba0.02TiO3": 60,
+        "Bi0.46Nd0.02Na0.48Ba0.04TiO3": 80,
+        "Bi0.45Nd0.02Na0.47Ba0.06TiO3": 115,
+        "Bi0.44Nd0.02Na0.46Ba0.08TiO3": 95,
+        "Bi0.43Nd0.02Na0.45Ba0.1TiO3": 70,
+        "Bi0.42Nd0.02Na0.44Ba0.12TiO3": 45
+      },
+      "property_unit": "pC/N",
+      "family": "Bi0.5Na0.5TiO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.cap.2009.06.044",
+      "title": "Dielectric and piezoelectric properties of (Bi1\u2212\u2212Nd Na1\u2212)0.5Ba TiO3 lead-free ceramics",
+      "journal": "Current Applied Physics",
+      "year": 2009,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Dunmin Lin",
+          "affiliation_id": "I63354593",
+          "affiliation_name": "Sichuan Normal University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "K. W. Kwok",
+          "affiliation_id": "I14243506",
+          "affiliation_name": "Hong Kong Polytechnic University",
+          "affiliation_country": "HK"
+        }
+      ],
+      "keywords": [
+        "Phase boundary",
+        "Materials science",
+        "Dielectric",
+        "Piezoelectricity",
+        "Tetragonal crystal system",
+        "Ceramic",
+        "Coercivity",
+        "Ferroelectricity",
+        "Polarization (electrochemistry)",
+        "Polar",
+        "Dielectric loss",
+        "Mineralogy",
+        "Phase (matter)",
+        "Analytical Chemistry (journal)",
+        "Condensed matter physics",
+        "Crystallography",
+        "Crystal structure",
+        "Chemistry",
+        "Composite material",
+        "Physical chemistry",
+        "Optoelectronics",
+        "Physics"
+      ]
+    }
+  },
+  "10.1016/j.ssc.2011.12.044": {
+    "composition_data": {
+      "compositions_property_values": {
+        "BiFeO3": 37,
+        "Bi0.9Sm0.1FeO3": 35,
+        "Bi0.875Sm0.125FeO3": 42,
+        "Bi0.8Sm0.2FeO3": 10,
+        "Bi0.75Sm0.25FeO3": 0
+      },
+      "property_unit": "pC/N",
+      "family": "BiFeO3"
+    },
+    "synthesis_data": {
+      "method": "",
+      "precursors": [],
+      "steps": [],
+      "characterization_techniques": []
+    },
+    "article_metadata": {
+      "doi": "10.1016/j.ssc.2011.12.044",
+      "title": "Structure, ferroelectricity and piezoelectricity evolutions of Bi1\u2212xSmxFeO3 at various temperatures",
+      "journal": "Solid State Communications",
+      "year": 2012,
+      "isOpenAccess": false,
+      "authors": [
+        {
+          "name": "Xiaomin Chen",
+          "affiliation_id": "I36399199",
+          "affiliation_name": "Nanjing University of Science and Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Yiping Wang",
+          "affiliation_id": "I9842412",
+          "affiliation_name": "Nanjing University of Aeronautics and Astronautics",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Ying Yang",
+          "affiliation_id": "I9842412",
+          "affiliation_name": "Nanjing University of Aeronautics and Astronautics",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Guoliang Yuan",
+          "affiliation_id": "I36399199",
+          "affiliation_name": "Nanjing University of Science and Technology",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Jiang Yin",
+          "affiliation_id": "I881766915",
+          "affiliation_name": "Nanjing University",
+          "affiliation_country": "CN"
+        },
+        {
+          "name": "Zhiguo Liu",
+          "affiliation_id": "I881766915",
+          "affiliation_name": "Nanjing University",
+          "affiliation_country": "CN"
+        }
+      ],
+      "keywords": [
+        "Ferroelectricity",
+        "Orthorhombic crystal system",
+        "Raman spectroscopy",
+        "Materials science",
+        "Multiferroics",
+        "Triclinic crystal system",
+        "Phase (matter)",
+        "Polar",
+        "Piezoelectricity",
+        "Trigonal crystal system",
+        "Condensed matter physics",
+        "Crystallography",
+        "Dielectric",
+        "Crystal structure",
+        "Chemistry",
+        "Optics",
+        "Optoelectronics",
+        "Composite material",
+        "Physics",
+        "Organic chemistry"
+      ]
+    }
+  }
+}

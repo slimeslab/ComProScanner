@@ -1,0 +1,205 @@
+2026-05-01 15:40:47: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1007/s10832-007-9344-7.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1007/s10832-007-9344-7 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Figure shows the X-ray diffraction patterns of sintered samples in the 2\u03b8 ranges 20\u201380\xb0. The splitting peaks observed is Kalpha1 and Kalpha2 type splitting because two X-ray wavelengths hit the sample. It indicated (Sb1/2Nb1/2)E^{4+} ions have diffused into the BNT lattice to form a solid solution. Fig. 1XRD pattern of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics sintered at 1190 \xb0C for 2 h XRD pattern of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics sintered at 1190 \xb0C for 2 h Figure shows the piezoelectric constant d33 and the dielectric constant \u025br at room temperature of the Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics as a function of x. Piezoelectric constant d33 increases with increasing (Sb1/2Nb1/2)E^{4+} fraction up to 0.8% with d33 = 97 pC/N and then decreases. Fig. 2Piezoelectric constant d33 and relative dielectric constant \u025br of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics as a function of (Sb1/2Nb1/2)E^{4+} concentration x Piezoelectric constant d33 and relative dielectric constant \u025br of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics as a function of (Sb1/2Nb1/2)E^{4+} concentration x The electromechanical coupling factor kt and dissipation factor tan\u03b4 of the Bi1/2Na1/2Ti1\u2212x(Sb1/2Nb1/2)xO3 ceramics as a function of x are showed in Fig.. It can be seen that kt first slightly increase, reaching maximum kt = 0.50, then decrease as the x increase. The dissipation factor tan\u03b4 linearly increase with increasing of (Sb1/2Nb1/2)E^{4+} concentration. Fig. 3Electromechanical coupling factor kt and dissipation factor tan\u03b4 of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics as a function of (Sb1/2Nb1/2)E^{4+} concentration x Electromechanical coupling factor kt and dissipation factor tan\u03b4 of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics as a function of (Sb1/2Nb1/2)E^{4+} concentration x It seemed that the electrical properties change were caused by complex ions of (Sb1/2Nb1/2)E^{4+} substitution in the B site of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 perovskite structure ceramics. That is because the additives in BNT-based composition cause defects such as vacancies, lattice deformation and they facilitate the domain movement leading to higher piezoelectric and dielectric properties [, ]. Figure shows the temperature dependence of dielectric constants \xe5r and dielectric loss tan\u03b4 for x = 0, 0.2, 0.8 mol% of the Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics between room temperature and 500 \xb0C at 1, 10, 100 kHz. The two dielectric peaks can attribute to the reason caused by the phase transitions from ferroelectric to anti-ferroelectric and anti-ferroelectric to paraelectric phase, which is consistent with the previous reports of NBT, NBT-BT, NBT-KBT lead-free ceramics system [\u2013]. The dielectric loss tan\u03b4 versus temperature curves indicate one loss peak corresponds with Td. The dielectric loss tan\u03b4 achieves the minimum value before the temperature Tm. The dielectric constant present in Fig. indicates another phenomenon that the dielectric constant increase sharply at low frequency and high temperature after (Sb1/2Nb1/2)E^{4+} was added. This phenomenon is consistent with previous results  and has been explained by Tu et al. in term of superparaelectric clusters existing in the tetragonal phase of the BNT ceramics [\u2013]. In the Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics, the BiE^{3+}, and NaE^{+} are randomly distributed at the A sites, and the (Sb1/2Nb1/2)E^{4+} doped at B site, causing randomly local electric fields and elastic distortions. Accordingly, the cluster polarization is \u2018frozen\u2019 under a high-frequency electric field, whereas the reorientation of the cluster polarization under low-frequency electric field and high temperature is allowed, leading to a large dielectric constant value. Fig. 4The dielectric constant \u025br and the dielectric loss tan\u03b4 of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics with x = 0% (a), 0.2% (b), and 0.8% (c) as a function of temperature The dielectric constant \u025br and the dielectric loss tan\u03b4 of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics with x = 0% (a), 0.2% (b), and 0.8% (c) as a function of temperature It can be also found from Fig. that the ceramics have relaxor ferroelectric characteristics. The dielectric constant \u025br at Td, transition temperature Td are strong depended on the measurement frequency. The value of relative dielectric constant \u025br decrease as the measuring frequency increases, Also, the fact that the Td increase with measurement frequency increase shows the evidence of a diffusion phase transition with a frequency dispersion occurring around the temperature Td. For most ABO3 type peroskite ferroelectric, it has relaxor feature caused by A or B site cations substitutions. In present work, (Sb1/2Nb1/2)E^{4+} ions substitute at B site induce the ions disorder at lattice which lead to relaxor behavior.
+
+# TITLE
+Piezoelectric properties and dielectric behavior of Bi1/2Na 1/2[Ti1-x (Sb1/2Nb1/2) x ]O3 lead-free piezoelectric ceramics
+
+# ABSTRACT
+New lead-free piezoelectric ceramics of ABO perovskite type, BiNa[Ti(SbNb)]O, were synthesized by conventional solid state reaction. The effect of the replacement of complex ions of (SbNb)E^{4+} in the B cationic site on structural and electrical properties was investigated. The XRD analysis showed that all samples exhibited a single phase of perovskite structure. Piezoelectric and dielectric measurement revealed that the substitution of (SbNb)E^{4+} ions lead to an increase in piezoelectric constant(), electromechanical coupling factor(), relative dielectric constant(),and loss tangent (tan), while excess of (NbSb)E^{4+} ions results in a decrease in , , , but an increase in tan. At low frequency and high temperature, dielectric constant increased sharply attributed to the superparaelectric clusters after (SbNb)E^{4+} ions substitution.
+
+# INTRODUCTION
+The most widely used piezoelectric materials are Pb(Zr, Ti)O3(PZT)-based three component system. Therefore, it is necessary to develop environment-friendly lead-free piezoelectric ceramics to replace PZT based ceramics. Among the lead-free compounds, bismuth sodium titanate (Bi1/2Na1/2TiO3, abbreviate as BNT), is interesting as BNT shows a strong ferroelectricity and high Curie temperature Tc = 320 \xb0C. This material belongs to the peroskite family ABO3, which has drawbacks such as high conductivity and large coercive field of 73 kV/cm, to cause problems in poling process. As a result of those, a lot of work to modify and improve piezoelectric properties of BNT ceramics have been done by substitution of BaTiO3 , K1/2Bi1/2TiO3 , NaNbO3, , BiFeO3 , La2O3. Therefore, the present work was to prepare and to characterize Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics of perovskite type derived from Bi1/2Na1/2TiO3 by complex ions of compensation valent substitutions. The study mainly describes the complex ions of (Sb1/2Nb1/2)E^{4+} substitution on improving the electrical properties of BNT ceramic.
+
+# CONCLUSION
+Lead-free piezoelectric ceramics Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3, a new member of the BNT-based group, was prepared by conventional solid state reaction and their dielectric, piezoelectric properties were investigated. The piezoelectric constant d33 and the electromechanical coupling factor kt increased with the increasing content of (Sb1/2Nb1/2)E^{4+}, showed the maximum value of 97 pC/N and 0.50 at x = 0.8 %, respectively, and rapidly decreased when x over 0.8 %. The loss tangent tan\u03b4 linearly increased with the increasing amount of (Sb1/2Nb1/2)E^{4+}. Temperature dependence of dielectric constant \u025br measurement indicated these compounds were relaxor ferroelectric. At low frequency and high temperature, dielectric constant increased sharply attributed to the superparaelectric clusters after (Sb1/2Nb1/2)E^{4+} ions substitution.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 15:41:42: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1007/s10832-007-9344-7.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1007/s10832-007-9344-7 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Figure shows the X-ray diffraction patterns of sintered samples in the 2\u03b8 ranges 20\u201380\xb0. The splitting peaks observed is Kalpha1 and Kalpha2 type splitting because two X-ray wavelengths hit the sample. It indicated (Sb1/2Nb1/2)E^{4+} ions have diffused into the BNT lattice to form a solid solution. Fig. 1XRD pattern of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics sintered at 1190 \xb0C for 2 h XRD pattern of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics sintered at 1190 \xb0C for 2 h Figure shows the piezoelectric constant d33 and the dielectric constant \u025br at room temperature of the Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics as a function of x. Piezoelectric constant d33 increases with increasing (Sb1/2Nb1/2)E^{4+} fraction up to 0.8% with d33 = 97 pC/N and then decreases. Fig. 2Piezoelectric constant d33 and relative dielectric constant \u025br of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics as a function of (Sb1/2Nb1/2)E^{4+} concentration x Piezoelectric constant d33 and relative dielectric constant \u025br of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics as a function of (Sb1/2Nb1/2)E^{4+} concentration x The electromechanical coupling factor kt and dissipation factor tan\u03b4 of the Bi1/2Na1/2Ti1\u2212x(Sb1/2Nb1/2)xO3 ceramics as a function of x are showed in Fig.. It can be seen that kt first slightly increase, reaching maximum kt = 0.50, then decrease as the x increase. The dissipation factor tan\u03b4 linearly increase with increasing of (Sb1/2Nb1/2)E^{4+} concentration. Fig. 3Electromechanical coupling factor kt and dissipation factor tan\u03b4 of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics as a function of (Sb1/2Nb1/2)E^{4+} concentration x Electromechanical coupling factor kt and dissipation factor tan\u03b4 of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics as a function of (Sb1/2Nb1/2)E^{4+} concentration x It seemed that the electrical properties change were caused by complex ions of (Sb1/2Nb1/2)E^{4+} substitution in the B site of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 perovskite structure ceramics. That is because the additives in BNT-based composition cause defects such as vacancies, lattice deformation and they facilitate the domain movement leading to higher piezoelectric and dielectric properties [, ]. Figure shows the temperature dependence of dielectric constants \xe5r and dielectric loss tan\u03b4 for x = 0, 0.2, 0.8 mol% of the Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics between room temperature and 500 \xb0C at 1, 10, 100 kHz. The two dielectric peaks can attribute to the reason caused by the phase transitions from ferroelectric to anti-ferroelectric and anti-ferroelectric to paraelectric phase, which is consistent with the previous reports of NBT, NBT-BT, NBT-KBT lead-free ceramics system [\u2013]. The dielectric loss tan\u03b4 versus temperature curves indicate one loss peak corresponds with Td. The dielectric loss tan\u03b4 achieves the minimum value before the temperature Tm. The dielectric constant present in Fig. indicates another phenomenon that the dielectric constant increase sharply at low frequency and high temperature after (Sb1/2Nb1/2)E^{4+} was added. This phenomenon is consistent with previous results  and has been explained by Tu et al. in term of superparaelectric clusters existing in the tetragonal phase of the BNT ceramics [\u2013]. In the Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics, the BiE^{3+}, and NaE^{+} are randomly distributed at the A sites, and the (Sb1/2Nb1/2)E^{4+} doped at B site, causing randomly local electric fields and elastic distortions. Accordingly, the cluster polarization is \u2018frozen\u2019 under a high-frequency electric field, whereas the reorientation of the cluster polarization under low-frequency electric field and high temperature is allowed, leading to a large dielectric constant value. Fig. 4The dielectric constant \u025br and the dielectric loss tan\u03b4 of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics with x = 0% (a), 0.2% (b), and 0.8% (c) as a function of temperature The dielectric constant \u025br and the dielectric loss tan\u03b4 of Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics with x = 0% (a), 0.2% (b), and 0.8% (c) as a function of temperature It can be also found from Fig. that the ceramics have relaxor ferroelectric characteristics. The dielectric constant \u025br at Td, transition temperature Td are strong depended on the measurement frequency. The value of relative dielectric constant \u025br decrease as the measuring frequency increases, Also, the fact that the Td increase with measurement frequency increase shows the evidence of a diffusion phase transition with a frequency dispersion occurring around the temperature Td. For most ABO3 type peroskite ferroelectric, it has relaxor feature caused by A or B site cations substitutions. In present work, (Sb1/2Nb1/2)E^{4+} ions substitute at B site induce the ions disorder at lattice which lead to relaxor behavior.
+
+# TITLE
+Piezoelectric properties and dielectric behavior of Bi1/2Na 1/2[Ti1-x (Sb1/2Nb1/2) x ]O3 lead-free piezoelectric ceramics
+
+# ABSTRACT
+New lead-free piezoelectric ceramics of ABO perovskite type, BiNa[Ti(SbNb)]O, were synthesized by conventional solid state reaction. The effect of the replacement of complex ions of (SbNb)E^{4+} in the B cationic site on structural and electrical properties was investigated. The XRD analysis showed that all samples exhibited a single phase of perovskite structure. Piezoelectric and dielectric measurement revealed that the substitution of (SbNb)E^{4+} ions lead to an increase in piezoelectric constant(), electromechanical coupling factor(), relative dielectric constant(),and loss tangent (tan), while excess of (NbSb)E^{4+} ions results in a decrease in , , , but an increase in tan. At low frequency and high temperature, dielectric constant increased sharply attributed to the superparaelectric clusters after (SbNb)E^{4+} ions substitution.
+
+# INTRODUCTION
+The most widely used piezoelectric materials are Pb(Zr, Ti)O3(PZT)-based three component system. Therefore, it is necessary to develop environment-friendly lead-free piezoelectric ceramics to replace PZT based ceramics. Among the lead-free compounds, bismuth sodium titanate (Bi1/2Na1/2TiO3, abbreviate as BNT), is interesting as BNT shows a strong ferroelectricity and high Curie temperature Tc = 320 \xb0C. This material belongs to the peroskite family ABO3, which has drawbacks such as high conductivity and large coercive field of 73 kV/cm, to cause problems in poling process. As a result of those, a lot of work to modify and improve piezoelectric properties of BNT ceramics have been done by substitution of BaTiO3 , K1/2Bi1/2TiO3 , NaNbO3, , BiFeO3 , La2O3. Therefore, the present work was to prepare and to characterize Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3 ceramics of perovskite type derived from Bi1/2Na1/2TiO3 by complex ions of compensation valent substitutions. The study mainly describes the complex ions of (Sb1/2Nb1/2)E^{4+} substitution on improving the electrical properties of BNT ceramic.
+
+# CONCLUSION
+Lead-free piezoelectric ceramics Bi1/2Na1/2[Ti1\u2212x(Sb1/2Nb1/2)x]O3, a new member of the BNT-based group, was prepared by conventional solid state reaction and their dielectric, piezoelectric properties were investigated. The piezoelectric constant d33 and the electromechanical coupling factor kt increased with the increasing content of (Sb1/2Nb1/2)E^{4+}, showed the maximum value of 97 pC/N and 0.50 at x = 0.8 %, respectively, and rapidly decreased when x over 0.8 %. The loss tangent tan\u03b4 linearly increased with the increasing amount of (Sb1/2Nb1/2)E^{4+}. Temperature dependence of dielectric constant \u025br measurement indicated these compounds were relaxor ferroelectric. At low frequency and high temperature, dielectric constant increased sharply attributed to the superparaelectric clusters after (Sb1/2Nb1/2)E^{4+} ions substitution.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(Bi0.5Na0.5)(Ti(0.992)Sb(0.004)Nb(0.004))O3": 97
+    },
+    "abbreviations": {
+      "BNT": "Bi1/2Na1/2TiO3"
+    },
+    "property_unit": "pC/N",
+    "family": "Bi1/2Na1/2TiO3"
+  }
+}"

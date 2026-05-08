@@ -1,0 +1,249 @@
+2026-05-01 23:12:45: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2014.02.008.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2014.02.008 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+(a) shows the XRD patterns of the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics as a function of SrE^{2+} contents. And there is no trace of second phase, implying that SrE^{2+} can diffuse into the (Ba,Ca)(Ti,Sn)O3 lattice to form a solid solution. In order to further analyze the effect of SrE^{2+} content on the phase structure, (b) plots the fine scanning XRD patterns in the 2\u03b8 range from 44\xb0 to 46\xb0 for all samples. An orthorhombic phase (PDF#81-2200) has been demonstrated in the ceramics with 0.00\u2266x\u22660.005, which is characterized by the (022)/(200) peaks at around 2\u03b8 of 45\xb0. The tetragonal phase (PDF#79-2264) is observed in the samples with 0.02\u2266x\u22660.03, featured with the (002)/(200) peaks at around 2\u03b8 of 45\xb0. The peaks characteristic near 45\xb0 in sample with x=0.01 show a mixture-phase behavior of both orthorhombic and tetragonal phases. Furthermore, it is noted that with increase of x from 0.00 to 0.02, the diffraction peak shifts to lower angle. When x=0.03, the diffraction peak shifts slightly to higher angle. In consideration of the ionic radius (SrE^{2+} is 1.12\xc5, CaE^{2+} is 0.99\xc5, and BaE^{2+} is 1.34\xc5), the above phenomena may be attributed to the lattice deformation caused by SrE^{2+} occupying the position of BaE^{2+} or CaE^{2+} partly. Similar peak shifting behavior induced by the partial substitution of a higher-ionic-radius element for a lower-ionic-radius element was also observed in Zr-modified BaTiO3 ceramics. To further confirm the effect of SrE^{2+} content on the crystal lattice, the lattice parameters a, b and c were calculated using the least square method from XRD data, which are displayed in. The lattice parameters of sample with orthorhombic symmetry are a=4.006\xc5, b=4.003\xc5, c=4.000\xc5 at x=0.00. The lattice parameters of tetragonal phase are a=b=4.874\xc5, c=3.834\xc5 at x=0.02. As shown in , the values of lattice parameters a, b and c varied continuously in the range of 0.00\u2266x\u22660.005 and 0.01\u2266x\u22660.03. The distinctly discontinuous change is observed around x=0.01, suggesting a two-phase coexistence zone (consisting of orthorhombic and tetragonal phases) near room temperature, which is consistent with the result of (b). The varied lattice parameters are considered as the further evidence of phase transition from orthorhombic to tetragonal symmetry in (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 system. The orthorhombic\u2013tetragonal coexistence should be identified as a thermodynamics polymorphism phase transition PPT behavior rather than a traditional MPB, as it depends not only on composition but also on temperature. (a) and (b) exhibits the temperature dependence of dielectric constant \u03b5 r and the dielectric loss tan \u03b4 for the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics with different x from \u221250 to 150\xb0C at 1kHz. As can be seen, three types of dielectric constant and loss anomaly are clearly observed in all samples around 0\xb0C, 20\xb0C and 70\xb0C, respectively. The observed dielectric anomalies are attributed to the following phase transitions with increasing temperature: rhombohedral\u2013orthorhombic phase (R\u2192O), orthorhombic\u2013tetragonal phase (O\u2192T) and tetragonal\u2013cubic phases (T\u2192C) sequentially. According to Tian and Yang\u05f3s results , the phase transitions of R\u2192O and O\u2192T are observed due to the fact that an pinched orthorhombic, induced by the approach of R and T phases, dwells at very narrow temperature range in (Ba1\u2212x Ca x )(Zr0.1Ti0.9)O3 ceramics. To identify the room-temperature phase structure of all samples, an enlarged temperature dependence of \u03b5 r from 0 to 40\xb0C is displayed in (c). Both T R\u2013O and T O\u2013T increase slightly with increasing x from 0.00 to 0.03. (d) plots the T R\u2013O, T O\u2013T and T T\u2013C for the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics with different x. As can be seen, the Curie temperature T c (T T\u2013C) drops from 73.7 to 63.0\xb0C with increasing x. T R\u2013O increases from \u22125.0 to 7.0\xb0C and T O\u2013T increases from 22.0 to 27.0\xb0C, indicating that the SrE^{2+} substitution in (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics make the phase transition of orthorhombic to tetragonal emerge in the vicinity of room temperature, which is in accordance with the results of. Released literatures reveal that the formation of the coexistence phases locating at near room usually benefits to the improvement in the piezoelectric properties of BaTiO3-based ceramics. (a)\u2013(e) depicts the polarization-electric field (P\u2013E) hysteresis loops of the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics which are measured at 1Hz under an electrical field of 50kV/cm near room temperature with increasing x from 0.00 to 0.30. (f) plots the values of remnant polarization P r and the coercive fields E c of (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics as a function of x. It can be seen that all samples exhibit a typical ferroelectric polarization hysteresis loop, and the P\u2013E loops become narrower with increasing x. P r changes weakly initially until x=0.01, then drops sharply at x=0.02, and finally increases. Whereas E c decreases initially, reaches the minimum value at x=0.01, and then increases slightly. The sample with x=0.01 owns relatively high P r value of 8.73 \u03bcC/cmE^{2} and the minimum E c of 0.07kV/cm. In order to verify these results, the electric-field-induced strains and piezoelectric properties are depicted in. (a) presents the bipolar electric-field-induced strains of (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics with different SrE^{2+} content under the same electric field of 50kV/mm at room temperature. The S\u2013E curves of the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics show a typical ferroelectric butterfly-curve behavior, and the Sr-doped samples exhibit higher strain compared to the unmodified (Ba,Ca)(Ti,Sn)O3 ceramics. The value of electric strain increases firstly, reaches the maximum value of 0.20% at x=0.01, and then decreases to 0.10% at x=0.03. The value of electric strain 0.20% is higher than any reported results in the (Ba,Ca)(Ti,Sn)O3 ceramic system. The normalized strain d 33 E^{\u204e} was calculated from the ratio of the maximum strain (S max) to the electric field (E max) (d 33 E^{\u204e} =S max /E max). The values of d 33 E^{\u204e} and electric strain are listed in (b). Obviously, in accordance with the electric strain, d 33 E^{\u204e} increases initially, reaches the maximum value of 362pm/V at x=0.01, and afterwards drops in the range of 0.01<x\u22660.03. In summary, the large values of electric strain and d 33 E^{\u204e} at x=0.01 are due to multiphase of orthorhombic and tetragonal phases, which provides for multiple polarization and strain variants, making it much easier for different grains to coordinate a collective response. In this sense, it is evident that suitable SrE^{2+} content might be responsible for the enhancement of the electric strain and high d 33 E^{\u204e}. illustrates the piezoelectric constant d 33 and the planar electromechanical coupling factor k p as a function of x for (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics. For all samples, both d 33 and k p increase in x range of 0.00\u2266x\u22660.01, then drops with 0.01<x\u22660.03. The large d 33 value of (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics with x=0.01 should be attributed to the higher P r value of 8.73\u03bcC/cmE^{2} and relative low E c of 0.07kV/cm. Due to above causes, the optimal electrical properties with d 33=585pC/N and k p =40% are obtained in the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics at x=0.01. In order to probe the potential operating temperatures of (Ba0.91Ca0.09\u2212x Sr x ) (Ti0.92Sn0.08)O3 ceramics, the temperature dependence of d 33 and k p were investigated and shown in. As can be seen, they show slightly anomalies in the vicinity of rhombohedral to orthorhombic (R\u2192O), orthorhombic to tetragonal (O\u2192T) and tetragonal to cubic (T\u2192C) phase transitions. The d 33 and k p anomalies correspond well with the dielectric anomalies shown in (a) and (c). The sample with x=0.01 reaches the maximum values of d 33=615pC/N and k p =40% at 25\xb0C, which may be attributed to the temperature near the phase transition temperature of O\u2192T. The values of d 33 and k p decrease slowly with the temperature until 55\xb0C and suddenly drops with further increasing temperature due to the fact that temperature is approaching T T\u2013C. In general, the values of d 33 and k p maintain well temperature stability for the samples in the range of \u22125 to 55\xb0C, which are desirable for device application at ambient temperature.
+
+# TITLE
+Polymorphic phase transition and enhanced electrical properties of (Ba 0.91Ca0.09-xSrx)(Ti0.92Sn 0.08)O3 lead-free ceramics
+
+# ABSTRACT
+Lead-free (Ba0.91Ca0.09−x
+                     Sr
+                        x
+                     )(Ti0.92Sn0.08)O3 ceramics were prepared by the solid state reaction method. Effects of Sr2+ content on the phase structure, electrical properties and temperature stabilities of the (Ba0.91Ca0.09−x
+                     Sr
+                        x
+                     )(Ti0.92Sn0.08)O3 ceramics were investigated systematically. The polymorphic phase transition behavior from orthorhombic to tetragonal phase around room temperature was observed in the samples with 0.005<x<0.02 according to XRD patterns. Owing to the coexistence of orthorhombic and tetragonal phases at room temperature, significantly enhanced electrical properties (d
+                     33=583pC/N, k
+                     
+                        p
+                     =40%, P
+                     
+                        r
+                     =8.73
+                     μC/cm2, E
+                     
+                        c
+                     =0.07kV/cm and electrical strain=0.20%) were obtained in (Ba0.91Ca0.08Sr0.01)(Ti0.92Sn0.08)O3 ceramics. Both d
+                     33 and k
+                     
+                        p
+                      displayed excellent temperature stabilities in the range from −5 to 55°C. These results demonstrated that (Ba0.91Ca0.08Sr0.01)(Ti0.92Sn0.08)O3 ceramics could be a promising candidate for lead-free piezoelectric material.
+
+# INTRODUCTION
+It is well known that lead zirconate titanate (PZT) ceramics have been widely used owing to the excellent properties induced by morphotropic phase boundary (MPB) where rhombohedral and tetragonal phases coexist. BaTiO3 is considered to be an excellent candidate for lead-free piezoelectric ceramics. However, the piezoelectric constant d 33 of BaTiO3 is relatively low (about 190pC/N), and the pure BaTiO3 undergoes a series of phase transformations with increasing temperature: rhombohedral to orthorhombic phase (R\u2192O) at \u221280\xb0C, orthorhombic to tetragonal phase (O\u2192T) at 5\xb0C, and finally tetragonal to cubic phase (T\u2192C) at 120\xb0C. Some attempts have been conducted to shift the phase transitions to room temperature and improve d 33 value through composition design. For example, the phase transformation temperature from tetragonal to orthorhombic (T T\u2013O) and orthorhombic to rhombohedral (T O\u2013R) can be shifted to room temperature by replacing TiE^{4+} with ZrE^{4+} at the B-site in the BaTiO3\u2013BaZrO3 system. The A-site replacement of BaE^{2+} by CaE^{2+} can reduce the T T\u2013O and T O\u2013R in the BaTiO3\u2013CaTiO3 system. Recently, Liu and Ren designed a ferroelectric system (1\u2212x)Ba(Zr0.2Ti0.8)O3\u2013x(Ba0.7Ca0.3)TiO3 (BZT\u2013xBCT) composition to a triple point and observed a very high d 33 value ~620pC/N. It was considered that BZT\u2013xBCT showed a phase diagram similar to the Pb-based systems, with a MPB starting from a triple point of a paraelectric cubic phase, ferroelectric rhombohedral and tetragonal. In addition, Li et al. reported (Ba,Ca)(Ti,Sn)O3 ceramic system with a relatively high d 33 of 530pC/N owing to the formation of polymorphic phase transition (PPT) from orthorhombic to tetragonal phase. It is known that the MPB or PPT plays a very important role in piezoelectric ceramics because dielectric and piezoelectric properties show maximum values around MPB and PPT. However, the MPB or PPT in BaTiO3-based system is very different from that in PZT-based ceramics. The piezoelectric constant shows very strong temperature dependence in BaTiO3-based system, which is often undesirable for practical application in any device. SrTiO3 is an effective additive being widely used in many perovskite piezoelectric ceramics to tailor the electrical performances. As well known, the radius of SrE^{2+} is 1.12\xc5, CaE^{2+} is 0.99\xc5, and BaE^{2+} is 1.34\xc5. In view of the radius, it is possible for SrE^{2+} to enter into the A-site of (Ba,Ca)(Ti,Sn)O3 ceramics system and affect the phase structure and electrical properties. Thus, a question can be proposed whether the electrical performance and temperature stability have been improved by modified phase transition behavior using the SrE^{2+} ion substitution. In this work, based on the modified phase transition behavior with ion doping, we designed a lead-free piezoelectric (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 system. The conventional solid state reaction method was employed to prepare designed (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics, and the effects of SrE^{2+} content on the phase transition, electrical properties and temperature stability were investigated in detail.
+
+# CONCLUSION
+(Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 lead-free piezoelectric ceramics have been successfully prepared by conventional sintering method. The phase structure, electrical properties and temperature dependence of (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 lead-free ceramics as a function of SrE^{2+} content were investigated. The phase transition of rhombohedral\u2013orthorhombic and orthorhombic\u2013tetragonal emerged to near room temperature with adjusting the SrE^{2+}content. Owing to the coexistence of orthorhombic and tetragonal phases at room temperature, outstanding electrical properties of d 33=583pC/N, k p =40%, P r =8.73 \u03bcC/cmE^{2}, E c =0.07kV/cm and electrical strain=0.20% were achieved in the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08) O3 ceramics with x=0.01. Furthermore, the temperature stability results revealed that both d 33 and k p show good temperature stabilities in the range of \u22125 to 55\xb0C. The results indicated that SrE^{2+} substitution is an effective way to enhance the electric properties and temperature dependence of (Ba0.91Ca0.08Sr0.01)(Ti0.92Sn0.08)O3 ceramics, which are promising as a lead-free piezoelectric candidate.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 23:13:43: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2014.02.008.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2014.02.008 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+(a) shows the XRD patterns of the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics as a function of SrE^{2+} contents. And there is no trace of second phase, implying that SrE^{2+} can diffuse into the (Ba,Ca)(Ti,Sn)O3 lattice to form a solid solution. In order to further analyze the effect of SrE^{2+} content on the phase structure, (b) plots the fine scanning XRD patterns in the 2\u03b8 range from 44\xb0 to 46\xb0 for all samples. An orthorhombic phase (PDF#81-2200) has been demonstrated in the ceramics with 0.00\u2266x\u22660.005, which is characterized by the (022)/(200) peaks at around 2\u03b8 of 45\xb0. The tetragonal phase (PDF#79-2264) is observed in the samples with 0.02\u2266x\u22660.03, featured with the (002)/(200) peaks at around 2\u03b8 of 45\xb0. The peaks characteristic near 45\xb0 in sample with x=0.01 show a mixture-phase behavior of both orthorhombic and tetragonal phases. Furthermore, it is noted that with increase of x from 0.00 to 0.02, the diffraction peak shifts to lower angle. When x=0.03, the diffraction peak shifts slightly to higher angle. In consideration of the ionic radius (SrE^{2+} is 1.12\xc5, CaE^{2+} is 0.99\xc5, and BaE^{2+} is 1.34\xc5), the above phenomena may be attributed to the lattice deformation caused by SrE^{2+} occupying the position of BaE^{2+} or CaE^{2+} partly. Similar peak shifting behavior induced by the partial substitution of a higher-ionic-radius element for a lower-ionic-radius element was also observed in Zr-modified BaTiO3 ceramics. To further confirm the effect of SrE^{2+} content on the crystal lattice, the lattice parameters a, b and c were calculated using the least square method from XRD data, which are displayed in. The lattice parameters of sample with orthorhombic symmetry are a=4.006\xc5, b=4.003\xc5, c=4.000\xc5 at x=0.00. The lattice parameters of tetragonal phase are a=b=4.874\xc5, c=3.834\xc5 at x=0.02. As shown in , the values of lattice parameters a, b and c varied continuously in the range of 0.00\u2266x\u22660.005 and 0.01\u2266x\u22660.03. The distinctly discontinuous change is observed around x=0.01, suggesting a two-phase coexistence zone (consisting of orthorhombic and tetragonal phases) near room temperature, which is consistent with the result of (b). The varied lattice parameters are considered as the further evidence of phase transition from orthorhombic to tetragonal symmetry in (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 system. The orthorhombic\u2013tetragonal coexistence should be identified as a thermodynamics polymorphism phase transition PPT behavior rather than a traditional MPB, as it depends not only on composition but also on temperature. (a) and (b) exhibits the temperature dependence of dielectric constant \u03b5 r and the dielectric loss tan \u03b4 for the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics with different x from \u221250 to 150\xb0C at 1kHz. As can be seen, three types of dielectric constant and loss anomaly are clearly observed in all samples around 0\xb0C, 20\xb0C and 70\xb0C, respectively. The observed dielectric anomalies are attributed to the following phase transitions with increasing temperature: rhombohedral\u2013orthorhombic phase (R\u2192O), orthorhombic\u2013tetragonal phase (O\u2192T) and tetragonal\u2013cubic phases (T\u2192C) sequentially. According to Tian and Yang\u05f3s results , the phase transitions of R\u2192O and O\u2192T are observed due to the fact that an pinched orthorhombic, induced by the approach of R and T phases, dwells at very narrow temperature range in (Ba1\u2212x Ca x )(Zr0.1Ti0.9)O3 ceramics. To identify the room-temperature phase structure of all samples, an enlarged temperature dependence of \u03b5 r from 0 to 40\xb0C is displayed in (c). Both T R\u2013O and T O\u2013T increase slightly with increasing x from 0.00 to 0.03. (d) plots the T R\u2013O, T O\u2013T and T T\u2013C for the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics with different x. As can be seen, the Curie temperature T c (T T\u2013C) drops from 73.7 to 63.0\xb0C with increasing x. T R\u2013O increases from \u22125.0 to 7.0\xb0C and T O\u2013T increases from 22.0 to 27.0\xb0C, indicating that the SrE^{2+} substitution in (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics make the phase transition of orthorhombic to tetragonal emerge in the vicinity of room temperature, which is in accordance with the results of. Released literatures reveal that the formation of the coexistence phases locating at near room usually benefits to the improvement in the piezoelectric properties of BaTiO3-based ceramics. (a)\u2013(e) depicts the polarization-electric field (P\u2013E) hysteresis loops of the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics which are measured at 1Hz under an electrical field of 50kV/cm near room temperature with increasing x from 0.00 to 0.30. (f) plots the values of remnant polarization P r and the coercive fields E c of (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics as a function of x. It can be seen that all samples exhibit a typical ferroelectric polarization hysteresis loop, and the P\u2013E loops become narrower with increasing x. P r changes weakly initially until x=0.01, then drops sharply at x=0.02, and finally increases. Whereas E c decreases initially, reaches the minimum value at x=0.01, and then increases slightly. The sample with x=0.01 owns relatively high P r value of 8.73 \u03bcC/cmE^{2} and the minimum E c of 0.07kV/cm. In order to verify these results, the electric-field-induced strains and piezoelectric properties are depicted in. (a) presents the bipolar electric-field-induced strains of (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics with different SrE^{2+} content under the same electric field of 50kV/mm at room temperature. The S\u2013E curves of the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics show a typical ferroelectric butterfly-curve behavior, and the Sr-doped samples exhibit higher strain compared to the unmodified (Ba,Ca)(Ti,Sn)O3 ceramics. The value of electric strain increases firstly, reaches the maximum value of 0.20% at x=0.01, and then decreases to 0.10% at x=0.03. The value of electric strain 0.20% is higher than any reported results in the (Ba,Ca)(Ti,Sn)O3 ceramic system. The normalized strain d 33 E^{\u204e} was calculated from the ratio of the maximum strain (S max) to the electric field (E max) (d 33 E^{\u204e} =S max /E max). The values of d 33 E^{\u204e} and electric strain are listed in (b). Obviously, in accordance with the electric strain, d 33 E^{\u204e} increases initially, reaches the maximum value of 362pm/V at x=0.01, and afterwards drops in the range of 0.01<x\u22660.03. In summary, the large values of electric strain and d 33 E^{\u204e} at x=0.01 are due to multiphase of orthorhombic and tetragonal phases, which provides for multiple polarization and strain variants, making it much easier for different grains to coordinate a collective response. In this sense, it is evident that suitable SrE^{2+} content might be responsible for the enhancement of the electric strain and high d 33 E^{\u204e}. illustrates the piezoelectric constant d 33 and the planar electromechanical coupling factor k p as a function of x for (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics. For all samples, both d 33 and k p increase in x range of 0.00\u2266x\u22660.01, then drops with 0.01<x\u22660.03. The large d 33 value of (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics with x=0.01 should be attributed to the higher P r value of 8.73\u03bcC/cmE^{2} and relative low E c of 0.07kV/cm. Due to above causes, the optimal electrical properties with d 33=585pC/N and k p =40% are obtained in the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics at x=0.01. In order to probe the potential operating temperatures of (Ba0.91Ca0.09\u2212x Sr x ) (Ti0.92Sn0.08)O3 ceramics, the temperature dependence of d 33 and k p were investigated and shown in. As can be seen, they show slightly anomalies in the vicinity of rhombohedral to orthorhombic (R\u2192O), orthorhombic to tetragonal (O\u2192T) and tetragonal to cubic (T\u2192C) phase transitions. The d 33 and k p anomalies correspond well with the dielectric anomalies shown in (a) and (c). The sample with x=0.01 reaches the maximum values of d 33=615pC/N and k p =40% at 25\xb0C, which may be attributed to the temperature near the phase transition temperature of O\u2192T. The values of d 33 and k p decrease slowly with the temperature until 55\xb0C and suddenly drops with further increasing temperature due to the fact that temperature is approaching T T\u2013C. In general, the values of d 33 and k p maintain well temperature stability for the samples in the range of \u22125 to 55\xb0C, which are desirable for device application at ambient temperature.
+
+# TITLE
+Polymorphic phase transition and enhanced electrical properties of (Ba 0.91Ca0.09-xSrx)(Ti0.92Sn 0.08)O3 lead-free ceramics
+
+# ABSTRACT
+Lead-free (Ba0.91Ca0.09−x
+                     Sr
+                        x
+                     )(Ti0.92Sn0.08)O3 ceramics were prepared by the solid state reaction method. Effects of Sr2+ content on the phase structure, electrical properties and temperature stabilities of the (Ba0.91Ca0.09−x
+                     Sr
+                        x
+                     )(Ti0.92Sn0.08)O3 ceramics were investigated systematically. The polymorphic phase transition behavior from orthorhombic to tetragonal phase around room temperature was observed in the samples with 0.005<x<0.02 according to XRD patterns. Owing to the coexistence of orthorhombic and tetragonal phases at room temperature, significantly enhanced electrical properties (d
+                     33=583pC/N, k
+                     
+                        p
+                     =40%, P
+                     
+                        r
+                     =8.73
+                     μC/cm2, E
+                     
+                        c
+                     =0.07kV/cm and electrical strain=0.20%) were obtained in (Ba0.91Ca0.08Sr0.01)(Ti0.92Sn0.08)O3 ceramics. Both d
+                     33 and k
+                     
+                        p
+                      displayed excellent temperature stabilities in the range from −5 to 55°C. These results demonstrated that (Ba0.91Ca0.08Sr0.01)(Ti0.92Sn0.08)O3 ceramics could be a promising candidate for lead-free piezoelectric material.
+
+# INTRODUCTION
+It is well known that lead zirconate titanate (PZT) ceramics have been widely used owing to the excellent properties induced by morphotropic phase boundary (MPB) where rhombohedral and tetragonal phases coexist. BaTiO3 is considered to be an excellent candidate for lead-free piezoelectric ceramics. However, the piezoelectric constant d 33 of BaTiO3 is relatively low (about 190pC/N), and the pure BaTiO3 undergoes a series of phase transformations with increasing temperature: rhombohedral to orthorhombic phase (R\u2192O) at \u221280\xb0C, orthorhombic to tetragonal phase (O\u2192T) at 5\xb0C, and finally tetragonal to cubic phase (T\u2192C) at 120\xb0C. Some attempts have been conducted to shift the phase transitions to room temperature and improve d 33 value through composition design. For example, the phase transformation temperature from tetragonal to orthorhombic (T T\u2013O) and orthorhombic to rhombohedral (T O\u2013R) can be shifted to room temperature by replacing TiE^{4+} with ZrE^{4+} at the B-site in the BaTiO3\u2013BaZrO3 system. The A-site replacement of BaE^{2+} by CaE^{2+} can reduce the T T\u2013O and T O\u2013R in the BaTiO3\u2013CaTiO3 system. Recently, Liu and Ren designed a ferroelectric system (1\u2212x)Ba(Zr0.2Ti0.8)O3\u2013x(Ba0.7Ca0.3)TiO3 (BZT\u2013xBCT) composition to a triple point and observed a very high d 33 value ~620pC/N. It was considered that BZT\u2013xBCT showed a phase diagram similar to the Pb-based systems, with a MPB starting from a triple point of a paraelectric cubic phase, ferroelectric rhombohedral and tetragonal. In addition, Li et al. reported (Ba,Ca)(Ti,Sn)O3 ceramic system with a relatively high d 33 of 530pC/N owing to the formation of polymorphic phase transition (PPT) from orthorhombic to tetragonal phase. It is known that the MPB or PPT plays a very important role in piezoelectric ceramics because dielectric and piezoelectric properties show maximum values around MPB and PPT. However, the MPB or PPT in BaTiO3-based system is very different from that in PZT-based ceramics. The piezoelectric constant shows very strong temperature dependence in BaTiO3-based system, which is often undesirable for practical application in any device. SrTiO3 is an effective additive being widely used in many perovskite piezoelectric ceramics to tailor the electrical performances. As well known, the radius of SrE^{2+} is 1.12\xc5, CaE^{2+} is 0.99\xc5, and BaE^{2+} is 1.34\xc5. In view of the radius, it is possible for SrE^{2+} to enter into the A-site of (Ba,Ca)(Ti,Sn)O3 ceramics system and affect the phase structure and electrical properties. Thus, a question can be proposed whether the electrical performance and temperature stability have been improved by modified phase transition behavior using the SrE^{2+} ion substitution. In this work, based on the modified phase transition behavior with ion doping, we designed a lead-free piezoelectric (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 system. The conventional solid state reaction method was employed to prepare designed (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 ceramics, and the effects of SrE^{2+} content on the phase transition, electrical properties and temperature stability were investigated in detail.
+
+# CONCLUSION
+(Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 lead-free piezoelectric ceramics have been successfully prepared by conventional sintering method. The phase structure, electrical properties and temperature dependence of (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08)O3 lead-free ceramics as a function of SrE^{2+} content were investigated. The phase transition of rhombohedral\u2013orthorhombic and orthorhombic\u2013tetragonal emerged to near room temperature with adjusting the SrE^{2+}content. Owing to the coexistence of orthorhombic and tetragonal phases at room temperature, outstanding electrical properties of d 33=583pC/N, k p =40%, P r =8.73 \u03bcC/cmE^{2}, E c =0.07kV/cm and electrical strain=0.20% were achieved in the (Ba0.91Ca0.09\u2212x Sr x )(Ti0.92Sn0.08) O3 ceramics with x=0.01. Furthermore, the temperature stability results revealed that both d 33 and k p show good temperature stabilities in the range of \u22125 to 55\xb0C. The results indicated that SrE^{2+} substitution is an effective way to enhance the electric properties and temperature dependence of (Ba0.91Ca0.08Sr0.01)(Ti0.92Sn0.08)O3 ceramics, which are promising as a lead-free piezoelectric candidate.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(Ba0.91Ca0.09)(Ti0.92Sn0.08)O3": 521,
+      "(Ba0.91Ca0.085Sr0.005)(Ti0.92Sn0.08)O3": 532,
+      "(Ba0.91Ca0.08Sr0.01)(Ti0.92Sn0.08)O3": 585,
+      "(Ba0.91Ca0.07Sr0.02)(Ti0.92Sn0.08)O3": 421,
+      "(Ba0.91Ca0.06Sr0.03)(Ti0.92Sn0.08)O3": 381
+    },
+    "abbreviations": {},
+    "property_unit": "pC/N",
+    "family": "BaTiO3"
+  }
+}"

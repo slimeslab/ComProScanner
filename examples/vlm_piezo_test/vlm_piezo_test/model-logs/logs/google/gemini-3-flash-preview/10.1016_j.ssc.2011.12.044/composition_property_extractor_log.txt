@@ -1,0 +1,328 @@
+2026-05-01 23:23:02: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ssc.2011.12.044.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ssc.2011.12.044 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The evolution of crystal structure was discussed according to room-temperature XRD patterns of Bi1\u2212x Sm x FeO3 in. The XRD patterns were consistent with a single rhombohedral phase at x\u22640.12. A diffraction peak at \u223c25.7\xb0 begins to appear at x=0.125 and then becomes much stronger with x increasing to 0.25 (a). This diffraction peak at x=0.125\u20130.2 should come from 1/2{110} superlattice diffraction of orthorhombic Pbam super-cell (\u221a2 a c\xd72\u221a2 a c\xd72 a c, a c\u223c4 \xc5). It has anti-parallel oxygen octahedra distortions and Fe displacements along the z axis which allows anti-ferroelectric (AFE) traits. Obviously, there are two phases at x=0.125\u20130.17 according to the peaks at \u223c25.7\xb0 and \u223c51.5\xb0, the first one is the ferroelectric triclinic phase and the second one is the anti-polar orthorhombic Pbam phase. The crystal lattices and angles of Bi1\u2212x Sm x FeO3 were derived from XRD patterns to understand its structure transformation and phase transition with x increasing in b. XRD patterns at x\u22640.16 were fitted with the Reitveld method according to the triclinic P1 space group. The traits of a\u2248b\u2248c and \u03b1\u2248\u03b2\u2248\u03b3 suggests that Bi1\u2212x Sm x FeO3 ceramics show rhombohedral R3c structure with little triclinic distortion at x\u22640.12. The crystal lattice decreases slightly from 3.965 to \u223c3.938 \xc5 with x increasing to 0.12 because some BiE^{3+} (radius=1.030 \xc5) ions were replaced by SmE^{3+} (radius=0.958 \xc5) ions. The triclinic phase is the main component according to fitting parameter R wp of <8.5% at x=0.125\u20130.16, however its crystal lattices and angles slightly deviate from the relationships of a\u2248b\u2248c and \u03b1\u2248\u03b2\u2248\u03b3. When orthorhombic Pbam space group is used to fit XRD patterns at x=0.175\u20130.23, the R wp is \u223c8.8%,a\u223c3.762\xd7\u221a2 \xc5,b\u223c3.720\xd72\u221a2 \xc5 and c\u223c3.649\xd72 \xc5. Both Pbam and Pbnm space groups were used to fit the XRD pattern of Bi0.75Sm0.25FeO3; the better one is Pbnm that is centrosymmetric and just permits a paraelectric phase. This suggests the paraelectric orthoferrite type phase at x\u22650.25 is larger than the previous report at x\u223c0.2. This difference is mainly due to the different preparation method and the corresponding Bi-site composition fluctuation. suggests strong FE characteristics at x=0\u20130.15, much weaker FE traits at x=0.175 and 0.2, and paraelectric traits at x=0.25. The saturated P\u2013E loops exhibit the maximum polarization (P m) of >15 \u03bcC/cmE^{2} and remnant polarization (P r) of >12 \u03bcC/cmE^{2} at x=0 (a), 0.125 (b) and 0.15 (c), respectively. This strong ferroelectricity is consistent with the rhombohedra-like ferroelectric phase at x=0\u20130.12 and the dominated triclinic ferroelectric phase at x=0.125\u20130.15 as mentioned above. The P m and P r are 7.5 and 4.2 \u03bcC/cmE^{2} for Bi0.825Sm0.175FeO3 (d), and 3.6 and 1.4 \u03bcC/cmE^{2} for Bi0.8Sm0.2FeO3 (e), respectively. The ferroelectricity of Bi0.825Sm0.175FeO3 and Bi0.8Sm0.2FeO3 should come from the triclinic ferroelectric clusters embedded in AFE orthorhombic Pbam phase as reported by Khomchenko et al.. This should not conflict with the fact that XRD patterns of Bi0.825Sm0.175FeO3 and Bi0.8Sm0.2FeO3 are successfully simulated according to AFE orthorhombic Pbam space group. There is a slim P\u2013E loops with the Ps of 3 \u03bcC/cmE^{2} and Ps of 0.3 \u03bcC/cmE^{2} at x=0.25 (f), and these paraelectric traits suggest that triclinic ferroelectric clusters disappear at x=0.25. Since a lone sE^{2} pair of electrons of a BiE^{3+} ion hybridizes with an empty p orbital of an OE^{2\u2212} ion to form a lobe and ferroelectricity , a low-concentration lone sE^{2} pair together with the atomic radii difference between Bi and Sm should result in a paraelectric phase in Bi0.75Sm0.25FeO3. shows the Raman spectra of Bi1\u2212x Sm x FeO3 at room temperature, suggesting the obvious ferroelectric phase at x=0\u22120.2. It has been reported that the Raman active modes below 700 cmE^{\u22121} can be summarized using the irreducible representation of \u0393=4 A 1+9E for rhombohedral R3c BiFeO3. Except for modes below 100 cmE^{\u22121} , the modes at 137, 172, 222, 260, 275, 340, 467, 515, 613, 980, 1250 and 1400 cmE^{\u22121} were differentiated for BiFeO3 at room temperature in a. In our cases, though modes shift a little with Sm concentration, they exist at x up to 0.2 (Inset). The modes at \u223c137 and \u223c172 cmE^{\u22121} concerns the spectral vibration of Bi\u2013O bonds and belongs to 4 A 1 irreducible representations, and they cannot be differentiated at x=0.25. Considering that the ferroelectrics originate in Bi\u2013O bonds , the inexistence of these two modes is compatible with ferroelectric phase disappearing at x=0.25. b shows the Raman spectra of Bi0.875Sm0.125FeO3 measured up to 500 \xb0C with 50 \xb0C per step. The intensity of modes, especially those at \u223c137 and \u223c172 cmE^{\u22121}, becomes much weaker above 300 \xb0C though some of them can be differentiated even at 500 \xb0C. This suggests that the modes concerning rhombohedral ferroelectric phase soften and the main component transforms to the non-polar phase above 350 \xb0C in Bi0.875Sm0.125FeO3 ceramics. a shows the dependence of piezoelectric d 33 and relative dielectric constant on x. Piezoelectric d 33 values were measured after the polarized electric field was removed. The d 33 value is \u223c35 pC/N at x\u22640.10, arrives in the maximum value of 42 pC/N at x=0.125, then decreases to 9 pC/N step by step with x increasing to 0.2. The d 33 maximum value is consistent with the two-phase coexistence and a possible MPB at x=0.125. When the tiny anti-polar orthorhombic Pbam phase is embedded in the ferroelectric rhombohedral R3c phase at x\u223c0.125, their MPB enhances the d 33 value obviously. On the contrary, when a little ferroelectric phase was embedded in the anti-ferroelectric phase at x\u223c0.2, the d 33 decreased to \u223c10 pC/N. The d 33 is close to zero at x=0.25, being consistent with the orthorhombic Pbnm paraelectric phase. a also shows the dependence of the relative dielectric constant (\u03b5 r) on the x value of Bi1\u2212x Sm x FeO3. The \u03b5 r shows a strong and broad peak at x=0.12\u20130.165 that should come from the coexistence of the rhombohedral R3c phase and the orthorhombic Pbam phase. b shows the room-temperature d 33 value of Bi1\u2212x Sm x FeO3 after the polarized ceramics were annealed at various temperatures (T anneal), suggesting a ferroelectric phase existing at higher temperatures. The d 33 value of the annealed BiFeO3 sample decreases slowly from 37 to 30 pC/N at T anneal=600\xb0 C, and then it fast drops and closes to zero at T anneal=800\xb0 C. This suggests a T C\u2212FE\u223c800\xb0 C, being compatible with the well-known T C\u2212FE of 813 \xb0C. The room-temperature d 33 of Bi0.875Sm0.125FeO3 decreases from 42 to 20 pC/N at T anneal=600\xb0 C and then fast closes to zero at T anneal=750\xb0 C, suggesting the ferroelectric cluster existence up to 700 \xb0C. b also suggests that a tiny ferroelectric phase should exist in the form of nano clusters with temperature up to 700 \xb0C for x=0.145, 550 \xb0C for x=0.165 and 350 \xb0C for x=0.2, though their main component may already transform to the Pbam anti-ferroelectric phase or Pbnm paraelectric phase at lower temperatures. The coexistence of ferroelectric clusters and a non-ferroelectric body at higher temperatures does not conflict with the fact that the main component of Bi0.875Sm0.125FeO3 already transforms to the non-ferroelectric phase at \u223c350 \xb0C. Since these ferroelectric clusters are difficult to differentiate by Raman spectra in b, the phase diagram should consider electric and magnetic measurements in Bi1\u2212x Sm x FeO3. When the polarized Bi0.875Sm0.125FeO3 was heated to high temperatures (e.g. 500\u2013700 \xb0C), the main component transforms to the non-ferroelectric phase while ferroelectric clusters still keep their ferroelectric polarization. During cooling the sample from 700 \xb0C to room temperature, these ferroelectric clusters are helpful to re-polarize other components below its own T C\u2212FE and thus the annealed Bi0.875Sm0.125FeO3 can show a relatively large d 33 value at room temperature. The Sm substitution enhances the remnant magnetization (M r) from nearly zero at x=0 to 0.29 emu/g at x=0.2 and room temperature. The transformation from the rhombohedral phase at x=0\u20130.12 to orthorhombic phase at x>0.125 collapses the space-modulated spin structure and then releases an enhanced macroscopic magnetization. As expected, the M r enhances with x increasing, e.g. 0.7 emg/g at x=0.1, 0.26 emg/g at x=0.15 and 0.29 emg/g at x=0.2.
+
+# TITLE
+Structure, ferroelectricity and piezoelectricity evolutions of Bi 1-xSm xFeO 3 at various temperatures
+
+# ABSTRACT
+Insulated Bi1−x
+                     Sm
+                        x
+                     FeO3 (
+                        x
+                        =
+                        0
+                        –
+                        0.25
+                     ) were prepared to study their multiferroic properties at various temperatures. Bi1−x
+                     Sm
+                        x
+                     FeO3 (
+                        x
+                        =
+                        0
+                        −
+                        0.12
+                     ) shows a rhombohedral-like phase, ferroelectric polarization of >17.8 μC/cm2, piezoelectric 
+                        
+                           
+                              d
+                           
+                           
+                              33
+                           
+                        
+                      value of >35 pC/N at room temperature. Bi1−x
+                     SmxFeO3 (
+                        x
+                        =
+                        0.125
+                        –
+                        0.2
+                     ) has a ferroelectric triclinic phase and an anti-polar orthorhombic phase together at room temperature, and Bi0.75Sm0.25FeO3 is mainly composed of a non-polar orthorhombic phase. After the polarized Bi1−x
+                     Sm
+                        x
+                     FeO3 (
+                        x
+                        =
+                        0
+                        –
+                        0.165
+                     ) was annealed at various high temperatures, the 
+                        
+                           
+                              d
+                           
+                           
+                              33
+                           
+                        
+                      evolution supports ferroelectric component exist above 500 °C. Raman spectra suggests that the main component of Bi0.875Sm0.125FeO3 does not keep a rhombohedral ferroelectric phase above 400 °C, thus its ferroelectric traits at high temperature should be due to ferroelectric clusters embedded in orthorhombic phase.
+
+# INTRODUCTION
+Multiferroic BiFeO3 shows ferroelectric (FE) order below Curie temperature of T C\u2212FE=830\xb0 C and G-type anti-ferromagnetic (AFM) order below Neel temperature of T N=370\xb0 C. In addition to the ferroelectric, magnetic and magnetoelectric properties, its piezoelectric property has attracted a lot of attention recently benefiting from the Pb-free and high T C\u2212FE traits. Especially, an enhanced piezoelectric d 33 of \u223c110 pm/V coefficient was reported in strained BiFeO3 epitaxial thin film and Sm-doped BiFeO3 epitaxial film. With partial replacement of BiE^{3+} ion (radius=1.030 \xc5) by SmE^{3+} ion (radius=0.958 \xc5), Bi0.84Sm0.16FeO3 epitaxial film could be reversibly converted between the rhombohedral phase and the orthorhombic phase, which allows an enhanced d 33 of \u223c100 pm/V under an applied electric field of 500 kV/cm. Synchrotron X-ray diffraction reveals substantial coexistence of ferroelectric rhombohedral R3c phase and anti-ferroelectric (AFE) PbZrO3-like orthorhombic Pbam phase in Sm doped BiFeO3 epitaxial film. We argued that Bi1\u2212x Sm x FeO3 ceramics may coexist with a rhombohedral-like phase and orthorhombic-like phase at a certain x, which should permit an enhanced d 33 value. In spite of intensive research of Bi1\u2212x Sm x FeO3 films, there are few reports concerning the piezoelectric, T C\u2212FE and their dependences on Sm concentration in Bi1\u2212x Sm x FeO3 ceramics. Pb-free Bi1\u2212x Sm x FeO3 ceramics may show some different characteristics than Bi1\u2212x Sm x FeO3 epitaxial film since films could be influenced by substrate, strain, and composition fluctuation to some extent. Although we know that BiFeO3 has the T C\u2212FE of 813 \xb0C, it is necessary to know the dependence of ferroelectric T C\u2212FE on Sm concentration. The low-temperature ferroelectric phase may transform to high-temperature orthorhombic phase in Bi1\u2212x Sm x FeO3 at a certain x. In this letter, we study the dependencies of crystal structure, ferroelectric polarization, piezoelectric d 33 value, T C\u2212FE and magnetic properties on Sm concentration in Bi1\u2212x Sm x FeO3 (x=0\u20130.25) ceramics.
+
+# CONCLUSION
+The room-temperature Bi1\u2212x Sm x FeO3 shows a ferroelectric rhombohedral-like phase at x=0\u20130.12, coexists with the ferroelectric triclinic phase and anti-ferroelectric orthorhombic phase at x=0.125\u20130.2, and transforms to the paraelectric orthoferrite type phase at x=0.25. This coexistence enhances the piezoelectric d 33 value to 42 pC/N at x=0.125. Besides, Bi0.875Sm0.125FeO3 shows piezoelectric traits at high temperature such as 700 \xb0C that should come from ferroelectric clusters inside a non-ferroelectric orthorhombic phase.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 23:23:46: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ssc.2011.12.044.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ssc.2011.12.044 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The evolution of crystal structure was discussed according to room-temperature XRD patterns of Bi1\u2212x Sm x FeO3 in. The XRD patterns were consistent with a single rhombohedral phase at x\u22640.12. A diffraction peak at \u223c25.7\xb0 begins to appear at x=0.125 and then becomes much stronger with x increasing to 0.25 (a). This diffraction peak at x=0.125\u20130.2 should come from 1/2{110} superlattice diffraction of orthorhombic Pbam super-cell (\u221a2 a c\xd72\u221a2 a c\xd72 a c, a c\u223c4 \xc5). It has anti-parallel oxygen octahedra distortions and Fe displacements along the z axis which allows anti-ferroelectric (AFE) traits. Obviously, there are two phases at x=0.125\u20130.17 according to the peaks at \u223c25.7\xb0 and \u223c51.5\xb0, the first one is the ferroelectric triclinic phase and the second one is the anti-polar orthorhombic Pbam phase. The crystal lattices and angles of Bi1\u2212x Sm x FeO3 were derived from XRD patterns to understand its structure transformation and phase transition with x increasing in b. XRD patterns at x\u22640.16 were fitted with the Reitveld method according to the triclinic P1 space group. The traits of a\u2248b\u2248c and \u03b1\u2248\u03b2\u2248\u03b3 suggests that Bi1\u2212x Sm x FeO3 ceramics show rhombohedral R3c structure with little triclinic distortion at x\u22640.12. The crystal lattice decreases slightly from 3.965 to \u223c3.938 \xc5 with x increasing to 0.12 because some BiE^{3+} (radius=1.030 \xc5) ions were replaced by SmE^{3+} (radius=0.958 \xc5) ions. The triclinic phase is the main component according to fitting parameter R wp of <8.5% at x=0.125\u20130.16, however its crystal lattices and angles slightly deviate from the relationships of a\u2248b\u2248c and \u03b1\u2248\u03b2\u2248\u03b3. When orthorhombic Pbam space group is used to fit XRD patterns at x=0.175\u20130.23, the R wp is \u223c8.8%,a\u223c3.762\xd7\u221a2 \xc5,b\u223c3.720\xd72\u221a2 \xc5 and c\u223c3.649\xd72 \xc5. Both Pbam and Pbnm space groups were used to fit the XRD pattern of Bi0.75Sm0.25FeO3; the better one is Pbnm that is centrosymmetric and just permits a paraelectric phase. This suggests the paraelectric orthoferrite type phase at x\u22650.25 is larger than the previous report at x\u223c0.2. This difference is mainly due to the different preparation method and the corresponding Bi-site composition fluctuation. suggests strong FE characteristics at x=0\u20130.15, much weaker FE traits at x=0.175 and 0.2, and paraelectric traits at x=0.25. The saturated P\u2013E loops exhibit the maximum polarization (P m) of >15 \u03bcC/cmE^{2} and remnant polarization (P r) of >12 \u03bcC/cmE^{2} at x=0 (a), 0.125 (b) and 0.15 (c), respectively. This strong ferroelectricity is consistent with the rhombohedra-like ferroelectric phase at x=0\u20130.12 and the dominated triclinic ferroelectric phase at x=0.125\u20130.15 as mentioned above. The P m and P r are 7.5 and 4.2 \u03bcC/cmE^{2} for Bi0.825Sm0.175FeO3 (d), and 3.6 and 1.4 \u03bcC/cmE^{2} for Bi0.8Sm0.2FeO3 (e), respectively. The ferroelectricity of Bi0.825Sm0.175FeO3 and Bi0.8Sm0.2FeO3 should come from the triclinic ferroelectric clusters embedded in AFE orthorhombic Pbam phase as reported by Khomchenko et al.. This should not conflict with the fact that XRD patterns of Bi0.825Sm0.175FeO3 and Bi0.8Sm0.2FeO3 are successfully simulated according to AFE orthorhombic Pbam space group. There is a slim P\u2013E loops with the Ps of 3 \u03bcC/cmE^{2} and Ps of 0.3 \u03bcC/cmE^{2} at x=0.25 (f), and these paraelectric traits suggest that triclinic ferroelectric clusters disappear at x=0.25. Since a lone sE^{2} pair of electrons of a BiE^{3+} ion hybridizes with an empty p orbital of an OE^{2\u2212} ion to form a lobe and ferroelectricity , a low-concentration lone sE^{2} pair together with the atomic radii difference between Bi and Sm should result in a paraelectric phase in Bi0.75Sm0.25FeO3. shows the Raman spectra of Bi1\u2212x Sm x FeO3 at room temperature, suggesting the obvious ferroelectric phase at x=0\u22120.2. It has been reported that the Raman active modes below 700 cmE^{\u22121} can be summarized using the irreducible representation of \u0393=4 A 1+9E for rhombohedral R3c BiFeO3. Except for modes below 100 cmE^{\u22121} , the modes at 137, 172, 222, 260, 275, 340, 467, 515, 613, 980, 1250 and 1400 cmE^{\u22121} were differentiated for BiFeO3 at room temperature in a. In our cases, though modes shift a little with Sm concentration, they exist at x up to 0.2 (Inset). The modes at \u223c137 and \u223c172 cmE^{\u22121} concerns the spectral vibration of Bi\u2013O bonds and belongs to 4 A 1 irreducible representations, and they cannot be differentiated at x=0.25. Considering that the ferroelectrics originate in Bi\u2013O bonds , the inexistence of these two modes is compatible with ferroelectric phase disappearing at x=0.25. b shows the Raman spectra of Bi0.875Sm0.125FeO3 measured up to 500 \xb0C with 50 \xb0C per step. The intensity of modes, especially those at \u223c137 and \u223c172 cmE^{\u22121}, becomes much weaker above 300 \xb0C though some of them can be differentiated even at 500 \xb0C. This suggests that the modes concerning rhombohedral ferroelectric phase soften and the main component transforms to the non-polar phase above 350 \xb0C in Bi0.875Sm0.125FeO3 ceramics. a shows the dependence of piezoelectric d 33 and relative dielectric constant on x. Piezoelectric d 33 values were measured after the polarized electric field was removed. The d 33 value is \u223c35 pC/N at x\u22640.10, arrives in the maximum value of 42 pC/N at x=0.125, then decreases to 9 pC/N step by step with x increasing to 0.2. The d 33 maximum value is consistent with the two-phase coexistence and a possible MPB at x=0.125. When the tiny anti-polar orthorhombic Pbam phase is embedded in the ferroelectric rhombohedral R3c phase at x\u223c0.125, their MPB enhances the d 33 value obviously. On the contrary, when a little ferroelectric phase was embedded in the anti-ferroelectric phase at x\u223c0.2, the d 33 decreased to \u223c10 pC/N. The d 33 is close to zero at x=0.25, being consistent with the orthorhombic Pbnm paraelectric phase. a also shows the dependence of the relative dielectric constant (\u03b5 r) on the x value of Bi1\u2212x Sm x FeO3. The \u03b5 r shows a strong and broad peak at x=0.12\u20130.165 that should come from the coexistence of the rhombohedral R3c phase and the orthorhombic Pbam phase. b shows the room-temperature d 33 value of Bi1\u2212x Sm x FeO3 after the polarized ceramics were annealed at various temperatures (T anneal), suggesting a ferroelectric phase existing at higher temperatures. The d 33 value of the annealed BiFeO3 sample decreases slowly from 37 to 30 pC/N at T anneal=600\xb0 C, and then it fast drops and closes to zero at T anneal=800\xb0 C. This suggests a T C\u2212FE\u223c800\xb0 C, being compatible with the well-known T C\u2212FE of 813 \xb0C. The room-temperature d 33 of Bi0.875Sm0.125FeO3 decreases from 42 to 20 pC/N at T anneal=600\xb0 C and then fast closes to zero at T anneal=750\xb0 C, suggesting the ferroelectric cluster existence up to 700 \xb0C. b also suggests that a tiny ferroelectric phase should exist in the form of nano clusters with temperature up to 700 \xb0C for x=0.145, 550 \xb0C for x=0.165 and 350 \xb0C for x=0.2, though their main component may already transform to the Pbam anti-ferroelectric phase or Pbnm paraelectric phase at lower temperatures. The coexistence of ferroelectric clusters and a non-ferroelectric body at higher temperatures does not conflict with the fact that the main component of Bi0.875Sm0.125FeO3 already transforms to the non-ferroelectric phase at \u223c350 \xb0C. Since these ferroelectric clusters are difficult to differentiate by Raman spectra in b, the phase diagram should consider electric and magnetic measurements in Bi1\u2212x Sm x FeO3. When the polarized Bi0.875Sm0.125FeO3 was heated to high temperatures (e.g. 500\u2013700 \xb0C), the main component transforms to the non-ferroelectric phase while ferroelectric clusters still keep their ferroelectric polarization. During cooling the sample from 700 \xb0C to room temperature, these ferroelectric clusters are helpful to re-polarize other components below its own T C\u2212FE and thus the annealed Bi0.875Sm0.125FeO3 can show a relatively large d 33 value at room temperature. The Sm substitution enhances the remnant magnetization (M r) from nearly zero at x=0 to 0.29 emu/g at x=0.2 and room temperature. The transformation from the rhombohedral phase at x=0\u20130.12 to orthorhombic phase at x>0.125 collapses the space-modulated spin structure and then releases an enhanced macroscopic magnetization. As expected, the M r enhances with x increasing, e.g. 0.7 emg/g at x=0.1, 0.26 emg/g at x=0.15 and 0.29 emg/g at x=0.2.
+
+# TITLE
+Structure, ferroelectricity and piezoelectricity evolutions of Bi 1-xSm xFeO 3 at various temperatures
+
+# ABSTRACT
+Insulated Bi1−x
+                     Sm
+                        x
+                     FeO3 (
+                        x
+                        =
+                        0
+                        –
+                        0.25
+                     ) were prepared to study their multiferroic properties at various temperatures. Bi1−x
+                     Sm
+                        x
+                     FeO3 (
+                        x
+                        =
+                        0
+                        −
+                        0.12
+                     ) shows a rhombohedral-like phase, ferroelectric polarization of >17.8 μC/cm2, piezoelectric 
+                        
+                           
+                              d
+                           
+                           
+                              33
+                           
+                        
+                      value of >35 pC/N at room temperature. Bi1−x
+                     SmxFeO3 (
+                        x
+                        =
+                        0.125
+                        –
+                        0.2
+                     ) has a ferroelectric triclinic phase and an anti-polar orthorhombic phase together at room temperature, and Bi0.75Sm0.25FeO3 is mainly composed of a non-polar orthorhombic phase. After the polarized Bi1−x
+                     Sm
+                        x
+                     FeO3 (
+                        x
+                        =
+                        0
+                        –
+                        0.165
+                     ) was annealed at various high temperatures, the 
+                        
+                           
+                              d
+                           
+                           
+                              33
+                           
+                        
+                      evolution supports ferroelectric component exist above 500 °C. Raman spectra suggests that the main component of Bi0.875Sm0.125FeO3 does not keep a rhombohedral ferroelectric phase above 400 °C, thus its ferroelectric traits at high temperature should be due to ferroelectric clusters embedded in orthorhombic phase.
+
+# INTRODUCTION
+Multiferroic BiFeO3 shows ferroelectric (FE) order below Curie temperature of T C\u2212FE=830\xb0 C and G-type anti-ferromagnetic (AFM) order below Neel temperature of T N=370\xb0 C. In addition to the ferroelectric, magnetic and magnetoelectric properties, its piezoelectric property has attracted a lot of attention recently benefiting from the Pb-free and high T C\u2212FE traits. Especially, an enhanced piezoelectric d 33 of \u223c110 pm/V coefficient was reported in strained BiFeO3 epitaxial thin film and Sm-doped BiFeO3 epitaxial film. With partial replacement of BiE^{3+} ion (radius=1.030 \xc5) by SmE^{3+} ion (radius=0.958 \xc5), Bi0.84Sm0.16FeO3 epitaxial film could be reversibly converted between the rhombohedral phase and the orthorhombic phase, which allows an enhanced d 33 of \u223c100 pm/V under an applied electric field of 500 kV/cm. Synchrotron X-ray diffraction reveals substantial coexistence of ferroelectric rhombohedral R3c phase and anti-ferroelectric (AFE) PbZrO3-like orthorhombic Pbam phase in Sm doped BiFeO3 epitaxial film. We argued that Bi1\u2212x Sm x FeO3 ceramics may coexist with a rhombohedral-like phase and orthorhombic-like phase at a certain x, which should permit an enhanced d 33 value. In spite of intensive research of Bi1\u2212x Sm x FeO3 films, there are few reports concerning the piezoelectric, T C\u2212FE and their dependences on Sm concentration in Bi1\u2212x Sm x FeO3 ceramics. Pb-free Bi1\u2212x Sm x FeO3 ceramics may show some different characteristics than Bi1\u2212x Sm x FeO3 epitaxial film since films could be influenced by substrate, strain, and composition fluctuation to some extent. Although we know that BiFeO3 has the T C\u2212FE of 813 \xb0C, it is necessary to know the dependence of ferroelectric T C\u2212FE on Sm concentration. The low-temperature ferroelectric phase may transform to high-temperature orthorhombic phase in Bi1\u2212x Sm x FeO3 at a certain x. In this letter, we study the dependencies of crystal structure, ferroelectric polarization, piezoelectric d 33 value, T C\u2212FE and magnetic properties on Sm concentration in Bi1\u2212x Sm x FeO3 (x=0\u20130.25) ceramics.
+
+# CONCLUSION
+The room-temperature Bi1\u2212x Sm x FeO3 shows a ferroelectric rhombohedral-like phase at x=0\u20130.12, coexists with the ferroelectric triclinic phase and anti-ferroelectric orthorhombic phase at x=0.125\u20130.2, and transforms to the paraelectric orthoferrite type phase at x=0.25. This coexistence enhances the piezoelectric d 33 value to 42 pC/N at x=0.125. Besides, Bi0.875Sm0.125FeO3 shows piezoelectric traits at high temperature such as 700 \xb0C that should come from ferroelectric clusters inside a non-ferroelectric orthorhombic phase.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "BiFeO3": 37,
+      "Bi0.95Sm0.05FeO3": 35,
+      "Bi0.90Sm0.10FeO3": 32,
+      "Bi0.89Sm0.11FeO3": 34,
+      "Bi0.88Sm0.12FeO3": 37,
+      "Bi0.875Sm0.125FeO3": 42,
+      "Bi0.865Sm0.135FeO3": 39,
+      "Bi0.86Sm0.14FeO3": 38,
+      "Bi0.855Sm0.145FeO3": 35,
+      "Bi0.85Sm0.15FeO3": 34,
+      "Bi0.84Sm0.16FeO3": 32,
+      "Bi0.835Sm0.165FeO3": 30,
+      "Bi0.83Sm0.17FeO3": 20,
+      "Bi0.825Sm0.175FeO3": 20,
+      "Bi0.82Sm0.18FeO3": 14,
+      "Bi0.81Sm0.19FeO3": 13,
+      "Bi0.80Sm0.20FeO3": 9,
+      "Bi0.79Sm0.21FeO3": 8,
+      "Bi0.78Sm0.22FeO3": 5,
+      "Bi0.77Sm0.23FeO3": 3,
+      "Bi0.76Sm0.24FeO3": 2,
+      "Bi0.75Sm0.25FeO3": 0
+    },
+    "abbreviations": {},
+    "property_unit": "pC/N",
+    "family": "BiFeO3"
+  }
+}"
