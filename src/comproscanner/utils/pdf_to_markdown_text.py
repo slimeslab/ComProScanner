@@ -385,13 +385,15 @@ class PDFToMarkdownText:
         Function to append the sections to the dataframe.
 
         Args:
-            req_sections (list, required): List of sections.
-            doi (str, required): DOI of the article.
-            article_title (str, required): Title of the article.
-            publication_name (str, required): Name of the publication.
-            publisher (str, required): Name of the publisher.
-            property_keywords (dict, required): Dict of property keywords.
-            logger (logging.Logger, required): Logger object.
+            req_sections (list): List of sections.
+            doi (str): DOI of the article.
+            article_title (str): Title of the article.
+            publication_name (str): Name of the publication.
+            publisher (str): Name of the publisher.
+            property_keywords (dict): Dict of property keywords with "exact_keywords" and/or "substring_keywords".
+            vector_db_manager (VectorDatabaseManager): Manager used to create/check vector databases for relevant articles.
+            logger (logging.Logger): Logger object.
+            has_caption_keyword_match (bool, optional): Whether a figure caption matched a property keyword. Defaults to False.
 
         Returns:
             pd.DataFrame: Dataframe containing the article data.
@@ -511,6 +513,17 @@ class PDFToMarkdownText:
             return abstract_fallback
 
         def _combine_sections(sections: list, section_keywords: dict):
+            """Classify and merge raw section texts into the canonical section buckets.
+
+            Args:
+                sections (list): List of section text strings (header + body).
+                section_keywords (dict): Mapping of section type → list of header keywords.
+
+            Returns:
+                dict: Keys are canonical section names (abstract, introduction,
+                      experimental_methods, computational_methods, results_discussion,
+                      conclusion); values are concatenated section text strings.
+            """
             final_sections = {
                 "abstract": "",
                 "introduction": "",

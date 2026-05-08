@@ -91,7 +91,7 @@ Custom base URL for RAG chat model API (useful for local or custom deployments).
 ```python
 from comproscanner import ComProScanner
 
-scanner = ComProScanner(output_dir="output")
+scanner = ComProScanner(main_property_keyword="piezoelectric")
 
 # Process articles with custom chunking
 scanner.process_articles(

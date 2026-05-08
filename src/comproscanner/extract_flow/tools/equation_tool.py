@@ -218,21 +218,23 @@ class EquationTool(BaseTool):
     related_figures_base_path: str = "results/related_figures"
 
     def _has_model_configuration(self) -> bool:
-        """Return True if any EquationTool model source is configured."""
+        """Return True if any EquationTool model source is configured.
+
+        Returns:
+            bool: True if `equation_model` is set or any supported provider API key is present.
+        """
         if self.equation_model:
-            return True
-        if os.getenv("EQUATION_TOOL_MODEL"):
             return True
         return any(os.getenv(env_var) for env_var, _ in _API_KEY_MODEL_PAIRS)
 
     def _select_model(self) -> str:
-        """Return explicit model override or infer from available API keys."""
+        """Return the litellm model string to use, preferring the explicit override.
+
+        Returns:
+            str: litellm model identifier (e.g. "anthropic/claude-sonnet-4-6").
+        """
         if self.equation_model:
             return self.equation_model
-
-        env_override = os.getenv("EQUATION_TOOL_MODEL")
-        if env_override:
-            return env_override
 
         for env_var, model in _API_KEY_MODEL_PAIRS:
             if os.getenv(env_var):
@@ -241,7 +243,15 @@ class EquationTool(BaseTool):
         return "anthropic/claude-sonnet-4-6"
 
     def _get_crystal_structure_images(self, doi: str) -> list:
-        """Return base64-encoded crystal structure images (XRD/SEM/TEM) for the DOI."""
+        """Return base64-encoded crystal structure images (XRD/SEM/TEM) for the DOI.
+
+        Args:
+            doi (str): Article DOI used to locate the figure directory.
+
+        Returns:
+            list: List of dicts with keys `"caption"` (str) and `"b64"` (str, base64 JPEG).
+                  Empty list if the figure directory does not exist or no matching images are found.
+        """
         doi_folder = doi.replace("/", "_")
         fig_dir = os.path.join(self.related_figures_base_path, doi_folder)
 
@@ -291,7 +301,7 @@ class EquationTool(BaseTool):
         if not self._has_model_configuration():
             msg = (
                 "No EquationTool model/provider is configured. "
-                "Set one of: equation_model argument, EQUATION_TOOL_MODEL env var, "
+                "Set one of: equation_model argument, "
                 "or provider API key (ANTHROPIC_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY, "
                 "DEEPSEEK_API_KEY, OPENROUTER_API_KEY, TOGETHER_API_KEY, COHERE_API_KEY, "
                 "FIREWORKS_API_KEY)."

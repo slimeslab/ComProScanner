@@ -45,6 +45,14 @@ class MultiModelEmbeddings(Embeddings):
     """Embeddings class supporting multiple model types optimized for processing pre-chunked articles"""
 
     def __init__(self, rag_config: Any):
+        """
+        Args:
+            rag_config: RAG configuration object exposing at least `embedding_model` (str) and `rag_max_tokens` (int). The `embedding_model` prefix determines which backend is initialised: `huggingface:`, `sentence-transformers:`, or OpenAI.
+
+        Raises:
+            ValueErrorHandler: If the embedding model prefix is not recognised.
+            ImportErrorHandler: If the required backend package is not installed.
+        """
         self.rag_config = rag_config
         self.model_type = self._determine_model_type(rag_config.embedding_model)
 

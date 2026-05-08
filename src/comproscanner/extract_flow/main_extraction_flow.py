@@ -46,6 +46,42 @@ logger = setup_logger("comproscanner.log", module_name="main_extraction_flow")
 
 
 class MaterialsState(BaseModel):
+    """Shared state object passed between all crews in the extraction flow.
+
+    Attributes:
+        is_materials_mentioned (str): Crew output indicating whether materials data was found.
+        composition_extracted_data (Dict): Raw composition data from the extraction crew.
+        composition_formatted_data (Dict): Formatted composition data from the format crew.
+        synthesis_extracted_data (Dict): Raw synthesis data from the extraction crew.
+        synthesis_formatted_data (Dict): Formatted synthesis data from the format crew.
+        doi (str): DOI of the article being processed.
+        materials_data_identifier_query (str): Query used by the identifier crew.
+        main_extraction_keyword (str): Primary property keyword driving extraction.
+        composition_property_text_data (str): Article text passed to the composition crew.
+        synthesis_text_data (str): Article text passed to the synthesis crew.
+        is_extract_synthesis_data (bool): Whether synthesis data extraction is enabled.
+        vlm_model (str): Vision LLM model name for the graph extractor tool.
+        related_figures_base_path (str): Base directory for saved article figures.
+        formula_instruction (str, optional): Custom system prompt for the equation tool.
+        equation_model (str, optional): Explicit model override for the equation tool.
+        llm (LLM, optional): CrewAI LLM instance shared across all crews.
+        rag_config (RAGConfig, optional): RAG configuration for the RAG tool.
+        output_log_folder (str, optional): Directory for crew task output JSON logs.
+        task_output_folder (str, optional): Directory for crew task artefacts.
+        is_log_json (bool, optional): Whether to write per-task JSON logs.
+        verbose (bool, optional): Whether crews run in verbose mode.
+        expected_composition_property_example (str): Few-shot example for the composition extraction task.
+        expected_variable_composition_property_example (str): Few-shot variable-composition example.
+        composition_property_extraction_agent_note (str): Extra instructions for the extraction agent.
+        composition_property_extraction_task_note (str): Extra instructions for the extraction task.
+        composition_property_formatting_agent_note (str): Extra instructions for the format agent.
+        composition_property_formatting_task_note (str): Extra instructions for the format task.
+        synthesis_extraction_agent_note (str): Extra instructions for the synthesis extraction agent.
+        synthesis_extraction_task_note (str): Extra instructions for the synthesis extraction task.
+        synthesis_formatting_agent_note (str): Extra instructions for the synthesis format agent.
+        synthesis_formatting_task_note (str): Extra instructions for the synthesis format task.
+    """
+
     model_config = ConfigDict(arbitrary_types_allowed=True)
     is_materials_mentioned: str = ""
     composition_extracted_data: Dict = {}

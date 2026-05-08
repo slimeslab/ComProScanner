@@ -32,7 +32,13 @@ class CleaningStrategy(str, Enum):
 
 
 class DataCleaner:
+    """Cleans and normalises composition-property data extracted from research articles."""
+
     def __init__(self, results_file: str):
+        """
+        Args:
+            results_file (str): Path to the JSON file containing raw extraction results.
+        """
         self.results_file = results_file
         self.all_data = self._load_results()
         self.all_elements = get_all_elements()
@@ -65,6 +71,14 @@ class DataCleaner:
         return valid
 
     def _is_elements(self, comp_pro_pair: Dict[str, Any]) -> bool:
+        """Check whether the composition key in a pair can be fully parsed as a sequence of valid element symbols.
+
+        Args:
+            comp_pro_pair (Dict[str, Any]): A single {composition: value} dictionary.
+
+        Returns:
+            bool: True if the key resolves to a valid chemical composition, False otherwise.
+        """
         def _convert_subscript_unicode(string: str) -> str:
             """Convert Unicode subscript digits to regular digits."""
             subscript_unicode = {
@@ -136,6 +150,14 @@ class DataCleaner:
             return False
 
     def _remove_extra_spaces(self, dict_list):
+        """Remove all spaces from composition keys in a list of {composition: value} dicts.
+
+        Args:
+            dict_list (list): List of single-entry dicts mapping composition strings to values.
+
+        Returns:
+            list: Same structure with spaces stripped from every key.
+        """
         # remove any spaces in the key
         return [
             {key.replace(" ", ""): value for key, value in d.items()} for d in dict_list
@@ -175,7 +197,7 @@ class DataCleaner:
 
     def _convert_fractions_and_resolve_compositions(self, dict_list):
         """
-        Convert fractions to decimal format and resolve composition formulas by ahndling mathematical operations and normalizing bracket notation.
+        Convert fractions to decimal format and resolve composition formulas by handling mathematical operations and normalizing bracket notation.
         """
 
         def _replace_fraction(match):
@@ -1027,6 +1049,14 @@ class DataCleaner:
         return resolved
 
     def _return_in_dict(self, dict_list):
+        """Merge a list of single-entry dicts into one flat dict.
+
+        Args:
+            dict_list (list): List of {composition: value} dicts.
+
+        Returns:
+            dict: Single merged dictionary of all composition-value pairs.
+        """
         final_dict = {}
         for d in dict_list:
             final_dict.update(d)

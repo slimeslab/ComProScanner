@@ -38,8 +38,7 @@
 - Added explicit Equation Tool model control:
 
   - New `equation_model` parameter in `extract_composition_property_data()` (threaded through `DataExtractionFlow` and `CompositionExtractionCrew` into `EquationTool`).
-  - New optional environment variable `EQUATION_TOOL_MODEL` for global override.
-  - EquationTool model precedence is now: `equation_model` argument -> `EQUATION_TOOL_MODEL` -> API-key-based auto-selection.
+  - EquationTool model precedence is now: `equation_model` argument -> API-key-based auto-selection.
 
 - Clarified Equation Tool instruction customization in extraction docs and API:
 

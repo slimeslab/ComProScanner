@@ -12,6 +12,8 @@ import sys
 
 
 class TextColours:
+    """ANSI colour codes used when printing error messages to the terminal."""
+
     WARNING = "\033[93m"
     FAIL = "\033[91m"
     ENDC = "\033[0m"
@@ -36,6 +38,10 @@ class KeyboardInterruptHandler(BaseError):
     """Raised when the user hits the interrupt key"""
 
     def __init__(self, message=None):
+        """
+        Args:
+            message (str, optional): Additional context appended to the standard interrupt message.
+        """
         message = (
             f"Keyboard Interruption detected. Exiting the program... {message}"
             if message
@@ -49,6 +55,10 @@ class FileNotFoundErrorHandler(BaseError):
     """Raised when a file is not found"""
 
     def __init__(self, message=None):
+        """
+        Args:
+            message (str, optional): Path or description of the missing file.
+        """
         message = f"File not found. {message}" if message else "File not found."
         super().__init__(message)
         self.exit_program()
@@ -58,6 +68,10 @@ class ValueErrorHandler(BaseError):
     """Raised when a built-in operation or function receives an argument that has the right type but an inappropriate value"""
 
     def __init__(self, message=None):
+        """
+        Args:
+            message (str, optional): Description of the invalid value or constraint violated.
+        """
         message = (
             f"ValueErrorHandler: {message}" if message else "Value error occurred."
         )
@@ -69,6 +83,10 @@ class ImportErrorHandler(BaseError):
     """Raised when an import statement has trouble loading a module"""
 
     def __init__(self, message=None):
+        """
+        Args:
+            message (str, optional): Name of the missing module or import failure detail.
+        """
         message = f"ImportError: {message}" if message else "Import error occurred."
         super().__init__(message)
         self.exit_program()
@@ -78,6 +96,11 @@ class CustomErrorHandler(BaseError):
     """Raised when a custom error is encountered"""
 
     def __init__(self, message=None, status_code=None):
+        """
+        Args:
+            message (str, optional): Human-readable description of the error.
+            status_code (int, optional): HTTP or application-level status code associated with the error.
+        """
         self.status_code = status_code
         if message and status_code:
             full_message = (

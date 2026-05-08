@@ -85,7 +85,7 @@ value_error_thresholds = {
         "precursors": 0.15,
         "characterization_techniques": 0.15,
         "steps": 0.1
-    }<br>:material-square-small:**`output_file`** = "semantic_evaluation_result.json"<br>:material-square-small:**`extraction_agent_model_name`** = "gpt-4o-mini"<br>:material-square-small:**`is_synthesis_evaluation`** = True<br>:material-square-small:**`use_semantic_model`** = True<br>:material-square-small:**`primary_model_name`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`fallback_model_name`** = "all-mpnet-base-v2"<br>
+    }<br>:material-square-small:**`output_file`** = "semantic_evaluation_result.json"<br>:material-square-small:**`extraction_agent_model_name`** = "gpt-4o-mini"<br>:material-square-small:**`is_synthesis_evaluation`** = True<br>:material-square-small:**`use_semantic_model`** = True<br>:material-square-small:**`primary_model_name`** = "thellert/physbert_cased"<br>:material-square-small:**`fallback_model_name`** = "all-mpnet-base-v2"<br>
     :material-square-small:**`similarity_thresholds`** = {
         "compositions_property_values": 0.8,
         "property_unit": 0.8,
@@ -115,7 +115,7 @@ graph TB
 Physics-aware BERT model trained on scientific literature:
 
 ```python
-primary_model_name="huggingface:thellert/physbert_cased"
+primary_model_name="thellert/physbert_cased"
 ```
 
 **Advantages**:

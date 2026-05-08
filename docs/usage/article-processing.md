@@ -283,7 +283,7 @@ scanner.process_articles(
 )
 ```
 
-Saved figures are stored under `results/extracted_data/{main_property_keyword}/related_figures/{doi}/` alongside an `info.json` file that maps each figure to its caption text.
+Saved figures are stored under `results/extracted_data/{main_property_keyword}/related_figures/{doi_underscored}/` (where `/` in the DOI is replaced with `_`, e.g. `10.1016_j.jeurceramsoc.2024.116677`) alongside an `info.json` file that maps each figure to its caption text.
 
 ### RAG Vector Database
 

@@ -32,7 +32,10 @@ logger = setup_logger("comproscanner.log", module_name="data_preparator")
 
 
 class SectionProcessor:
+    """Splits and filters article section text to extract composition-property relevant content."""
+
     def __init__(self):
+        """Initialises section name mappings and the CSV-column-to-section-key map."""
         self.section_names = {
             "article_title": "TITLE",
             "abstract": "ABSTRACT",

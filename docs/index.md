@@ -16,7 +16,7 @@
 
 ## Key Features
 
-!!! tip "Automated Data Extraction"
+!!! tip "Automated Data Extraction from Text, Tables, and Graphs"
 Extract composition-property relationships in structured format from scientific literature automatically using AI-powered agents.
 
 !!! example "Multi-Publisher Support"
@@ -60,7 +60,7 @@ property_keywords = {
 # Process articles
 scanner.process_articles(
     property_keywords=property_keywords,
-    source_list=["elsevier", "springer"]
+    source_list=["elsevier", "wiley", "iop", "springer"]
 )
 
 # Extract data

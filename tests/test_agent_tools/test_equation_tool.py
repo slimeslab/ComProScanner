@@ -88,29 +88,10 @@ def test_select_model_defaults_to_anthropic_when_no_key_set(monkeypatch):
 
 
 def test_select_model_prefers_explicit_equation_model(monkeypatch):
-    monkeypatch.setenv("EQUATION_TOOL_MODEL", "openai/gpt-5.4-mini")
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test")
     tool = _make_tool()
     tool.equation_model = "gemini/gemini-3-flash-preview"
     assert tool._select_model() == "gemini/gemini-3-flash-preview"
-
-
-def test_select_model_uses_environment_override(monkeypatch):
-    monkeypatch.setenv("EQUATION_TOOL_MODEL", "openai/gpt-5.4-mini")
-    for var in (
-        "ANTHROPIC_API_KEY",
-        "GEMINI_API_KEY",
-        "OPENAI_API_KEY",
-        "DEEPSEEK_API_KEY",
-        "OPENROUTER_API_KEY",
-        "TOGETHER_API_KEY",
-        "COHERE_API_KEY",
-        "FIREWORKS_API_KEY",
-    ):
-        monkeypatch.delenv(var, raising=False)
-
-    tool = _make_tool()
-    assert tool._select_model() == "openai/gpt-5.4-mini"
 
 
 # ---------------------------------------------------------------------------
@@ -287,7 +268,6 @@ def test_run_returns_config_error_when_no_model_source_set(monkeypatch):
         "TOGETHER_API_KEY",
         "COHERE_API_KEY",
         "FIREWORKS_API_KEY",
-        "EQUATION_TOOL_MODEL",
     ):
         monkeypatch.delenv(var, raising=False)
 

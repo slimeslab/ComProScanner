@@ -20,12 +20,10 @@ def get_paper_metadata_from_openalex(doi: str):
     Function to get the paper metadata from the OpenAlex API.
 
     Args:
-        doi (str: required): DOI of the paper
+        doi (str): DOI of the paper.
 
     Returns:
-        title (str): Title of the paper.
-        journal_name (str): Name of the journal.
-        publisher (str): Name of the publisher.
+        tuple: (title, journal_name, publisher) strings; all empty strings on failure.
     """
     try:
         url = f"https://api.openalex.org/works/doi:{doi}"
@@ -60,10 +58,10 @@ def return_error_message(missing_variable: str):
     Function to return an error message based on the missing variable.
 
     Args:
-        missing_variable (str: required): Variable which is missing.
+        missing_variable (str): Name of the missing variable (e.g. "main_property_keyword").
 
     Returns:
-        error_message (str): Error message based on the missing variable.
+        str: Human-readable error message describing how to fix the missing variable.
     """
     if missing_variable == None:
         raise ValueError("The variable is missing.")
@@ -136,7 +134,8 @@ def write_timeout_file(doi, timeout_file):
     Write the DOI to the timeout file.
 
     Args:
-        doi (str: Required): The DOI of the article.
+        doi (str): The DOI of the article to record.
+        timeout_file (str): Path to the file where timed-out DOIs are appended.
     """
     timeout_dir = os.path.dirname(timeout_file)
     if not os.path.exists(timeout_dir):

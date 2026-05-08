@@ -152,7 +152,14 @@ class FilterMetadata:
             logger.error(f"Error identifying missing publishers: {e}")
 
     def _get_unique_identifiers_for_missing(self, df_missing):
-        """Gets unique ISSNs and Scopus IDs for entries with missing publishers"""
+        """Gets unique ISSNs and Scopus IDs for entries with missing publishers.
+
+        Args:
+            df_missing (pd.DataFrame): DataFrame of entries with missing publisher information.
+
+        Returns:
+            tuple: (issn_list, scopus_id_list, publication_names) — one entry per unique journal.
+        """
         try:
             # Group by journal and take the first occurrence of each
             unique_data = (
@@ -175,9 +182,8 @@ class FilterMetadata:
 
         Args:
             response (requests.Response): Response object from the API
-            df (pd.DataFrame): DataFrame containing metadata
-            issn (str): ISSN of the publication
-            scopus_id (str): Scopus ID of the publication
+            issn (str, optional): ISSN of the publication
+            scopus_id (str, optional): Scopus ID of the publication
 
         Raises:
             AttributeError: If the publisher is not found

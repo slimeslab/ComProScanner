@@ -45,7 +45,7 @@ class FetchMetadata:
     Args:
         main_property_keyword (str: required): The main keyword for the search and filenames
         base_queries (list: optional): The base queries for the search. If None, the main_property_keyword will be used as the base query. The list will be sorted alphabetically before processing.
-        extra_queries (list: optional): The extra queries for the search which will be combined with the base queries. The list will be sorted alphabetically before processing.
+        extra_queries (list: optional): The extra queries for the search which will be combined with the base queries. The list will be sorted alphabetically before processing. Defaults to an empty list when None.
         start_year (int: optional): The start year for the search (default: current year)
         end_year (int: optional): The end year for the search (default: current year  - 2)
 

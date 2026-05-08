@@ -14,12 +14,18 @@ import json
 
 
 class SaveResults:
+    """Persists extraction results to both a JSON file and a CSV file."""
 
     def __init__(
         self,
         json_results_file: str = "results.json",
         csv_results_file: str = "results.csv",
     ) -> None:
+        """
+        Args:
+            json_results_file (str, optional): Path to the JSON results file. Defaults to "results.json".
+            csv_results_file (str, optional): Path to the CSV results file. Defaults to "results.csv".
+        """
         self.json_results_file = json_results_file
         self.csv_results_file = csv_results_file
         self._load_existing_results()

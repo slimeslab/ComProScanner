@@ -713,6 +713,7 @@ class ComProScanner:
         is_save_composition_property_file: bool = True,
         composition_property_file: str = "composition_property.json",
         cleaning_strategy: str = "full",
+        apply_advanced_cleaning: bool = True,
         is_store_unresolved_compositions: bool = False,
         unresolved_compositions_file: str = "unresolved_compositions.json",
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
@@ -726,8 +727,9 @@ class ComProScanner:
             is_save_composition_property_file (bool, optional): Whether to save composition-property values to a separate file. Defaults to True.
             composition_property_file (str, optional): Path to the composition-property file containing a dictionary of composition-property data. Defaults to "composition_property.json".
             cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
+            apply_advanced_cleaning (bool, optional): Whether to apply advanced composition cleaning transformations (Miller indices removal, coefficient expansion, normalization, zero-coefficient removal). Defaults to True.
             is_store_unresolved_compositions (bool, optional): Whether to log resolution statistics and save unresolved composition keys to a file. Requires is_save_composition_property_file=True. Defaults to False.
-            unresolved_compositions_file (str, optional): Path to the file where unresolved composition keys will be saved. Used only when is_store_unresolved_compositions=True. Defaults to "unresolved_compositions.txt".
+            unresolved_compositions_file (str, optional): Path to the file where unresolved composition keys will be saved. Used only when is_store_unresolved_compositions=True. Defaults to "unresolved_compositions.json".
 
         Returns:
             tuple: A tuple containing:
@@ -763,7 +765,8 @@ class ComProScanner:
                 if isinstance(article_data, dict)
             )
         final_data = data_cleaner.clean_data_with_relevant_compositions(
-            strategy=cleaning_strategy
+            strategy=cleaning_strategy,
+            apply_advanced_cleaning=apply_advanced_cleaning,
         )
         # Save the cleaned data back to the cleaned JSON file
         if is_save_separate_results:
