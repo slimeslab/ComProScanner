@@ -3,6 +3,7 @@ date:
   created: 2026-04-05
 authors:
   - aritraroy24
+cover_image: https://pubs.rsc.org/en/Image/Get?imageInfo.ImageType=GA&imageInfo.ImageIdentifier.ManuscriptID=D5DD00521C&imageInfo.ImageIdentifier.Year=2026
 ---
 # ComProScanner Published in Digital Discovery
 <!-- more -->
