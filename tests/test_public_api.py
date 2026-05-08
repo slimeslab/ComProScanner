@@ -160,7 +160,8 @@ def test_clean_data_public_api_forwards_to_cleaner(tmp_path):
 
     assert result == {"10.x/test": {}}
     cleaner.clean_data_with_relevant_compositions.assert_called_once_with(
-        strategy="full"
+        strategy="full",
+        apply_advanced_cleaning=True,
     )
 
 
