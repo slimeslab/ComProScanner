@@ -59,7 +59,7 @@ plugins:
   - search:
       separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
   - blog:
-      blog_dir: blogs
+      blog_dir: news
       post_date_format: long
       post_url_format: "{slug}"
       post_excerpt: optional
@@ -176,7 +176,7 @@ nav:
           - Evaluation Visualization: usage/visualization/eval-viz.md
   - RAG Configuration: rag-config.md
   - API Overview: api.md
-  - Blog: blogs/index.md
+  - Blog: news/index.md
   - About:
       - Project Structure: about/project-structure.md
       - License: about/license.md

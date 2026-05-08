@@ -11,12 +11,14 @@ authors:
 
 ---
 <div align="center">
-<img src="https://pubs.rsc.org/en/Image/Get?imageInfo.ImageType=GA&imageInfo.ImageIdentifier.ManuscriptID=D5DD00521C&imageInfo.ImageIdentifier.Year=2026" alt="ComProScanner TOC" style="width:100%; max-width:700px; id="overall-workflow" alt="ComProScanner TOC">
+<img src="https://i.ibb.co/jPJf86Qg/comproscanner-vlm-integration.png" style="width:100%; max-width:700px; id="vlm-integration" alt="ComProScanner VLM Integration">
+<p style="font-size: 10px;">
+<i><b>Image Credit:</b> ChatGPT Images 2.0</i></p>
 </div>
 
 ## Overview
 
-The [2026.5.8](https://pypi.org/project/comproscanner/2026.05.08) release of ComProScanner introduces several substantive additions to the framework, the most architecturally significant of which is the **GraphExtractorTool**: a vision language model (VLM) based agent tool that reads saved scientific figures and extracts composition–property value pairs directly from graphs and charts embedded in research articles. This post documents the rationale for including graph-based extraction, the methodology by which VLM candidates were selected and the results of a structured benchmark conducted across 50 piezoelectric articles from the existing test corpus. **Gemini-3-Flash-Preview** outperformed all other models with an average score of **0.96** in all metrics. Furthermore, an **EquationTool** has been added to the framework for generating mathematical doped equations by understanding the element replacement logic and XRD patterns. Finally, additional changes accompanying this release are summarised briefly.
+The [2026.05.08](https://pypi.org/project/comproscanner/2026.05.08) release of ComProScanner introduces several substantive additions to the framework, the most architecturally significant of which is the **GraphExtractorTool**: a vision language model (VLM) based agent tool that reads saved scientific figures and extracts composition–property value pairs directly from graphs and charts embedded in research articles. This post documents the rationale for including graph-based extraction, the methodology by which VLM candidates were selected and the results of a structured benchmark conducted across 50 piezoelectric articles from the existing test corpus. **Gemini-3-Flash-Preview** outperformed all other models with an average score of **0.96** in all metrics. Furthermore, an **EquationTool** has been added to the framework for generating mathematical doped equations by understanding the element replacement logic and XRD patterns. Finally, additional changes accompanying this release are summarised briefly.
 
 ---
 
@@ -34,7 +36,7 @@ A companion **`FigureExtractor`** utility handles caption-keyword–based filter
 <img src="https://i.ibb.co/FG0XK9j/overall-workflow.png" alt="overall workflow graphtool" style="width:100%; max-width:700px; id="overall-workflow" alt="ComProScanner Overall Workflow">
 </div>
 <p style="font-size: 10px;">
-<b>Fig. 1</b>: Overall workflow diagram of ComProScanner framework incorporating the GraphExtractorTool and EquationTool. The flow is separated in four distinct operational phases, distinguished with four different colour regions: (a) metadata retrieval (yellow), (b) article collection (purple), (c) information extraction (green) and (d) evaluation, post-processing and dataset creation (brown).
+<b>Fig. 1:</b> Overall workflow diagram of ComProScanner framework incorporating the GraphExtractorTool and EquationTool. The flow is separated in four distinct operational phases, distinguished with four different colour regions: (a) metadata retrieval (yellow), (b) article collection (purple), (c) information extraction (green) and (d) evaluation, post-processing and dataset creation (brown).
 </p>
 
 The _Materials Data Identifier_ agent from information extraction phase now includes image-aware RAG, which is invoked when the initial text-based RAG step fails to find relevant data. `Composition-Property Data Extractor` is the agent responsible for invoking the `GraphExtractorTool` when the flow reaches the graph extraction step. As well as this agent has access to the `EquationTool` for generating mathematical doped equations by understanding the text regarding element replacement logic and XRD pattern from images. This new information extraction flowchart diagram is illustrated in [Fig. 2](#flow-diagram).
@@ -42,7 +44,7 @@ The _Materials Data Identifier_ agent from information extraction phase now incl
 <img src="https://i.ibb.co/tTYHqtxP/flow-diagram.png" alt="flow diagram" style="width:100%; max-width:500px; id="flow-diagram" alt="ComProScanner Flow Diagram">
 </div>
 <p style="font-size: 10px;">
-<b>Fig. 2</b>: Flow diagram of ComProScanner framework's information extraction process incorporating the image-aware RAGTool, GraphExtractorTool, EquationTool and Material-ParserTool. The CrewAI-based extraction system is comprised of five specialised agents. The process begins with a property identifier agent ((a) RAG Crew) that leverages Retrieval-Augmented Generation (RAG) technology to filter relevant articles. The remaining four agents are strategically organised into two parallel functional subgroups: one dedicated to composition data extraction ((b) composition crew set) and the other focused on synthesis information collection ((c) synthesis crew set). Each subgroup implements a sequential two-agent architecture—the first agent extracts raw data while the second performs formatting and standardisation.
+<b>Fig. 2:</b> Flow diagram of ComProScanner framework's information extraction process incorporating the image-aware RAGTool, GraphExtractorTool, EquationTool and Material-ParserTool. The CrewAI-based extraction system is comprised of five specialised agents. The process begins with a property identifier agent ((a) RAG Crew) that leverages Retrieval-Augmented Generation (RAG) technology to filter relevant articles. The remaining four agents are strategically organised into two parallel functional subgroups: one dedicated to composition data extraction ((b) composition crew set) and the other focused on synthesis information collection ((c) synthesis crew set). Each subgroup implements a sequential two-agent architecture—the first agent extracts raw data while the second performs formatting and standardisation.
 </p>
 ---
 
@@ -54,7 +56,7 @@ Because the primary use case is reading scientific charts, not general image cap
 <img src="https://i.ibb.co/HT1yLBfx/lmarena-vlm-leaderboard.png" alt="lmarena diagram leaderboard" style="width:100%; max-width:700px; id="lmarena-leaderboard" alt="LMArena Leaderboard for VLMs">
 </div>
 <p style="font-size: 10px;">
-<b>Fig. 3</b>: LMArena Leaderboard for VLMs (Diagram category) as of April 2026. The region highlighted in pink indicates the models that were selected for evaluation based on the criteria of having an Arena ELO score of at least 1,250 and an input cost of less than $1.50 per 1 million tokens.
+<b>Fig. 3:</b> LMArena Leaderboard for VLMs (Diagram category) as of April 2026. The region highlighted in pink indicates the models that were selected for evaluation based on the criteria of having an Arena ELO score of at least 1,250 and an input cost of less than $1.50 per 1 million tokens.
 </p>
 
 ---
@@ -69,7 +71,7 @@ Of the 50 selected articles, 49 yielded evaluatable composition–property data 
 <img src="https://i.ibb.co/7dzx8s1b/confusion-matrix.png" alt="confusion matrix" style="width:100%; max-width:700px; id="confusion-matrix" alt="Confusion Matrix for VLM Benchmark">
 </div>
 <p style="font-size: 10px;">
-<b>Fig. 4</b>: Confusion matrix from semantic evaluation with 1.0 threshold for composition-property data, showcasing all 7 evaluation parameters, such as weight-based composition accuracy, classification metrics (precision, recall and F1-score) and normalised classification metrics (normalised precision, normalised recall and normalised F1-score), across 4 different VLMs used in this study.
+<b>Fig. 4:</b> Confusion matrix from semantic evaluation with 1.0 threshold for composition-property data, showcasing all 7 evaluation parameters, such as weight-based composition accuracy, classification metrics (precision, recall and F1-score) and normalised classification metrics (normalised precision, normalised recall and normalised F1-score), across 4 different VLMs used in this study.
 </p>
 
 **Gemini-3-Flash-Preview** is the clear frontrunner across all evaluation dimensions. It achieves a composition accuracy of 0.97, with absolute precision, recall, and F1 of 0.96, 0.95, and 0.96 respectively, and normalised precision, recall, and F1 of 0.97, 0.96, and 0.97 respectively. This outcome is entirely consistent with its standing on the LMArena Diagram leaderboard, where Gemini-3-Flash-Preview carries a higher Arena ELO score than Gemini-2.5-Pro whilst commanding a substantially lower input cost per million tokens, making it simultaneously the highest-performing and most economical candidate in this evaluation. **Gemini-2.5-Pro** performs respectably, with a composition accuracy of 0.86, absolute precision, recall, and F1 of 0.84, 0.76, and 0.80 respectively, and normalised precision, recall, and F1 of 0.88, 0.80, and 0.84 respectively. The notably lower recall relative to precision, a gap of approximately 0.08 in both absolute and normalised settings suggests the model is more conservative in proposing data points than the Flash variant, consistent with the Pro model's tendency towards cautious reasoning in ambiguous figure layouts. **GPT-5-Chat-Latest** and **GPT-5.1** perform broadly comparably to one another and can be considered together. Both yield a composition accuracy of 0.78. In terms of absolute classification metrics, both models achieve a precision of 0.71, with recall of 0.62 and 0.63 and F1 of 0.66 and 0.67 respectively. Normalised metrics follow a similar pattern: precision of 0.75 and 0.76, recall of 0.68 and 0.69, and F1 of 0.71 and 0.72 respectively. Both lie approximately 0.12–0.13 below Gemini-2.5-Pro on normalised F1, indicating difficulty with the full diversity of graphical representations across the corpus. Given this performance gap at similar cost, Gemini-3-Flash-Preview is adopted as the default VLM for the `GraphExtractorTool`, whilst the `vlm_model` parameter remains available for users to override with any LiteLLM-compatible model identifier (refer to the [ComProScanner documentation](../usage/data-extraction.md)).
