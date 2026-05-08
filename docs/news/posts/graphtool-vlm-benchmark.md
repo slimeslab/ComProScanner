@@ -4,6 +4,10 @@ date:
 authors:
   - aritraroy24
 cover_image: https://i.ibb.co/jPJf86Qg/comproscanner-vlm-integration.png
+description: >-
+  ComProScanner 2026.05.08 introduces GraphExtractorTool — VLM-based graph
+  data extraction benchmarked across 4 models on 50 piezoelectric articles.
+  Gemini-3-Flash-Preview leads with 0.97 composition accuracy.
 ---
 
 # ComProScanner Now Has Graph Extraction: Benchmarking VLMs on Piezoelectric Data

@@ -4,6 +4,10 @@ date:
 authors:
   - aritraroy24
 cover_image: https://pubs.rsc.org/en/Image/Get?imageInfo.ImageType=GA&imageInfo.ImageIdentifier.ManuscriptID=D5DD00521C&imageInfo.ImageIdentifier.Year=2026
+description: >-
+  ComProScanner is published in Digital Discovery (RSC) — a multi-agent
+  framework for autonomous extraction of composition–property data from
+  scientific literature into ML-ready databases.
 ---
 # ComProScanner Published in Digital Discovery
 <!-- more -->
