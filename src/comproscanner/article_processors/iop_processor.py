@@ -661,9 +661,18 @@ class IOPArticleProcessor:
                 break
         if has_caption_keyword_match and not has_text_property_match:
             all_req_data["is_property_mentioned"] = "1"
-            logger.info(
-                f"Target caption keyword matched for {doi}; keeping article for downstream extraction."
-            )
+            modified_doi = doi.replace("/", "_")
+            if self.vector_db_manager.database_exists(modified_doi):
+                logger.warning(
+                    f"Vector Database already exists for {doi}...Skipping..."
+                )
+            else:
+                logger.info(
+                    f"Target caption keyword matched for {doi}; creating vector database for RAG..."
+                )
+                self.vector_db_manager.create_database(
+                    db_name=modified_doi, article_text=total_text
+                )
         if all_req_data["is_property_mentioned"] == "0":
             all_req_data["abstract"] = ""
             all_req_data["introduction"] = ""
