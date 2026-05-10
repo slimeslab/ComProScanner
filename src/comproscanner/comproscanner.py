@@ -119,7 +119,8 @@ class ComProScanner:
         chunk_size: int = 1000,
         chunk_overlap: int = 25,
         embedding_model: str = "huggingface:thellert/physbert_cased",
-        caption_keywords: Optional[Dict] = None,
+        main_figure_keywords: Optional[Dict] = None,
+        additional_figure_keywords: Optional[Dict] = None,
         save_failed_pdf_report: bool = True,
         failed_pdf_report_path: Optional[str] = None,
         save_failed_automated_report: bool = True,
@@ -148,7 +149,8 @@ class ComProScanner:
             chunk_size (int, optional): Size of the chunks to split the input text into. Defaults to 1000.
             chunk_overlap (int, optional): Overlap between the chunks. Defaults to 25.
             embedding_model (str, optional): Name of the embedding model. Defaults to 'thellert/physbert_cased'.
-            caption_keywords (dict, optional): Keywords to match figure captions for figure extraction. Same format as property_keywords with "exact_keywords" and "substring_keywords" keys. Defaults to None (no figure extraction).
+            main_figure_keywords (dict, optional): Keywords to match figure captions for figure extraction. Same format as property_keywords with "exact_keywords" and "substring_keywords" keys. Defaults to None (falls back to property_keywords). Caption matches trigger vector DB creation.
+            additional_figure_keywords (dict, optional): Secondary caption keywords for figure extraction only. Same format as property_keywords. Matching figures are saved but do NOT trigger vector DB creation. Defaults to None.
             save_failed_pdf_report (bool, optional): For `pdfs` source only. If True, save skipped/failed filename-based DOI fallback cases to a text report. Defaults to True.
             failed_pdf_report_path (str, optional): For `pdfs` source only. Custom path for failed PDF filename report. Defaults to None (uses `{folder_path}/failed_pdf_filenames.txt`).
             save_failed_automated_report (bool, optional): For automated publisher sources (elsevier, springer, iop, wiley). If True, save failed/unparseable articles to a report. Defaults to True.
@@ -185,9 +187,7 @@ class ComProScanner:
             try:
                 import pandas as pd
 
-                metadata_file = (
-                    f"results/{self.main_property_keyword}_metadata.csv"
-                )
+                metadata_file = f"results/{self.main_property_keyword}_metadata.csv"
                 if not os.path.exists(metadata_file):
                     logger.warning(
                         f"Metadata file '{metadata_file}' not found. "
@@ -212,9 +212,10 @@ class ComProScanner:
                             routed_doi_list[src] = doi_list
                     else:
                         doi_to_publisher = {
-                            str(row["doi"]).strip(): str(
-                                row["general_publisher"]
-                            ).strip().lower()
+                            str(row["doi"])
+                            .strip(): str(row["general_publisher"])
+                            .strip()
+                            .lower()
                             for _, row in metadata_df.iterrows()
                             if str(row["doi"]).strip()
                         }
@@ -266,7 +267,8 @@ class ComProScanner:
                 is_sql_db=is_sql_db,
                 is_save_xml=is_save_xml,
                 rag_config=rag_config,
-                caption_keywords=caption_keywords,
+                main_figure_keywords=main_figure_keywords,
+                additional_figure_keywords=additional_figure_keywords,
                 save_failed_automated_report=save_failed_automated_report,
                 failed_automated_report_path=failed_automated_report_path,
             )
@@ -289,7 +291,8 @@ class ComProScanner:
                 is_sql_db=is_sql_db,
                 is_save_xml=is_save_xml,
                 rag_config=rag_config,
-                caption_keywords=caption_keywords,
+                main_figure_keywords=main_figure_keywords,
+                additional_figure_keywords=additional_figure_keywords,
                 save_failed_automated_report=save_failed_automated_report,
                 failed_automated_report_path=failed_automated_report_path,
             )
@@ -312,7 +315,8 @@ class ComProScanner:
                 is_sql_db=is_sql_db,
                 is_save_pdf=is_save_pdf,
                 rag_config=rag_config,
-                caption_keywords=caption_keywords,
+                main_figure_keywords=main_figure_keywords,
+                additional_figure_keywords=additional_figure_keywords,
                 save_failed_automated_report=save_failed_automated_report,
                 failed_automated_report_path=failed_automated_report_path,
             )
@@ -334,7 +338,8 @@ class ComProScanner:
                 doi_list=routed_doi_list["iop"],
                 is_sql_db=is_sql_db,
                 rag_config=rag_config,
-                caption_keywords=caption_keywords,
+                main_figure_keywords=main_figure_keywords,
+                additional_figure_keywords=additional_figure_keywords,
                 save_failed_automated_report=save_failed_automated_report,
                 failed_automated_report_path=failed_automated_report_path,
             )
@@ -352,7 +357,8 @@ class ComProScanner:
                 csv_batch_size=csv_batch_size,
                 is_sql_db=is_sql_db,
                 rag_config=rag_config,
-                caption_keywords=caption_keywords,
+                main_figure_keywords=main_figure_keywords,
+                additional_figure_keywords=additional_figure_keywords,
                 save_failed_pdf_report=save_failed_pdf_report,
                 failed_pdf_report_path=failed_pdf_report_path,
             )
@@ -760,7 +766,11 @@ class ComProScanner:
         data_cleaner = DataCleaner(results_file=json_results_file)
         if is_store_unresolved_compositions and is_save_composition_property_file:
             source_composition_count = sum(
-                len(article_data.get("composition_data", {}).get("compositions_property_values", {}))
+                len(
+                    article_data.get("composition_data", {}).get(
+                        "compositions_property_values", {}
+                    )
+                )
                 for article_data in data_cleaner.all_data.values()
                 if isinstance(article_data, dict)
             )
@@ -789,19 +799,28 @@ class ComProScanner:
                     all_composition_property_values.update(compositions_property_values)
             if is_store_unresolved_compositions:
                 resolved_count = len(all_composition_property_values)
-                filtered_count = sum(len(v) for v in data_cleaner.filtered_compositions.values())
-                unresolved_count = sum(len(v) for v in data_cleaner.unresolved_compositions.values())
+                filtered_count = sum(
+                    len(v) for v in data_cleaner.filtered_compositions.values()
+                )
+                unresolved_count = sum(
+                    len(v) for v in data_cleaner.unresolved_compositions.values()
+                )
                 logger.info(
                     f"Composition-property pairs — source: {source_composition_count}, "
                     f"filtered: {filtered_count}, unresolved: {unresolved_count}, "
                     f"resolved: {resolved_count}"
                 )
-                if data_cleaner.filtered_compositions or data_cleaner.unresolved_compositions:
+                if (
+                    data_cleaner.filtered_compositions
+                    or data_cleaner.unresolved_compositions
+                ):
                     dropped_report = {
                         "filtered": data_cleaner.filtered_compositions,
                         "unresolved": data_cleaner.unresolved_compositions,
                     }
-                    with open(unresolved_compositions_file, "w", encoding="utf-8") as file:
+                    with open(
+                        unresolved_compositions_file, "w", encoding="utf-8"
+                    ) as file:
                         json.dump(dropped_report, file, indent=2)
                     logger.info(
                         f"Filtered and unresolved compositions saved to {unresolved_compositions_file}."

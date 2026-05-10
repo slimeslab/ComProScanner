@@ -151,22 +151,29 @@ class TestPDFToMarkdownText:
         fake_document.iterate_items.return_value = [(fake_element, 0)]
         pdf_converter._document = fake_document
 
-        caption_keywords = {"exact_keywords": ["d33"], "substring_keywords": []}
+        main_figure_keywords = {"exact_keywords": ["d33"], "substring_keywords": []}
 
-        with patch(
-            "comproscanner.utils.pdf_to_markdown_text.PictureItem", fake_picture_base
-        ), patch(
-            "comproscanner.utils.pdf_to_markdown_text.TableItem", type(
-                "FakeTableBase", (), {}
-            )
-        ), patch(
-            "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.update_info_json"
-        ) as mock_update, patch(
-            "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.save_figure_from_bytes",
-            return_value="saved.jpg",
-        ) as mock_save:
+        with (
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.PictureItem",
+                fake_picture_base,
+            ),
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.TableItem",
+                type("FakeTableBase", (), {}),
+            ),
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.update_info_json"
+            ) as mock_update,
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.save_figure_from_bytes",
+                return_value="saved.jpg",
+            ) as mock_save,
+        ):
             result = pdf_converter.extract_and_save_figures(
-                "10.1000/test.doi", caption_keywords, base_path="results/test_figures"
+                "10.1000/test.doi",
+                main_figure_keywords,
+                base_path="results/test_figures",
             )
 
         assert result is True
@@ -176,10 +183,10 @@ class TestPDFToMarkdownText:
     @patch("comproscanner.utils.pdf_to_markdown_text.TableItem")
     @patch("comproscanner.utils.pdf_to_markdown_text.PictureItem")
     @patch("comproscanner.utils.pdf_to_markdown_text.DocumentConverter")
-    def test_extract_and_save_figures_saves_all_when_no_caption_keywords(
+    def test_extract_and_save_figures_saves_all_when_no_main_figure_keywords(
         self, mock_converter, mock_picture_item, mock_table_item
     ):
-        """When caption_keywords is None all figures should be saved regardless of caption"""
+        """When main_figure_keywords is None all figures should be saved regardless of caption"""
         pdf_converter = PDFToMarkdownText(source="test.pdf")
 
         fake_picture_base = type("FakePictureBase", (), {})
@@ -194,20 +201,27 @@ class TestPDFToMarkdownText:
         fake_document.iterate_items.return_value = [(fake_element, 0)]
         pdf_converter._document = fake_document
 
-        with patch(
-            "comproscanner.utils.pdf_to_markdown_text.PictureItem", fake_picture_base
-        ), patch(
-            "comproscanner.utils.pdf_to_markdown_text.TableItem", type(
-                "FakeTableBase", (), {}
-            )
-        ), patch(
-            "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.update_info_json"
-        ) as mock_update, patch(
-            "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.save_figure_from_bytes",
-            return_value="saved.jpg",
-        ) as mock_save:
+        with (
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.PictureItem",
+                fake_picture_base,
+            ),
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.TableItem",
+                type("FakeTableBase", (), {}),
+            ),
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.update_info_json"
+            ) as mock_update,
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.save_figure_from_bytes",
+                return_value="saved.jpg",
+            ) as mock_save,
+        ):
             result = pdf_converter.extract_and_save_figures(
-                "10.1000/test.doi", caption_keywords=None, base_path="results/test_figures"
+                "10.1000/test.doi",
+                main_figure_keywords=None,
+                base_path="results/test_figures",
             )
 
         assert result is True

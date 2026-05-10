@@ -20,7 +20,7 @@
 
   - New `FigureExtractor` utility — shared helper for caption keyword-based figure filtering and saving, used by all article processors.
 
-  - New `caption_keywords` parameter in `process_articles()` and `extract_composition_property_data()`, and new `vlm_model` and `related_figures_base_path` parameters in `extract_composition_property_data()`.
+  - New `main_figure_keywords` parameter in `process_articles()` and `extract_composition_property_data()`, and new `vlm_model` and `related_figures_base_path` parameters in `extract_composition_property_data()`.
 
 - New unit tests added for all three agent tools in `tests/test_agent_tools/`.
 

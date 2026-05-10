@@ -80,7 +80,8 @@ class SpringerArticleProcessor:
         is_sql_db: bool = False,
         is_save_xml: bool = False,
         rag_config: RAGConfig = RAGConfig(),
-        caption_keywords: dict = None,
+        main_figure_keywords: dict = None,
+        additional_figure_keywords: dict = None,
         save_failed_automated_report: bool = True,
         failed_automated_report_path: str = None,
     ):
@@ -118,7 +119,12 @@ class SpringerArticleProcessor:
         self.is_save_xml = is_save_xml
         self.rag_config = rag_config
         self.tdm_api_key = os.getenv("SPRINGER_TDM_API_KEY")
-        self.caption_keywords = caption_keywords
+        self.main_figure_keywords = (
+            main_figure_keywords
+            if main_figure_keywords is not None
+            else property_keywords
+        )
+        self.additional_figure_keywords = additional_figure_keywords
         # Takes from config file
         self.timeout_file = self.all_paths.TIMEOUT_DOI_LOG_FILENAME
         self.article_related_keywords = ArticleRelatedKeywords()
@@ -159,7 +165,9 @@ class SpringerArticleProcessor:
         """Record a failed article to the automated failure report."""
         self.failed_automated_count += 1
         record_failed_article(
-            doi, self.source, reason,
+            doi,
+            self.source,
+            reason,
             self.failed_automated_report_path,
             self.save_failed_automated_report,
         )
@@ -523,7 +531,7 @@ class SpringerArticleProcessor:
 
     def _extract_and_save_figures(self, root, doi: str):
         """
-        Extract figures from Springer JATS XML and save them. If self.caption_keywords is
+        Extract figures from Springer JATS XML and save them. If self.main_figure_keywords is
         provided only figures whose captions match are saved; if None, all figures are saved.
         Attempts to download images from the Springer CDN and saves them to
         results/extracted_data/{keyword}/related_figures/{doi_}/{caption_id}.jpg
@@ -561,12 +569,17 @@ class SpringerArticleProcessor:
                 ).strip()
                 caption_text = f"{label_text} {para_text}".strip()
 
-                if self.caption_keywords and not FigureExtractor.keyword_matches_caption(
-                    caption_text, self.caption_keywords
-                ):
+                main_match = FigureExtractor.keyword_matches_caption(
+                    caption_text, self.main_figure_keywords
+                )
+                additional_match = self.additional_figure_keywords and FigureExtractor.keyword_matches_caption(
+                    caption_text, self.additional_figure_keywords
+                )
+                if not main_match and not additional_match:
                     continue
 
-                has_caption_keyword_match = True
+                if main_match:
+                    has_caption_keyword_match = True
                 # Always save caption to info.json
                 FigureExtractor.update_info_json(
                     doi, caption_id, caption_text, base_path

@@ -85,7 +85,8 @@ class WileyArticleProcessor:
         is_sql_db: bool = False,
         is_save_pdf: bool = False,
         rag_config: RAGConfig = RAGConfig(),
-        caption_keywords: dict = None,
+        main_figure_keywords: dict = None,
+        additional_figure_keywords: dict = None,
         save_failed_automated_report: bool = True,
         failed_automated_report_path: str = None,
     ):
@@ -120,7 +121,12 @@ class WileyArticleProcessor:
         self.is_sql_db = is_sql_db
         self.is_save_pdf = is_save_pdf
         self.rag_config = rag_config
-        self.caption_keywords = caption_keywords
+        self.main_figure_keywords = (
+            main_figure_keywords
+            if main_figure_keywords is not None
+            else property_keywords
+        )
+        self.additional_figure_keywords = additional_figure_keywords
         # Takes from config file
         self.timeout_file = self.all_paths.TIMEOUT_DOI_LOG_FILENAME
         self.article_related_keywords = ArticleRelatedKeywords()
@@ -165,7 +171,9 @@ class WileyArticleProcessor:
         """Record a failed article to the automated failure report."""
         self.failed_automated_count += 1
         record_failed_article(
-            doi, self.source, reason,
+            doi,
+            self.source,
+            reason,
             self.failed_automated_report_path,
             self.save_failed_automated_report,
         )
@@ -529,7 +537,11 @@ class WileyArticleProcessor:
                 md_text = pdf_to_md.convert_to_markdown()
 
                 # Check if conversion was successful or text detection is empty/corrupted
-                if md_text is None or not md_text.strip() or self._is_corrupted_text(md_text):
+                if (
+                    md_text is None
+                    or not md_text.strip()
+                    or self._is_corrupted_text(md_text)
+                ):
                     logger.warning(
                         f"Text detection result is empty or corrupted for DOI {doi}. "
                         "Storing with is_property_mentioned=0 and skipping vector database creation."
@@ -581,12 +593,17 @@ class WileyArticleProcessor:
                         time.sleep(5)
                     continue
 
-                # Extract and save figures; filtered by caption_keywords if provided, else all
                 has_caption_keyword_match = pdf_to_md.extract_and_save_figures(
                     row["doi"],
-                    self.caption_keywords,
+                    self.main_figure_keywords,
                     base_path=f"results/extracted_data/{self.keyword}/related_figures",
                 )
+                if self.additional_figure_keywords:
+                    pdf_to_md.extract_and_save_figures(
+                        row["doi"],
+                        self.additional_figure_keywords,
+                        base_path=f"results/extracted_data/{self.keyword}/related_figures",
+                    )
 
                 # Process the markdown text
                 all_sections = pdf_to_md.clean_text(md_text)

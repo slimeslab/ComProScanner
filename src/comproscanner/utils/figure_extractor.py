@@ -32,20 +32,20 @@ class FigureExtractor:
     BASE_PATH = "results/related_figures"
 
     @staticmethod
-    def keyword_matches_caption(caption_text: str, caption_keywords: dict) -> bool:
+    def keyword_matches_caption(caption_text: str, main_figure_keywords: dict) -> bool:
         """
         Check whether the caption text contains any of the given keywords.
 
         Args:
             caption_text (str): The figure caption text to check.
-            caption_keywords (dict): Dictionary with optional keys:
+            main_figure_keywords (dict): Dictionary with optional keys:
                 - "exact_keywords": List of keywords for case-insensitive substring match.
                 - "substring_keywords": List of strings for case-insensitive substring match.
 
         Returns:
             bool: True if any keyword matches, False otherwise.
         """
-        if not caption_text or not caption_keywords:
+        if not caption_text or not main_figure_keywords:
             return False
 
         text_lower = caption_text.lower()
@@ -54,13 +54,13 @@ class FigureExtractor:
         # Compact text removes all separators to match forms like d33 vs d 33.
         text_compact = re.sub(r"[^a-z0-9]+", "", text_lower)
 
-        for kw in caption_keywords.get("exact_keywords", []):
+        for kw in main_figure_keywords.get("exact_keywords", []):
             kw_lower = kw.lower()
             kw_compact = re.sub(r"[^a-z0-9]+", "", kw_lower)
             if kw_compact and kw_compact in text_compact:
                 return True
 
-        for kw in caption_keywords.get("substring_keywords", []):
+        for kw in main_figure_keywords.get("substring_keywords", []):
             kw_spaced = re.sub(r"[^a-z0-9]+", " ", kw.lower()).strip()
             if kw_spaced and kw_spaced in text_spaced:
                 return True

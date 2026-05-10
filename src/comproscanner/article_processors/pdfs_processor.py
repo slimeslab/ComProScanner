@@ -38,7 +38,6 @@ from ..utils.common_functions import (
     return_error_message,
 )
 
-
 # configure logger
 logger = setup_logger("comproscanner.log", module_name="pdfs_processor")
 
@@ -54,7 +53,8 @@ class PDFsProcessor:
         csv_batch_size: int = 1,
         is_sql_db: bool = False,
         rag_config: RAGConfig = RAGConfig(),
-        caption_keywords: dict = None,
+        main_figure_keywords: dict = None,
+        additional_figure_keywords: dict = None,
         save_failed_pdf_report: bool = True,
         failed_pdf_report_path: str = None,
     ):
@@ -91,7 +91,12 @@ class PDFsProcessor:
             logger.error(f"{property_keywords_message}")
             raise ValueErrorHandler(f"{property_keywords_message}")
         self.is_sql_db = is_sql_db
-        self.caption_keywords = caption_keywords
+        self.main_figure_keywords = (
+            main_figure_keywords
+            if main_figure_keywords is not None
+            else property_keywords
+        )
+        self.additional_figure_keywords = additional_figure_keywords
         self.save_failed_pdf_report = save_failed_pdf_report
         self.failed_pdf_report_path = failed_pdf_report_path or os.path.join(
             self.folder_path, "failed_pdf_filenames.txt"
@@ -259,11 +264,11 @@ class PDFsProcessor:
         try:
             if not os.path.exists(self.metadata_csv_filename):
                 return "", "", ""
-            
+
             # Load metadata CSV if not already loaded
             if self.df is None:
                 self.df = pd.read_csv(self.metadata_csv_filename)
-            
+
             matching_rows = self.df[self.df["doi"] == doi]
             if not matching_rows.empty:
                 row = matching_rows.iloc[0]
@@ -302,7 +307,11 @@ class PDFsProcessor:
                 )
 
                 # Handle empty or corrupted text detection result
-                if md_text is None or not md_text.strip() or self._is_corrupted_text(md_text):
+                if (
+                    md_text is None
+                    or not md_text.strip()
+                    or self._is_corrupted_text(md_text)
+                ):
                     logger.warning(
                         f"Text detection result is empty or corrupted for {pdf_file}. "
                         "Storing with is_property_mentioned=0 and skipping vector database creation."
@@ -321,12 +330,14 @@ class PDFsProcessor:
                     # Try to get metadata (API first, then CSV)
                     title, journal_name, publisher = "", "", ""
                     if self.doi.startswith("10."):
-                        title, journal_name, publisher = get_paper_metadata_from_openalex(
-                            self.doi
+                        title, journal_name, publisher = (
+                            get_paper_metadata_from_openalex(self.doi)
                         )
-                        
+
                         if not title or not journal_name or not publisher:
-                            csv_title, csv_journal, csv_publisher = self._get_metadata_from_csv(self.doi)
+                            csv_title, csv_journal, csv_publisher = (
+                                self._get_metadata_from_csv(self.doi)
+                            )
                             title = title or csv_title
                             journal_name = journal_name or csv_journal
                             publisher = publisher or csv_publisher
@@ -370,7 +381,9 @@ class PDFsProcessor:
                     if crossref_doi:
                         self.doi = crossref_doi
                         self.identifier = crossref_doi
-                        logger.info(f"DOI resolved via CrossRef for {pdf_file}: {self.doi}")
+                        logger.info(
+                            f"DOI resolved via CrossRef for {pdf_file}: {self.doi}"
+                        )
                     else:
                         # Final fallback: derive DOI from filename only if valid DOI format.
                         filename = os.path.basename(pdf_file)
@@ -392,9 +405,11 @@ class PDFsProcessor:
                     title, journal_name, publisher = get_paper_metadata_from_openalex(
                         self.doi
                     )
-                    
+
                     if not title or not journal_name or not publisher:
-                        csv_title, csv_journal, csv_publisher = self._get_metadata_from_csv(self.doi)
+                        csv_title, csv_journal, csv_publisher = (
+                            self._get_metadata_from_csv(self.doi)
+                        )
                         title = title or csv_title
                         journal_name = journal_name or csv_journal
                         publisher = publisher or csv_publisher
@@ -402,12 +417,17 @@ class PDFsProcessor:
                     if not title:
                         logger.warning(f"Metadata not found for DOI: {self.doi}")
 
-                # Extract and save figures; filtered by caption_keywords if provided, else all
                 has_caption_keyword_match = pdf_to_md.extract_and_save_figures(
                     self.doi,
-                    self.caption_keywords,
+                    self.main_figure_keywords,
                     base_path=f"results/extracted_data/{self.keyword}/related_figures",
                 )
+                if self.additional_figure_keywords:
+                    pdf_to_md.extract_and_save_figures(
+                        self.doi,
+                        self.additional_figure_keywords,
+                        base_path=f"results/extracted_data/{self.keyword}/related_figures",
+                    )
 
                 # Process sections
                 all_sections = pdf_to_md.clean_text(md_text)
@@ -480,4 +500,6 @@ class PDFsProcessor:
                 f"Total skipped PDFs due to invalid filename DOI fallback: {len(self.failed_pdf_records)}"
             )
             if self.save_failed_pdf_report:
-                logger.info(f"Failed PDF report saved to: {self.failed_pdf_report_path}")
+                logger.info(
+                    f"Failed PDF report saved to: {self.failed_pdf_report_path}"
+                )

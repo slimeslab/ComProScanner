@@ -257,7 +257,7 @@ Is there any material chemical composition and corresponding {main_property_keyw
 
 !!! example "Graph Extractor Tool"
 
-    Graph Extractor Tool is used by the `Composition-Property Data Extractor` agent **after** the Equation Tool when figures have been saved during article processing. It scans the saved figure directory for the given DOI, sends each image to a configurable vision LLM (default: `gemini/gemini-3-flash-preview`), and extracts composition-property value pairs directly from graphs and charts. The extracted data is returned as structured JSON and used alongside the text-based extraction to improve coverage of graphical data. For graph extraction, the figures are saved during article processing (using `caption_keywords` in `process_articles`) and specify the VLM model at extraction time:
+    Graph Extractor Tool is used by the `Composition-Property Data Extractor` agent **after** the Equation Tool when figures have been saved during article processing. It scans the saved figure directory for the given DOI, sends each image to a configurable vision LLM (default: `gemini/gemini-3-flash-preview`), and extracts composition-property value pairs directly from graphs and charts. The extracted data is returned as structured JSON and used alongside the text-based extraction to improve coverage of graphical data. For graph extraction, the figures are saved during article processing (using `main_figure_keywords` in `process_articles`) and specify the VLM model at extraction time:
 
 !!! example "MaterialParser Tool"
 

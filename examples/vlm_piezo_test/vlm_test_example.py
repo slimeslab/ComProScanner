@@ -115,7 +115,7 @@ property_keywords = {
     "exact_keywords": ["d33", "pC/N"],
     "substring_keywords": [" d 33 ", " pC/N "],
 }
-caption_keywords = {
+main_figure_keywords = {
     "exact_keywords": [
         "d33",
         "piezoelectric",
@@ -193,7 +193,7 @@ if __name__ == "__main__":
 
     comproscanner.process_articles(
         property_keywords=property_keywords,
-        caption_keywords=caption_keywords,
+        main_figure_keywords=main_figure_keywords,
         source_list=["elsevier", "springer", "iop", "wiley"],
         doi_list=test_doi_list,
     )
