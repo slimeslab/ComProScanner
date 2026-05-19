@@ -39,7 +39,7 @@ pip install -e .
 
 ## Quick Start
 
-Here's a complete example extracting piezoelectric coefficient ($d_{33}$) data:
+Here's a complete example extracting piezoelectric coefficient (d<sub>33</sub>) data:
 
 ```python
 from comproscanner import ComProScanner

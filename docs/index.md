@@ -5,9 +5,14 @@
 </p>
 
 <p align="center">
-  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.12 | 3.13-green.svg" alt="Python Version"></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
-  <a href="https://pypi.org/project/comproscanner/"><img src="https://img.shields.io/pypi/v/comproscanner.svg" alt="PyPI version"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg?logo=python&logoColor=white" alt="Python Version"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://custom-icon-badges.demolab.com/badge/license-MIT-brown.svg?logo=law&logoColor=white" alt="License: MIT"></a>
+  <a href="https://pypi.org/project/comproscanner/"><img src="https://img.shields.io/pypi/v/comproscanner?logo=pypi&logoColor=white" alt="PyPI version"></a>
+  <a href="https://slimeslab.github.io/ComProScanner/"><img src="https://custom-icon-badges.demolab.com/badge/docs-latest-brightgreen.svg?logo=materialformkdocs&logoColor=white" alt="Documentation"></a>
+  <a href="https://codecov.io/gh/aritraroy24/ComProScanner"><img src="https://img.shields.io/codecov/c/github/aritraroy24/ComProScanner?logo=codecov&logoColor=white&label=coverage&color=e62277" alt="Coverage"></a>
+  <a href="https://pypistats.org/packages/comproscanner"><img src="https://custom-icon-badges.demolab.com/pypi/dm/comproscanner?logo=download&logoColor=white&color=purple" alt="Downloads"></a>
+  <a href="https://deepwiki.com/slimeslab/ComProScanner"><img src="https://custom-icon-badges.demolab.com/badge/Ask%20DeepWiki-brightgreen.svg?logo=deepwikidevin&logoColor=white&labelColor=grey&color=5ab998" alt="Ask DeepWiki"></a>
+  <a href="https://doi.org/10.1039/D5DD00521C"><img src="https://custom-icon-badges.demolab.com/badge/Digital_Discovery-10.1039/D5DD00521C-brightgreen.svg?logo=rsc&logoColor=white&color=c8c300" alt="Digital Discovery"></a>
 </p>
 
 ## Welcome
