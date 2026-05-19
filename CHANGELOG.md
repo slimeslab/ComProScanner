@@ -44,6 +44,10 @@
 
   - `formula_instruction` remains available in `extract_composition_property_data()` for domain-specific formula-derivation guidance, while preserving the built-in default instruction when unset.
 
+### Changed
+
+- Versioning scheme migrated from [Semantic Versioning](https://semver.org/) (SemVer) to [Calendar Versioning](https://calver.org/) (CalVer) using the `YYYY.MM.DD` format. Starting from this release, version numbers reflect the release date rather than an incrementing major/minor/patch scheme.
+
 ### Fixed
 
 - `_parse_json_output()` now recovers JSON from mixed-text crew outputs (e.g. `Thought: … { "json": "here" }`) by scanning for the first `{` / `[` and last `}` / `]` and retrying `json.loads()` on the extracted substring, before falling back to `ast.literal_eval()`.
