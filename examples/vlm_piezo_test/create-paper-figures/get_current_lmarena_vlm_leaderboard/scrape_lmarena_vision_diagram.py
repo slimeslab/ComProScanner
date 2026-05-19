@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Scrape Arena vision leaderboard and join with LiteLLM token pricing."""
 
 from __future__ import annotations

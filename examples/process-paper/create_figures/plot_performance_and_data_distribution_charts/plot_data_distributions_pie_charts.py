@@ -1,9 +1,12 @@
 from comproscanner import data_visualizer
 
+DEEPSEEK_RESULTS_PATH = (
+    "../../../piezo_test/model-outputs/deepseek/"
+    "deepseek-v3-0324-piezo-ceramic-test-results.json"
+)
+
 data_visualizer.plot_family_pie_chart(
-    data_sources=[
-        "../../../piezo_test/model-outputs/deepseek/deepseek-v3-0324-piezo-ceramic-test-results.json"
-    ],
+    data_sources=[DEEPSEEK_RESULTS_PATH],
     output_file="../plots-raw/best_model_family_distribution_pie_chart.png",
     figsize=(20, 15),
     color_palette="Reds",
@@ -13,9 +16,7 @@ data_visualizer.plot_family_pie_chart(
 )
 
 data_visualizer.plot_precursors_pie_chart(
-    data_sources=[
-        "../../../piezo_test/model-outputs/deepseek/deepseek-v3-0324-piezo-ceramic-test-results.json"
-    ],
+    data_sources=[DEEPSEEK_RESULTS_PATH],
     output_file="../plots-raw/best_model_precursors_distribution_pie_chart.png",
     figsize=(20, 15),
     color_palette="Blues",
@@ -25,9 +26,7 @@ data_visualizer.plot_precursors_pie_chart(
 )
 
 data_visualizer.plot_characterization_techniques_pie_chart(
-    data_sources=[
-        "../../../piezo_test/model-outputs/deepseek/deepseek-v3-0324-piezo-ceramic-test-results.json"
-    ],
+    data_sources=[DEEPSEEK_RESULTS_PATH],
     output_file="../plots-raw/best_model_characterization_techniques_distribution_pie_chart.png",
     figsize=(20, 15),
     color_palette="Greens",

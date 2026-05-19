@@ -166,7 +166,7 @@ Custom instruction passed to the `Equation Tool` that guides the LLM when determ
 
 #### :material-square-medium:`equation_model` _(str)_
 
-Explicit LiteLLM model name for `Equation Tool`. Use this when you want deterministic model control for formula derivation (for example, `openai/gpt-5.4-mini` or `gemini/gemini-3-flash-preview`). If `None`, the tool falls back to API-key based auto-selection.
+Explicit LiteLLM model name for `Equation Tool`. Use this when you want deterministic model control for formula derivation (for example, `openai/gpt-5.4-mini` or `gemini/gemini-3-flash-preview`). If `None`, the tool falls back to API-key-based auto-selection.
 
 #### :material-square-medium:`**flow_optional_args` _(dict)_
 

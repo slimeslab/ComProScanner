@@ -10,7 +10,7 @@ Date: 19-03-2025
 import os
 import pytest
 import pandas as pd
-from unittest.mock import patch, MagicMock, mock_open
+from unittest.mock import ANY, patch, MagicMock, mock_open
 from lxml import etree
 import requests
 import tempfile
@@ -183,7 +183,9 @@ class TestSpringerArticleProcessor:
         assert result_df.iloc[0]["is_property_mentioned"] == "1"
         assert result_df.iloc[0]["abstract"] != ""
         assert result_df.iloc[0]["results_discussion"] != ""
-        processor.vector_db_manager.create_database.assert_not_called()
+        processor.vector_db_manager.create_database.assert_called_once_with(
+            db_name="10.1007_test-doi", article_text=ANY
+        )
 
     def test_initialization(self, mock_environment, property_keywords):
         """Test initialization of SpringerArticleProcessor with correct parameters"""

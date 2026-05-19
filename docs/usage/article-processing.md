@@ -241,7 +241,7 @@ scanner.process_articles(
 
 The report is a plain-text file with one tab-separated entry per failed article:
 
-```
+```text
 10.1016/j.actamat.2021.123456	elsevier	download_failed
 10.1007/s10854-021-06899-y	springer	xml_parse_failed
 10.1088/1361-6463/ab1234	iop	body_not_found
