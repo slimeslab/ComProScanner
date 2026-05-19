@@ -1,0 +1,297 @@
+2026-05-01 12:40:50: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1007/s10832-007-9152-0.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1007/s10832-007-9152-0 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The XRD diffraction patterns of BNKLB-x/y/z ceramics are shown in Fig.. From Fig. , the ceramics possess a single crystalline phase with perovskite structure and no second phase can be found, which reveal that KE^{+}, LiE^{+} and BaE^{2+} diffuse into Bi0.5Na0.5TiO3 lattices to form a solid solution. The BNKLN-x/y/z ceramics sintered at 1,100\u20131,150\xb0C for 2 h have the bulk densities of 5.62\u20135.75 g/cmE^{3} which are 95% higher than the theoretical densities. Fig. 1XRD diffraction patterns of BNKLB-x/0.075/z ceramics in the range 2\u03b8 of 20\u201370 \xb0 XRD diffraction patterns of BNKLB-x/0.075/z ceramics in the range 2\u03b8 of 20\u201370 \xb0 The microstructures of the sintered BNKLB-x/y/z ceramics were observed using SEM, and the micrographs of these ceramics are shown in Fig.. Pure BNT ceramics sintered at 1,200 \xb0C for 2 h are very dense and the shape of the grains is not regular (Fig. (a)). The diffusion of KE^{+}, LiE^{+} and BaE^{2+} into BNT lattices greatly influences the microstructures of the materials. From Fig. (b)\u2013(d), differently from pure BNT ceramics, the grain growth of BNKLB-0.15/0.075/0.02 ceramics sintered at 1,100\u20131,150 \xb0C for 2 h is suppressed, and the grains become smaller and grow into neat rectangular shapes. With sintering temperature increasing, the grains of BNKLB-0.15/0.075/0.02 ceramics slightly become larger and more rectangular. At 1,100\u20131,150 \xb0C for 2 h, the ceramics are very dense and almost no holes can be found. Fig. 2SEM micrographs of the sintered samples a BNKLB-0/0/0 sintered at 1,200 \xb0C for 2 h; b BNKLB-0.15/0.075/0.02 sintered at 1,100 \xb0C for 2 h; c BNKLB-0.15/0.075/0.02 sintered at 1,125 \xb0C for 2 h; and d BNKLB-0.15/0.075/0.02 sintered at 1,150 \xb0C for 2 h. SEM micrographs of the sintered samples a BNKLB-0/0/0 sintered at 1,200 \xb0C for 2 h; b BNKLB-0.15/0.075/0.02 sintered at 1,100 \xb0C for 2 h; c BNKLB-0.15/0.075/0.02 sintered at 1,125 \xb0C for 2 h; and d BNKLB-0.15/0.075/0.02 sintered at 1,150 \xb0C for 2 h. Figure shows the piezoelectric constant d33 and mechanical quality factor Qm as a function of z for BNKLB-0.15/0.075/z ceramics. The piezoelectric constant d33 reaches a maximum value of 205pC/N at z = 0.02. The mechanical quality factor Qm decreases sharply with z increasing from 0 to 0.02. Fig. 3Piezoelectric constant d33 and mechanical quality factor Qm as a function of z for BNKLB-0.15/0.075/z ceramics Piezoelectric constant d33 and mechanical quality factor Qm as a function of z for BNKLB-0.15/0.075/z ceramics Electromechanical coupling factors kp and k31 as a function of z for BNKLB-0.15/0.075/z ceramics are shown in Fig.. It can be found that planar electromechanical coupling factor kp decreases with z increasing up to 0.04, and then has no evident change with the further increasing of z. kp reaches the maximum value of 34.6% at z = 0. The variation of the electromechanical coupling factor k31 with x is similar to that of kp. Fig. 4Electromechanical coupling factors kp and k31 as a function of z for BNKLB-0.15/0.075/z ceramics Electromechanical coupling factors kp and k31 as a function of z for BNKLB-0.15/0.075/z ceramics Figure shows dielectric constant and dielectric loss tan\u03b4 as a function of z for BNKLB-0.15/0.075/z ceramics. With the increase of x, dielectric loss tan\u03b4 decreases from 0.036 to 0.025. The dielectric constant reaches a maximum value of 1041 at z = 0.02. Fig. 5Dielectric constant and dielectric loss tan\u03b4 as a function of z for BNKLB-0.15/0.075/z ceramics Dielectric constant and dielectric loss tan\u03b4 as a function of z for BNKLB-0.15/0.075/z ceramics The P-E hysteresis loops of BNKLB-x/0.075/0.01 ceramics at room temperature are shown in Fig.. With x increasing from 0.05 to 0.20, the coercive field Ec decreases from 5.16 to 3.18 kv/mm. The maximum value of remanent polarization Pr of 38.5 \u03bcC/cmE^{2} appears at x = 0.20. Compared with pure BNT ceramics , it is concluded that the partial substitution of NaE^{+} by KE^{+} and LiE^{+} and partial substitution (Bi0.5Na0.5)E^{2+} by BaE^{2+} greatly decrease the coercive field Ec but simultaneously keep the very high remanent polarization Pr, which leads to facilitating the poling process of the BNKLB-x/y/z ceramics and an obvious enhancement of piezoelectric properties of the materials. Therefore BNKLB-x/y/z ceramics show better piezoelectric properties. Fig. 6P-E hysteresis loops of BNKLB-x/0.075/0.01 ceramics at room temperature P-E hysteresis loops of BNKLB-x/0.075/0.01 ceramics at room temperature
+
+# TITLE
+Synthesis and piezoelectric properties of [Bi1-z(Na 1-x-y-zKxLiy)]0.5Ba zTiO3 lead-free piezoelectric ceramics
+
+# ABSTRACT
+[Bi(NaKLi)]BaTiO lead-free piezoelectric ceramics were fabricated by ordinary ceramic technique and the piezoelectric and ferroelectric properties of the ceramics were studied. The ceramics can be well sintered at 1,100–1,150 °C for 2 h. X-ray diffraction (XRD) analysis shows that KE^{+}, LiE^{+} and BaE^{2+} diffuse into the BiNaTiO lattices to form a solid solution with a single-phase perovskite structure. The introduction of KE^{+}, LiE^{+} and BaE^{2+} into BiNaTiO significantly decreases the coercive field  but maintains the large remanent polarization  of the materials. The ceramics provide piezoelectric constant  of 205 pC/N, electromechanical coupling factor  of 0.346, remanent polarization  of 31.7–38.5 μC/cmE^{2}, and coercive field  of 3.18–5.16 kV/mm.
+
+# INTRODUCTION
+Pb(Ti,Zr)TiO3-based piezoelectric ceramics are widely used for various electronic and microelectronic devices. At present, alkali metal niobate-based, bismuth layer-structured-type, Bi0.5Na0.5TiO3-based (abbreviated as BNT) and BaTiO3-based ferroelectrics are known as lead-free piezoelectric ceramics. Among these materials, BNT is thought to be a strong candidate of lead-free piezoelectric ceramics because of its relatively large remanent polarization (Pr = 38 \u03bcC/cmE^{2})[]. However, because pure BNT ceramics have a high coercive field (Ec = 7.3 kV/mm) and large electric conductivity[], these ceramics are difficult to be completely polarized. In order to improve the piezoelectric and ferroelectric properties of BNT ceramics, some solid solutions of BNT with BaTiO3 , Bi0.5K0.5TiO3 , NaNbO3 , Ba(Cu1/2W1/2)O3 , BiFeO3  are extensively investigated. According to the characteristics of BNT ferroelectric, it is believed that a key point to further enhance the piezoelectric properties is to decrease the coercive field efficiently and simultaneously retain the strong ferroelectricity of BNT-based ceramics. Therefore, the research and development of new BNT-based systems with a larger Pr and lower Ec may be a promising way to obviously enhance the piezoelectric properties of BNT-based ceramics. In this paper, new [Bi1-z(Na1-x-y-zKxLiy)]0.5BazTiO3 (abbreviated as BNKLB-x/y/z) ceramics were prepared by the conventional ceramic processing and their microstructures and piezoelectric properties were studied.
+
+# CONCLUSION
+New [Bi1-z(Na1-x-y-zKxLiy)]0.5BazTiO3 ceramics were prepared by the conventional ceramic sintering processing and their microstructures and piezoelectric properties were studied. The introduction of KE^{+}, LiE^{+} and BaE^{2+} to the BNT lattice causes an evident change in the microstructure of the BNT ceramics and decreases coercive field greatly but large remanent polarization is simultaneously maintained. The ceramics exhibit piezoelectric constant d33 of 205 pC/N, electromechanical coupling factor kp of 0.346, remanent polarization Pr of 31.7\u201338.5 \u03bcC/cmE^{2}, and coercive field Ec of 3.18\u20135.16 kV/mm.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 12:41:41: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1007/s10832-007-9152-0.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1007/s10832-007-9152-0 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The XRD diffraction patterns of BNKLB-x/y/z ceramics are shown in Fig.. From Fig. , the ceramics possess a single crystalline phase with perovskite structure and no second phase can be found, which reveal that KE^{+}, LiE^{+} and BaE^{2+} diffuse into Bi0.5Na0.5TiO3 lattices to form a solid solution. The BNKLN-x/y/z ceramics sintered at 1,100\u20131,150\xb0C for 2 h have the bulk densities of 5.62\u20135.75 g/cmE^{3} which are 95% higher than the theoretical densities. Fig. 1XRD diffraction patterns of BNKLB-x/0.075/z ceramics in the range 2\u03b8 of 20\u201370 \xb0 XRD diffraction patterns of BNKLB-x/0.075/z ceramics in the range 2\u03b8 of 20\u201370 \xb0 The microstructures of the sintered BNKLB-x/y/z ceramics were observed using SEM, and the micrographs of these ceramics are shown in Fig.. Pure BNT ceramics sintered at 1,200 \xb0C for 2 h are very dense and the shape of the grains is not regular (Fig. (a)). The diffusion of KE^{+}, LiE^{+} and BaE^{2+} into BNT lattices greatly influences the microstructures of the materials. From Fig. (b)\u2013(d), differently from pure BNT ceramics, the grain growth of BNKLB-0.15/0.075/0.02 ceramics sintered at 1,100\u20131,150 \xb0C for 2 h is suppressed, and the grains become smaller and grow into neat rectangular shapes. With sintering temperature increasing, the grains of BNKLB-0.15/0.075/0.02 ceramics slightly become larger and more rectangular. At 1,100\u20131,150 \xb0C for 2 h, the ceramics are very dense and almost no holes can be found. Fig. 2SEM micrographs of the sintered samples a BNKLB-0/0/0 sintered at 1,200 \xb0C for 2 h; b BNKLB-0.15/0.075/0.02 sintered at 1,100 \xb0C for 2 h; c BNKLB-0.15/0.075/0.02 sintered at 1,125 \xb0C for 2 h; and d BNKLB-0.15/0.075/0.02 sintered at 1,150 \xb0C for 2 h. SEM micrographs of the sintered samples a BNKLB-0/0/0 sintered at 1,200 \xb0C for 2 h; b BNKLB-0.15/0.075/0.02 sintered at 1,100 \xb0C for 2 h; c BNKLB-0.15/0.075/0.02 sintered at 1,125 \xb0C for 2 h; and d BNKLB-0.15/0.075/0.02 sintered at 1,150 \xb0C for 2 h. Figure shows the piezoelectric constant d33 and mechanical quality factor Qm as a function of z for BNKLB-0.15/0.075/z ceramics. The piezoelectric constant d33 reaches a maximum value of 205pC/N at z = 0.02. The mechanical quality factor Qm decreases sharply with z increasing from 0 to 0.02. Fig. 3Piezoelectric constant d33 and mechanical quality factor Qm as a function of z for BNKLB-0.15/0.075/z ceramics Piezoelectric constant d33 and mechanical quality factor Qm as a function of z for BNKLB-0.15/0.075/z ceramics Electromechanical coupling factors kp and k31 as a function of z for BNKLB-0.15/0.075/z ceramics are shown in Fig.. It can be found that planar electromechanical coupling factor kp decreases with z increasing up to 0.04, and then has no evident change with the further increasing of z. kp reaches the maximum value of 34.6% at z = 0. The variation of the electromechanical coupling factor k31 with x is similar to that of kp. Fig. 4Electromechanical coupling factors kp and k31 as a function of z for BNKLB-0.15/0.075/z ceramics Electromechanical coupling factors kp and k31 as a function of z for BNKLB-0.15/0.075/z ceramics Figure shows dielectric constant and dielectric loss tan\u03b4 as a function of z for BNKLB-0.15/0.075/z ceramics. With the increase of x, dielectric loss tan\u03b4 decreases from 0.036 to 0.025. The dielectric constant reaches a maximum value of 1041 at z = 0.02. Fig. 5Dielectric constant and dielectric loss tan\u03b4 as a function of z for BNKLB-0.15/0.075/z ceramics Dielectric constant and dielectric loss tan\u03b4 as a function of z for BNKLB-0.15/0.075/z ceramics The P-E hysteresis loops of BNKLB-x/0.075/0.01 ceramics at room temperature are shown in Fig.. With x increasing from 0.05 to 0.20, the coercive field Ec decreases from 5.16 to 3.18 kv/mm. The maximum value of remanent polarization Pr of 38.5 \u03bcC/cmE^{2} appears at x = 0.20. Compared with pure BNT ceramics , it is concluded that the partial substitution of NaE^{+} by KE^{+} and LiE^{+} and partial substitution (Bi0.5Na0.5)E^{2+} by BaE^{2+} greatly decrease the coercive field Ec but simultaneously keep the very high remanent polarization Pr, which leads to facilitating the poling process of the BNKLB-x/y/z ceramics and an obvious enhancement of piezoelectric properties of the materials. Therefore BNKLB-x/y/z ceramics show better piezoelectric properties. Fig. 6P-E hysteresis loops of BNKLB-x/0.075/0.01 ceramics at room temperature P-E hysteresis loops of BNKLB-x/0.075/0.01 ceramics at room temperature
+
+# TITLE
+Synthesis and piezoelectric properties of [Bi1-z(Na 1-x-y-zKxLiy)]0.5Ba zTiO3 lead-free piezoelectric ceramics
+
+# ABSTRACT
+[Bi(NaKLi)]BaTiO lead-free piezoelectric ceramics were fabricated by ordinary ceramic technique and the piezoelectric and ferroelectric properties of the ceramics were studied. The ceramics can be well sintered at 1,100–1,150 °C for 2 h. X-ray diffraction (XRD) analysis shows that KE^{+}, LiE^{+} and BaE^{2+} diffuse into the BiNaTiO lattices to form a solid solution with a single-phase perovskite structure. The introduction of KE^{+}, LiE^{+} and BaE^{2+} into BiNaTiO significantly decreases the coercive field  but maintains the large remanent polarization  of the materials. The ceramics provide piezoelectric constant  of 205 pC/N, electromechanical coupling factor  of 0.346, remanent polarization  of 31.7–38.5 μC/cmE^{2}, and coercive field  of 3.18–5.16 kV/mm.
+
+# INTRODUCTION
+Pb(Ti,Zr)TiO3-based piezoelectric ceramics are widely used for various electronic and microelectronic devices. At present, alkali metal niobate-based, bismuth layer-structured-type, Bi0.5Na0.5TiO3-based (abbreviated as BNT) and BaTiO3-based ferroelectrics are known as lead-free piezoelectric ceramics. Among these materials, BNT is thought to be a strong candidate of lead-free piezoelectric ceramics because of its relatively large remanent polarization (Pr = 38 \u03bcC/cmE^{2})[]. However, because pure BNT ceramics have a high coercive field (Ec = 7.3 kV/mm) and large electric conductivity[], these ceramics are difficult to be completely polarized. In order to improve the piezoelectric and ferroelectric properties of BNT ceramics, some solid solutions of BNT with BaTiO3 , Bi0.5K0.5TiO3 , NaNbO3 , Ba(Cu1/2W1/2)O3 , BiFeO3  are extensively investigated. According to the characteristics of BNT ferroelectric, it is believed that a key point to further enhance the piezoelectric properties is to decrease the coercive field efficiently and simultaneously retain the strong ferroelectricity of BNT-based ceramics. Therefore, the research and development of new BNT-based systems with a larger Pr and lower Ec may be a promising way to obviously enhance the piezoelectric properties of BNT-based ceramics. In this paper, new [Bi1-z(Na1-x-y-zKxLiy)]0.5BazTiO3 (abbreviated as BNKLB-x/y/z) ceramics were prepared by the conventional ceramic processing and their microstructures and piezoelectric properties were studied.
+
+# CONCLUSION
+New [Bi1-z(Na1-x-y-zKxLiy)]0.5BazTiO3 ceramics were prepared by the conventional ceramic sintering processing and their microstructures and piezoelectric properties were studied. The introduction of KE^{+}, LiE^{+} and BaE^{2+} to the BNT lattice causes an evident change in the microstructure of the BNT ceramics and decreases coercive field greatly but large remanent polarization is simultaneously maintained. The ceramics exhibit piezoelectric constant d33 of 205 pC/N, electromechanical coupling factor kp of 0.346, remanent polarization Pr of 31.7\u201338.5 \u03bcC/cmE^{2}, and coercive field Ec of 3.18\u20135.16 kV/mm.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="Thought: Now I have the graph data from Fig. 3. The text explicitly states: "The piezoelectric constant d33 reaches a maximum value of 205pC/N at z = 0.02" for BNKLB-0.15/0.075/z ceramics. The graph gives d33 = 201 pC/N at z = 0.02 for the same series. According to the conflict resolution rule, I keep the text-derived value (205 pC/N) for that composition.
+
+The graph also provides d33 values for other z values (0.00, 0.04, 0.06, 0.08, 0.10) for BNKLB-0.15/0.075/z, which are not explicitly stated in the text. I can use these as supplementary data.
+
+Now, I need to construct the full chemical formulas. The general formula from the Equation Tool is: (Bi(0.5*(1-z))Na(0.5*(1-x-y-z))K(0.5*x)Li(0.5*y)Ba(z))TiO3
+
+For the series BNKLB-0.15/0.075/z, x=0.15, y=0.075, and z varies.
+
+Let me compute the formulas for each z value:
+
+For z=0.00:
+- Bi: 0.5*(1-0.00) = 0.5
+- Na: 0.5*(1-0.15-0.075-0.00) = 0.5*0.775 = 0.3875
+- K: 0.5*0.15 = 0.075
+- Li: 0.5*0.075 = 0.0375
+- Ba: 0.00
+Formula: (Bi0.5Na0.3875K0.075Li0.0375)TiO3
+
+For z=0.02:
+- Bi: 0.5*(1-0.02) = 0.5*0.98 = 0.49
+- Na: 0.5*(1-0.15-0.075-0.02) = 0.5*0.755 = 0.3775
+- K: 0.5*0.15 = 0.075
+- Li: 0.5*0.075 = 0.0375
+- Ba: 0.02
+Formula: (Bi0.49Na0.3775K0.075Li0.0375Ba0.02)TiO3
+
+For z=0.04:
+- Bi: 0.5*(1-0.04) = 0.5*0.96 = 0.48
+- Na: 0.5*(1-0.15-0.075-0.04) = 0.5*0.735 = 0.3675
+- K: 0.5*0.15 = 0.075
+- Li: 0.5*0.075 = 0.0375
+- Ba: 0.04
+Formula: (Bi0.48Na0.3675K0.075Li0.0375Ba0.04)TiO3
+
+For z=0.06:
+- Bi: 0.5*(1-0.06) = 0.5*0.94 = 0.47
+- Na: 0.5*(1-0.15-0.075-0.06) = 0.5*0.715 = 0.3575
+- K: 0.5*0.15 = 0.075
+- Li: 0.5*0.075 = 0.0375
+- Ba: 0.06
+Formula: (Bi0.47Na0.3575K0.075Li0.0375Ba0.06)TiO3
+
+For z=0.08:
+- Bi: 0.5*(1-0.08) = 0.5*0.92 = 0.46
+- Na: 0.5*(1-0.15-0.075-0.08) = 0.5*0.695 = 0.3475
+- K: 0.5*0.15 = 0.075
+- Li: 0.5*0.075 = 0.0375
+- Ba: 0.08
+Formula: (Bi0.46Na0.3475K0.075Li0.0375Ba0.08)TiO3
+
+For z=0.10:
+- Bi: 0.5*(1-0.10) = 0.5*0.90 = 0.45
+- Na: 0.5*(1-0.15-0.075-0.10) = 0.5*0.675 = 0.3375
+- K: 0.5*0.15 = 0.075
+- Li: 0.5*0.075 = 0.0375
+- Ba: 0.10
+Formula: (Bi0.45Na0.3375K0.075Li0.0375Ba0.10)TiO3
+
+Now, I also need to consider the abbreviation BNKLB-x/y/z. The text defines: "[Bi1-z(Na1-x-y-zKxLiy)]0.5BazTiO3 (abbreviated as BNKLB-x/y/z)". So I should include this abbreviation.
+
+The family is Bi0.5Na0.5TiO3 (BNT)-based.
+
+Let me also check if there are any other compositions mentioned. The text mentions "BNKLB-0/0/0" which is pure BNT (Bi0.5Na0.5TiO3), but no d33 value is given for it in the text. The graph gives d33=152 pC/N for z=0.00 (which is BNKLB-0.15/0.075/0.00, not pure BNT). So I'll only include the compositions from the graph and text.
+
+Now, for the text value: "The piezoelectric constant d33 reaches a maximum value of 205pC/N at z = 0.02" - this is for BNKLB-0.15/0.075/0.02. The graph gives 201 pC/N for the same. I keep the text value 205.
+
+Let me construct the final JSON.
+
+Abbreviations:
+- "BNT": "Bi0.5Na0.5TiO3"
+- "BNKLB": "[Bi1-z(Na1-x-y-zKxLiy)]0.5BazTiO3"
+
+Family: "Bi0.5Na0.5TiO3" or "BNT"
+
+Property unit: "pC/N"
+
+Compositions and values:
+- Text: (Bi0.49Na0.3775K0.075Li0.0375Ba0.02)TiO3: 205
+- Graph: (Bi0.5Na0.3875K0.075Li0.0375)TiO3: 152
+- Graph: (Bi0.48Na0.3675K0.075Li0.0375Ba0.04)TiO3: 150
+- Graph: (Bi0.47Na0.3575K0.075Li0.0375Ba0.06)TiO3: 149
+- Graph: (Bi0.46Na0.3475K0.075Li0.0375Ba0.08)TiO3: 140
+- Graph: (Bi0.45Na0.3375K0.075Li0.0375Ba0.10)TiO3: 122
+
+I'll write the formulas with proper parentheses and notation.```
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(Bi0.5Na0.3875K0.075Li0.0375)TiO3": 152,
+      "(Bi0.49Na0.3775K0.075Li0.0375Ba0.02)TiO3": 205,
+      "(Bi0.48Na0.3675K0.075Li0.0375Ba0.04)TiO3": 150,
+      "(Bi0.47Na0.3575K0.075Li0.0375Ba0.06)TiO3": 149,
+      "(Bi0.46Na0.3475K0.075Li0.0375Ba0.08)TiO3": 140,
+      "(Bi0.45Na0.3375K0.075Li0.0375Ba0.10)TiO3": 122
+    },
+    "abbreviations": {
+      "BNT": "Bi0.5Na0.5TiO3",
+      "BNKLB": "[Bi1-z(Na1-x-y-zKxLiy)]0.5BazTiO3"
+    },
+    "property_unit": "pC/N",
+    "family": "Bi0.5Na0.5TiO3"
+  }
+}
+```"

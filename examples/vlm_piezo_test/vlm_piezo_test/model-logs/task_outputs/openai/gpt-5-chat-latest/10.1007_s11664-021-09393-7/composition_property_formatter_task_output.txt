@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"Pb(Zr0.49Ti0.51)0.7(Zn1/3Nb2/3)0.3O3":420,"(Pb0.98Sr0.02)(Zr0.49Ti0.51)0.7(Zn1/3Nb2/3)0.3O3":470,"(Pb0.96Sr0.04)(Zr0.49Ti0.51)0.7(Zn1/3Nb2/3)0.3O3":496,"(Pb0.94Sr0.06)(Zr0.49Ti0.51)0.7(Zn1/3Nb2/3)0.3O3":460,"(Pb0.92Sr0.08)(Zr0.49Ti0.51)0.7(Zn1/3Nb2/3)0.3O3":440},"property_unit":"pC/N","family":"PZN-PZT"}}

@@ -1,0 +1,3 @@
+# db folder details
+
+This directory contains vector databases for the 49 test articles (1 article from Wiley was not retrievable out of 50 test articles) used in the Visual Language Models (VLMs) evaluation for extracting information from graphs of the piezoelectric journal articles. The details about the evaluation process and the results can be found at https://slimeslab.github.io/ComProScanner/news/comproscanner-now-has-graph-extraction-benchmarking-vlms-on-piezoelectric-data/. The databases are created using ChromaDB with DOI numbers as folder names, where '/' characters are replaced with '_'. **However, due to size limitations, the databases are not included in this repository.**

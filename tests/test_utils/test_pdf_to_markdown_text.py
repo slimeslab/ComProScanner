@@ -18,6 +18,11 @@ from comproscanner.utils.pdf_to_markdown_text import PDFToMarkdownText
 from comproscanner.utils.error_handler import ValueErrorHandler
 
 
+class _FakeCaptionNode:
+    def __init__(self, text):
+        self.text = text
+
+
 class TestPDFToMarkdownText:
     """Test cases for PDFToMarkdownText class"""
 
@@ -110,6 +115,118 @@ class TestPDFToMarkdownText:
         result = pdf_converter.convert_to_markdown()
         assert result is None
         mock_converter_instance.convert.assert_called_once_with("test.pdf")
+
+    @patch("comproscanner.utils.pdf_to_markdown_text.DocumentConverter")
+    def test_extract_caption_text_uses_fallback_caption_attrs(self, mock_converter):
+        """Fallback caption fields should be used when caption_text() is blank"""
+        pdf_converter = PDFToMarkdownText(source="test.pdf")
+        pdf_converter._document = MagicMock()
+
+        fake_element = MagicMock()
+        fake_element.caption_text.return_value = ""
+        fake_element.captions = [_FakeCaptionNode(" d33 vs composition ")]
+
+        caption_text = pdf_converter._extract_caption_text(fake_element)
+
+        assert caption_text == "d33 vs composition"
+
+    @patch("comproscanner.utils.pdf_to_markdown_text.TableItem")
+    @patch("comproscanner.utils.pdf_to_markdown_text.PictureItem")
+    @patch("comproscanner.utils.pdf_to_markdown_text.DocumentConverter")
+    def test_extract_and_save_figures_uses_fallback_caption_attrs(
+        self, mock_converter, mock_picture_item, mock_table_item
+    ):
+        """Figure extraction should save matches found via fallback caption fields"""
+        pdf_converter = PDFToMarkdownText(source="test.pdf")
+
+        fake_picture_base = type("FakePictureBase", (), {})
+        fake_element = fake_picture_base()
+        fake_element.caption_text = MagicMock(return_value="")
+        fake_element.captions = [_FakeCaptionNode("d33 vs composition")]
+        fake_image = MagicMock()
+        fake_image.save = MagicMock()
+        fake_element.get_image = MagicMock(return_value=fake_image)
+
+        fake_document = MagicMock()
+        fake_document.iterate_items.return_value = [(fake_element, 0)]
+        pdf_converter._document = fake_document
+
+        main_figure_keywords = {"exact_keywords": ["d33"], "substring_keywords": []}
+
+        with (
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.PictureItem",
+                fake_picture_base,
+            ),
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.TableItem",
+                type("FakeTableBase", (), {}),
+            ),
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.update_info_json"
+            ) as mock_update,
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.save_figure_from_bytes",
+                return_value="saved.jpg",
+            ) as mock_save,
+        ):
+            result = pdf_converter.extract_and_save_figures(
+                "10.1000/test.doi",
+                main_figure_keywords,
+                base_path="results/test_figures",
+            )
+
+        assert result is True
+        mock_update.assert_called_once()
+        mock_save.assert_called_once()
+
+    @patch("comproscanner.utils.pdf_to_markdown_text.TableItem")
+    @patch("comproscanner.utils.pdf_to_markdown_text.PictureItem")
+    @patch("comproscanner.utils.pdf_to_markdown_text.DocumentConverter")
+    def test_extract_and_save_figures_saves_all_when_no_main_figure_keywords(
+        self, mock_converter, mock_picture_item, mock_table_item
+    ):
+        """When main_figure_keywords is None all figures should be saved regardless of caption"""
+        pdf_converter = PDFToMarkdownText(source="test.pdf")
+
+        fake_picture_base = type("FakePictureBase", (), {})
+        fake_element = fake_picture_base()
+        fake_element.caption_text = MagicMock(return_value="")
+        fake_element.captions = [_FakeCaptionNode("some unrelated caption")]
+        fake_image = MagicMock()
+        fake_image.save = MagicMock()
+        fake_element.get_image = MagicMock(return_value=fake_image)
+
+        fake_document = MagicMock()
+        fake_document.iterate_items.return_value = [(fake_element, 0)]
+        pdf_converter._document = fake_document
+
+        with (
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.PictureItem",
+                fake_picture_base,
+            ),
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.TableItem",
+                type("FakeTableBase", (), {}),
+            ),
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.update_info_json"
+            ) as mock_update,
+            patch(
+                "comproscanner.utils.pdf_to_markdown_text.FigureExtractor.save_figure_from_bytes",
+                return_value="saved.jpg",
+            ) as mock_save,
+        ):
+            result = pdf_converter.extract_and_save_figures(
+                "10.1000/test.doi",
+                main_figure_keywords=None,
+                base_path="results/test_figures",
+            )
+
+        assert result is True
+        mock_update.assert_called_once()
+        mock_save.assert_called_once()
 
     def test_clean_text_with_image_placeholders(self):
         """Test clean_text method with image placeholders"""
@@ -262,4 +379,45 @@ class TestPDFToMarkdownText:
         assert result_df.iloc[0]["comp_methods"] == ""
         assert result_df.iloc[0]["results_discussion"] == ""
         assert result_df.iloc[0]["conclusion"] == ""
+        mock_vector_db_manager.create_database.assert_not_called()
+
+    @patch("comproscanner.utils.pdf_to_markdown_text.DocumentConverter")
+    @patch("os.path.exists")
+    @patch("os.listdir")
+    def test_append_section_to_df_keeps_article_when_caption_matches(
+        self, mock_listdir, mock_exists, mock_converter
+    ):
+        """Test caption keyword matches keep the article even without text keyword hits"""
+        mock_exists.return_value = True
+        mock_listdir.return_value = ["folder1", "folder2"]
+        sections = [
+            "# Title\nSample Title",
+            "## Abstract\nThis abstract does not mention the target property.",
+            "## Introduction\nThis is the introduction.",
+            "## Results\nThese are the results.",
+            "## Conclusion\nThis is the conclusion.",
+        ]
+
+        mock_vector_db_manager = MagicMock()
+        mock_logger = MagicMock()
+        property_keywords = {
+            "piezoelectric": ["piezoelectric", "piezo"],
+            "ferroelectric": ["ferroelectric", "ferro"],
+        }
+        pdf_converter = PDFToMarkdownText(source="test.pdf")
+        result_df = pdf_converter.append_section_to_df(
+            req_sections=sections,
+            doi="10.1000/test.doi",
+            article_title="Test Article",
+            publication_name="Test Journal",
+            publisher="Test Publisher",
+            property_keywords=property_keywords,
+            vector_db_manager=mock_vector_db_manager,
+            logger=mock_logger,
+            has_caption_keyword_match=True,
+        )
+
+        assert result_df.iloc[0]["is_property_mentioned"] == "1"
+        assert result_df.iloc[0]["abstract"] != ""
+        assert result_df.iloc[0]["results_discussion"] != ""
         mock_vector_db_manager.create_database.assert_not_called()

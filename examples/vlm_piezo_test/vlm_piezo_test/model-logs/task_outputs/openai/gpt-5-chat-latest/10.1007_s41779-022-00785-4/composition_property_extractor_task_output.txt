@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi0.47Na0.47Ba0.06TiO3":122,"Bi0.46La0.01Na0.47Ba0.06TiO3":131,"Bi0.44La0.03Na0.47Ba0.06TiO3":null,"Bi0.42La0.05Na0.47Ba0.06TiO3":null},"abbreviations":{},"property_unit":"pC/N","family":"Na0.5Bi0.5TiO3-BaTiO3"}}

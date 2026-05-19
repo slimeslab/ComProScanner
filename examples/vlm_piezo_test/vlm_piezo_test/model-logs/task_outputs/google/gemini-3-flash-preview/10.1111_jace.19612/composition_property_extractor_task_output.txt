@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"(K0.5Na0.5)NbO3":61,"((K0.5Na0.5)0.985Sm0.005)NbO3":94,"((K0.5Na0.5)0.97Sm0.01)NbO3":72,"((K0.5Na0.5)0.955Sm0.015)NbO3":47,"((K0.5Na0.5)0.94Sm0.02)NbO3":23},"abbreviations":{"KNSN":"((K0.5Na0.5)1-3xSmx)NbO3"},"property_unit":"pC/N","family":"KNN"}}

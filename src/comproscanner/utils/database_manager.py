@@ -44,7 +44,14 @@ logger = setup_logger("comproscanner.log", module_name="database_manager")
 
 
 class MySQLDatabaseManager:
+    """Manages a MySQL database for storing article extraction results via SQLAlchemy."""
+
     def __init__(self, main_keyword: str, is_sql_db: bool = False):
+        """
+        Args:
+            main_keyword (str): Property keyword used to derive the database configuration.
+            is_sql_db (bool, optional): Whether to initialise the SQL engine. Defaults to False.
+        """
         if is_sql_db:
             try:
                 is_sql_db = True
@@ -58,12 +65,26 @@ class MySQLDatabaseManager:
                 logger.error(f"Error: {e}...")
 
     def table_exists(self, table_name):
+        """Check whether a table exists in the database.
+
+        Args:
+            table_name (str): Name of the table to check.
+
+        Returns:
+            bool: True if the table exists, False otherwise.
+        """
         try:
             return self.inspector.has_table(table_name)
         except Exception as e:
             logger.error(f"Error: {e}...")
 
     def _create_table(self, table_name, df):
+        """Create a new table in the database with columns derived from the DataFrame.
+
+        Args:
+            table_name (str): Name of the table to create.
+            df (pd.DataFrame): DataFrame whose columns define the table schema.
+        """
         while True:
             try:
                 table = Table(table_name, self.metadata)
@@ -96,6 +117,12 @@ class MySQLDatabaseManager:
                 continue
 
     def _append_data(self, table_name, df):
+        """Append rows from the DataFrame to the table, skipping already-present DOIs.
+
+        Args:
+            table_name (str): Target table name.
+            df (pd.DataFrame): DataFrame containing rows to append.
+        """
         while True:
             try:
                 table = Table(table_name, self.metadata, autoload_with=self.sql_engine)
@@ -120,6 +147,12 @@ class MySQLDatabaseManager:
                 continue
 
     def write_to_sql_db(self, table_name, final_df):
+        """Write the DataFrame to the SQL database, creating the table if necessary.
+
+        Args:
+            table_name (str): Target table name.
+            final_df (pd.DataFrame): DataFrame to write. Empty DataFrames are ignored.
+        """
         # If the new dataframe is not empty, append it to the database
         if not final_df.empty:
             while True:
@@ -147,10 +180,21 @@ class MySQLDatabaseManager:
 
 
 class CSVDatabaseManager:
+    """Manages writing article extraction results to CSV files."""
+
     def __init__(self):
         pass
 
     def write_to_csv(self, final_df, filepath, keyword, source, csv_batch_size):
+        """Write the DataFrame to a CSV file, appending new rows and skipping duplicate DOIs.
+
+        Args:
+            final_df (pd.DataFrame): DataFrame containing article data to write.
+            filepath (str): Directory path where the CSV file will be created.
+            keyword (str): Property keyword used to construct the output filename.
+            source (str): Publisher/source label used to construct the output filename.
+            csv_batch_size (int): Batch size; values greater than 1 trigger an info log.
+        """
         if csv_batch_size > 1:
             logger.info("Writing to CSV...")
         try:

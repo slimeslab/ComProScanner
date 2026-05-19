@@ -35,8 +35,7 @@ from ..utils.error_handler import ValueErrorHandler, KeyboardInterruptHandler
 from ..utils.logger import setup_logger
 from ..utils.common_functions import return_error_message
 from ..utils.prepare_iop_files import PrepareIOPFiles
-from ..utils.figure_extractor import FigureExtractor
-
+from ..utils.figure_extractor import FigureExtractor, record_failed_article
 
 # configure logger
 logger = setup_logger("comproscanner.log", module_name="iop_processor")
@@ -74,7 +73,10 @@ class IOPArticleProcessor:
         doi_list: list = None,
         is_sql_db: bool = False,
         rag_config: RAGConfig = RAGConfig(),
-        caption_keywords: dict = None,
+        main_figure_keywords: dict = None,
+        additional_figure_keywords: dict = None,
+        save_failed_automated_report: bool = True,
+        failed_automated_report_path: str = None,
     ):
         keyword_message = return_error_message("main_property_keyword")
         property_keywords_message = return_error_message("property_keywords")
@@ -103,7 +105,12 @@ class IOPArticleProcessor:
         self.doi_list = doi_list
         self.is_sql_db = is_sql_db
         self.rag_config = rag_config
-        self.caption_keywords = caption_keywords
+        self.main_figure_keywords = (
+            main_figure_keywords
+            if main_figure_keywords is not None
+            else property_keywords
+        )
+        self.additional_figure_keywords = additional_figure_keywords
         # Takes from config file
         self.timeout_file = self.all_paths.TIMEOUT_DOI_LOG_FILENAME
         self.article_related_keywords = ArticleRelatedKeywords()
@@ -129,11 +136,27 @@ class IOPArticleProcessor:
         self.csv_filepath = (
             f"{self.csv_path}/{self.source}_{self.keyword}_paragraphs.csv"
         )
+        self.save_failed_automated_report = save_failed_automated_report
+        self.failed_automated_report_path = (
+            failed_automated_report_path or "results/failed_automated_articles.txt"
+        )
+        self.failed_automated_count = 0
 
         self.sql_db_manager = MySQLDatabaseManager(self.keyword, self.is_sql_db)
         self.csv_db_manager = CSVDatabaseManager()
         self.vector_db_manager = VectorDatabaseManager(rag_config=self.rag_config)
         self._iop_revision_cache = {}
+
+    def _record_failed_article(self, doi: str, reason: str) -> None:
+        """Record a failed article to the automated failure report."""
+        self.failed_automated_count += 1
+        record_failed_article(
+            doi,
+            self.source,
+            reason,
+            self.failed_automated_report_path,
+            self.save_failed_automated_report,
+        )
 
     def _get_first_xpath_text(self, root, xpath_expr: str) -> str:
         values = root.xpath(xpath_expr)
@@ -376,7 +399,8 @@ class IOPArticleProcessor:
 
     def _extract_and_save_figures(self, root, doi: str, xml_dir: str):
         """
-        Extract figures from IOP JATS XML whose captions match self.caption_keywords.
+        Extract figures from IOP JATS XML and save them. If self.main_figure_keywords is
+        provided only figures whose captions match are saved; if None, all figures are saved.
         Tries local image files first (co-located with the XML), then IOP CDN as fallback.
         Saves to results/extracted_data/{keyword}/related_figures/{doi_}/.
 
@@ -385,8 +409,6 @@ class IOPArticleProcessor:
             doi (str): Article DOI.
             xml_dir (str): Directory containing the XML file (for local image lookup).
         """
-        if not self.caption_keywords:
-            return
         base_path = f"results/extracted_data/{self.keyword}/related_figures"
         try:
             XLINK = "http://www.w3.org/1999/xlink"
@@ -401,6 +423,7 @@ class IOPArticleProcessor:
                     "IOP content CDN figure fallback may fail."
                 )
             figures = root.xpath('.//*[local-name()="fig"]')
+            has_caption_keyword_match = False
             for i, figure in enumerate(figures):
                 caption_id = figure.get("id", f"fig_{i}")
 
@@ -416,11 +439,17 @@ class IOPArticleProcessor:
                 ).strip()
                 caption_text = f"{label_text} {para_text}".strip()
 
-                if not FigureExtractor.keyword_matches_caption(
-                    caption_text, self.caption_keywords
-                ):
+                main_match = FigureExtractor.keyword_matches_caption(
+                    caption_text, self.main_figure_keywords
+                )
+                additional_match = self.additional_figure_keywords and FigureExtractor.keyword_matches_caption(
+                    caption_text, self.additional_figure_keywords
+                )
+                if not main_match and not additional_match:
                     continue
 
+                if main_match:
+                    has_caption_keyword_match = True
                 FigureExtractor.update_info_json(
                     doi, caption_id, caption_text, base_path
                 )
@@ -486,8 +515,10 @@ class IOPArticleProcessor:
                         f"Could not download IOP figure '{caption_id}' for {doi} "
                         "from content CDN; caption saved to info.json only."
                     )
+            return has_caption_keyword_match
         except Exception as e:
             logger.warning(f"Error extracting figures from IOP XML for {doi}: {e}")
+            return False
 
     def _extract_paragraphs(self, element):
         paragraphs = element.xpath('.//*[local-name()="p"]')
@@ -519,6 +550,7 @@ class IOPArticleProcessor:
         article_title,
         publication_name,
         publisher,
+        has_caption_keyword_match: bool = False,
     ):
         def _append_section(section):
             """
@@ -618,9 +650,11 @@ class IOPArticleProcessor:
 
         # Check if property is mentioned in the article
         total_text = f"#TITLE:\n{all_req_data['article_title']}\n\n# ABSTRACT:\n{all_req_data["abstract"]}\n\n# INTRODUCTION:\n{all_req_data["introduction"]}\n\n# EXPERIMENTAL SYNTHESIS:\n{all_req_data["exp_methods"]}\n\n# COMPUTATIONAL METHODOLOGY:\n{all_req_data["comp_methods"]}\n\n# RESULTS AND DISCUSSION:\n{all_req_data["results_discussion"]}\n\n# CONCLUSION\n{all_req_data["conclusion"]}"
+        has_text_property_match = False
         for item in self.property_keywords.values():
             for keyword in item:
                 if keyword in total_text:
+                    has_text_property_match = True
                     all_req_data["is_property_mentioned"] = "1"
                     modified_doi = doi.replace("/", "_")
                     if self.vector_db_manager.database_exists(modified_doi):
@@ -635,6 +669,22 @@ class IOPArticleProcessor:
                             db_name=modified_doi, article_text=total_text
                         )
                     break
+            if has_text_property_match:
+                break
+        if has_caption_keyword_match and not has_text_property_match:
+            all_req_data["is_property_mentioned"] = "1"
+            modified_doi = doi.replace("/", "_")
+            if self.vector_db_manager.database_exists(modified_doi):
+                logger.warning(
+                    f"Vector Database already exists for {doi}...Skipping..."
+                )
+            else:
+                logger.info(
+                    f"Target caption keyword matched for {doi}; creating vector database for RAG..."
+                )
+                self.vector_db_manager.create_database(
+                    db_name=modified_doi, article_text=total_text
+                )
         if all_req_data["is_property_mentioned"] == "0":
             all_req_data["abstract"] = ""
             all_req_data["introduction"] = ""
@@ -828,12 +878,16 @@ class IOPArticleProcessor:
                             logger.error(
                                 f"Error processing IOP article with DOI {doi}. Skipping..."
                             )
+                            self._record_failed_article(doi, "xml_parse_failed")
                             continue
-                        self._extract_and_save_figures(root, doi, self.iop_folderpath)
+                        has_caption_keyword_match = self._extract_and_save_figures(
+                            root, doi, self.iop_folderpath
+                        )
                         body_element = root.xpath('.//*[local-name()="body"]')
                         body = body_element[0] if body_element else None
                         if body is None:
                             logger.error(f"Body not found for DOI: {doi}. Skipping...")
+                            self._record_failed_article(doi, "body_not_found")
                             continue
                         tables = body.xpath('.//*[local-name()="table"]')
                         if tables:
@@ -854,6 +908,7 @@ class IOPArticleProcessor:
                             row["article_title"],
                             row["publication_name"],
                             row["metadata_publisher"],
+                            has_caption_keyword_match=has_caption_keyword_match,
                         )
                         sql_dataframes.append(row)
                         csv_dataframes.append(row)
@@ -918,3 +973,11 @@ class IOPArticleProcessor:
         self._process_articles()
         logger.verbose(f"\n\nIOP articles processing completed...\n\n")
         logger.info(f"\nTotal valid property articles: {self.valid_property_articles}")
+        if self.failed_automated_count > 0:
+            logger.warning(
+                f"Total failed IOP articles (download/parse): {self.failed_automated_count}"
+            )
+            if self.save_failed_automated_report:
+                logger.info(
+                    f"Failed automated report saved to: {self.failed_automated_report_path}"
+                )

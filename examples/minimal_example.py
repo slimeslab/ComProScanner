@@ -12,5 +12,5 @@ if __name__ == "__main__":
 
     comproscanner.extract_composition_property_data(
         main_extraction_keyword="d33",
-        json_results_file="deepseek/deepseek-v3-piezo-ceramic-test-results.json",
+        json_results_file="deepseek/deepseek-v3-0324-piezo-ceramic-test-results.json",
     )

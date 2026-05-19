@@ -24,6 +24,11 @@ class MaterialParserInput(BaseModel):
 
 
 class MaterialParserTool(BaseTool):
+    """CrewAI tool that resolves variable chemical formulas to canonical forms via the Material Parsers API.
+
+    Sends each composition key in the input dict to https://lfoppiano-material-parsers.hf.space and returns the API-resolved formula in place of the original key. Falls back to the original formula on API errors or unresolvable inputs.
+    """
+
     name: str = "Material Formula Parser"
     description: str = (
         "Parses and resolves chemical formulas with variables from a JSON structure containing compositions and their associated values. "
@@ -77,14 +82,18 @@ class MaterialParserTool(BaseTool):
                     compositions = data["compositions"]
                 elif "compositions_property_values" in data:
                     compositions = data["compositions_property_values"]
+                else:
+                    # Agent passed raw composition-value pairs without a wrapper key;
+                    # treat the whole dict as compositions, excluding known metadata fields.
+                    non_comp_keys = {"property_unit", "family", "abbreviations"}
+                    compositions = {
+                        k: v for k, v in data.items() if k not in non_comp_keys
+                    }
 
-            # Get unit information, checking various possible field names
+            # Get unit information
             unit = ""
-            if isinstance(data, dict):
-                if "{composition_property_text_data}_unit" in data:
-                    unit = data["{composition_property_text_data}_unit"]
-                elif "property_unit" in data:
-                    unit = data["property_unit"]
+            if isinstance(data, dict) and "property_unit" in data:
+                unit = data["property_unit"]
 
             # Get family information
             family = ""

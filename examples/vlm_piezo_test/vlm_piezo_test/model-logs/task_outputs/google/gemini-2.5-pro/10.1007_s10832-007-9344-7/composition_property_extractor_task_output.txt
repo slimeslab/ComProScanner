@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"(Bi0.5Na0.5)(Ti(0.992)Sb(0.004)Nb(0.004))O3":97},"abbreviations":{"BNT":"Bi1/2Na1/2TiO3"},"property_unit":"pC/N","family":"Bi1/2Na1/2TiO3"}}

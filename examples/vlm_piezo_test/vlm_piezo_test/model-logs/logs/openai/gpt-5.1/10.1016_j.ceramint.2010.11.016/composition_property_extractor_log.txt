@@ -1,0 +1,362 @@
+2026-05-01 12:09:44: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2010.11.016.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2010.11.016 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Stoichiometric PLGZNT ceramic compositions synthesized.
+|Formulae|
+|---|
+|General formula|[Pb(1\u2212w\u2212x)La w Gd x ][(ZrzTi1\u2212z)(1\u2212(w/4)\u2212(x/4)\u2212(5*k/4))NbkO3]|
+|PLGZNT|[Pb(0.988\u2212x)La0.012Gd x ][(Zr0.53Ti0.47)(0.972\u2212(x/4))Nb0.02O3]\u2014(PLGZNT)|
+|mol%|w =La=1.2, z =Zr=53, 1\u2212 z =Ti=47, k =Nb=2 and x =Gd=0, 0.2, 0.4, 0.6, 0.8, and 1|
+|0|0.988PbO+0.006La2O3 +0.51516ZrO2 +0.45684TiO2 +0.01Nb2O5 \u2192[Pb0.988La0.012Gd0][Zr0.53Ti0.47](\u0394E^{B} 0.972)Nb0.02O3|
+|0.2|0.986PbO+0.006La2O3 +0.001Gd2O3 +0.514895ZrO2 +0.456605TiO2 +0.01Nb2O5 \u2192[Pb0.986La0.012Gd0.002][Zr0.53Ti0.47](\u0394E^{B} 0.9715)Nb0.02O3|
+|0.4|0.984PbO+0.006La2O3 +0.002Gd2O3 +0.51463ZrO2 +0.45637TiO2 +0.01Nb2O5 \u2192[Pb0.984La0.012Gd0.004][Zr0.53Ti0.47](\u0394E^{B} 0.971)Nb0.02O3|
+|0.6|0.982PbO+0.006La2O3 +0.003Gd2O3 +0.514365ZrO2 +0.456135TiO2 +0.01Nb2O5 \u2192[Pb0.982La0.012Gd0.006][Zr0.53Ti0.47](\u0394E^{B} 0.9705)Nb0.02O3|
+|0.8|0.980PbO+0.006La2O3 +0.004Gd2O3 +0.51410ZrO2 +0.45590TiO2 +0.01Nb2O5 \u2192[Pb0.980La0.012Gd0.008][Zr0.53Ti0.47](\u0394E^{B} 0.97)Nb0.02O3|
+|1|0.978PbO+0.006La2O3 +0.005Gd2O3 +0.513835ZrO2 +0.455665TiO2 +0.01Nb2O5 \u2192[Pb0.978La0.012Gd0.01][Zr0.53Ti0.47](\u0394E^{B} 0.9695)Nb0.02O3|
+
+Table 2. Tolerance factor (t) and averaged electronegativity difference (e) of PLGZNT ceramics.
+|Gd (mol%)|Tolerance factor (t)|Averaged electronegativity difference (e)|
+|---|---|---|
+|0|0.8276|1.564|
+|0.2|0.8276|1.565|
+|0.4|0.8275|1.566|
+|0.6|0.8275|1.567|
+|0.8|0.8274|1.568|
+|1.0|0.8274|1.569|
+
+Table 3. Ionic radii of elements in PLGZNT ceramics [20].
+|Elements|Ionic radii|Fold|
+|---|---|---|
+|PbE^{2+}|1.49|12|
+|LaE^{3+}|1.36|12|
+|GdE^{3+}|1.107|9|
+|ZrE^{4+}|0.72|6|
+|TiE^{4+}|0.605|6|
+|NbE^{5+}|0.64|6|
+|OE^{2\u2212}|1.4|6|
+
+# RESULTS AND DISCUSSION
+depicts X-ray diffraction patterns of Gd modified lead lanthanum zirconium niobium titanate (designated as PLGZNT) ceramics. All the XRD patterns were found to have single phase with tetragonal structure. XRD studies revealed that GdE^{3+} doping at A-site of PLZNT lattice resulted in enhanced tetragonality. It can be seen that the peaks of the (002) and (200), (102) and (201), (112) and (211) planes correspond to tetragonal symmetry. It is reported that GdE^{3+} with smaller ionic radius (0.93\xc5) similar to that of ZrE^{4+}/TiE^{4+} =0.72\xc5/0.605\xc5 enters B-site while GdE^{3+} ions having higher ionic radius (1.107\xc5) occupy the A-sites which is similar to that of PbE^{2+} =1.49\xc5. It is reported that the vacancies could exist at both A and B sites in PLZT lattice. In our study, it is expected that GdE^{3+} (1.107\xc5) occupies A-site and creates vacancies on B-site due to the approximately similar ionic radii of PbE^{2+} (1.49\xc5) and LaE^{3+} (1.36\xc5) at A-site. Shannon reported that the ionic radii of GdE^{3+} with 6 fold coordination is 0.93\xc5 whereas the ionic radii of GdE^{3+} with 9 fold coordination is 1.107\xc5. The substitution of LaE^{3+} and GdE^{3+} ions on the PbE^{2+} lattice sites were charge compensated by the formation of VB '''' small cationic vacancies on the Zr/Ti lattice sites. The trivalent ions LaE^{3+} and GdE^{3+} partially substitute PbE^{2+} and cationic vacancies are created on B-site. According to Goldschmidt, a perovskite is stable only if a tolerance factor, t, falls in between 0.8< t <0.99 and beyond this range indicates distortion in perovskite structure. Besides, using the tolerance factor, t, to classify the perovskite structure, the average electronegativity can be calculated as :  In the above expression, the individual electronegativities of A and B-cations, and O-anions are represented by \u03c7 A, \u03c7 B and \u03c7 O, respectively. By using the stoichiometric chemical equation for the perovskite system, the averaged electronegativity difference (e) can be written as:  shows the tolerance factor (t) and averaged electronegativity difference (e) of PLGZNT ceramics. In our study, the calculated tolerance factor (t) values of tetragonal structured PLGZNT ceramics fall within the perovskite range and showed a consistent trend with a slight variation of 0.0001 in t values supporting the tetragonal perovskite. Concurrently, the averaged electronegativity difference (e) of tetragonal structured PLGZNT ceramics showed a consistent trend with a slight variation of 0.001 in e values that characterize tetragonal perovskite lattice. depicts scanning electron micrographs of fractured surface of Gd modified PLZNT ceramics, respectively. The grains were homogenous in nature and the grain growth increased as Gd content increased up to 0.6mol%. The grain growth inhibition at 1mol% Gd can be ascribed to the grain-boundary pinning process induced by the own presence of (substitutional and/or interstitial) Gd, which resulted in inhibited grain growth. The grain growth increment could be attributed to the different dopants (LaE^{3+}, GdE^{3+} and NbE^{5+}) at the grain boundaries and lead vacancies caused by the dopants whereas the grain growth inhibition could have been caused by the excess Gd ions stagnating at the grain boundaries hindering the mobility. In our study, we observed a grain growth up to 0.6mol% Gd after which grain growth inhibited. A similar decrease in grain growth has been reported. shows apparent density of Gd modified PLZNT ceramics. In our study, it is observed that the density showed an increasing trend till 0.6mol% Gd doped PLZNT ceramic. This could be accredited to the homogeneous grains without pores due to two trivalent ions at A-site in the PLGZNT lattice. The maximum density can be observed in 0.6mol% (7.724gm/cmE^{3}) PLGZNT ceramic. (i\u2013iv) shows temperature dependent dielectric properties of Gd modified PLZNT ceramics at 1kHz, respectively. Dielectric studies indicated that room temperature dielectric response enhanced (\u025b RT =2342) up to 0.6mol% Gd which could be due to the enhanced electric-dipole polarization in the PLGZNT lattice. When compared to the undoped, the dielectric constant of PLGZNT ceramics increased rapidly and reached a maximum at 0.6mol% Gd. As Gd content increased, the Curie temperature (331\u2013253\xb0C) and dielectric loss showed a decreasing trend while the dielectric maximum (\u025b Tc =23,108) increased constantly throughout the series. The dielectric properties of PLZT ceramics are known to depend on the grain growth and density of the ceramics. Okazaki and Nagata have observed that, in PLZT ceramics (La:Zr:Ti=48:65:35), T c increases and K max decreases with decreasing grain growth. In our study, we chose the solid solutions with La:Zr:Ti=1.2/53:47 near morphotrophic phase boundary having a tetragonal symmetry. Moreover, GdE^{3+} and LaE^{3+} both occupied at A-site in PLGZNT lattice due to the approximately similar ionic radii and vacancies created in the B-site. Thus, the charge compensation occur by the creation of vacancies at B-site and as Gd content increased the polarization also increased and attained saturation at 0.6mol% Gd reaching the solid solubility limit which is not comparable with PLNZNT ( ). shows the piezoelectric charge coefficient (d 33) and piezoelectric planar coupling coefficient (k p) of Gd modified PLZNT ceramics, respectively. It is observed that d 33 and k p enhanced with increasing Gd content up to 0.6mol%. The piezoelectric properties both piezoelectric charge coefficient (d 33 =574pC/N) and electromechanical planar coupling coefficient (k p =0.589) for PLGZNT system increased with the increasing Gd content up to 0.6mol% and thereafter decreased. PbE^{2+}, LaE^{3+}, ZrE^{4+} and TiE^{4+} are replaced partially by cations (GdE^{3+} at A-site) and (NbE^{5+} at B-site) with similar ionic radii as those of the replaced ions, respectively. In the case of tetragonal PZT ceramics, 50% of the domains perpendicular to the applied field can be reoriented by poling and about 44% of them are maintained after removing the poling field. The piezoelectric properties strongly depend on the grains and dopant concentrations as well as MPB region. Maximum values of d 33 (574pC/N) and k p (0.589) are found in 0.6 mol% Gd doped PLZNT ceramic. The d 33 and k p reported in this series are larger than those of earlier studies.
+
+# ABSTRACT
+This paper reports the dielectric and piezoelectric properties of rare-earth Gd modified PLZNT solid solutions with a stoichiometric formula [Pb(0.988−x)La0.012Gd
+                        x
+                     ][(Zr0.53Ti0.47)(0.972−(x/4))Nb0.02O3] (hereafter known as PLGZNT) with x
+                     =0, 0.2, 0.4, 0.6, 0.8 and 1.0mol% synthesized through solid state reaction method for phase formation, microstructure, dielectric and piezoelectric properties. The powder X-ray diffraction results obtained for PLGZNT ceramics showed pure perovskite phase with tetragonal symmetry sintered at 1245°C supported by an accurate structure analysis of tolerance factor (t) and averaged electronegativity difference (e). The optimum dielectric (ɛ
+                     RT and tan
+                     δ) and piezoelectric properties (d
+                     33 and k
+                     p) were observed in 0.6mol% Gd modified PLZNT ceramic composition which attained saturation and thereafter decreased.
+
+# INTRODUCTION
+The most important ferroelectric ceramics crystallize in the ABO3 structured perovskite. LaE^{3+} modified at A-site in Pb(Zr,Ti)O3 lattice known as (Pb,La)(Zr,Ti)O3 is a well-known ferroelectric solid solution. PLZT has been extensively studied as it has interesting functional properties close to the morphotrophic phase boundary (MPB, Zr:Ti\u224852:48) on its phase diagram. The polycrystalline solid solutions of PLZT provide an excellent piezoelectric property after electrical poling. The crucial step in PLZT fabrication is the final sintering process. Perovskite structured PLZT has been modified with many dopants such as Ag , Sm , Nd , Fe , Mn , Zn , Dy , Ce , and Yb. The morphotrophic phase boundary (MPB) is the point where the solid solution ceramic system at room temperature undergoes a morphotrophic phase transition in which the ferroelectric tetragonal structure transforms to a ferroelectric rhombohedral structure or vice versa depending on various factors such as Zr/Ti ratio, effect of dopants, and synthesis route. The dielectric and piezoelectric properties of PLZT doped with additives show anomalies near MPB. It is also known that pentavalent element NbE^{5+} (donor type) produces Pb vacancies (A-vacancy in ABO3 perovskite) in PZT and enhances domain reorientation , resulting in high dielectric and piezoelectric properties. We have been systematically studying either single or multiple soft and hard doping in PLZT lattice at different Zr/Ti ratios near MPB. However, the effect of rare-earth Gd substitution in the PLZT lattice for dielectric and piezoelectric properties is very limited. In this work, we investigated the dopant (Gd) influence on perovskite PLZNT to understand the mutual dependence of phase formation, stoichiometry, microstructure, physical and functional properties. The stoichiometric compositions of PLGZNT are given in.
+
+# CONCLUSION
+In conclusion, the perovskite structured [Pb(0.988\u2212x)La0.012Gd x ][(Zr0.53Ti0.47)(0.972\u2212(x/4))Nb0.02O3] solid solutions have been synthesized through solid state reaction route. X-ray diffraction patterns of PLGZNT with peak splittings of (002) and (200), (102) and (201), (112) and (211) correspond to ferroelectric tetragonal phase. The calculated tolerance factor (t) and averaged electronegativity difference (e) values of PLGZNT ceramics confirmed the tetragonal perovskite symmetry. The homogeneous microstructure could be credited to grains without pores and two trivalent ions at A-site in the PLGZNT lattice which promoted the density till 0.6mol% Gd. Dielectric constant at room temperature enhanced up to 0.6mol% Gd along with dielectric maximum whereas Curie temperature and dielectric loss continuously decreased. The piezoelectric properties (d 33 and k p) enhanced due to the presence of two trivalent cations at A-site in the perovskite and increasing Gd content contributed considerably to the piezoelectric effect. Among the series, 0.6mol% Gd showed optimum dielectric and piezoelectric properties. In our study, the advantages of Gd modified PLZNT showed improved properties of density, dielectric constant (\u025b Tc), piezoelectric properties (d 33, k p) with low T c and tan \u03b4 RT up to 0.6mol% than PLZNT. The main disadvantage of Gd modified PLZNT is higher concentrations of Gd led to deterioration of properties.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 12:10:40: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2010.11.016.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2010.11.016 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Stoichiometric PLGZNT ceramic compositions synthesized.
+|Formulae|
+|---|
+|General formula|[Pb(1\u2212w\u2212x)La w Gd x ][(ZrzTi1\u2212z)(1\u2212(w/4)\u2212(x/4)\u2212(5*k/4))NbkO3]|
+|PLGZNT|[Pb(0.988\u2212x)La0.012Gd x ][(Zr0.53Ti0.47)(0.972\u2212(x/4))Nb0.02O3]\u2014(PLGZNT)|
+|mol%|w =La=1.2, z =Zr=53, 1\u2212 z =Ti=47, k =Nb=2 and x =Gd=0, 0.2, 0.4, 0.6, 0.8, and 1|
+|0|0.988PbO+0.006La2O3 +0.51516ZrO2 +0.45684TiO2 +0.01Nb2O5 \u2192[Pb0.988La0.012Gd0][Zr0.53Ti0.47](\u0394E^{B} 0.972)Nb0.02O3|
+|0.2|0.986PbO+0.006La2O3 +0.001Gd2O3 +0.514895ZrO2 +0.456605TiO2 +0.01Nb2O5 \u2192[Pb0.986La0.012Gd0.002][Zr0.53Ti0.47](\u0394E^{B} 0.9715)Nb0.02O3|
+|0.4|0.984PbO+0.006La2O3 +0.002Gd2O3 +0.51463ZrO2 +0.45637TiO2 +0.01Nb2O5 \u2192[Pb0.984La0.012Gd0.004][Zr0.53Ti0.47](\u0394E^{B} 0.971)Nb0.02O3|
+|0.6|0.982PbO+0.006La2O3 +0.003Gd2O3 +0.514365ZrO2 +0.456135TiO2 +0.01Nb2O5 \u2192[Pb0.982La0.012Gd0.006][Zr0.53Ti0.47](\u0394E^{B} 0.9705)Nb0.02O3|
+|0.8|0.980PbO+0.006La2O3 +0.004Gd2O3 +0.51410ZrO2 +0.45590TiO2 +0.01Nb2O5 \u2192[Pb0.980La0.012Gd0.008][Zr0.53Ti0.47](\u0394E^{B} 0.97)Nb0.02O3|
+|1|0.978PbO+0.006La2O3 +0.005Gd2O3 +0.513835ZrO2 +0.455665TiO2 +0.01Nb2O5 \u2192[Pb0.978La0.012Gd0.01][Zr0.53Ti0.47](\u0394E^{B} 0.9695)Nb0.02O3|
+
+Table 2. Tolerance factor (t) and averaged electronegativity difference (e) of PLGZNT ceramics.
+|Gd (mol%)|Tolerance factor (t)|Averaged electronegativity difference (e)|
+|---|---|---|
+|0|0.8276|1.564|
+|0.2|0.8276|1.565|
+|0.4|0.8275|1.566|
+|0.6|0.8275|1.567|
+|0.8|0.8274|1.568|
+|1.0|0.8274|1.569|
+
+Table 3. Ionic radii of elements in PLGZNT ceramics [20].
+|Elements|Ionic radii|Fold|
+|---|---|---|
+|PbE^{2+}|1.49|12|
+|LaE^{3+}|1.36|12|
+|GdE^{3+}|1.107|9|
+|ZrE^{4+}|0.72|6|
+|TiE^{4+}|0.605|6|
+|NbE^{5+}|0.64|6|
+|OE^{2\u2212}|1.4|6|
+
+# RESULTS AND DISCUSSION
+depicts X-ray diffraction patterns of Gd modified lead lanthanum zirconium niobium titanate (designated as PLGZNT) ceramics. All the XRD patterns were found to have single phase with tetragonal structure. XRD studies revealed that GdE^{3+} doping at A-site of PLZNT lattice resulted in enhanced tetragonality. It can be seen that the peaks of the (002) and (200), (102) and (201), (112) and (211) planes correspond to tetragonal symmetry. It is reported that GdE^{3+} with smaller ionic radius (0.93\xc5) similar to that of ZrE^{4+}/TiE^{4+} =0.72\xc5/0.605\xc5 enters B-site while GdE^{3+} ions having higher ionic radius (1.107\xc5) occupy the A-sites which is similar to that of PbE^{2+} =1.49\xc5. It is reported that the vacancies could exist at both A and B sites in PLZT lattice. In our study, it is expected that GdE^{3+} (1.107\xc5) occupies A-site and creates vacancies on B-site due to the approximately similar ionic radii of PbE^{2+} (1.49\xc5) and LaE^{3+} (1.36\xc5) at A-site. Shannon reported that the ionic radii of GdE^{3+} with 6 fold coordination is 0.93\xc5 whereas the ionic radii of GdE^{3+} with 9 fold coordination is 1.107\xc5. The substitution of LaE^{3+} and GdE^{3+} ions on the PbE^{2+} lattice sites were charge compensated by the formation of VB '''' small cationic vacancies on the Zr/Ti lattice sites. The trivalent ions LaE^{3+} and GdE^{3+} partially substitute PbE^{2+} and cationic vacancies are created on B-site. According to Goldschmidt, a perovskite is stable only if a tolerance factor, t, falls in between 0.8< t <0.99 and beyond this range indicates distortion in perovskite structure. Besides, using the tolerance factor, t, to classify the perovskite structure, the average electronegativity can be calculated as :  In the above expression, the individual electronegativities of A and B-cations, and O-anions are represented by \u03c7 A, \u03c7 B and \u03c7 O, respectively. By using the stoichiometric chemical equation for the perovskite system, the averaged electronegativity difference (e) can be written as:  shows the tolerance factor (t) and averaged electronegativity difference (e) of PLGZNT ceramics. In our study, the calculated tolerance factor (t) values of tetragonal structured PLGZNT ceramics fall within the perovskite range and showed a consistent trend with a slight variation of 0.0001 in t values supporting the tetragonal perovskite. Concurrently, the averaged electronegativity difference (e) of tetragonal structured PLGZNT ceramics showed a consistent trend with a slight variation of 0.001 in e values that characterize tetragonal perovskite lattice. depicts scanning electron micrographs of fractured surface of Gd modified PLZNT ceramics, respectively. The grains were homogenous in nature and the grain growth increased as Gd content increased up to 0.6mol%. The grain growth inhibition at 1mol% Gd can be ascribed to the grain-boundary pinning process induced by the own presence of (substitutional and/or interstitial) Gd, which resulted in inhibited grain growth. The grain growth increment could be attributed to the different dopants (LaE^{3+}, GdE^{3+} and NbE^{5+}) at the grain boundaries and lead vacancies caused by the dopants whereas the grain growth inhibition could have been caused by the excess Gd ions stagnating at the grain boundaries hindering the mobility. In our study, we observed a grain growth up to 0.6mol% Gd after which grain growth inhibited. A similar decrease in grain growth has been reported. shows apparent density of Gd modified PLZNT ceramics. In our study, it is observed that the density showed an increasing trend till 0.6mol% Gd doped PLZNT ceramic. This could be accredited to the homogeneous grains without pores due to two trivalent ions at A-site in the PLGZNT lattice. The maximum density can be observed in 0.6mol% (7.724gm/cmE^{3}) PLGZNT ceramic. (i\u2013iv) shows temperature dependent dielectric properties of Gd modified PLZNT ceramics at 1kHz, respectively. Dielectric studies indicated that room temperature dielectric response enhanced (\u025b RT =2342) up to 0.6mol% Gd which could be due to the enhanced electric-dipole polarization in the PLGZNT lattice. When compared to the undoped, the dielectric constant of PLGZNT ceramics increased rapidly and reached a maximum at 0.6mol% Gd. As Gd content increased, the Curie temperature (331\u2013253\xb0C) and dielectric loss showed a decreasing trend while the dielectric maximum (\u025b Tc =23,108) increased constantly throughout the series. The dielectric properties of PLZT ceramics are known to depend on the grain growth and density of the ceramics. Okazaki and Nagata have observed that, in PLZT ceramics (La:Zr:Ti=48:65:35), T c increases and K max decreases with decreasing grain growth. In our study, we chose the solid solutions with La:Zr:Ti=1.2/53:47 near morphotrophic phase boundary having a tetragonal symmetry. Moreover, GdE^{3+} and LaE^{3+} both occupied at A-site in PLGZNT lattice due to the approximately similar ionic radii and vacancies created in the B-site. Thus, the charge compensation occur by the creation of vacancies at B-site and as Gd content increased the polarization also increased and attained saturation at 0.6mol% Gd reaching the solid solubility limit which is not comparable with PLNZNT ( ). shows the piezoelectric charge coefficient (d 33) and piezoelectric planar coupling coefficient (k p) of Gd modified PLZNT ceramics, respectively. It is observed that d 33 and k p enhanced with increasing Gd content up to 0.6mol%. The piezoelectric properties both piezoelectric charge coefficient (d 33 =574pC/N) and electromechanical planar coupling coefficient (k p =0.589) for PLGZNT system increased with the increasing Gd content up to 0.6mol% and thereafter decreased. PbE^{2+}, LaE^{3+}, ZrE^{4+} and TiE^{4+} are replaced partially by cations (GdE^{3+} at A-site) and (NbE^{5+} at B-site) with similar ionic radii as those of the replaced ions, respectively. In the case of tetragonal PZT ceramics, 50% of the domains perpendicular to the applied field can be reoriented by poling and about 44% of them are maintained after removing the poling field. The piezoelectric properties strongly depend on the grains and dopant concentrations as well as MPB region. Maximum values of d 33 (574pC/N) and k p (0.589) are found in 0.6 mol% Gd doped PLZNT ceramic. The d 33 and k p reported in this series are larger than those of earlier studies.
+
+# ABSTRACT
+This paper reports the dielectric and piezoelectric properties of rare-earth Gd modified PLZNT solid solutions with a stoichiometric formula [Pb(0.988−x)La0.012Gd
+                        x
+                     ][(Zr0.53Ti0.47)(0.972−(x/4))Nb0.02O3] (hereafter known as PLGZNT) with x
+                     =0, 0.2, 0.4, 0.6, 0.8 and 1.0mol% synthesized through solid state reaction method for phase formation, microstructure, dielectric and piezoelectric properties. The powder X-ray diffraction results obtained for PLGZNT ceramics showed pure perovskite phase with tetragonal symmetry sintered at 1245°C supported by an accurate structure analysis of tolerance factor (t) and averaged electronegativity difference (e). The optimum dielectric (ɛ
+                     RT and tan
+                     δ) and piezoelectric properties (d
+                     33 and k
+                     p) were observed in 0.6mol% Gd modified PLZNT ceramic composition which attained saturation and thereafter decreased.
+
+# INTRODUCTION
+The most important ferroelectric ceramics crystallize in the ABO3 structured perovskite. LaE^{3+} modified at A-site in Pb(Zr,Ti)O3 lattice known as (Pb,La)(Zr,Ti)O3 is a well-known ferroelectric solid solution. PLZT has been extensively studied as it has interesting functional properties close to the morphotrophic phase boundary (MPB, Zr:Ti\u224852:48) on its phase diagram. The polycrystalline solid solutions of PLZT provide an excellent piezoelectric property after electrical poling. The crucial step in PLZT fabrication is the final sintering process. Perovskite structured PLZT has been modified with many dopants such as Ag , Sm , Nd , Fe , Mn , Zn , Dy , Ce , and Yb. The morphotrophic phase boundary (MPB) is the point where the solid solution ceramic system at room temperature undergoes a morphotrophic phase transition in which the ferroelectric tetragonal structure transforms to a ferroelectric rhombohedral structure or vice versa depending on various factors such as Zr/Ti ratio, effect of dopants, and synthesis route. The dielectric and piezoelectric properties of PLZT doped with additives show anomalies near MPB. It is also known that pentavalent element NbE^{5+} (donor type) produces Pb vacancies (A-vacancy in ABO3 perovskite) in PZT and enhances domain reorientation , resulting in high dielectric and piezoelectric properties. We have been systematically studying either single or multiple soft and hard doping in PLZT lattice at different Zr/Ti ratios near MPB. However, the effect of rare-earth Gd substitution in the PLZT lattice for dielectric and piezoelectric properties is very limited. In this work, we investigated the dopant (Gd) influence on perovskite PLZNT to understand the mutual dependence of phase formation, stoichiometry, microstructure, physical and functional properties. The stoichiometric compositions of PLGZNT are given in.
+
+# CONCLUSION
+In conclusion, the perovskite structured [Pb(0.988\u2212x)La0.012Gd x ][(Zr0.53Ti0.47)(0.972\u2212(x/4))Nb0.02O3] solid solutions have been synthesized through solid state reaction route. X-ray diffraction patterns of PLGZNT with peak splittings of (002) and (200), (102) and (201), (112) and (211) correspond to ferroelectric tetragonal phase. The calculated tolerance factor (t) and averaged electronegativity difference (e) values of PLGZNT ceramics confirmed the tetragonal perovskite symmetry. The homogeneous microstructure could be credited to grains without pores and two trivalent ions at A-site in the PLGZNT lattice which promoted the density till 0.6mol% Gd. Dielectric constant at room temperature enhanced up to 0.6mol% Gd along with dielectric maximum whereas Curie temperature and dielectric loss continuously decreased. The piezoelectric properties (d 33 and k p) enhanced due to the presence of two trivalent cations at A-site in the perovskite and increasing Gd content contributed considerably to the piezoelectric effect. Among the series, 0.6mol% Gd showed optimum dielectric and piezoelectric properties. In our study, the advantages of Gd modified PLZNT showed improved properties of density, dielectric constant (\u025b Tc), piezoelectric properties (d 33, k p) with low T c and tan \u03b4 RT up to 0.6mol% than PLZNT. The main disadvantage of Gd modified PLZNT is higher concentrations of Gd led to deterioration of properties.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="Thought: The Graph Data Extractor returned d33 values from the figure for compositions at x = 0, 0.2, 0.4, 0.6, 0.8, 1.0 mol% Gd. However, the text explicitly states: "d33 = 574 pC/N" for 0.6 mol% Gd. According to the conflict resolution rule, I must keep the text-derived value (574) for the 0.6 mol% composition and ignore the graph value (570) for that composition. For the other compositions (0, 0.2, 0.4, 0.8, 1.0 mol%), the text does not provide explicit d33 values, so I can use the graph-extracted values as fallback.
+
+Now I need to construct the final JSON. The canonical formula from the Equation Tool is: (Pb(0.988-x)La(0.012)Gd(x))(Zr(0.53*(0.972-(x/4)))Ti(0.47*(0.972-(x/4)))Nb(0.02))O3
+
+I need to substitute x values (in decimal form: 0, 0.002, 0.004, 0.006, 0.008, 0.01) into the formula to get the full compositions.
+
+Let me compute each:
+
+For x=0 (0 mol%):
+A-site: Pb(0.988-0)=Pb0.988, La0.012, Gd0
+B-site: (Zr0.53Ti0.47)(0.972-(0/4)) = (Zr0.53Ti0.47)(0.972), Nb0.02
+So: Zr: 0.53*0.972 = 0.51516, Ti: 0.47*0.972 = 0.45684, Nb: 0.02
+Formula: Pb0.988La0.012Gd0(Zr0.51516Ti0.45684Nb0.02)O3
+
+For x=0.002 (0.2 mol%):
+A-site: Pb(0.988-0.002)=Pb0.986, La0.012, Gd0.002
+B-site: (Zr0.53Ti0.47)(0.972-(0.002/4)) = (Zr0.53Ti0.47)(0.972-0.0005) = (Zr0.53Ti0.47)(0.9715)
+Zr: 0.53*0.9715 = 0.514895, Ti: 0.47*0.9715 = 0.456605, Nb: 0.02
+Formula: Pb0.986La0.012Gd0.002(Zr0.514895Ti0.456605Nb0.02)O3
+
+For x=0.004 (0.4 mol%):
+A-site: Pb(0.988-0.004)=Pb0.984, La0.012, Gd0.004
+B-site: (Zr0.53Ti0.47)(0.972-(0.004/4)) = (Zr0.53Ti0.47)(0.972-0.001) = (Zr0.53Ti0.47)(0.971)
+Zr: 0.53*0.971 = 0.51463, Ti: 0.47*0.971 = 0.45637, Nb: 0.02
+Formula: Pb0.984La0.012Gd0.004(Zr0.51463Ti0.45637Nb0.02)O3
+
+For x=0.006 (0.6 mol%):
+A-site: Pb(0.988-0.006)=Pb0.982, La0.012, Gd0.006
+B-site: (Zr0.53Ti0.47)(0.972-(0.006/4)) = (Zr0.53Ti0.47)(0.972-0.0015) = (Zr0.53Ti0.47)(0.9705)
+Zr: 0.53*0.9705 = 0.514365, Ti: 0.47*0.9705 = 0.456135, Nb: 0.02
+Formula: Pb0.982La0.012Gd0.006(Zr0.514365Ti0.456135Nb0.02)O3
+
+For x=0.008 (0.8 mol%):
+A-site: Pb(0.988-0.008)=Pb0.980, La0.012, Gd0.008
+B-site: (Zr0.53Ti0.47)(0.972-(0.008/4)) = (Zr0.53Ti0.47)(0.972-0.002) = (Zr0.53Ti0.47)(0.97)
+Zr: 0.53*0.97 = 0.51410, Ti: 0.47*0.97 = 0.45590, Nb: 0.02
+Formula: Pb0.980La0.012Gd0.008(Zr0.51410Ti0.45590Nb0.02)O3
+
+For x=0.01 (1.0 mol%):
+A-site: Pb(0.988-0.01)=Pb0.978, La0.012, Gd0.01
+B-site: (Zr0.53Ti0.47)(0.972-(0.01/4)) = (Zr0.53Ti0.47)(0.972-0.0025) = (Zr0.53Ti0.47)(0.9695)
+Zr: 0.53*0.9695 = 0.513835, Ti: 0.47*0.9695 = 0.455665, Nb: 0.02
+Formula: Pb0.978La0.012Gd0.01(Zr0.513835Ti0.455665Nb0.02)O3
+
+Now, for d33 values:
+- x=0 (0 mol%): text doesn't give explicit value, graph gives 508 pC/N → use 508
+- x=0.002 (0.2 mol%): text doesn't give explicit value, graph gives 520 pC/N → use 520
+- x=0.004 (0.4 mol%): text doesn't give explicit value, graph gives 535 pC/N → use 535
+- x=0.006 (0.6 mol%): text gives 574 pC/N, graph gives 570 → KEEP text value 574
+- x=0.008 (0.8 mol%): text doesn't give explicit value, graph gives 550 pC/N → use 550
+- x=0.01 (1.0 mol%): text doesn't give explicit value, graph gives 525 pC/N → use 525
+
+The abbreviation PLGZNT is used throughout. I should include it.
+
+Family: The base is Pb(Zr,Ti)O3 (PZT) modified with La, Gd, Nb. The family could be "PZT" or "PLZT" or "PLGZNT". Since the paper calls it PLGZNT (Pb-La-Gd-Zr-Nb-Ti-O), the family is likely "PLZT" or "PZT". Given the base is PLZT with Gd and Nb, I'll use "PLZT" as the family.
+
+Let me construct the JSON. I'll use the variable form for the compositions as per the instructions, but since I have explicit values for x, I'll substitute them.
+
+Actually, looking at the instructions more carefully: "If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner". So I should write the compositions with the variable x and specify the x values.
+
+Let me use the canonical formula from Equation Tool: (Pb(0.988-x)La(0.012)Gd(x))(Zr(0.53*(0.972-(x/4)))Ti(0.47*(0.972-(x/4)))Nb(0.02))O3
+
+For each x value, I'll write the composition with the x value substituted.
+
+Actually, the instruction says to write like: "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350
+
+So I should write the formula with the variable and then specify the variable value.
+
+Let me use the form: [Pb(0.988-x)La0.012Gd(x)][(Zr0.53Ti0.47)(0.972-(x/4))Nb0.02]O3 where x=0, etc.
+
+But the instruction also says "Don't remove brackets or parentheses from the chemical formula which is already in the composition."
+
+The original formula in the paper is: [Pb(0.988−x)La0.012Gdx][(Zr0.53Ti0.47)(0.972−(x/4))Nb0.02O3]
+
+I'll use that format.
+
+For the d33 values, I'll use the text value for x=0.006 (574) and graph values for others.
+
+Let me finalize the JSON.```
+{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "[Pb(0.988-x)La0.012Gd(x)][(Zr0.53Ti0.47)(0.972-(x/4))Nb0.02]O3 where x=0": 508,
+      "[Pb(0.988-x)La0.012Gd(x)][(Zr0.53Ti0.47)(0.972-(x/4))Nb0.02]O3 where x=0.002": 520,
+      "[Pb(0.988-x)La0.012Gd(x)][(Zr0.53Ti0.47)(0.972-(x/4))Nb0.02]O3 where x=0.004": 535,
+      "[Pb(0.988-x)La0.012Gd(x)][(Zr0.53Ti0.47)(0.972-(x/4))Nb0.02]O3 where x=0.006": 574,
+      "[Pb(0.988-x)La0.012Gd(x)][(Zr0.53Ti0.47)(0.972-(x/4))Nb0.02]O3 where x=0.008": 550,
+      "[Pb(0.988-x)La0.012Gd(x)][(Zr0.53Ti0.47)(0.972-(x/4))Nb0.02]O3 where x=0.01": 525
+    },
+    "abbreviations": {
+      "PLGZNT": "[Pb(0.988-x)La0.012Gd(x)][(Zr0.53Ti0.47)(0.972-(x/4))Nb0.02]O3"
+    },
+    "property_unit": "pC/N",
+    "family": "PLZT"
+  }
+}
+```"

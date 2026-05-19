@@ -146,10 +146,9 @@ class PrepareIOPFiles:
 
         Args:
             folder_path (str): Path to the main folder
-            doi_mapping (dict): Dictionary mapping original filenames to DOI numbers
 
         Returns:
-            tuple: (number of files moved, number of folders deleted)
+            int: Number of XML files moved from subfolders to the main folder
         """
         folder_path = os.path.abspath(folder_path)
         if not os.path.exists(folder_path):
@@ -282,7 +281,7 @@ class PrepareIOPFiles:
 
     def prepare_files(self):
         """
-        Main function to prepare the userful IOP files in one folder.
+        Main function to prepare the useful IOP files in one folder.
             1. Process ZIP files - extract, filter and move valid XML files
             2. Combine all XML files from subfolders to the main folder
         """

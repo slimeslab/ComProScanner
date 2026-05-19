@@ -2,6 +2,7 @@ import pytest
 import pandas as pd
 import json
 import glob
+import os
 from unittest.mock import patch, MagicMock, mock_open
 
 from comproscanner.utils.configs import RAGConfig, ArticleRelatedKeywords
@@ -49,6 +50,23 @@ def test_init_valid_parameters(sample_property_keywords):
     assert processor.csv_batch_size == 1
     assert processor.valid_property_articles == 0
     assert processor.source == "pdf"
+    assert processor.save_failed_pdf_report is True
+    assert processor.failed_pdf_report_path == os.path.join(
+        "/test/path", "failed_pdf_filenames.txt"
+    )
+
+
+def test_init_custom_failed_pdf_report_path(sample_property_keywords):
+    """Test initialization with custom failed PDF report settings"""
+    processor = PDFsProcessor(
+        folder_path="/test/path",
+        main_property_keyword="piezoelectric",
+        property_keywords=sample_property_keywords,
+        save_failed_pdf_report=False,
+        failed_pdf_report_path="/custom/failed_report.txt",
+    )
+    assert processor.save_failed_pdf_report is False
+    assert processor.failed_pdf_report_path == "/custom/failed_report.txt"
 
 
 def test_init_missing_folder_path(sample_property_keywords):

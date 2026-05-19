@@ -1,0 +1,30 @@
+{
+  "filtered": {
+    "10.1016/j.ceramint.2018.02.163": [
+      "(K0.5Na0.5)(Nb0.8Ta0.2)O3-SPS-960C-5min-50MPa",
+      "(K0.5Na0.5)(Nb0.8Ta0.2)O3-SPS-960C-10min-50MPa",
+      "(K0.5Na0.5)(Nb0.8Ta0.2)O3-SPS-920C-5min-200MPa",
+      "(K0.5Na0.5)(Nb0.8Ta0.2)O3-SPS-960C-5min-50MPa-ramp50",
+      "(K0.5Na0.5)(Nb0.8Ta0.2)O3-SPS-optimized",
+      "(K0.5Na0.5)(Nb0.7Ta0.3)O3-SPS",
+      "(K0.5Na0.5)NbO3-SPS",
+      "(K0.5Na0.5)(Nb0.9Ta0.1)O3-SPS",
+      "(K0.5Na0.5)(Nb0.6Ta0.4)O3-SPS",
+      "(K0.5Na0.5)(Nb0.5Ta0.5)O3-SPS",
+      "(K0.5Na0.5)NbO3-conventional",
+      "(K0.5Na0.5)(Nb0.9Ta0.1)O3-conventional",
+      "(K0.5Na0.5)(Nb0.8Ta0.2)O3-conventional",
+      "(K0.5Na0.5)(Nb0.7Ta0.3)O3-conventional",
+      "(K0.5Na0.5)(Nb0.6Ta0.4)O3-conventional",
+      "(K0.5Na0.5)(Nb0.5Ta0.5)O3-conventional"
+    ]
+  },
+  "unresolved": {
+    "10.1111/jace.19612": [
+      "K0.4925Na0.4925Sm0.005)NbO3",
+      "K0.485Na0.485Sm0.01)NbO3",
+      "K0.4775Na0.4775Sm0.015)NbO3",
+      "K0.47Na0.47Sm0.02)NbO3"
+    ]
+  }
+}

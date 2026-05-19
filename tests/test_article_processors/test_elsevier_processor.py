@@ -123,6 +123,39 @@ def test_init_without_property_keywords(monkeypatch, share_scopus_api_key):
     assert "property_keywords" in str(exc_info.value)
 
 
+def test_initialization_with_inst_token(monkeypatch, share_scopus_api_key):
+    """Test that X-ELS-Insttoken header is included when SCIENCEDIRECT_INSTTOKEN is set"""
+    monkeypatch.setenv("SCOPUS_API_KEY", share_scopus_api_key)
+    monkeypatch.setenv("SCIENCEDIRECT_INSTTOKEN", "dummy_inst_token")
+    property_keywords = {"exact_keywords": ["d33"], "substring_keywords": [" d33 "]}
+
+    with patch("os.path.exists", return_value=False), patch("os.makedirs"):
+        processor = ElsevierArticleProcessor(
+            main_property_keyword="piezoelectric", property_keywords=property_keywords
+        )
+
+    assert processor.inst_token == "dummy_inst_token"
+    assert "X-ELS-Insttoken" in processor.headers
+    assert processor.headers["X-ELS-Insttoken"] == "dummy_inst_token"
+    assert processor.headers["X-ELS-APIKey"] == share_scopus_api_key
+
+
+def test_initialization_without_inst_token(monkeypatch, share_scopus_api_key):
+    """Test that X-ELS-Insttoken header is omitted when SCIENCEDIRECT_INSTTOKEN is not set"""
+    monkeypatch.setenv("SCOPUS_API_KEY", share_scopus_api_key)
+    monkeypatch.delenv("SCIENCEDIRECT_INSTTOKEN", raising=False)
+    property_keywords = {"exact_keywords": ["d33"], "substring_keywords": [" d33 "]}
+
+    with patch("os.path.exists", return_value=False), patch("os.makedirs"):
+        processor = ElsevierArticleProcessor(
+            main_property_keyword="piezoelectric", property_keywords=property_keywords
+        )
+
+    assert processor.inst_token is None
+    assert "X-ELS-Insttoken" not in processor.headers
+    assert processor.headers["X-ELS-APIKey"] == share_scopus_api_key
+
+
 def test_load_and_preprocess_data(elsevier_processor, sample_df, monkeypatch):
     """Test load and preprocess data method"""
     monkeypatch.setattr(pd, "read_csv", lambda *args, **kwargs: sample_df)
@@ -295,6 +328,29 @@ def test_process_xml(elsevier_processor, sample_xml_content):
         assert "Methods" in section_titles
         assert "Results and Discussion" in section_titles
         assert "Conclusion" in section_titles
+
+
+def test_append_sections_to_df_reads_full_elsevier_abstract_text(elsevier_processor):
+    """Nested abstract text should still participate in property matching"""
+    elsevier_processor.vector_db_manager = MagicMock()
+    elsevier_processor.vector_db_manager.database_exists.return_value = False
+    abstract_xml = etree.fromstring(
+        "<description>Lead-free ceramic <italic>d33</italic>=583 pC/N is reported.</description>"
+    )
+
+    result_df = elsevier_processor._append_sections_to_df(
+        [abstract_xml],
+        [],
+        "10.1016/j.ceramint.2014.02.008",
+        [],
+        "Sample Article",
+        "Ceramics International",
+        "Elsevier Ltd",
+    )
+
+    assert "d33" in result_df.iloc[0]["abstract"]
+    assert result_df.iloc[0]["is_property_mentioned"] == "1"
+    elsevier_processor.vector_db_manager.create_database.assert_called_once()
 
 
 def test_extract_paragraphs(elsevier_processor):

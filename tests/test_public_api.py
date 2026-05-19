@@ -116,6 +116,32 @@ def test_extract_composition_property_data_public_api_smoke_with_no_papers(tmp_p
     mock_cleaner_cls.return_value.get_useful_data.assert_called_once_with()
 
 
+def test_process_articles_forwards_pdf_failed_report_args():
+    scanner = ComProScanner(main_property_keyword="piezoelectric")
+    mock_pdfs_cls = MagicMock()
+    fake_modules = {
+        "comproscanner.article_processors.pdfs_processor": types.SimpleNamespace(
+            PDFsProcessor=mock_pdfs_cls
+        )
+    }
+
+    with patch.dict(sys.modules, fake_modules, clear=False):
+        scanner.process_articles(
+            property_keywords={"exact_keywords": ["d33"], "substring_keywords": []},
+            source_list=["pdfs"],
+            folder_path="/tmp/pdfs",
+            save_failed_pdf_report=False,
+            failed_pdf_report_path="/tmp/failed_pdf_report.txt",
+        )
+
+    assert mock_pdfs_cls.call_args.kwargs["save_failed_pdf_report"] is False
+    assert (
+        mock_pdfs_cls.call_args.kwargs["failed_pdf_report_path"]
+        == "/tmp/failed_pdf_report.txt"
+    )
+    mock_pdfs_cls.return_value.process_pdfs.assert_called_once_with()
+
+
 def test_clean_data_public_api_forwards_to_cleaner(tmp_path):
     scanner = ComProScanner(main_property_keyword="piezoelectric")
     input_file = tmp_path / "input.json"
@@ -134,8 +160,43 @@ def test_clean_data_public_api_forwards_to_cleaner(tmp_path):
 
     assert result == {"10.x/test": {}}
     cleaner.clean_data_with_relevant_compositions.assert_called_once_with(
-        strategy="full"
+        strategy="full",
+        apply_advanced_cleaning=True,
     )
+
+
+def test_clean_data_stores_unresolved_compositions(tmp_path):
+    scanner = ComProScanner(main_property_keyword="piezoelectric")
+    input_file = tmp_path / "input.json"
+    input_file.write_text('{"10.x/a": {"composition_data": {"compositions_property_values": {"BaTiO3": 1}}, "synthesis_data": {}, "article_metadata": {}}}', encoding="utf-8")
+    unresolved_file = tmp_path / "unresolved.txt"
+
+    cleaner = MagicMock()
+    cleaner.clean_data_with_relevant_compositions.return_value = {
+        "10.x/a": {"composition_data": {"compositions_property_values": {"BaTiO3": 1}}}
+    }
+    cleaner.filtered_compositions = {"10.x/a": ["ABBREVIATION", "INVALID"]}
+    cleaner.unresolved_compositions = {"10.x/a": ["(BadComp)TiO3", "Na(0.5*x)NbO3"]}
+    cleaner.all_data = {"10.x/a": {"composition_data": {"compositions_property_values": {"BaTiO3": 1, "(BadComp)TiO3": 2}}}}
+
+    with patch("comproscanner.comproscanner.DataCleaner", return_value=cleaner):
+        scanner.clean_data(
+            json_results_file=str(input_file),
+            is_save_separate_results=False,
+            is_save_composition_property_file=True,
+            composition_property_file=str(tmp_path / "comp_prop.json"),
+            cleaning_strategy="full",
+            is_store_unresolved_compositions=True,
+            unresolved_compositions_file=str(unresolved_file),
+        )
+
+    assert unresolved_file.exists()
+    import json as _json
+    report = _json.loads(unresolved_file.read_text(encoding="utf-8"))
+    assert "filtered" in report
+    assert "unresolved" in report
+    assert report["filtered"]["10.x/a"] == ["ABBREVIATION", "INVALID"]
+    assert report["unresolved"]["10.x/a"] == ["(BadComp)TiO3", "Na(0.5*x)NbO3"]
 
 
 def test_evaluate_semantic_public_api_supports_value_error_thresholds():

@@ -37,7 +37,7 @@ from ..utils.database_manager import (
 from ..utils.error_handler import ValueErrorHandler, KeyboardInterruptHandler
 from ..utils.logger import setup_logger
 from ..utils.common_functions import return_error_message, write_timeout_file
-from ..utils.figure_extractor import FigureExtractor
+from ..utils.figure_extractor import FigureExtractor, record_failed_article
 
 # Load environment variables from .env file
 load_dotenv()
@@ -80,7 +80,10 @@ class ElsevierArticleProcessor:
         is_sql_db: bool = False,
         is_save_xml: bool = False,
         rag_config: RAGConfig = RAGConfig(),
-        caption_keywords: dict = None,
+        main_figure_keywords: dict = None,
+        additional_figure_keywords: dict = None,
+        save_failed_automated_report: bool = True,
+        failed_automated_report_path: str = None,
     ):
         keyword_message = return_error_message("main_property_keyword")
         property_keywords_message = return_error_message("property_keywords")
@@ -98,6 +101,7 @@ class ElsevierArticleProcessor:
         if self.api_key is None:
             logger.error(f"{api_key_message}")
             raise ValueErrorHandler(f"{api_key_message}")
+        self.inst_token = os.getenv("SCIENCEDIRECT_INSTTOKEN")
         # create instances
         self.all_paths = DefaultPaths(self.keyword)
         self.db_configs = DatabaseConfig(self.keyword, is_sql_db)
@@ -113,15 +117,27 @@ class ElsevierArticleProcessor:
         self.is_sql_db = is_sql_db
         self.is_save_xml = is_save_xml
         self.rag_config = rag_config
-        self.caption_keywords = caption_keywords
+        self.main_figure_keywords = (
+            main_figure_keywords
+            if main_figure_keywords is not None
+            else property_keywords
+        )
+        self.additional_figure_keywords = additional_figure_keywords
         # Takes from config file
         self.timeout_file = self.all_paths.TIMEOUT_DOI_LOG_FILENAME
         self.article_related_keywords = ArticleRelatedKeywords()
 
-        self.headers = {
-            "X-ELS-APIKey": self.api_key,
-            "Accept": "application/xml",
-        }
+        if self.inst_token is not None:
+            self.headers = {
+                "X-ELS-APIKey": self.api_key,
+                "X-ELS-Insttoken": self.inst_token,
+                "Accept": "application/xml",
+            }
+        else:
+            self.headers = {
+                "X-ELS-APIKey": self.api_key,
+                "Accept": "application/xml",
+            }
         self.df = None
         self.new_df = pd.DataFrame(
             columns=[
@@ -143,11 +159,27 @@ class ElsevierArticleProcessor:
         self.csv_filepath = (
             f"{self.csv_path}/{self.source}_{self.keyword}_paragraphs.csv"
         )
+        self.save_failed_automated_report = save_failed_automated_report
+        self.failed_automated_report_path = (
+            failed_automated_report_path or "results/failed_automated_articles.txt"
+        )
+        self.failed_automated_count = 0
 
         self.sql_db_manager = MySQLDatabaseManager(self.keyword, self.is_sql_db)
         self.csv_db_manager = CSVDatabaseManager()
         self.vector_db_manager = VectorDatabaseManager(rag_config=self.rag_config)
         self.is_exceeded = False
+
+    def _record_failed_article(self, doi: str, reason: str) -> None:
+        """Record a failed article to the automated failure report."""
+        self.failed_automated_count += 1
+        record_failed_article(
+            doi,
+            self.source,
+            reason,
+            self.failed_automated_report_path,
+            self.save_failed_automated_report,
+        )
 
     def _load_and_preprocess_data(self):
         """
@@ -464,7 +496,8 @@ class ElsevierArticleProcessor:
 
     def _extract_and_save_figures(self, root, doi: str):
         """
-        Extract figures from Elsevier XML whose captions match self.caption_keywords.
+        Extract figures from Elsevier XML and save them. If self.main_figure_keywords is
+        provided only figures whose captions match are saved; if None, all figures are saved.
         Downloads images from the Elsevier API and saves them to
         results/extracted_data/{keyword}/related_figures/{doi_}/{caption_id}.jpg
         alongside info.json.
@@ -473,8 +506,6 @@ class ElsevierArticleProcessor:
             root: lxml root element of the parsed Elsevier XML.
             doi (str): Article DOI.
         """
-        if not self.caption_keywords:
-            return
         base_path = f"results/extracted_data/{self.keyword}/related_figures"
         try:
             # Build ref → URL map from <objects> element
@@ -490,11 +521,14 @@ class ElsevierArticleProcessor:
                     ref_to_url[ref] = url
             # Find all <ce:figure> elements
             figures = root.xpath('.//*[local-name()="figure"]')
-            for figure in figures:
+            logger.debug(
+                f"Elsevier figure extraction for {doi}: found {len(figures)} figures and {len(ref_to_url)} image object mappings."
+            )
+            has_caption_keyword_match = False
+            for figure_index, figure in enumerate(figures):
                 # Caption text from all <ce:simple-para> descendants inside <ce:caption>
                 caption_elements = figure.xpath(
-                    './/*[local-name()="caption"]'
-                    '//*[local-name()="simple-para"]'
+                    './/*[local-name()="caption"]' '//*[local-name()="simple-para"]'
                 )
                 caption_text = " ".join(
                     "".join(el.itertext()) for el in caption_elements
@@ -506,11 +540,17 @@ class ElsevierArticleProcessor:
                         "".join(el.itertext()) for el in caption_els
                     ).strip()
 
-                if not FigureExtractor.keyword_matches_caption(
-                    caption_text, self.caption_keywords
-                ):
+                main_match = FigureExtractor.keyword_matches_caption(
+                    caption_text, self.main_figure_keywords
+                )
+                additional_match = self.additional_figure_keywords and FigureExtractor.keyword_matches_caption(
+                    caption_text, self.additional_figure_keywords
+                )
+                if not main_match and not additional_match:
                     continue
 
+                if main_match:
+                    has_caption_keyword_match = True
                 # Get the image reference locator (e.g., "gr1")
                 link_els = figure.xpath('.//*[local-name()="link"]')
                 locator = None
@@ -522,16 +562,25 @@ class ElsevierArticleProcessor:
                     locator = figure.get("id", "unknown")
 
                 caption_id = locator
+                logger.debug(
+                    f"Elsevier figure {figure_index} for {doi}: matched caption with locator='{locator}'."
+                )
 
                 # Always save caption to info.json
-                FigureExtractor.update_info_json(doi, caption_id, caption_text, base_path)
+                FigureExtractor.update_info_json(
+                    doi, caption_id, caption_text, base_path
+                )
 
                 # Download image if URL is available
                 url = ref_to_url.get(locator)
                 if url:
+                    logger.debug(
+                        f"Elsevier figure {figure_index} for {doi}: resolved locator '{locator}' to URL '{url}'."
+                    )
                     try:
                         img_headers = {
                             "X-ELS-APIKey": self.api_key,
+                            "X-ELS-Insttoken": self.inst_token,
                             "Accept": "*/*",
                         }
                         resp = requests.get(url, headers=img_headers, timeout=30)
@@ -555,10 +604,13 @@ class ElsevierArticleProcessor:
                         )
                 else:
                     logger.warning(
-                        f"No image URL found for Elsevier figure '{caption_id}' in {doi}"
+                        f"No image URL found for Elsevier figure '{caption_id}' in {doi}. "
+                        f"Available refs: {list(ref_to_url.keys())[:10]}"
                     )
+            return has_caption_keyword_match
         except Exception as e:
             logger.warning(f"Error extracting figures from Elsevier XML for {doi}: {e}")
+            return False
 
     def _extract_paragraphs(self, element):
         """
@@ -601,6 +653,7 @@ class ElsevierArticleProcessor:
         article_title,
         publication_name,
         publisher,
+        has_caption_keyword_match: bool = False,
     ):
         """
         Append the required sections to the dataframe.
@@ -643,9 +696,11 @@ class ElsevierArticleProcessor:
             "is_property_mentioned": "0",
         }
         if abstract:
-            if abstract[0].text:
-                abstract_text = (abstract[0].text).strip()
-            else:
+            try:
+                abstract_text = " ".join(
+                    text.strip() for text in abstract[0].itertext() if text.strip()
+                )
+            except Exception:
                 abstract_text = ""
             all_req_data["abstract"] = abstract_text
         for section in req_sections:
@@ -713,9 +768,11 @@ class ElsevierArticleProcessor:
 
         # Check if property is mentioned in the article
         total_text = f"#TITLE:\n{all_req_data['article_title']}\n\n# ABSTRACT:\n{all_req_data["abstract"]}\n\n# INTRODUCTION:\n{all_req_data["introduction"]}\n\n# EXPERIMENTAL SYNTHESIS:\n{all_req_data["exp_methods"]}\n\n# COMPUTATIONAL METHODOLOGY:\n{all_req_data["comp_methods"]}\n\n# RESULTS AND DISCUSSION:\n{all_req_data["results_discussion"]}\n\n# CONCLUSION\n{all_req_data["conclusion"]}"
+        has_text_property_match = False
         for item in self.property_keywords.values():
             for keyword in item:
                 if keyword in total_text:
+                    has_text_property_match = True
                     all_req_data["is_property_mentioned"] = "1"
                     modified_doi = doi.replace("/", "_")
                     if self.vector_db_manager.database_exists(modified_doi):
@@ -730,6 +787,22 @@ class ElsevierArticleProcessor:
                             db_name=modified_doi, article_text=total_text
                         )
                     break
+            if has_text_property_match:
+                break
+        if has_caption_keyword_match and not has_text_property_match:
+            all_req_data["is_property_mentioned"] = "1"
+            modified_doi = doi.replace("/", "_")
+            if self.vector_db_manager.database_exists(modified_doi):
+                logger.warning(
+                    f"Vector Database already exists for {doi}...Skipping..."
+                )
+            else:
+                logger.info(
+                    f"Target caption keyword matched for {doi}; creating vector database for RAG..."
+                )
+                self.vector_db_manager.create_database(
+                    db_name=modified_doi, article_text=total_text
+                )
         if all_req_data["is_property_mentioned"] == "0":
             all_req_data["abstract"] = ""
             all_req_data["introduction"] = ""
@@ -942,6 +1015,7 @@ class ElsevierArticleProcessor:
                     logger.warning(
                         f"Failed to download article...skipping {row["doi"]}..."
                     )
+                    self._record_failed_article(row["doi"], "download_failed")
                     continue
 
                 # Handle "Not Found" articles
@@ -988,10 +1062,13 @@ class ElsevierArticleProcessor:
                 root = self._parse_response(response)
                 if root is None:
                     logger.error(f"Failed to parse XML...skipping {row["doi"]}...")
+                    self._record_failed_article(row["doi"], "xml_parse_failed")
                     continue
-                self._extract_and_save_figures(root, row["doi"])
+                has_caption_keyword_match = self._extract_and_save_figures(
+                    root, row["doi"]
+                )
                 if self.is_save_xml:
-                    logger.info("Saving XML for DOI: ", row["doi"])
+                    logger.info(f"Saving XML for DOI: {row['doi']}")
                     self._save_xml(response, row["doi"])
                 tables = root.xpath('.//*[local-name()="table"]')
                 if tables:
@@ -1012,6 +1089,7 @@ class ElsevierArticleProcessor:
                     row["article_title"],
                     row["publication_name"],
                     row["metadata_publisher"],
+                    has_caption_keyword_match=has_caption_keyword_match,
                 )
 
                 sql_dataframes.append(row)
@@ -1092,3 +1170,11 @@ class ElsevierArticleProcessor:
         self._process_with_timeout_handling()
         logger.verbose(f"\n\nElsevier articles processing completed...\n\n")
         logger.info(f"\nTotal valid property articles: {self.valid_property_articles}")
+        if self.failed_automated_count > 0:
+            logger.warning(
+                f"Total failed Elsevier articles (download/parse): {self.failed_automated_count}"
+            )
+            if self.save_failed_automated_report:
+                logger.info(
+                    f"Failed automated report saved to: {self.failed_automated_report_path}"
+                )

@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 where x=0.0050":221},"abbreviations":{"BNBT":"(Bi1/2Na1/2)0.935Ba0.065TiO3","PN":"(Pr1/2Nb1/2)","BNT":"Bi0.5Na0.5TiO3"},"property_unit":"pC/N","family":"Bi0.5Na0.5TiO3"}}

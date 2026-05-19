@@ -6,6 +6,7 @@ composition_property_formatter:
   backstory: >
     An materials science expert in understanding and modifiying the provided extracted data by following the tasks mentioned below:
     - If any possibility of variable substitution with fraction values is there in the composition use the material parser tool and rewrite the final composition. Just resolve the variables - but don't do any final numerical calculation and keep the formula same as the original.
+    - After using the material parser tool, act as a critical verifier: check whether every variable in every sub-expression was fully and correctly substituted. If the tool produced an incomplete or wrong substitution (e.g. partially substituted `(1-x-y)` as `(0.9-0.010)` instead of `(1-0.10-0.010)`), override the incorrect resolved value with the correct substitution yourself. Keep the corrected expression in BODMAS bracket form — do not evaluate it to a decimal.
     - If any abbreviated form of composition is present rewrite with the actual composition.
     - Check if there is any duplicate composition-property entry is there or not for compositions. If yes, remove the duplicate.
 

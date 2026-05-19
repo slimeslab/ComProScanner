@@ -14,6 +14,7 @@ import time
 from io import BytesIO
 import pandas as pd
 import torch
+import requests
 from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import (
@@ -53,6 +54,55 @@ class PDFToMarkdownText:
         self.retry_delay = 60
         self.converter = self._setup_converter()
         self._document = None  # Cached Docling document for HTML/figure export
+
+    @staticmethod
+    def _stringify_caption_value(value) -> str:
+        """Convert a Docling caption-like value into plain text."""
+        if value is None:
+            return ""
+        if isinstance(value, str):
+            return value.strip()
+        if isinstance(value, (list, tuple)):
+            text_parts = [
+                PDFToMarkdownText._stringify_caption_value(item)
+                for item in value
+                if item is not None
+            ]
+            return " ".join(part for part in text_parts if part).strip()
+        if hasattr(value, "itertext"):
+            try:
+                return " ".join(
+                    text.strip() for text in value.itertext() if text.strip()
+                )
+            except Exception:
+                pass
+        for attr in ("text", "orig", "content", "label"):
+            attr_value = getattr(value, attr, None)
+            if isinstance(attr_value, str) and attr_value.strip():
+                return attr_value.strip()
+        return str(value).strip()
+
+    def _extract_caption_text(self, element) -> str:
+        """Extract caption text from a Docling picture/table item with fallbacks."""
+        caption_candidates = []
+
+        try:
+            caption_from_method = element.caption_text(self._document)
+            if caption_from_method:
+                caption_candidates.append(caption_from_method)
+        except Exception:
+            pass
+
+        for attr_name in ("captions", "caption", "caption_data"):
+            attr_value = getattr(element, attr_name, None)
+            if attr_value:
+                caption_candidates.append(self._stringify_caption_value(attr_value))
+
+        for candidate in caption_candidates:
+            normalized = re.sub(r"\s+", " ", candidate).strip()
+            if normalized:
+                return normalized
+        return ""
 
     def _setup_converter(self):
         """Setup document converter with appropriate acceleration options.
@@ -205,17 +255,19 @@ class PDFToMarkdownText:
                 raise KeyboardInterruptHandler()
 
     def extract_and_save_figures(
-        self, doi: str, caption_keywords: dict, base_path: str = None
+        self, doi: str, main_figure_keywords: dict = None, base_path: str = None
     ):
         """
-        Extract figures/tables from converted PDF using Docling item images and save
-        those whose captions match caption_keywords.
+        Extract figures/tables from converted PDF using Docling item images and save them.
+        If main_figure_keywords is provided, only figures whose captions match are saved;
+        if None, all figures are saved.
 
         Must be called after convert_to_markdown() so that self._document is populated.
 
         Args:
             doi (str): Article DOI.
-            caption_keywords (dict): Dict with "exact_keywords" and/or "substring_keywords".
+            main_figure_keywords (dict, optional): Dict with "exact_keywords" and/or
+                "substring_keywords". If None, all figures are saved.
             base_path (str, optional): Base directory for saving figures. Defaults to
                 FigureExtractor.BASE_PATH ("results/related_figures").
         """
@@ -223,28 +275,30 @@ class PDFToMarkdownText:
             logger.warning(
                 "extract_and_save_figures called before convert_to_markdown(); skipping."
             )
-            return
-        if not caption_keywords:
-            return
+            return False
 
         try:
             match_counter = 0
+            has_caption_keyword_match = False
             for element, _level in self._document.iterate_items():
                 if not isinstance(element, (PictureItem, TableItem)):
                     continue
 
-                try:
-                    caption_text = element.caption_text(self._document).strip()
-                except Exception:
-                    caption_text = ""
+                caption_text = self._extract_caption_text(element)
 
-                if not FigureExtractor.keyword_matches_caption(
-                    caption_text, caption_keywords
+                if (
+                    main_figure_keywords
+                    and not FigureExtractor.keyword_matches_caption(
+                        caption_text, main_figure_keywords
+                    )
                 ):
                     continue
 
+                has_caption_keyword_match = True
                 caption_id = f"figure_{match_counter}"
-                FigureExtractor.update_info_json(doi, caption_id, caption_text, base_path)
+                FigureExtractor.update_info_json(
+                    doi, caption_id, caption_text, base_path
+                )
 
                 try:
                     image = element.get_image(self._document)
@@ -276,8 +330,10 @@ class PDFToMarkdownText:
                     )
 
                 match_counter += 1
+            return has_caption_keyword_match
         except Exception as e:
             logger.warning(f"Error extracting figures from PDF for {doi}: {e}")
+            return False
 
     @staticmethod
     def clean_text(text: str):
@@ -326,18 +382,21 @@ class PDFToMarkdownText:
         property_keywords,
         vector_db_manager,
         logger,
+        has_caption_keyword_match: bool = False,
     ):
         """
         Function to append the sections to the dataframe.
 
         Args:
-            req_sections (list, required): List of sections.
-            doi (str, required): DOI of the article.
-            article_title (str, required): Title of the article.
-            publication_name (str, required): Name of the publication.
-            publisher (str, required): Name of the publisher.
-            property_keywords (dict, required): Dict of property keywords.
-            logger (logging.Logger, required): Logger object.
+            req_sections (list): List of sections.
+            doi (str): DOI of the article.
+            article_title (str): Title of the article.
+            publication_name (str): Name of the publication.
+            publisher (str): Name of the publisher.
+            property_keywords (dict): Dict of property keywords with "exact_keywords" and/or "substring_keywords".
+            vector_db_manager (VectorDatabaseManager): Manager used to create/check vector databases for relevant articles.
+            logger (logging.Logger): Logger object.
+            has_caption_keyword_match (bool, optional): Whether a figure caption matched a property keyword. Defaults to False.
 
         Returns:
             pd.DataFrame: Dataframe containing the article data.
@@ -399,7 +458,75 @@ class PDFToMarkdownText:
                         return section_type
             return None
 
+        def _fetch_abstract_from_semantic_scholar(doi_value: str) -> str:
+            """
+            Try fetching abstract via Semantic Scholar Graph API (no API key).
+            """
+            if not doi_value or not doi_value.startswith("10."):
+                return ""
+
+            url = (
+                f"https://api.semanticscholar.org/graph/v1/paper/DOI:{doi_value}"
+                "?fields=abstract"
+            )
+            headers = {"Accept": "application/json"}
+            try:
+                response = requests.get(url, headers=headers, timeout=20)
+                if response.status_code != 200:
+                    logger.warning(
+                        f"Semantic Scholar abstract fetch failed for {doi_value}: HTTP {response.status_code}"
+                    )
+                    return ""
+                payload = response.json()
+                abstract = payload.get("abstract", "")
+                return abstract.strip() if isinstance(abstract, str) else ""
+            except Exception as e:
+                logger.warning(
+                    f"Semantic Scholar abstract fetch error for {doi_value}: {e}"
+                )
+                return ""
+
+        def _fallback_abstract_from_pre_intro(
+            sections: list, title_value: str = ""
+        ) -> str:
+            """
+            Build abstract fallback from all section text before introduction,
+            after removing title text.
+            """
+            pre_intro_chunks = []
+            for section in sections:
+                section_lines = section.split("\n")
+                first_line = section_lines[0] if section_lines else ""
+                modified_first_line = first_line.lower().replace(" ", "")
+                section_type = _get_section_type(
+                    modified_first_line, self.article_keywords.SECTION_TITLE_WORDS
+                )
+                if section_type == "introduction":
+                    break
+
+                section_content = "\n".join(
+                    line.strip() for line in section_lines[1:] if line.strip()
+                ).strip()
+                if section_content:
+                    pre_intro_chunks.append(section_content)
+
+            abstract_fallback = "\n".join(pre_intro_chunks).strip()
+            if title_value:
+                abstract_fallback = abstract_fallback.replace(title_value, "").strip()
+            return abstract_fallback
+
         def _combine_sections(sections: list, section_keywords: dict):
+            """Classify and merge raw section texts into the canonical section buckets.
+
+            Args:
+                sections (list): List of section text strings (header + body).
+                section_keywords (dict): Mapping of section type → list of header keywords.
+
+            Returns:
+                dict: Keys are canonical section names (abstract, introduction,
+                      experimental_methods, computational_methods, results_discussion,
+                      conclusion); values are concatenated section text strings.
+            """
             final_sections = {
                 "abstract": "",
                 "introduction": "",
@@ -486,10 +613,32 @@ class PDFToMarkdownText:
         all_req_data["results_discussion"] = final_sections["results_discussion"]
         all_req_data["conclusion"] = final_sections["conclusion"]
 
+        # Abstract fallback chain:
+        # 1) Semantic Scholar Graph API abstract
+        # 2) Text before introduction (after removing title)
+        if not all_req_data["abstract"].strip():
+            semantic_abstract = _fetch_abstract_from_semantic_scholar(doi)
+            if semantic_abstract:
+                logger.info(
+                    f"Abstract recovered from Semantic Scholar API for DOI: {doi}"
+                )
+                all_req_data["abstract"] = semantic_abstract
+            else:
+                pre_intro_abstract = _fallback_abstract_from_pre_intro(
+                    req_sections, article_title
+                )
+                if pre_intro_abstract:
+                    logger.info(
+                        f"Abstract recovered from pre-introduction text for DOI: {doi}"
+                    )
+                    all_req_data["abstract"] = pre_intro_abstract
+
         total_text = f"#TITLE:\n{all_req_data['article_title']}\n\n# ABSTRACT:\n{all_req_data["abstract"]}\n\n# INTRODUCTION:\n{all_req_data["introduction"]}\n\n# EXPERIMENTAL SYNTHESIS:\n{all_req_data["exp_methods"]}\n\n# COMPUTATIONAL METHODOLOGY:\n{all_req_data["comp_methods"]}\n\n# RESULTS AND DISCUSSION:\n{all_req_data["results_discussion"]}\n\n# CONCLUSION\n{all_req_data["conclusion"]}"
+        has_text_property_match = False
         for item in property_keywords.values():
             for keyword in item:
                 if keyword in total_text:
+                    has_text_property_match = True
                     all_req_data["is_property_mentioned"] = "1"
                     modified_doi = doi.replace("/", "_")
                     if vector_db_manager.database_exists(modified_doi):
@@ -502,6 +651,20 @@ class PDFToMarkdownText:
                             db_name=modified_doi, article_text=total_text
                         )
                     break
+            if has_text_property_match:
+                break
+        if has_caption_keyword_match and not has_text_property_match:
+            all_req_data["is_property_mentioned"] = "1"
+            modified_doi = doi.replace("/", "_")
+            if vector_db_manager.database_exists(modified_doi):
+                logger.warning(f"Database already exists for {doi}...")
+            else:
+                logger.info(
+                    f"Target caption keyword matched for {doi}; creating vector database for RAG..."
+                )
+                vector_db_manager.create_database(
+                    db_name=modified_doi, article_text=total_text
+                )
         if all_req_data["is_property_mentioned"] == "0":
             all_req_data["abstract"] = ""
             all_req_data["introduction"] = ""

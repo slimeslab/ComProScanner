@@ -119,7 +119,12 @@ class ComProScanner:
         chunk_size: int = 1000,
         chunk_overlap: int = 25,
         embedding_model: str = "huggingface:thellert/physbert_cased",
-        caption_keywords: Optional[Dict] = None,
+        main_figure_keywords: Optional[Dict] = None,
+        additional_figure_keywords: Optional[Dict] = None,
+        save_failed_pdf_report: bool = True,
+        failed_pdf_report_path: Optional[str] = None,
+        save_failed_automated_report: bool = True,
+        failed_automated_report_path: Optional[str] = None,
     ):
         """Process articles for the main property keyword.
 
@@ -144,7 +149,12 @@ class ComProScanner:
             chunk_size (int, optional): Size of the chunks to split the input text into. Defaults to 1000.
             chunk_overlap (int, optional): Overlap between the chunks. Defaults to 25.
             embedding_model (str, optional): Name of the embedding model. Defaults to 'thellert/physbert_cased'.
-            caption_keywords (dict, optional): Keywords to match figure captions for figure extraction. Same format as property_keywords with "exact_keywords" and "substring_keywords" keys. Defaults to None (no figure extraction).
+            main_figure_keywords (dict, optional): Keywords to match figure captions for figure extraction. Same format as property_keywords with "exact_keywords" and "substring_keywords" keys. Defaults to None (falls back to property_keywords). Caption matches trigger vector DB creation.
+            additional_figure_keywords (dict, optional): Secondary caption keywords for figure extraction only. Same format as property_keywords. Matching figures are saved but do NOT trigger vector DB creation. Defaults to None.
+            save_failed_pdf_report (bool, optional): For `pdfs` source only. If True, save skipped/failed filename-based DOI fallback cases to a text report. Defaults to True.
+            failed_pdf_report_path (str, optional): For `pdfs` source only. Custom path for failed PDF filename report. Defaults to None (uses `{folder_path}/failed_pdf_filenames.txt`).
+            save_failed_automated_report (bool, optional): For automated publisher sources (elsevier, springer, iop, wiley). If True, save failed/unparseable articles to a report. Defaults to True.
+            failed_automated_report_path (str, optional): Custom path for the automated failure report. Defaults to None (uses `results/failed_automated_articles.txt`).
 
         Raises:
             ValueErrorHandler: If property_keywords is not provided.
@@ -154,8 +164,6 @@ class ComProScanner:
                 message="Please provide property_keywords dictionary to proceed."
             )
         source_list = [source.lower() for source in source_list]
-        if caption_keywords is None:
-            caption_keywords = property_keywords
         rag_config = RAGConfig(
             rag_db_path=rag_db_path,
             chunk_size=chunk_size,
@@ -179,9 +187,7 @@ class ComProScanner:
             try:
                 import pandas as pd
 
-                metadata_file = (
-                    f"results/{self.main_property_keyword}_metadata.csv"
-                )
+                metadata_file = f"results/{self.main_property_keyword}_metadata.csv"
                 if not os.path.exists(metadata_file):
                     logger.warning(
                         f"Metadata file '{metadata_file}' not found. "
@@ -206,9 +212,10 @@ class ComProScanner:
                             routed_doi_list[src] = doi_list
                     else:
                         doi_to_publisher = {
-                            str(row["doi"]).strip(): str(
-                                row["general_publisher"]
-                            ).strip().lower()
+                            str(row["doi"])
+                            .strip(): str(row["general_publisher"])
+                            .strip()
+                            .lower()
                             for _, row in metadata_df.iterrows()
                             if str(row["doi"]).strip()
                         }
@@ -260,7 +267,10 @@ class ComProScanner:
                 is_sql_db=is_sql_db,
                 is_save_xml=is_save_xml,
                 rag_config=rag_config,
-                caption_keywords=caption_keywords,
+                main_figure_keywords=main_figure_keywords,
+                additional_figure_keywords=additional_figure_keywords,
+                save_failed_automated_report=save_failed_automated_report,
+                failed_automated_report_path=failed_automated_report_path,
             )
             elsevier_processor.process_elsevier_articles()
 
@@ -281,7 +291,10 @@ class ComProScanner:
                 is_sql_db=is_sql_db,
                 is_save_xml=is_save_xml,
                 rag_config=rag_config,
-                caption_keywords=caption_keywords,
+                main_figure_keywords=main_figure_keywords,
+                additional_figure_keywords=additional_figure_keywords,
+                save_failed_automated_report=save_failed_automated_report,
+                failed_automated_report_path=failed_automated_report_path,
             )
             springer_processor.process_springer_articles()
 
@@ -302,7 +315,10 @@ class ComProScanner:
                 is_sql_db=is_sql_db,
                 is_save_pdf=is_save_pdf,
                 rag_config=rag_config,
-                caption_keywords=caption_keywords,
+                main_figure_keywords=main_figure_keywords,
+                additional_figure_keywords=additional_figure_keywords,
+                save_failed_automated_report=save_failed_automated_report,
+                failed_automated_report_path=failed_automated_report_path,
             )
             wiley_processor.process_wiley_articles()
 
@@ -322,7 +338,10 @@ class ComProScanner:
                 doi_list=routed_doi_list["iop"],
                 is_sql_db=is_sql_db,
                 rag_config=rag_config,
-                caption_keywords=caption_keywords,
+                main_figure_keywords=main_figure_keywords,
+                additional_figure_keywords=additional_figure_keywords,
+                save_failed_automated_report=save_failed_automated_report,
+                failed_automated_report_path=failed_automated_report_path,
             )
             iop_processor.process_iop_articles()
 
@@ -338,7 +357,10 @@ class ComProScanner:
                 csv_batch_size=csv_batch_size,
                 is_sql_db=is_sql_db,
                 rag_config=rag_config,
-                caption_keywords=caption_keywords,
+                main_figure_keywords=main_figure_keywords,
+                additional_figure_keywords=additional_figure_keywords,
+                save_failed_pdf_report=save_failed_pdf_report,
+                failed_pdf_report_path=failed_pdf_report_path,
             )
             pdf_processor.process_pdfs()
 
@@ -380,6 +402,8 @@ class ComProScanner:
         rag_base_url: Optional[str] = None,
         vlm_model: str = "gemini/gemini-3-flash-preview",
         related_figures_base_path: Optional[str] = None,
+        formula_instruction: Optional[str] = None,
+        equation_model: Optional[str] = None,
         **flow_optional_args,
     ):
         """Extract the composition-property data and synthesis data if the property is present in the article.
@@ -422,6 +446,11 @@ class ComProScanner:
             vlm_model (str, optional): Vision LLM model for graph data extraction from saved figures. Defaults to "gemini/gemini-3-flash-preview".
             related_figures_base_path (str, optional): Base path where saved figures are stored. Defaults to
                 "results/extracted_data/{main_property_keyword}/related_figures".
+            formula_instruction (str, optional): Custom instruction for the EquationTool used to derive
+                doped chemical formulas. When None the tool's built-in perovskite instruction is used.
+            equation_model (str, optional): Explicit litellm model name for EquationTool (for example,
+                "openai/gpt-4o-mini", "gemini/gemini-3-flash-preview"). When None, EquationTool auto-selects
+                based on available API keys.
             **flow_optional_args (Any): Optional keyword arguments for the MaterialsFlow class.
 
         Raises:
@@ -555,6 +584,8 @@ class ComProScanner:
                         is_extract_synthesis_data=is_extract_synthesis_data,
                         vlm_model=vlm_model,
                         related_figures_base_path=related_figures_base_path,
+                        formula_instruction=formula_instruction,
+                        equation_model=equation_model,
                         rag_config=rag_config,
                         output_log_folder=output_log_folder,
                         task_output_folder=task_output_folder,
@@ -688,6 +719,9 @@ class ComProScanner:
         is_save_composition_property_file: bool = True,
         composition_property_file: str = "composition_property.json",
         cleaning_strategy: str = "full",
+        apply_advanced_cleaning: bool = True,
+        is_store_unresolved_compositions: bool = False,
+        unresolved_compositions_file: str = "unresolved_compositions.json",
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Removes extra information (key-value pairs) provided by extracted agents. Finally, cleans the composition-property data based on periodic elements, abbreviations and resolves arithmetic calculations, fractions etc.
@@ -699,6 +733,9 @@ class ComProScanner:
             is_save_composition_property_file (bool, optional): Whether to save composition-property values to a separate file. Defaults to True.
             composition_property_file (str, optional): Path to the composition-property file containing a dictionary of composition-property data. Defaults to "composition_property.json".
             cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
+            apply_advanced_cleaning (bool, optional): Whether to apply advanced composition cleaning transformations (Miller indices removal, coefficient expansion, normalization, zero-coefficient removal). Defaults to True.
+            is_store_unresolved_compositions (bool, optional): Whether to log resolution statistics and save unresolved composition keys to a file. Requires is_save_composition_property_file=True. Defaults to False.
+            unresolved_compositions_file (str, optional): Path to the file where unresolved composition keys will be saved. Used only when is_store_unresolved_compositions=True. Defaults to "unresolved_compositions.json".
 
         Returns:
             tuple: A tuple containing:
@@ -727,8 +764,19 @@ class ComProScanner:
                 message=f"Invalid cleaning strategy: {cleaning_strategy}. Please choose either 'full' or 'basic'."
             )
         data_cleaner = DataCleaner(results_file=json_results_file)
+        if is_store_unresolved_compositions and is_save_composition_property_file:
+            source_composition_count = sum(
+                len(
+                    article_data.get("composition_data", {}).get(
+                        "compositions_property_values", {}
+                    )
+                )
+                for article_data in data_cleaner.all_data.values()
+                if isinstance(article_data, dict)
+            )
         final_data = data_cleaner.clean_data_with_relevant_compositions(
-            strategy=cleaning_strategy
+            strategy=cleaning_strategy,
+            apply_advanced_cleaning=apply_advanced_cleaning,
         )
         # Save the cleaned data back to the cleaned JSON file
         if is_save_separate_results:
@@ -749,6 +797,34 @@ class ComProScanner:
                         "compositions_property_values", {}
                     )
                     all_composition_property_values.update(compositions_property_values)
+            if is_store_unresolved_compositions:
+                resolved_count = len(all_composition_property_values)
+                filtered_count = sum(
+                    len(v) for v in data_cleaner.filtered_compositions.values()
+                )
+                unresolved_count = sum(
+                    len(v) for v in data_cleaner.unresolved_compositions.values()
+                )
+                logger.info(
+                    f"Composition-property pairs — source: {source_composition_count}, "
+                    f"filtered: {filtered_count}, unresolved: {unresolved_count}, "
+                    f"resolved: {resolved_count}"
+                )
+                if (
+                    data_cleaner.filtered_compositions
+                    or data_cleaner.unresolved_compositions
+                ):
+                    dropped_report = {
+                        "filtered": data_cleaner.filtered_compositions,
+                        "unresolved": data_cleaner.unresolved_compositions,
+                    }
+                    with open(
+                        unresolved_compositions_file, "w", encoding="utf-8"
+                    ) as file:
+                        json.dump(dropped_report, file, indent=2)
+                    logger.info(
+                        f"Filtered and unresolved compositions saved to {unresolved_compositions_file}."
+                    )
             # Save all composition-property values to a separate JSON file
             with open(composition_property_file, "w", encoding="utf-8") as file:
                 json.dump(all_composition_property_values, file, indent=2, default=str)

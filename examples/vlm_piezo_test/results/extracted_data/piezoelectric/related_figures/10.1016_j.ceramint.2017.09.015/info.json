@@ -1,0 +1,7 @@
+{
+  "gr1": "FESEM images of thermal etched cross-sections for BNKT ceramics with various Fe content: (a) undoped, (b) x = 1.0%, (c) x = 2.0%, (d) x = 3.0%, (e) x = 4.0% and (f) x = 5.0%.",
+  "gr3": "XRD patterns of Fe doped BNKT ceramic powders: (a) 2θ = 10–80°, (b) 2θ = 39.25–47.35°. The reflections are indexed in pseudocubic perovskite structure.",
+  "gr4": "(a) Room-temperature piezoelectric constant d\n                     33 and depolarization temperature T\n                     d as functions of Fe content; (b) retained d\n                     33 as function of annealing temperature; (c) temperature dependent depolarization current density J\n                     dep; (d) polarization loss P\n                     loss calculated by integrating J\n                     dep over time.",
+  "gr5": "XRD patterns of (a) 0.0Fe and (b) 3.0Fe annealed at different temperatures with 2θ = 39.25–47.35°.",
+  "gr6": "(a) Piezoelectric constant d\n                     33, (b) dielectric constant ε\n                     33/ε\n                     0 (1kHz), (c) remanent polarization P\n                     r,TSDC obtained by TSDC measurement, (d) the product P\n                     r,TSDC·ε\n                     33/ε\n                     0 and (e) effective electrostrictive coefficient Q as functions of Fe content."
+}

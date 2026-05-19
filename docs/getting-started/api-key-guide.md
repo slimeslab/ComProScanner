@@ -38,6 +38,27 @@ How to get it:
 SCOPUS_API_KEY=your_scopus_api_key
 ```
 
+### ScienceDirect Institutional Token
+
+Environment variable: `SCIENCEDIRECT_INSTTOKEN`
+
+> **Optional.** Only required when accessing subscription-based Elsevier full-text articles and figures from outside the university campus network (i.e., for remote/off-campus access).
+
+Used for:
+
+- Remote off-campus access to Elsevier full-text article retrieval
+- Downloading subscription-gated figures from ScienceDirect when working outside the campus network
+
+How to get it:
+
+1. Contact your institution's library or IT/research computing team and ask for the **ScienceDirect Institutional Token** (insttoken).
+2. Elsevier issues this token per institution; individual researchers cannot generate it directly.
+3. Once obtained, copy it into your `.env` file as `SCIENCEDIRECT_INSTTOKEN`.
+
+```bash
+SCIENCEDIRECT_INSTTOKEN=your_sciencedirect_insttoken
+```
+
 ### Springer Nature Open Access API
 
 Environment variable: `SPRINGER_OPENACCESS_API_KEY`
@@ -289,6 +310,7 @@ Use the subset you need:
 ```bash
 # Publisher providers
 SCOPUS_API_KEY=your_scopus_api_key
+SCIENCEDIRECT_INSTTOKEN=your_sciencedirect_insttoken  # optional, for off-campus access
 SPRINGER_OPENACCESS_API_KEY=your_springer_openaccess_api_key
 SPRINGER_TDM_API_KEY=your_springer_tdm_api_key
 WILEY_API_KEY=your_wiley_api_key

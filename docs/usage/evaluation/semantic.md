@@ -62,17 +62,16 @@ Dictionary specifying similarity thresholds for each metric when using semantic 
 
 #### :material-square-medium:`value_error_thresholds` _(dict)_
 
-Optional mapping of ground-truth value ranges to absolute error tolerances for numeric property value comparisons. When provided, a property value is accepted as a match if the absolute difference between the extracted value and the ground-truth value does not exceed the threshold for the range that the ground-truth value falls in. If no range matches, exact comparison is used.
+Optional mapping of ground-truth value ranges to absolute error tolerances for numeric property value comparisons. Ranges are interpreted as **layers**: the narrowest range that contains the ground-truth value determines the tolerance, so wider ranges implicitly cover the gaps left by narrower ones. If no range matches, exact comparison is used.
 
-Keys must be **tuples** `(min, max)` representing the range; `float('inf')` and `float('-inf')` are supported for open-ended bounds.
+Keys must be **tuples** `(a, b)` — element order does not matter, `(-150, 150)` and `(150, -150)` are treated identically. `float('inf')` and `float('-inf')` are supported for open-ended bounds.
 
 ```python
 value_error_thresholds = {
-    (-200, 200):           5,   # |ref| ≤ 200  →  tolerance ±5
-    (201, 500):            8,   # ref in (200, 500]  →  tolerance ±8
-    (-500, -201):          8,   # ref in [-500, -200)  →  tolerance ±8
-    (501, float('inf')):  10,   # ref > 500  →  tolerance ±10
-    (float('-inf'), -501): 10,  # ref < -500  →  tolerance ±10
+    (-50, 50):                        0.5,  # |ref| ≤ 50  →  tolerance ±0.5
+    (-150, 150):                        1,  # |ref| in (50, 150]  →  tolerance ±1
+    (-1000, 1000):                      2,  # |ref| in (150, 1000]  →  tolerance ±2
+    (float('-inf'), float('inf')):      5,  # |ref| > 1000  →  tolerance ±5
 }
 ```
 
@@ -86,7 +85,7 @@ value_error_thresholds = {
         "precursors": 0.15,
         "characterization_techniques": 0.15,
         "steps": 0.1
-    }<br>:material-square-small:**`output_file`** = "semantic_evaluation_result.json"<br>:material-square-small:**`extraction_agent_model_name`** = "gpt-4o-mini"<br>:material-square-small:**`is_synthesis_evaluation`** = True<br>:material-square-small:**`use_semantic_model`** = True<br>:material-square-small:**`primary_model_name`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`fallback_model_name`** = "all-mpnet-base-v2"<br>
+    }<br>:material-square-small:**`output_file`** = "semantic_evaluation_result.json"<br>:material-square-small:**`extraction_agent_model_name`** = "gpt-4o-mini"<br>:material-square-small:**`is_synthesis_evaluation`** = True<br>:material-square-small:**`use_semantic_model`** = True<br>:material-square-small:**`primary_model_name`** = "thellert/physbert_cased"<br>:material-square-small:**`fallback_model_name`** = "all-mpnet-base-v2"<br>
     :material-square-small:**`similarity_thresholds`** = {
         "compositions_property_values": 0.8,
         "property_unit": 0.8,
@@ -116,7 +115,7 @@ graph TB
 Physics-aware BERT model trained on scientific literature:
 
 ```python
-primary_model_name="huggingface:thellert/physbert_cased"
+primary_model_name="thellert/physbert_cased"
 ```
 
 **Advantages**:
@@ -194,11 +193,10 @@ results = evaluate_semantic(
     ground_truth_file="ground_truth.json",
     test_data_file="test_data.json",
     value_error_thresholds={
-        (-200, 200):           5,   # small values: allow ±5
-        (201, 500):            8,   # medium values: allow ±8
-        (-500, -201):          8,
-        (501, float('inf')):  10,   # large values: allow ±10
-        (float('-inf'), -501): 10,
+        (-50, 50):                       0.5,  # small values: allow ±0.5
+        (-150, 150):                       1,  # medium values: allow ±1
+        (-1000, 1000):                     2,  # large values: allow ±2
+        (float('-inf'), float('inf')):     5,  # very large values: allow ±5
     }
 )
 ```

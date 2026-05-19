@@ -1,0 +1,294 @@
+2026-05-01 10:44:35: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.matchemphys.2018.01.073.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.matchemphys.2018.01.073 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The crystallite size at different annealing temperature and different Zr content.
+|Annealing temperature T\xa0\xb0C|The crystallite size D (nm)|x\u202f=\u202fzero|x\u202f=\u202f0.2|x\u202f=\u202f0.4|x\u202f=\u202f0.8|
+|---|---|---|---|---|---|
+|600|33.51|46.8|31.5|23.8|
+|700|45|43.35|42.4|32.2|
+|800|45.9|39.02|43.75|21.87|
+|900|40.9|44.8|36.05|20.9|
+|1000|47.7|37.39|36.62|28.33|
+|1100|57.1|27.72|30.4|28.7|
+
+Table 2. Kp and d33 of the published data and our present data.
+|Composition|Kp|d33 (C/N)|ref|
+|---|---|---|---|
+|PZT (52/48)|\u2013|135|[33]|
+|0-3 PZT|\u2013|87|[34]|
+|PZT (57/43)|0.41|200|[35]|
+|PZT|0.419|\u2013|[36]|
+|PbTiO3|0.3|56|[37]|
+|PZT|\u2013|75|[34]|
+|La-doped PZT|\u2013|380|[38]|
+|MPSZT0.5|0.32|270|[39]|
+|PZT|\u2013|125|[40]|
+|Pb(Zr0.52Ti0.48)O3|0.53|223|[41]|
+|Pb0.9725(Zr0.52Ti0.48)0.945Nb0.055O3|0.59|386|[42]|
+|PZT|0.71|505|[43]|
+|PZT-2TZ|0.62|475|[43]|
+|PZT-5TZ|0.58|395|[43]|
+|PZT-10TZ|0.53|311|[43]|
+|PZT-4|0.54|225|[44]|
+|PZT-5H|0.59|585|[44]|
+|0.9PZT-0.1CFO|\u2013|38|[44]|
+|Nano PbZr0.4Ti0.6O3|0.75|528|present work|
+
+# RESULTS AND DISCUSSION
+The XRD patterns for the studied materials are shown in. These diffractions have sharp and single diffraction peaks were indexed and agreed with those in JCPDS card file number 70-4057 showing the perovskite structure for all composites. It was knots from XRD patterns the presents of PbTiO3 and PbO at 600 \xb0C. these phases were disappeared at higher temperatures where PbZrTiO3 are single phase at 110 \xb0C. The lattice parameter of the tetragonal phase of PZT samples increase with Zr content as shown in. The reason of increase of lattice parameter is the higher of the ionic radius ZrE^{4+} = 0.079 nm where the ionic radius of TiE^{4+} = 0.068 nm. The PZT samples exhibit sintering reaction behavior between PbO2 and ZrxTi1-xO2 phase. The expansion of the unit cell is caused by this reaction to form the perovskite PZT, since the volume of PZT is larger than the sum of reactance. The temperature at which expansion maximizes is about 1100 \xb0C. This temperature is near 100 \xb0C lower than that required when solid-state reaction process is employed to form PZT samples indicating the higher reactivity of the tartrate method for preparing PZT. FTIR spectroscopy carried out on PZT samples prepared by tartrate precursor method and thermally annealed at (600, 700, 800, 900, 1000 and 1100 \xb0C) are shown in. The spectrum show two vibrational main peaks, one in the range ( \u2212c m \u2212)E^{585}E^{577}E^{1} and the other at ( \u2212c m \u2212)E^{1385}E^{1425}E^{1}. The peak around c m \u2212E^{1400}E^{1} becomes very small after annealing at higher temperature and is nearly disappeared at 1100 \xb0C. Analyzing the peak around c m \u2212E^{1400}E^{1}, its band intensity increase by increasing annealing temperature. This indicates that the band belongs to lead zirconate carbonate in PZT sample. A broad peak at around ( \u2212c m \u2212)E^{3421}E^{3450}E^{1} and small peak around ( \u2212c m \u2212)E^{2800}E^{2900}E^{1} are attributed to OH, CH3 and CH2 vibrational modes respectively. The band around low wave number ( c m \u2212)E^{700}E^{1} is assigned to stretching vibrational of titanium carbonate, which decreases by increasing annealing temperature. The existence of absorption band near 582 cmE^{\u22121} which become broad band after annealing at 1000 and 1100 \xb0C should be related to (Ti-O-Ti), (Ti-O), (Zr-O-Zr) and (Zr-O) bonds. This broad band appears after annealing at 1000 and 1100 \xb0C, which is an evidence for the development of perovskite structure of PZT compound at temperature 1000 and 1100 \xb0C. The band appears at around ( c m \u2212)E^{1700}E^{1} could be attributed to (O-C-O) vibration, which decreases by annealing temperature. The absorption band occurring at ( ,andc m \u2212)E^{700}E^{1400}E^{1700}E^{1} are decreasing by increasing annealing temperature indicating the ignition of organic material used for synthesis of the sample. The band observed around ( c m \u2212)E^{586}E^{1} is the characteristic band of the formation of PZT perovskite structure. The effect of the annealing temperature of the characteristic band is apparent from the shift of the band to higher frequency from ( toc m \u2212)E^{582}E^{600}E^{1}. This behavior is due to increased number of (M-O) bonds in the perovskite of PZT material. a shows the scanning electron micrograph (SEM) of the polished samples (PbZrxTi1-xO3) indicate homogeneous distribution of grain growth. The average grain size estimated from micrograph is 1\u20133 \u03bcm depending on Zr additions. As ZrE^{4+,} concentration increases the grain size increases as shown in. It is obvious that the increase of ZrE^{4+} content increases c/a tetragonality in the composition (PbZrxTi1-xO3) up to x = 0.4 and then decreases for higher Zr content. The linear behavior indicates the polarized character of PbZrxTi1-xO3 composite. It is also noticed that the increase of Zr content up to x = 0.4 increased the generated charges. The sample x > 0.4 deviated from linearity, this is due to the following: when ZrE^{4+} substituted for TiE^{4+} enhanced the volume fraction of grain boundary, leading to increase the domain wall mobility. For the composition x > 0.4, the tetragonality decreases with increasing the volume fraction of grain bundies which retard the domain wall motion leading to decrease in the slope of the liner relation. Some point defects which may be present due to the preparation condition were minimized in high annealing temperature 1100 \xb0C. shows the effect of zirconia on the piezoelectric modulus d33 on system PbZrxTi1-xO3 ceramics. It is noticed that the increase of x increases d33 up to x = 0.4 above this content d33 decreases. The modulus d33 increased with increasing the grain size associated with maximum value of tetragonality at x = 0.4. and this may be due to the following: The domain wall motion became easier due to the increase of tetragonality and grain size, leading to the reduction of the internal stress at the grain boundaries. These process affect the anisotropy and imperfections leading to the increase of polarization and consequently d33 increase. The increase of x higher than 0.4 decreases the tetragonality leading to decrease d33. From the relation it is found that the Kp increases with increasing x up to 0.4, above this content Kp begin to decrease. Above 0.4, the decrease of Kp was due to scattering of dipole orientation leading to decrease the resultant polarization and hence the polarization modulus d33. The effect of ZrO2 (x) in the polarized disc is shown in. For x > 0.4, the tetragonality decreased which may be filling the vacancy sites by ZrE^{4+}ions. The ferroelectric was performed using Sewer -Tower circuit, for pure sample PbTiO3 and samples doped with Zr with ratios 0.2, 0.4 and 0.8. The increase of polarization with increasing Zr content may be due to the increase of 180 and 90\xb0 domains in the direction of applied electric field. This behavior is conformed from the relation between induced polarization (Pr) and the applied (AC) voltage as shown in. This figure shown that (Pr) has maximum value at Zr content = 0.8 whereas decreases for the pure PbTiO3. The decrease of polarization at samples X = 0.2 and 0.4 is obviously clear from this figure due to the effect of Zr which resist the domain rotation of PbTiO3 at low value of Zr at high Zr content X = 0.8 the Zr ions enter in the lead titante lattice and become soluble in lead titanate which give rise to more rotation and enhancement of polarization (see ).
+
+# ABSTRACT
+A series of PbZrxTi1-xO3 (x = 0.0, 0.2, 0.4 and 0.8) nanoparticle samples were prepared by tartrate precursor method. Both the piezoelectric modulus d33 and the grain size increased by increasing zirconium (Zr) content up to x = 0.4 and then decreases for higher content. The coupling factor Kp increased also by more doping of Zr up to x = 0.4. The ultrasonic wave velocity decreased with increasing Zr content up to x = 0.4. The piezoelectric modulus d33 value of nano PbZr0.4Ti0.6O3 is suitable for improving application for piezoelectric technology.
+
+# INTRODUCTION
+The most piezoelectric materials used in many applications are Lead Zirconate Titanate (PZT). The (PZT) has a characteristic properties which may be enhanced by the addition of various ions at \u201cA\u201d or \u201cB\u201d sites. These dopants are mainly of two types: \u201cdonor\u201d dopants, such as LaE^{3+}, NbE^{5+}, CeE^{3+} and TaE^{5+}, which produce \u201csoft\u201d PZT; and \u201cacceptor\u201d dopant, such as KE^{+}, NaE^{+}, ScE^{3+} and FeE^{3+}, which produce \u201chard\u201d PZT. The soft dopants facilitate the domain wall motion; thereby, the electronic properties are much better compared to undoped PZT. La is one of the most widely studied dopants in PZT system. LaE^{3+}ions increases the squareness of the hysteresis loop and decreases the coercive field (Ec), improves the dielectric constant, and electromechanical coupling coefficient. NdE^{3+} ions decrease the grain size of Pb(Zr,Ti)O3. It was found that the pure phase Perovskite structure can be obtained at the samples annealed at 600 \xb0C if all compound were used as nitrates. An accurate measurement of piezoelectric coefficient d33 thin films through the use of basic principles in mechanics of vibration were reported in Ref.. Both static and dynamic measurement methods for d33 become impractical for PZT thin films. In the case of static forces, PZT thin films often have a much smaller time constant than bulk or thick-film PZT. Moreover, as PZT becomes thin (e.g., 1 \u03bcm), the output voltage is significantly reduced and the signal-to-noise ratio drops. The large force could, in turn, fracture or depolarize the PZT thin film. The aim of the work is to study the effect of ZrO2 doping in PbTiO3 to obtain high quality of piezoelectric modulus d33 and enhance the coupling factor Kp compared with those published in previous work.
+
+# CONCLUSION
+Piezoelectric ceramics PbZrxTi1-xO3is prepared by tartrate precursor method. The piezoelectric modulus d33increased by increasing zirconium (Zr) contents. The increase of orientation of 180\xb0 domain and fraction of 90\xb0 domain in the direction of poling field caused the increase of Kp and d33with increasing Zr contents.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 10:45:05: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.matchemphys.2018.01.073.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.matchemphys.2018.01.073 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. The crystallite size at different annealing temperature and different Zr content.
+|Annealing temperature T\xa0\xb0C|The crystallite size D (nm)|x\u202f=\u202fzero|x\u202f=\u202f0.2|x\u202f=\u202f0.4|x\u202f=\u202f0.8|
+|---|---|---|---|---|---|
+|600|33.51|46.8|31.5|23.8|
+|700|45|43.35|42.4|32.2|
+|800|45.9|39.02|43.75|21.87|
+|900|40.9|44.8|36.05|20.9|
+|1000|47.7|37.39|36.62|28.33|
+|1100|57.1|27.72|30.4|28.7|
+
+Table 2. Kp and d33 of the published data and our present data.
+|Composition|Kp|d33 (C/N)|ref|
+|---|---|---|---|
+|PZT (52/48)|\u2013|135|[33]|
+|0-3 PZT|\u2013|87|[34]|
+|PZT (57/43)|0.41|200|[35]|
+|PZT|0.419|\u2013|[36]|
+|PbTiO3|0.3|56|[37]|
+|PZT|\u2013|75|[34]|
+|La-doped PZT|\u2013|380|[38]|
+|MPSZT0.5|0.32|270|[39]|
+|PZT|\u2013|125|[40]|
+|Pb(Zr0.52Ti0.48)O3|0.53|223|[41]|
+|Pb0.9725(Zr0.52Ti0.48)0.945Nb0.055O3|0.59|386|[42]|
+|PZT|0.71|505|[43]|
+|PZT-2TZ|0.62|475|[43]|
+|PZT-5TZ|0.58|395|[43]|
+|PZT-10TZ|0.53|311|[43]|
+|PZT-4|0.54|225|[44]|
+|PZT-5H|0.59|585|[44]|
+|0.9PZT-0.1CFO|\u2013|38|[44]|
+|Nano PbZr0.4Ti0.6O3|0.75|528|present work|
+
+# RESULTS AND DISCUSSION
+The XRD patterns for the studied materials are shown in. These diffractions have sharp and single diffraction peaks were indexed and agreed with those in JCPDS card file number 70-4057 showing the perovskite structure for all composites. It was knots from XRD patterns the presents of PbTiO3 and PbO at 600 \xb0C. these phases were disappeared at higher temperatures where PbZrTiO3 are single phase at 110 \xb0C. The lattice parameter of the tetragonal phase of PZT samples increase with Zr content as shown in. The reason of increase of lattice parameter is the higher of the ionic radius ZrE^{4+} = 0.079 nm where the ionic radius of TiE^{4+} = 0.068 nm. The PZT samples exhibit sintering reaction behavior between PbO2 and ZrxTi1-xO2 phase. The expansion of the unit cell is caused by this reaction to form the perovskite PZT, since the volume of PZT is larger than the sum of reactance. The temperature at which expansion maximizes is about 1100 \xb0C. This temperature is near 100 \xb0C lower than that required when solid-state reaction process is employed to form PZT samples indicating the higher reactivity of the tartrate method for preparing PZT. FTIR spectroscopy carried out on PZT samples prepared by tartrate precursor method and thermally annealed at (600, 700, 800, 900, 1000 and 1100 \xb0C) are shown in. The spectrum show two vibrational main peaks, one in the range ( \u2212c m \u2212)E^{585}E^{577}E^{1} and the other at ( \u2212c m \u2212)E^{1385}E^{1425}E^{1}. The peak around c m \u2212E^{1400}E^{1} becomes very small after annealing at higher temperature and is nearly disappeared at 1100 \xb0C. Analyzing the peak around c m \u2212E^{1400}E^{1}, its band intensity increase by increasing annealing temperature. This indicates that the band belongs to lead zirconate carbonate in PZT sample. A broad peak at around ( \u2212c m \u2212)E^{3421}E^{3450}E^{1} and small peak around ( \u2212c m \u2212)E^{2800}E^{2900}E^{1} are attributed to OH, CH3 and CH2 vibrational modes respectively. The band around low wave number ( c m \u2212)E^{700}E^{1} is assigned to stretching vibrational of titanium carbonate, which decreases by increasing annealing temperature. The existence of absorption band near 582 cmE^{\u22121} which become broad band after annealing at 1000 and 1100 \xb0C should be related to (Ti-O-Ti), (Ti-O), (Zr-O-Zr) and (Zr-O) bonds. This broad band appears after annealing at 1000 and 1100 \xb0C, which is an evidence for the development of perovskite structure of PZT compound at temperature 1000 and 1100 \xb0C. The band appears at around ( c m \u2212)E^{1700}E^{1} could be attributed to (O-C-O) vibration, which decreases by annealing temperature. The absorption band occurring at ( ,andc m \u2212)E^{700}E^{1400}E^{1700}E^{1} are decreasing by increasing annealing temperature indicating the ignition of organic material used for synthesis of the sample. The band observed around ( c m \u2212)E^{586}E^{1} is the characteristic band of the formation of PZT perovskite structure. The effect of the annealing temperature of the characteristic band is apparent from the shift of the band to higher frequency from ( toc m \u2212)E^{582}E^{600}E^{1}. This behavior is due to increased number of (M-O) bonds in the perovskite of PZT material. a shows the scanning electron micrograph (SEM) of the polished samples (PbZrxTi1-xO3) indicate homogeneous distribution of grain growth. The average grain size estimated from micrograph is 1\u20133 \u03bcm depending on Zr additions. As ZrE^{4+,} concentration increases the grain size increases as shown in. It is obvious that the increase of ZrE^{4+} content increases c/a tetragonality in the composition (PbZrxTi1-xO3) up to x = 0.4 and then decreases for higher Zr content. The linear behavior indicates the polarized character of PbZrxTi1-xO3 composite. It is also noticed that the increase of Zr content up to x = 0.4 increased the generated charges. The sample x > 0.4 deviated from linearity, this is due to the following: when ZrE^{4+} substituted for TiE^{4+} enhanced the volume fraction of grain boundary, leading to increase the domain wall mobility. For the composition x > 0.4, the tetragonality decreases with increasing the volume fraction of grain bundies which retard the domain wall motion leading to decrease in the slope of the liner relation. Some point defects which may be present due to the preparation condition were minimized in high annealing temperature 1100 \xb0C. shows the effect of zirconia on the piezoelectric modulus d33 on system PbZrxTi1-xO3 ceramics. It is noticed that the increase of x increases d33 up to x = 0.4 above this content d33 decreases. The modulus d33 increased with increasing the grain size associated with maximum value of tetragonality at x = 0.4. and this may be due to the following: The domain wall motion became easier due to the increase of tetragonality and grain size, leading to the reduction of the internal stress at the grain boundaries. These process affect the anisotropy and imperfections leading to the increase of polarization and consequently d33 increase. The increase of x higher than 0.4 decreases the tetragonality leading to decrease d33. From the relation it is found that the Kp increases with increasing x up to 0.4, above this content Kp begin to decrease. Above 0.4, the decrease of Kp was due to scattering of dipole orientation leading to decrease the resultant polarization and hence the polarization modulus d33. The effect of ZrO2 (x) in the polarized disc is shown in. For x > 0.4, the tetragonality decreased which may be filling the vacancy sites by ZrE^{4+}ions. The ferroelectric was performed using Sewer -Tower circuit, for pure sample PbTiO3 and samples doped with Zr with ratios 0.2, 0.4 and 0.8. The increase of polarization with increasing Zr content may be due to the increase of 180 and 90\xb0 domains in the direction of applied electric field. This behavior is conformed from the relation between induced polarization (Pr) and the applied (AC) voltage as shown in. This figure shown that (Pr) has maximum value at Zr content = 0.8 whereas decreases for the pure PbTiO3. The decrease of polarization at samples X = 0.2 and 0.4 is obviously clear from this figure due to the effect of Zr which resist the domain rotation of PbTiO3 at low value of Zr at high Zr content X = 0.8 the Zr ions enter in the lead titante lattice and become soluble in lead titanate which give rise to more rotation and enhancement of polarization (see ).
+
+# ABSTRACT
+A series of PbZrxTi1-xO3 (x = 0.0, 0.2, 0.4 and 0.8) nanoparticle samples were prepared by tartrate precursor method. Both the piezoelectric modulus d33 and the grain size increased by increasing zirconium (Zr) content up to x = 0.4 and then decreases for higher content. The coupling factor Kp increased also by more doping of Zr up to x = 0.4. The ultrasonic wave velocity decreased with increasing Zr content up to x = 0.4. The piezoelectric modulus d33 value of nano PbZr0.4Ti0.6O3 is suitable for improving application for piezoelectric technology.
+
+# INTRODUCTION
+The most piezoelectric materials used in many applications are Lead Zirconate Titanate (PZT). The (PZT) has a characteristic properties which may be enhanced by the addition of various ions at \u201cA\u201d or \u201cB\u201d sites. These dopants are mainly of two types: \u201cdonor\u201d dopants, such as LaE^{3+}, NbE^{5+}, CeE^{3+} and TaE^{5+}, which produce \u201csoft\u201d PZT; and \u201cacceptor\u201d dopant, such as KE^{+}, NaE^{+}, ScE^{3+} and FeE^{3+}, which produce \u201chard\u201d PZT. The soft dopants facilitate the domain wall motion; thereby, the electronic properties are much better compared to undoped PZT. La is one of the most widely studied dopants in PZT system. LaE^{3+}ions increases the squareness of the hysteresis loop and decreases the coercive field (Ec), improves the dielectric constant, and electromechanical coupling coefficient. NdE^{3+} ions decrease the grain size of Pb(Zr,Ti)O3. It was found that the pure phase Perovskite structure can be obtained at the samples annealed at 600 \xb0C if all compound were used as nitrates. An accurate measurement of piezoelectric coefficient d33 thin films through the use of basic principles in mechanics of vibration were reported in Ref.. Both static and dynamic measurement methods for d33 become impractical for PZT thin films. In the case of static forces, PZT thin films often have a much smaller time constant than bulk or thick-film PZT. Moreover, as PZT becomes thin (e.g., 1 \u03bcm), the output voltage is significantly reduced and the signal-to-noise ratio drops. The large force could, in turn, fracture or depolarize the PZT thin film. The aim of the work is to study the effect of ZrO2 doping in PbTiO3 to obtain high quality of piezoelectric modulus d33 and enhance the coupling factor Kp compared with those published in previous work.
+
+# CONCLUSION
+Piezoelectric ceramics PbZrxTi1-xO3is prepared by tartrate precursor method. The piezoelectric modulus d33increased by increasing zirconium (Zr) contents. The increase of orientation of 180\xb0 domain and fraction of 90\xb0 domain in the direction of poling field caused the increase of Kp and d33with increasing Zr contents.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="Thought: The Graph Data Extractor provided d33 values from the graph "The effect of zirconia on the piezoelectric modulus d33 on system PbZrxTi1-xO3 ceramics." The extracted data points are:
+- x=0.0 (PbTiO3): d33 = 190 ×10⁻¹² C/N = 190 pC/N
+- x=0.3: d33 = 430 ×10⁻¹² C/N = 430 pC/N
+- x=0.4: d33 = 530 ×10⁻¹² C/N = 530 pC/N
+- x=0.8: d33 = 230 ×10⁻¹² C/N = 230 pC/N
+
+The text explicitly gives d33 = 528 C/N for "Nano PbZr0.4Ti0.6O3" in Table 2. According to the conflict resolution rule, I keep the text-derived value (528) for PbZr0.4Ti0.6O3 (x=0.4) and use graph-derived values for compositions not explicitly given in text (x=0.0, x=0.3, x=0.8). Note that x=0.2 is not present in the graph data points, so I will not include it.
+
+The unit from the graph is "×10⁻¹² C/N" which is equivalent to pC/N. The text Table 2 shows d33 in "C/N" but the values are clearly in pC/N (e.g., 528 C/N would be impossibly large, so it's pC/N). I'll use pC/N as the unit.
+
+The family is "PZT" or "Pb(Zr,Ti)O3" - I'll use "PbTiO3" as the base family since the system is PbZrxTi1-xO3.
+
+Now I need to check for abbreviations. The text mentions "PZT" which is an abbreviation for "Lead Zirconate Titanate" or "Pb(Zr,Ti)O3". I should include this abbreviation.
+
+Let me compile the final JSON.
+
+Compositions from text (present work only):
+- Nano PbZr0.4Ti0.6O3: 528 (from Table 2)
+
+Compositions from graph (supplementing missing values):
+- PbTiO3 (x=0.0): 190
+- PbZr0.3Ti0.7O3 (x=0.3): 430
+- PbZr0.8Ti0.2O3 (x=0.8): 230
+
+Note: x=0.2 is not in graph data, so I skip it.
+
+The family should be "PbTiO3" or "PZT". I'll use "PbTiO3" as the base.
+
+Abbreviations: "PZT" -> "Pb(Zr,Ti)O3" or more precisely "PbZrxTi1-xO3". I'll use "PZT": "Pb(Zr,Ti)O3".
+
+Final answer:{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "PbTiO3": 190,
+      "PbZr0.3Ti0.7O3": 430,
+      "PbZr0.4Ti0.6O3": 528,
+      "PbZr0.8Ti0.2O3": 230
+    },
+    "abbreviations": {
+      "PZT": "Pb(Zr,Ti)O3"
+    },
+    "property_unit": "pC/N",
+    "family": "PbTiO3"
+  }
+}"

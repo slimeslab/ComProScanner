@@ -58,6 +58,11 @@ theme:
 plugins:
   - search:
       separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+  - blog:
+      blog_dir: news
+      post_date_format: long
+      post_url_format: "{slug}"
+      post_excerpt: optional
   - minify:
       minify_html: true
   - mkdocstrings:
@@ -86,6 +91,7 @@ markdown_extensions:
   - toc:
       permalink: true
       title: On this page
+      toc_depth: 3
   - pymdownx.arithmatex:
       generic: true
   - pymdownx.betterem:
@@ -154,6 +160,7 @@ nav:
   - Home: index.md
   - Getting Started:
       - Installation: getting-started/installation.md
+      - API Key Guide: getting-started/api-key-guide.md
       - Quick Start: getting-started/quick-start.md
   - User Guide:
       - Metadata Collection: usage/metadata-collection.md
@@ -170,6 +177,7 @@ nav:
           - Evaluation Visualization: usage/visualization/eval-viz.md
   - RAG Configuration: rag-config.md
   - API Overview: api.md
+  - Blog: news/index.md
   - About:
       - Project Structure: about/project-structure.md
       - License: about/license.md

@@ -11,11 +11,11 @@ Date: 16-04-2025
 import json
 import string
 from difflib import SequenceMatcher
+from pathlib import Path
 
 # Custom imports
 from ...utils.configs import CustomDictionary
 from ...utils.error_handler import ValueErrorHandler
-
 
 class MaterialsDataSemanticEvaluator:
     """
@@ -210,12 +210,20 @@ class MaterialsDataSemanticEvaluator:
         Args:
             ref_val (float): Ground-truth numeric value.
             error_thresholds (dict): Mapping of ``(min, max)`` tuples to absolute
-                thresholds.  Infinity values are supported.
+                thresholds.  Infinity values are supported.  Ranges are interpreted
+                as layers: the narrowest range that contains ``ref_val`` wins, so
+                ``(-150, 150): 8`` matches values in (-150, -50) and (50, 150) when
+                ``(-50, 50): 0.5`` is also present.  Tuple order does not matter —
+                ``(-150, 150)`` and ``(150, -150)`` are equivalent.
 
         Returns:
             float or None: Threshold if a range contains *ref_val*, else ``None``.
         """
-        for range_key, threshold in error_thresholds.items():
+        sorted_ranges = sorted(
+            error_thresholds.items(),
+            key=lambda item: max(item[0]) - min(item[0]),
+        )
+        for range_key, threshold in sorted_ranges:
             lo = min(range_key)
             hi = max(range_key)
             if lo <= ref_val <= hi:
@@ -1592,7 +1600,9 @@ class MaterialsDataSemanticEvaluator:
                 )
 
         # Save results to file
-        with open(output_file, "w", encoding="utf-8") as file:
+        output_path = Path(output_file)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_path, "w", encoding="utf-8") as file:
             json.dump(accumulated_results, file, indent=2)
 
         return accumulated_results

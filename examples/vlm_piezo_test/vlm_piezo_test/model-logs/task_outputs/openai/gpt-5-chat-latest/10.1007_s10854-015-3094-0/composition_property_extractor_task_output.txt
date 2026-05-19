@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"Bi1/2Na1/2TiO3":89,"Bi1/2Na1/2Ti(0.997)(Nd1/2Ta1/2)(0.003)O3":98,"Bi1/2Na1/2Ti(0.994)(Nd1/2Ta1/2)(0.006)O3":110,"Bi1/2Na1/2Ti(0.991)(Nd1/2Ta1/2)(0.009)O3":102,"Bi1/2Na1/2Ti(0.988)(Nd1/2Ta1/2)(0.012)O3":94},"abbreviations":{"BNT":"Bi1/2Na1/2TiO3"},"property_unit":"pC/N","family":"Bi0.5Na0.5TiO3"}}

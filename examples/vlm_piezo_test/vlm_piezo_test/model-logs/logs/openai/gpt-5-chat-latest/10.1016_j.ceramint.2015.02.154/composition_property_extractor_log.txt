@@ -1,0 +1,302 @@
+2026-05-01 10:31:09: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2015.02.154.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2015.02.154 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Refinement index and lattice parameters obtained by Rietveld analysis of BZT samples doped with Mg2+ (0.01mol), Ca2+ (0.015mol) and Sr2+(0.015mol).
+|Parameters|BMZT|BCZT|BSZT|
+|---|---|---|---|
+|Refinement index (%)||||
+|R p|17.86|22.48|15.63|
+|R wp|25.05|29.21|19.49|
+|||||
+|Lattice parameters||||
+|a (\xc5)|4.000|4.00343|4.00718|
+|b (\xc5)|4.0|4.00343|4.00718|
+|c (\xc5)|4.0|4.00343|4.00718|
+|Volume (\xc5E^{3})|64|64.165|64.345|
+|Space group: Pm-3m||||
+
+# RESULTS AND DISCUSSION
+(a) and (b) confirms the presence of pure perovskite orthorhombic phase in all the cases except for CaE^{2+} doped sample, tetragonal splitting was observed \u22650.015mole similar to that reported by Li et al.. It is attributed to higher CaE^{2+} dopant concentration induces lattice distortion due to dissimilar in ionic radii of CaE^{2+} (1.12\xc5) and BaE^{2+} (1.42\xc5), as well as phase changes in CaE^{2+} doped BZT. Rietveld analysis of doped BZT samples was carried out by GSAS software and the resulted graphs are presented in (a)\u2013(c). From the analysis, it is observed that the lattice parameters increase in the order SrE^{2+}>CaE^{2+}>MgE^{2+} corresponding to their increase in ionic sizes. shows that bulk density increases with dopant concentration initially up to 0.015mol due to their solubility in the structure. SEM microstructure of thermally etched samples as seen in shows the grains are mostly sub-micron sized for pure BZT with the presence of micro-pores near grain boundaries. In case of doped BZT, the grains are large (2\u20135\u03bcm) due to the fluxing action of dopants causing dissolution of smaller grains to form large grains. shows the Energy Dispersive X-Ray Spectroscopy (EDS) analysis of the samples which confirms the presence of dopants (i.e. MgE^{2+}, CaE^{2+}and SrE^{2+}) very close to their stoichiometric compositions. shows the d 33 is maximum for SrE^{2+} doped BZT (330pC/N) mainly due to enhanced grain size which makes easier for the domain wall rotation. shows the dielectric constant of MgE^{2+} doped BZT was maximum (K=2348) at 0.01mol. Similarly, the dielectric constant of CaE^{2+}doped BZT (K=2521) and SrE^{2+} doped BZT (K=2337) are maximum at 0.015mol. shows the loss factor follows a reverse trend to dielectric constant. In (a)\u2013(c), the ferroelectric loops of the samples show saturation polarization (P s) at relatively low electric field (2\u20133kV/mm) due to large grain size that helps in early saturation. shows the maximum remnant polarization for SrE^{2+} doped BZT (P r=4.69\u03bcC/cmE^{2}) than CaE^{2+} and MgE^{2+} doped BZTs. shows the coercive field (E c) increases with the increase in dopant concentration. In general, SrE^{2+} doped BZT samples are well sintered and their electrical properties are superior to other two dopants.
+
+# TITLE
+Effect of dopants (A=Mg2+, Ca2+ and Sr2+) on ferroelectric, dielectric and piezoelectric properties of (Ba1-xAx) (Ti0.98Zr0.02) O3 lead-free piezo ceramics
+
+# ABSTRACT
+The effect of Mg2+, Ca2+ and Sr2+ dopants on ferroelectric, dielectric and piezoelectric properties of BZT (Ba1−x
+                     A
+                        x
+                     ) (Ti0.98Zr0.02) O3 (x=0.00, 0.01, 0.015, 0.02 and 0.03) (A=Mg2+, Ca2+ and Sr2+) was studied. The precursor powders prepared by a “mixed oxide” route and calcined at 1000°C for 4h. The calcined powders were de-agglomerated, pressed into pellets and sintered at 1150°C for 3h. Scanning electron microscopy (SEM) studies of polished sintered pellets reveals the grains mostly of sub-micron sized for pure BZT samples, large (2–5μm) for doped BZTs. EDS analysis of the samples confirms the presence of dopants very close to their stoichiometric compositions. The piezoelectric charge constant was maximum for 0.015mol Sr2+ doped BZT (d
+                     33=330pC/N). Similarly, the dielectric constant was maximum for 0.015mol Ca2+doped BZT (K=2521) and the remnant polarization was maximum for 0.015mol Sr2+ doped BZT (P
+                     r=4.69μC/cm2).
+
+# INTRODUCTION
+Lead Zirconate Titanate (PZT) is an important piezoelectric material with exciting ferroelectric, dielectric and piezoelectric properties. Researchers worldwide are in search of safer lead free piezo materials as an alternative to toxic lead (Pb) bearing PZT. Some lead free piezo systems explored so far are: (i) Bismuth Sodium Titanate (BNT), (ii) Bismuth Potassium Titanate (BKT), (iii) Sodium Potassium Niobium (NKN), (iv) Potassium Sodium Niobate (KNN), and (v) Barium Titanate (BaTiO3) etc. The main drawbacks of alkali (Na, K) based lead-free piezo ceramics are low d 33, difficult in maintaining stoichiometry due to high volatilization and corrosive at high temperature. Barium Titanate (BT) and BT modified materials are promising due to high d 33 associated with composition-induced transitions such as morphotropic phase boundary (MPB) or polymorphic phase transitions (PPT). Barium Titanate (BT) has been modified as Barium Zirconate Titanate (BZT) by addition of zirconia, which influences the crystal structure and electrical properties. Wang et al. synthesized CaE^{2+} and ZrE^{4+} co-doped BT material with exceptionally high piezoelectric charge constant by optimization of calcination and sintering temperature. The effect of various dopants such as CeE^{4+}, YE^{3+}, HoE^{3+} and CaE^{2+} on a BZT system has been studied. The dielectric and microstructure properties of MgE^{2+} doped BT , relaxor behavior of MgE^{2+} doped BZT and SrE^{2+} doped BZT have already been studied. However, a comparative study on effect of various dopants on electrical properties such as ferroelectric and piezoelectric properties of BZT is not reported. In this study, an attempt has been made to find the effect of alkaline earth metal dopants such as MgE^{2+}, CaE^{2+} and SrE^{2+} on microstructure, ferroelectric, dielectric and piezoelectric properties of BZT.
+
+# CONCLUSION
+A comparative study on effect of MgE^{2+}, CaE^{2+} and SrE^{2+}dopants on electrical properties of BZT is studied. The powders are prepared by a \u201cmixed oxide\u201d route, calcined and sintered in identical conditions. XRD analysis of samples confirmed the presence of perovskite phase. Rietveld analysis of doped BZT samples shows there is a good agreement between the experimental and theoretical line profile and the lattice parameters increase in the order SrE^{2+}>CaE^{2+}>MgE^{2+} corresponding to their increase in ionic sizes. SEM micrographs show the homogeneous grain size, the grains are mostly sub-micron sized for pure BZT samples and are larger (2\u20135\u03bcm) for doped BZTs. EDS analysis of the samples confirms the presence of dopants very close to their stoichiometric compositions. Among three dopants, SrE^{2+} doped BZT shows maximum piezoelectric charge constant, remnant polarization. The CaE^{2+} doped sample shows maximum dielectric constant. In general, SrE^{2+} doped BZT samples are well sintered and their electrical properties are superior to MgE^{2+} and CaE^{2+} doped samples.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 10:32:05: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2015.02.154.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2015.02.154 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Refinement index and lattice parameters obtained by Rietveld analysis of BZT samples doped with Mg2+ (0.01mol), Ca2+ (0.015mol) and Sr2+(0.015mol).
+|Parameters|BMZT|BCZT|BSZT|
+|---|---|---|---|
+|Refinement index (%)||||
+|R p|17.86|22.48|15.63|
+|R wp|25.05|29.21|19.49|
+|||||
+|Lattice parameters||||
+|a (\xc5)|4.000|4.00343|4.00718|
+|b (\xc5)|4.0|4.00343|4.00718|
+|c (\xc5)|4.0|4.00343|4.00718|
+|Volume (\xc5E^{3})|64|64.165|64.345|
+|Space group: Pm-3m||||
+
+# RESULTS AND DISCUSSION
+(a) and (b) confirms the presence of pure perovskite orthorhombic phase in all the cases except for CaE^{2+} doped sample, tetragonal splitting was observed \u22650.015mole similar to that reported by Li et al.. It is attributed to higher CaE^{2+} dopant concentration induces lattice distortion due to dissimilar in ionic radii of CaE^{2+} (1.12\xc5) and BaE^{2+} (1.42\xc5), as well as phase changes in CaE^{2+} doped BZT. Rietveld analysis of doped BZT samples was carried out by GSAS software and the resulted graphs are presented in (a)\u2013(c). From the analysis, it is observed that the lattice parameters increase in the order SrE^{2+}>CaE^{2+}>MgE^{2+} corresponding to their increase in ionic sizes. shows that bulk density increases with dopant concentration initially up to 0.015mol due to their solubility in the structure. SEM microstructure of thermally etched samples as seen in shows the grains are mostly sub-micron sized for pure BZT with the presence of micro-pores near grain boundaries. In case of doped BZT, the grains are large (2\u20135\u03bcm) due to the fluxing action of dopants causing dissolution of smaller grains to form large grains. shows the Energy Dispersive X-Ray Spectroscopy (EDS) analysis of the samples which confirms the presence of dopants (i.e. MgE^{2+}, CaE^{2+}and SrE^{2+}) very close to their stoichiometric compositions. shows the d 33 is maximum for SrE^{2+} doped BZT (330pC/N) mainly due to enhanced grain size which makes easier for the domain wall rotation. shows the dielectric constant of MgE^{2+} doped BZT was maximum (K=2348) at 0.01mol. Similarly, the dielectric constant of CaE^{2+}doped BZT (K=2521) and SrE^{2+} doped BZT (K=2337) are maximum at 0.015mol. shows the loss factor follows a reverse trend to dielectric constant. In (a)\u2013(c), the ferroelectric loops of the samples show saturation polarization (P s) at relatively low electric field (2\u20133kV/mm) due to large grain size that helps in early saturation. shows the maximum remnant polarization for SrE^{2+} doped BZT (P r=4.69\u03bcC/cmE^{2}) than CaE^{2+} and MgE^{2+} doped BZTs. shows the coercive field (E c) increases with the increase in dopant concentration. In general, SrE^{2+} doped BZT samples are well sintered and their electrical properties are superior to other two dopants.
+
+# TITLE
+Effect of dopants (A=Mg2+, Ca2+ and Sr2+) on ferroelectric, dielectric and piezoelectric properties of (Ba1-xAx) (Ti0.98Zr0.02) O3 lead-free piezo ceramics
+
+# ABSTRACT
+The effect of Mg2+, Ca2+ and Sr2+ dopants on ferroelectric, dielectric and piezoelectric properties of BZT (Ba1−x
+                     A
+                        x
+                     ) (Ti0.98Zr0.02) O3 (x=0.00, 0.01, 0.015, 0.02 and 0.03) (A=Mg2+, Ca2+ and Sr2+) was studied. The precursor powders prepared by a “mixed oxide” route and calcined at 1000°C for 4h. The calcined powders were de-agglomerated, pressed into pellets and sintered at 1150°C for 3h. Scanning electron microscopy (SEM) studies of polished sintered pellets reveals the grains mostly of sub-micron sized for pure BZT samples, large (2–5μm) for doped BZTs. EDS analysis of the samples confirms the presence of dopants very close to their stoichiometric compositions. The piezoelectric charge constant was maximum for 0.015mol Sr2+ doped BZT (d
+                     33=330pC/N). Similarly, the dielectric constant was maximum for 0.015mol Ca2+doped BZT (K=2521) and the remnant polarization was maximum for 0.015mol Sr2+ doped BZT (P
+                     r=4.69μC/cm2).
+
+# INTRODUCTION
+Lead Zirconate Titanate (PZT) is an important piezoelectric material with exciting ferroelectric, dielectric and piezoelectric properties. Researchers worldwide are in search of safer lead free piezo materials as an alternative to toxic lead (Pb) bearing PZT. Some lead free piezo systems explored so far are: (i) Bismuth Sodium Titanate (BNT), (ii) Bismuth Potassium Titanate (BKT), (iii) Sodium Potassium Niobium (NKN), (iv) Potassium Sodium Niobate (KNN), and (v) Barium Titanate (BaTiO3) etc. The main drawbacks of alkali (Na, K) based lead-free piezo ceramics are low d 33, difficult in maintaining stoichiometry due to high volatilization and corrosive at high temperature. Barium Titanate (BT) and BT modified materials are promising due to high d 33 associated with composition-induced transitions such as morphotropic phase boundary (MPB) or polymorphic phase transitions (PPT). Barium Titanate (BT) has been modified as Barium Zirconate Titanate (BZT) by addition of zirconia, which influences the crystal structure and electrical properties. Wang et al. synthesized CaE^{2+} and ZrE^{4+} co-doped BT material with exceptionally high piezoelectric charge constant by optimization of calcination and sintering temperature. The effect of various dopants such as CeE^{4+}, YE^{3+}, HoE^{3+} and CaE^{2+} on a BZT system has been studied. The dielectric and microstructure properties of MgE^{2+} doped BT , relaxor behavior of MgE^{2+} doped BZT and SrE^{2+} doped BZT have already been studied. However, a comparative study on effect of various dopants on electrical properties such as ferroelectric and piezoelectric properties of BZT is not reported. In this study, an attempt has been made to find the effect of alkaline earth metal dopants such as MgE^{2+}, CaE^{2+} and SrE^{2+} on microstructure, ferroelectric, dielectric and piezoelectric properties of BZT.
+
+# CONCLUSION
+A comparative study on effect of MgE^{2+}, CaE^{2+} and SrE^{2+}dopants on electrical properties of BZT is studied. The powders are prepared by a \u201cmixed oxide\u201d route, calcined and sintered in identical conditions. XRD analysis of samples confirmed the presence of perovskite phase. Rietveld analysis of doped BZT samples shows there is a good agreement between the experimental and theoretical line profile and the lattice parameters increase in the order SrE^{2+}>CaE^{2+}>MgE^{2+} corresponding to their increase in ionic sizes. SEM micrographs show the homogeneous grain size, the grains are mostly sub-micron sized for pure BZT samples and are larger (2\u20135\u03bcm) for doped BZTs. EDS analysis of the samples confirms the presence of dopants very close to their stoichiometric compositions. Among three dopants, SrE^{2+} doped BZT shows maximum piezoelectric charge constant, remnant polarization. The CaE^{2+} doped sample shows maximum dielectric constant. In general, SrE^{2+} doped BZT samples are well sintered and their electrical properties are superior to MgE^{2+} and CaE^{2+} doped samples.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="Thought: The Graph Data Extractor returned d33 values from Figure 7 for various x values for Mg2+, Ca2+, and Sr2+ doped BZT. The text explicitly states: "The piezoelectric charge constant was maximum for 0.015mol Sr2+ doped BZT (d33=330pC/N)". The graph shows values for x=0.00, 0.01, 0.02, 0.03 but not for x=0.015. The text also mentions "d33 is maximum for Sr2+ doped BZT (330pC/N)" at 0.015mol. The graph shows for Sr2+ at x=0.01: 295 pC/N, x=0.02: 320 pC/N. The text value of 330 pC/N at x=0.015 is not in the graph. I need to include the text-derived value for x=0.015 Sr2+ doped BZT. For the other compositions, the graph provides values for x=0.00, 0.01, 0.02, 0.03 for each dopant. The text does not provide explicit d33 values for those specific x values, so I will use the graph-derived values for those. The base composition (x=0.00) is the same for all three series: (Ba1-0.00)(Ti0.98Zr0.02)O3 = Ba(Ti0.98Zr0.02)O3 with d33=105 pC/N.
+
+Now I need to construct the compositions using the formula (Ba(1-x)A(x))(Ti0.98Zr0.02)O3 where A = Mg, Ca, Sr.
+
+For x=0.00: (Ba1.00)(Ti0.98Zr0.02)O3 = Ba(Ti0.98Zr0.02)O3
+For x=0.01, A=Mg: (Ba0.99Mg0.01)(Ti0.98Zr0.02)O3
+For x=0.01, A=Ca: (Ba0.99Ca0.01)(Ti0.98Zr0.02)O3
+For x=0.01, A=Sr: (Ba0.99Sr0.01)(Ti0.98Zr0.02)O3
+For x=0.015, A=Sr: (Ba0.985Sr0.015)(Ti0.98Zr0.02)O3
+For x=0.02, A=Mg: (Ba0.98Mg0.02)(Ti0.98Zr0.02)O3
+For x=0.02, A=Ca: (Ba0.98Ca0.02)(Ti0.98Zr0.02)O3
+For x=0.02, A=Sr: (Ba0.98Sr0.02)(Ti0.98Zr0.02)O3
+For x=0.03, A=Mg: (Ba0.97Mg0.03)(Ti0.98Zr0.02)O3
+For x=0.03, A=Ca: (Ba0.97Ca0.03)(Ti0.98Zr0.02)O3
+For x=0.03, A=Sr: (Ba0.97Sr0.03)(Ti0.98Zr0.02)O3
+
+The family is BaTiO3-based, specifically BZT (Barium Zirconate Titanate).
+
+Abbreviations: BZT is used in the text. Also BMZT, BCZT, BSZT are used in Table 1. I should include those.
+
+Let me compile the JSON.
+
+Compositions:
+- Ba(Ti0.98Zr0.02)O3: 105 (from graph, x=0.00)
+- (Ba0.99Mg0.01)(Ti0.98Zr0.02)O3: 165 (from graph)
+- (Ba0.99Ca0.01)(Ti0.98Zr0.02)O3: 220 (from graph)
+- (Ba0.99Sr0.01)(Ti0.98Zr0.02)O3: 295 (from graph)
+- (Ba0.985Sr0.015)(Ti0.98Zr0.02)O3: 330 (from text, explicit)
+- (Ba0.98Mg0.02)(Ti0.98Zr0.02)O3: 120 (from graph)
+- (Ba0.98Ca0.02)(Ti0.98Zr0.02)O3: 190 (from graph)
+- (Ba0.98Sr0.02)(Ti0.98Zr0.02)O3: 320 (from graph)
+- (Ba0.97Mg0.03)(Ti0.98Zr0.02)O3: 95 (from graph)
+- (Ba0.97Ca0.03)(Ti0.98Zr0.02)O3: 165 (from graph)
+- (Ba0.97Sr0.03)(Ti0.98Zr0.02)O3: 165 (from graph)
+
+Property unit: pC/N
+Family: BaTiO3 (or BZT)
+
+Abbreviations: BZT: Ba(Ti0.98Zr0.02)O3, BMZT: (Ba0.99Mg0.01)(Ti0.98Zr0.02)O3 (but BMZT is used generically for Mg-doped BZT, not a specific x), BCZT: (Ba0.985Ca0.015)(Ti0.98Zr0.02)O3 (but BCZT is used generically for Ca-doped BZT), BSZT: (Ba0.985Sr0.015)(Ti0.98Zr0.02)O3 (but BSZT is used generically for Sr-doped BZT). I'll include them as abbreviations with the general formula.
+
+Actually, looking at Table 1, BMZT, BCZT, BSZT are sample labels for specific dopant concentrations (0.01mol Mg, 0.015mol Ca, 0.015mol Sr). So I can map them to the specific compositions.
+
+BMZT: (Ba0.99Mg0.01)(Ti0.98Zr0.02)O3
+BCZT: (Ba0.985Ca0.015)(Ti0.98Zr0.02)O3
+BSZT: (Ba0.985Sr0.015)(Ti0.98Zr0.02)O3
+
+But the text doesn't give d33 for BCZT or BMZT explicitly. The graph gives d33 for x=0.01 Mg (165), x=0.01 Ca (220), x=0.015 Sr (330 from text). For BCZT at x=0.015, the graph doesn't have a point, and the text doesn't give a value. So I won't include BCZT d33.
+
+I'll include the abbreviations.
+
+Final JSON structure.{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "Ba(Ti0.98Zr0.02)O3": 105,
+      "(Ba0.99Mg0.01)(Ti0.98Zr0.02)O3": 165,
+      "(Ba0.99Ca0.01)(Ti0.98Zr0.02)O3": 220,
+      "(Ba0.99Sr0.01)(Ti0.98Zr0.02)O3": 295,
+      "(Ba0.985Sr0.015)(Ti0.98Zr0.02)O3": 330,
+      "(Ba0.98Mg0.02)(Ti0.98Zr0.02)O3": 120,
+      "(Ba0.98Ca0.02)(Ti0.98Zr0.02)O3": 190,
+      "(Ba0.98Sr0.02)(Ti0.98Zr0.02)O3": 320,
+      "(Ba0.97Mg0.03)(Ti0.98Zr0.02)O3": 95,
+      "(Ba0.97Ca0.03)(Ti0.98Zr0.02)O3": 165,
+      "(Ba0.97Sr0.03)(Ti0.98Zr0.02)O3": 165
+    },
+    "abbreviations": {
+      "BZT": "Ba(Ti0.98Zr0.02)O3",
+      "BMZT": "(Ba0.99Mg0.01)(Ti0.98Zr0.02)O3",
+      "BCZT": "(Ba0.985Ca0.015)(Ti0.98Zr0.02)O3",
+      "BSZT": "(Ba0.985Sr0.015)(Ti0.98Zr0.02)O3"
+    },
+    "property_unit": "pC/N",
+    "family": "BaTiO3"
+  }
+}"

@@ -26,6 +26,8 @@ comproscanner
 │       │   │       └── synthesis_format_crew/
 │       │   ├── tools
 │       │   │   ├── __init__.py
+│       │   │   ├── equation_tool.py
+│       │   │   ├── graph_extractor_tool.py
 │       │   │   ├── material_parser_tool.py
 │       │   │   └── rag_tool.py
 │       │   ├── __init__.py
@@ -61,7 +63,9 @@ comproscanner
 ├── examples/
 ├── tests/
 ├── .env
+├── .env.example
 ├── .gitignore
+├── CITATION.cff
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── LICENSE

@@ -1,0 +1,91 @@
+2026-05-01 23:04:58: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(Bi0.5Na0.45K0.05)TiO3': 102, '(Bi0.5Na0.445K0.05Ag0.005)TiO3': 104, '(Bi0.5Na0.4425K0.05Ag0.0075)TiO3': 108, '(Bi0.5Na0.44K0.05Ag0.01)TiO3': 124, '(Bi0.5Na0.4375K0.05Ag0.0125)TiO3': 128, '(Bi0.5Na0.425K0.075)TiO3': 126, '(Bi0.5Na0.42K0.075Ag0.005)TiO3': 126, '(Bi0.5Na0.4175K0.075Ag0.0075)TiO3': 125, '(Bi0.5Na0.415K0.075Ag0.01)TiO3': 130, '(Bi0.5Na0.4125K0.075Ag0.0125)TiO3': 129, '(Bi0.5Na0.4125K0.0875)TiO3': 144, '(Bi0.5Na0.4075K0.0875Ag0.005)TiO3': 145, '(Bi0.5Na0.405K0.0875Ag0.0075)TiO3': 146, '(Bi0.5Na0.4025K0.0875Ag0.01)TiO3': 156, '(Bi0.5Na0.4K0.0875Ag0.0125)TiO3': 144, '(Bi0.5Na0.4K0.10)TiO3': 163, '(Bi0.5Na0.395K0.10Ag0.005)TiO3': 166, '(Bi0.5Na0.3925K0.10Ag0.0075)TiO3': 172, '(Bi0.5Na0.39K0.10Ag0.01)TiO3': 180, '(Bi0.5Na0.3875K0.10Ag0.0125)TiO3': 157, '(Bi0.5Na0.3875K0.1125)TiO3': 153, '(Bi0.5Na0.3825K0.1125Ag0.005)TiO3': 155, '(Bi0.5Na0.38K0.1125Ag0.0075)TiO3': 158, '(Bi0.5Na0.3775K0.1125Ag0.01)TiO3': 168, '(Bi0.5Na0.375K0.1125Ag0.0125)TiO3': 87, '(Bi0.5Na0.3875K0.0875Ag0.025)TiO3': 138, '(Bi0.5Na0.375K0.0875Ag0.0375)TiO3': 107, '(Bi0.5Na0.3625K0.0875Ag0.05)TiO3': 93}, 'abbreviations': {'BNKAT': 'Bi0.5(Na1-x-yKxAgy)0.5TiO3', 'BNT': 'Bi0.5Na0.5TiO3'}, 'property_unit': 'pC/N', 'family': 'Bi0.5Na0.5TiO3'}}. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- After receiving the MaterialParserTool output, VERIFY that every variable was substituted correctly. For each sub-expression containing variables (e.g. `(1-x-y)`), manually confirm that all variables in that expression were replaced with their given values. For example, `(1-x-y)` with x=0.10, y=0.010 must resolve to `(1-0.10-0.010)`, NOT `(0.9-0.010)` (partial substitution is wrong). If the tool's resolved formula contains any incorrect or incomplete substitution, OVERRIDE it with the correctly substituted expression. The override must still follow the BODMAS bracket notation and must NOT collapse the expression to a single number — just substitute variable symbols with their numeric values.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+- IMPORTANT: Remove the compositions with null property value. But DON'T ever remove compositions with property values.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(Bi0.5Na0.45K0.05)TiO3': 102, '(Bi0.5Na0.445K0.05Ag0.005)TiO3': 104, '(Bi0.5Na0.4425K0.05Ag0.0075)TiO3': 108, '(Bi0.5Na0.44K0.05Ag0.01)TiO3': 124, '(Bi0.5Na0.4375K0.05Ag0.0125)TiO3': 128, '(Bi0.5Na0.425K0.075)TiO3': 126, '(Bi0.5Na0.42K0.075Ag0.005)TiO3': 126, '(Bi0.5Na0.4175K0.075Ag0.0075)TiO3': 125, '(Bi0.5Na0.415K0.075Ag0.01)TiO3': 130, '(Bi0.5Na0.4125K0.075Ag0.0125)TiO3': 129, '(Bi0.5Na0.4125K0.0875)TiO3': 144, '(Bi0.5Na0.4075K0.0875Ag0.005)TiO3': 145, '(Bi0.5Na0.405K0.0875Ag0.0075)TiO3': 146, '(Bi0.5Na0.4025K0.0875Ag0.01)TiO3': 156, '(Bi0.5Na0.4K0.0875Ag0.0125)TiO3': 144, '(Bi0.5Na0.4K0.10)TiO3': 163, '(Bi0.5Na0.395K0.10Ag0.005)TiO3': 166, '(Bi0.5Na0.3925K0.10Ag0.0075)TiO3': 172, '(Bi0.5Na0.39K0.10Ag0.01)TiO3': 180, '(Bi0.5Na0.3875K0.10Ag0.0125)TiO3': 157, '(Bi0.5Na0.3875K0.1125)TiO3': 153, '(Bi0.5Na0.3825K0.1125Ag0.005)TiO3': 155, '(Bi0.5Na0.38K0.1125Ag0.0075)TiO3': 158, '(Bi0.5Na0.3775K0.1125Ag0.01)TiO3': 168, '(Bi0.5Na0.375K0.1125Ag0.0125)TiO3': 87, '(Bi0.5Na0.3875K0.0875Ag0.025)TiO3': 138, '(Bi0.5Na0.375K0.0875Ag0.0375)TiO3': 107, '(Bi0.5Na0.3625K0.0875Ag0.05)TiO3': 93}, 'abbreviations': {'BNKAT': 'Bi0.5(Na1-x-yKxAgy)0.5TiO3', 'BNT': 'Bi0.5Na0.5TiO3'}, 'property_unit': 'pC/N', 'family': 'Bi0.5Na0.5TiO3'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="started"
+2026-05-01 23:05:38: task_name="format_composition_property", task="**Task**: Format Material Compositions and Properties
+**Description**: Format the extracted material composition and properties data. Focus on the 'Notes' if anything is provided. You MUST use 'MaterialParserTool' as tool if there is any variable in the composition in {'composition_extracted_data': {'compositions_property_values': {'(Bi0.5Na0.45K0.05)TiO3': 102, '(Bi0.5Na0.445K0.05Ag0.005)TiO3': 104, '(Bi0.5Na0.4425K0.05Ag0.0075)TiO3': 108, '(Bi0.5Na0.44K0.05Ag0.01)TiO3': 124, '(Bi0.5Na0.4375K0.05Ag0.0125)TiO3': 128, '(Bi0.5Na0.425K0.075)TiO3': 126, '(Bi0.5Na0.42K0.075Ag0.005)TiO3': 126, '(Bi0.5Na0.4175K0.075Ag0.0075)TiO3': 125, '(Bi0.5Na0.415K0.075Ag0.01)TiO3': 130, '(Bi0.5Na0.4125K0.075Ag0.0125)TiO3': 129, '(Bi0.5Na0.4125K0.0875)TiO3': 144, '(Bi0.5Na0.4075K0.0875Ag0.005)TiO3': 145, '(Bi0.5Na0.405K0.0875Ag0.0075)TiO3': 146, '(Bi0.5Na0.4025K0.0875Ag0.01)TiO3': 156, '(Bi0.5Na0.4K0.0875Ag0.0125)TiO3': 144, '(Bi0.5Na0.4K0.10)TiO3': 163, '(Bi0.5Na0.395K0.10Ag0.005)TiO3': 166, '(Bi0.5Na0.3925K0.10Ag0.0075)TiO3': 172, '(Bi0.5Na0.39K0.10Ag0.01)TiO3': 180, '(Bi0.5Na0.3875K0.10Ag0.0125)TiO3': 157, '(Bi0.5Na0.3875K0.1125)TiO3': 153, '(Bi0.5Na0.3825K0.1125Ag0.005)TiO3': 155, '(Bi0.5Na0.38K0.1125Ag0.0075)TiO3': 158, '(Bi0.5Na0.3775K0.1125Ag0.01)TiO3': 168, '(Bi0.5Na0.375K0.1125Ag0.0125)TiO3': 87, '(Bi0.5Na0.3875K0.0875Ag0.025)TiO3': 138, '(Bi0.5Na0.375K0.0875Ag0.0375)TiO3': 107, '(Bi0.5Na0.3625K0.0875Ag0.05)TiO3': 93}, 'abbreviations': {'BNKAT': 'Bi0.5(Na1-x-yKxAgy)0.5TiO3', 'BNT': 'Bi0.5Na0.5TiO3'}, 'property_unit': 'pC/N', 'family': 'Bi0.5Na0.5TiO3'}}. Just resolve the variables - but don't do any final numerical calculation to get the composition percentage by yourself and keep the formula same as the original.
+- After receiving the MaterialParserTool output, VERIFY that every variable was substituted correctly. For each sub-expression containing variables (e.g. `(1-x-y)`), manually confirm that all variables in that expression were replaced with their given values. For example, `(1-x-y)` with x=0.10, y=0.010 must resolve to `(1-0.10-0.010)`, NOT `(0.9-0.010)` (partial substitution is wrong). If the tool's resolved formula contains any incorrect or incomplete substitution, OVERRIDE it with the correctly substituted expression. The override must still follow the BODMAS bracket notation and must NOT collapse the expression to a single number — just substitute variable symbols with their numeric values.
+- If any abbreviated form of composition is present rewrite with the actual composition. But DON'T modify the chemical composition / periodic element with chemical name / element name for e.g., Bi should not be replaced with Bismuth or BaTiO3 should not be replaced with Barium titanate.
+- If composition has variables with equation, after resolving the variable the formula should be written in a form of BODMAS rule with only () as brackets, + as addition, - as subtraction, * as multiplication and / as division. For e.g, ABx-2y/5C3 is a chemical formula, where A, B, C are periodic elements and x and y are variables with values x=2, y=3, the final chemical formula should be written as AB(2-((2*3)/5))O3 so that BODMAS rule can be applied later.
+- IMPORTANT: Remove the compositions with null property value. But DON'T ever remove compositions with property values.
+
+**Parameters**:
+- Extracted composition-property dictionary-
+{'composition_extracted_data': {'compositions_property_values': {'(Bi0.5Na0.45K0.05)TiO3': 102, '(Bi0.5Na0.445K0.05Ag0.005)TiO3': 104, '(Bi0.5Na0.4425K0.05Ag0.0075)TiO3': 108, '(Bi0.5Na0.44K0.05Ag0.01)TiO3': 124, '(Bi0.5Na0.4375K0.05Ag0.0125)TiO3': 128, '(Bi0.5Na0.425K0.075)TiO3': 126, '(Bi0.5Na0.42K0.075Ag0.005)TiO3': 126, '(Bi0.5Na0.4175K0.075Ag0.0075)TiO3': 125, '(Bi0.5Na0.415K0.075Ag0.01)TiO3': 130, '(Bi0.5Na0.4125K0.075Ag0.0125)TiO3': 129, '(Bi0.5Na0.4125K0.0875)TiO3': 144, '(Bi0.5Na0.4075K0.0875Ag0.005)TiO3': 145, '(Bi0.5Na0.405K0.0875Ag0.0075)TiO3': 146, '(Bi0.5Na0.4025K0.0875Ag0.01)TiO3': 156, '(Bi0.5Na0.4K0.0875Ag0.0125)TiO3': 144, '(Bi0.5Na0.4K0.10)TiO3': 163, '(Bi0.5Na0.395K0.10Ag0.005)TiO3': 166, '(Bi0.5Na0.3925K0.10Ag0.0075)TiO3': 172, '(Bi0.5Na0.39K0.10Ag0.01)TiO3': 180, '(Bi0.5Na0.3875K0.10Ag0.0125)TiO3': 157, '(Bi0.5Na0.3875K0.1125)TiO3': 153, '(Bi0.5Na0.3825K0.1125Ag0.005)TiO3': 155, '(Bi0.5Na0.38K0.1125Ag0.0075)TiO3': 158, '(Bi0.5Na0.3775K0.1125Ag0.01)TiO3': 168, '(Bi0.5Na0.375K0.1125Ag0.0125)TiO3': 87, '(Bi0.5Na0.3875K0.0875Ag0.025)TiO3': 138, '(Bi0.5Na0.375K0.0875Ag0.0375)TiO3': 107, '(Bi0.5Na0.3625K0.0875Ag0.05)TiO3': 93}, 'abbreviations': {'BNKAT': 'Bi0.5(Na1-x-yKxAgy)0.5TiO3', 'BNT': 'Bi0.5Na0.5TiO3'}, 'property_unit': 'pC/N', 'family': 'Bi0.5Na0.5TiO3'}}
+
+The extracted output should look like the following-
+
+{
+  "compositions":
+  {
+    "Ba0.99Ca0.01Ti0.68Zr0.32O3": 375, 
+    "Ba0.98Ca0.02Ti0.78Zr0.22O3": 350, 
+    "Ba0.97Ca0.03Ti0.88Zr0.12O3": 325, 
+    "Ba0.96Ca0.04Ti0.98Zr0.02O3": 300
+  },
+  "property_unit": "pC/N", 
+  "family": "BaTiO3"
+}
+
+**Notes**:
+- The unit, given here, along with other data, is just an example. It can change depending on the property.
+", agent="Material Composition and Property Formatter", status="completed", output="{
+  "composition_formatted_data": {
+    "compositions_property_values": {
+      "(Bi0.5Na0.45K0.05)TiO3": 102,
+      "(Bi0.5Na0.445K0.05Ag0.005)TiO3": 104,
+      "(Bi0.5Na0.4425K0.05Ag0.0075)TiO3": 108,
+      "(Bi0.5Na0.44K0.05Ag0.01)TiO3": 124,
+      "(Bi0.5Na0.4375K0.05Ag0.0125)TiO3": 128,
+      "(Bi0.5Na0.425K0.075)TiO3": 126,
+      "(Bi0.5Na0.42K0.075Ag0.005)TiO3": 126,
+      "(Bi0.5Na0.4175K0.075Ag0.0075)TiO3": 125,
+      "(Bi0.5Na0.415K0.075Ag0.01)TiO3": 130,
+      "(Bi0.5Na0.4125K0.075Ag0.0125)TiO3": 129,
+      "(Bi0.5Na0.4125K0.0875)TiO3": 144,
+      "(Bi0.5Na0.4075K0.0875Ag0.005)TiO3": 145,
+      "(Bi0.5Na0.405K0.0875Ag0.0075)TiO3": 146,
+      "(Bi0.5Na0.4025K0.0875Ag0.01)TiO3": 156,
+      "(Bi0.5Na0.4K0.0875Ag0.0125)TiO3": 144,
+      "(Bi0.5Na0.4K0.10)TiO3": 163,
+      "(Bi0.5Na0.395K0.10Ag0.005)TiO3": 166,
+      "(Bi0.5Na0.3925K0.10Ag0.0075)TiO3": 172,
+      "(Bi0.5Na0.39K0.10Ag0.01)TiO3": 180,
+      "(Bi0.5Na0.3875K0.10Ag0.0125)TiO3": 157,
+      "(Bi0.5Na0.3875K0.1125)TiO3": 153,
+      "(Bi0.5Na0.3825K0.1125Ag0.005)TiO3": 155,
+      "(Bi0.5Na0.38K0.1125Ag0.0075)TiO3": 158,
+      "(Bi0.5Na0.3775K0.1125Ag0.01)TiO3": 168,
+      "(Bi0.5Na0.375K0.1125Ag0.0125)TiO3": 87,
+      "(Bi0.5Na0.3875K0.0875Ag0.025)TiO3": 138,
+      "(Bi0.5Na0.375K0.0875Ag0.0375)TiO3": 107,
+      "(Bi0.5Na0.3625K0.0875Ag0.05)TiO3": 93
+    },
+    "property_unit": "pC/N",
+    "family": "Bi0.5Na0.5TiO3"
+  }
+}"

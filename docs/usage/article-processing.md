@@ -102,20 +102,55 @@ Overlap size between chunks for creating vector databases for RAG.
 
 Name of the embedding model to use for creating vector databases for RAG.
 
-#### :material-square-medium:`caption_keywords` _(dict)_
+#### :material-square-medium:`main_figure_keywords` _(dict)_
 
-Dictionary of keyword lists used to filter figures during article processing. Only figures whose captions match these keywords are saved for later VLM-based graph extraction. If not provided, defaults to `property_keywords`.
+Primary caption filter for figure extraction. Figures whose captions match are saved **and** count as a relevance signal — triggering vector DB creation even when the property is not found in the article text. If not provided (`None`), falls back to `property_keywords`.
 
 ```python
-caption_keywords = {
+main_figure_keywords = {
     "exact_keywords": ["d33"],
     "substring_keywords": [" d 33 "]
 }
 ```
 
+#### :material-square-medium:`additional_figure_keywords` _(dict)_
+
+Secondary caption filter for figure extraction only. Figures whose captions match are saved, but this **does not** trigger vector DB creation on its own. Useful for figures (e.g. XRD patterns) that are worth saving whenever found, but whose presence alone does not indicate the article is relevant. Same format as `property_keywords`. Defaults to `None`.
+
+```python
+additional_figure_keywords = {
+    "exact_keywords": ["XRD", "X-ray diffraction"],
+    "substring_keywords": []
+}
+```
+
+#### :material-square-medium:`save_failed_pdf_report` _(bool)_
+
+For `source_list=["pdfs"]` processing only. If `True`, saves a text report for PDFs skipped because DOI could not be found and filename-to-DOI fallback was invalid.
+
+#### :material-square-medium:`failed_pdf_report_path` _(str)_
+
+For `source_list=["pdfs"]` processing only. Custom output path for the failed PDF filename report. If not provided, defaults to `{folder_path}/failed_pdf_filenames.txt`.
+
+#### :material-square-medium:`save_failed_automated_report` _(bool)_
+
+For automated publisher sources (`elsevier`, `springer`, `iop`, `wiley`). If `True`, appends a tab-separated record for every article that could not be downloaded or parsed to the failure report. Each line contains three fields: `doi`, `publisher`, and a short reason code:
+
+| Reason code | Meaning |
+|---|---|
+| `download_failed` | HTTP request returned no content (network/API error) |
+| `not_found` | Publisher returned 404 / article not available |
+| `xml_parse_failed` | XML response could not be parsed |
+| `body_not_found` | IOP article XML has no `<body>` element |
+| `pdf_text_extraction_failed` | Wiley PDF converted to empty or corrupted text |
+
+#### :material-square-medium:`failed_automated_report_path` _(str)_
+
+Custom output path for the automated failure report. If not provided, defaults to `results/failed_automated_articles.txt`. All enabled publisher processors append to the same file, so a single run produces one consolidated report.
+
 !!! info "Default Values"
 
-    :material-square-small:**`source_list`** = ["elsevier", "wiley", "iop", "springer"]<br>:material-square-small:**`folder_path`** = None<br>:material-square-small:**`doi_list`** = None<br>:material-square-small:**`is_sql_db`** = False<br>:material-square-small:**`is_save_xml`** = False<br>:material-square-small:**`is_save_pdf`** = False<br>:material-square-small:**`rag_db_path`** = "db"<br>:material-square-small:**`chunk_size`** = 1000<br>:material-square-small:**`chunk_overlap`** = 25<br>:material-square-small:**`embedding_model`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`caption_keywords`** = `property_keywords`
+    :material-square-small:**`source_list`** = ["elsevier", "wiley", "iop", "springer"]<br>:material-square-small:**`folder_path`** = None<br>:material-square-small:**`doi_list`** = None<br>:material-square-small:**`is_sql_db`** = False<br>:material-square-small:**`is_save_xml`** = False<br>:material-square-small:**`is_save_pdf`** = False<br>:material-square-small:**`rag_db_path`** = "db"<br>:material-square-small:**`chunk_size`** = 1000<br>:material-square-small:**`chunk_overlap`** = 25<br>:material-square-small:**`embedding_model`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`main_figure_keywords`** = `property_keywords`<br>:material-square-small:**`additional_figure_keywords`** = None<br>:material-square-small:**`save_failed_pdf_report`** = True<br>:material-square-small:**`failed_pdf_report_path`** = None (auto: `{folder_path}/failed_pdf_filenames.txt`)<br>:material-square-small:**`save_failed_automated_report`** = True<br>:material-square-small:**`failed_automated_report_path`** = None (auto: `results/failed_automated_articles.txt`)
 
 ## Processing Workflow
 
@@ -185,8 +220,32 @@ scanner.process_articles(
 scanner.process_articles(
     property_keywords=property_keywords,
     source_list=["pdfs"],
-    folder_path="/home/user/papers"
+    folder_path="/home/user/papers",
+    save_failed_pdf_report=True,
+    failed_pdf_report_path="/home/user/papers/failed_pdf_filenames.txt"
 )
+```
+
+### Failure Reporting for Automated Publishers
+
+```python
+# Articles that could not be downloaded or parsed are logged to a report file.
+# All four publishers append to the same file in a single run.
+scanner.process_articles(
+    property_keywords=property_keywords,
+    source_list=["elsevier", "springer", "iop", "wiley"],
+    save_failed_automated_report=True,
+    failed_automated_report_path="results/failed_automated_articles.txt"
+)
+```
+
+The report is a plain-text file with one tab-separated entry per failed article:
+
+```text
+10.1016/j.actamat.2021.123456	elsevier	download_failed
+10.1007/s10854-021-06899-y	springer	xml_parse_failed
+10.1088/1361-6463/ab1234	iop	body_not_found
+10.1002/adfm.202100001	wiley	pdf_text_extraction_failed
 ```
 
 ## Advanced Features
@@ -220,22 +279,22 @@ scanner.process_articles(
 
 ### Figure Extraction for VLM-Based Graph Analysis
 
-When `caption_keywords` are provided, figures whose captions match those keywords are automatically extracted and saved during article processing. These saved figures are later used by the `GraphExtractorTool` during data extraction to read composition-property values directly from graphs and charts using a vision LLM.
+When `main_figure_keywords` are provided, figures whose captions match those keywords are automatically extracted and saved during article processing. If `main_figure_keywords` is not provided, the `property_keywords` are used as the caption filter. These saved figures are later used by the `GraphExtractorTool` during data extraction to read composition-property values directly from graphs and charts using a vision LLM.
 
 ```python
-caption_keywords = {
+main_figure_keywords = {
     "exact_keywords": ["d33"],
     "substring_keywords": [" d 33 "]
 }
 
 scanner.process_articles(
     property_keywords=property_keywords,
-    caption_keywords=caption_keywords,
+    main_figure_keywords=main_figure_keywords,
     source_list=["elsevier", "springer", "wiley", "iop", "pdfs"]
 )
 ```
 
-Saved figures are stored under `results/extracted_data/{main_property_keyword}/related_figures/{doi}/` alongside an `info.json` file that maps each figure to its caption text.
+Saved figures are stored under `results/extracted_data/{main_property_keyword}/related_figures/{doi_underscored}/` (where `/` in the DOI is replaced with `_`, e.g. `10.1016_j.jeurceramsoc.2024.116677`) alongside an `info.json` file that maps each figure to its caption text.
 
 ### RAG Vector Database
 

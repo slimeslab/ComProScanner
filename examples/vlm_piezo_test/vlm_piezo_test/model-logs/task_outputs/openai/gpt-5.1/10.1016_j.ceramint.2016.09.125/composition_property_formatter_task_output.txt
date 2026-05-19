@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(K0.49Na0.51)(Nb(1-0)*Sb(0))O3":115,"(K0.49Na0.51)(Nb(1-0.02)*Sb(0.02))O3":138,"(K0.49Na0.51)(Nb(1-0.04)*Sb(0.04))O3":158,"(K0.49Na0.51)(Nb(1-0.06)*Sb(0.06))O3":182,"(K0.49Na0.51)(Nb(1-0.08)*Sb(0.08))O3":173,"(K0.49Na0.51)(Nb(1-0.10)*Sb(0.10))O3":152},"property_unit":"pC/N","family":"KNN"}}

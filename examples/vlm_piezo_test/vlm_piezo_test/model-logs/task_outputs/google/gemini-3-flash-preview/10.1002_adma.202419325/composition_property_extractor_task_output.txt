@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BaSn(0.11)Ti(0.89)O3":433,"BaSn(0.10945)Ti(0.88555)Mn(0.005)O3":710,"BaSn(0.1089)Ti(0.8811)Mn(0.01)O3":614},"abbreviations":{"BST":"Ba(Sn0.11Ti0.89)O3"},"property_unit":"pC/N","family":"BaTiO3"}}

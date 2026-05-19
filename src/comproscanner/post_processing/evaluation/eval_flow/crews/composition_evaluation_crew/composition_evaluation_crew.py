@@ -149,21 +149,23 @@ class CompositionEvaluationCrew:
                 it can look up the tolerance before deciding on value matches.  Example::
 
                     {
-                        (-200, 200): 5,
-                        (201, 500): 8,
-                        (-500, -201): 8,
-                        (501, float('inf')): 10,
-                        (float('-inf'), -501): 10,
+                        (-50, 50): 0.5,
+                        (-150, 150): 1,
+                        (-1000, 1000): 2,
+                        (float('-inf'), float('inf')): 5,
                     }
         """
         self.llm = llm or LLM(model="o3-mini")
-        # Convert the dict to an internal list of (lo, hi, threshold) triples
+        # Convert the dict to an internal list of (lo, hi, threshold) triples sorted by
+        # span ascending so the narrowest matching range always wins (layered semantics).
         self._thresholds_list: List[Tuple[float, float, float]] = []
         if value_error_thresholds:
+            triples = []
             for range_key, threshold in value_error_thresholds.items():
                 lo = min(range_key)
                 hi = max(range_key)
-                self._thresholds_list.append((lo, hi, float(threshold)))
+                triples.append((lo, hi, float(threshold)))
+            self._thresholds_list = sorted(triples, key=lambda t: t[1] - t[0])
 
     @agent
     def composition_evaluator_agent(self) -> Agent:

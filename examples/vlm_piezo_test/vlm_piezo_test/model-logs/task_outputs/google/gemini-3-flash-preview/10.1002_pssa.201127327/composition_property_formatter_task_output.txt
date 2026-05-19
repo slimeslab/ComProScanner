@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"K1/2Bi1/2TiO3":31,"K1/2Bi1/2Ti0.95Zr0.05O3":10,"K1/2Bi1/2Ti0.90Zr0.10O3":2.4,"K1/2Bi1/2Ti0.80Zr0.20O3":2,"K1/2Bi1/2Ti0.70Zr0.30O3":2,"K1/2Bi1/2Ti0.60Zr0.40O3":0.3},"property_unit":"pC/N","family":"KBT-KBZ"}}

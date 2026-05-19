@@ -50,9 +50,17 @@ The cleaning strategy to be used. It can be either `full` or `basic`. While comp
 
 Flag to indicate if advanced composition cleaning transformations should be applied. When `True`, applies all advanced cleaning processes including Miller indices removal, coefficient expansion, normalization, and zero-coefficient element removal. When `False`, returns basic cleaned compositions only.
 
+#### :material-square-medium:`is_store_unresolved_compositions` _(bool)_
+
+When `True`, logs a split statistics line showing `source`, `filtered`, `unresolved`, and `resolved` composition-property pair counts, and saves both filtered compositions (dropped by invalid-key or element-validation checks) and unresolved compositions (still containing parentheses, brackets, or multiplication operators after the full cleaning pipeline) to a JSON file keyed by DOI. Requires `is_save_composition_property_file=True`.
+
+#### :material-square-medium:`unresolved_compositions_file` _(str)_
+
+Path to the JSON file where filtered and unresolved composition keys are saved, with `"filtered"` and `"unresolved"` as top-level keys and DOIs as sub-keys mapping to lists of composition strings. Used only when `is_store_unresolved_compositions=True`.
+
 !!! info "Default Values"
 
-    :material-square-small:**`is_save_separate_results`** = True<br>:material-square-small:**`cleaned_json_results_file`** = "cleaned_results.json"<br>:material-square-small:**`is_save_composition_property_file`** = True<br>:material-square-small:**`composition_property_file`** = "composition_property.json"<br>:material-square-small:**`cleaning_strategy`** = "full"<br>:material-square-small:**`apply_advanced_cleaning`** = True
+    :material-square-small:**`is_save_separate_results`** = True<br>:material-square-small:**`cleaned_json_results_file`** = "cleaned_results.json"<br>:material-square-small:**`is_save_composition_property_file`** = True<br>:material-square-small:**`composition_property_file`** = "composition_property.json"<br>:material-square-small:**`cleaning_strategy`** = "full"<br>:material-square-small:**`apply_advanced_cleaning`** = True<br>:material-square-small:**`is_store_unresolved_compositions`** = False<br>:material-square-small:**`unresolved_compositions_file`** = "unresolved_compositions.json"
 
 ## Cleaning Process Flow
 

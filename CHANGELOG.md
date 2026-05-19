@@ -1,7 +1,12 @@
 # Unreleased
+
+### Added
+
+- Added `SCIENCEDIRECT_INSTTOKEN` environment variable support in `ElsevierArticleProcessor` for off-campus remote access to subscription-based Elsevier articles and figures. When set, the token is sent as the `X-ELS-Insttoken` header in all ScienceDirect API requests and figure downloads. The variable is optional; omitting it does not affect on-campus access.
+
 - New `value_error_thresholds` parameter added to both `evaluate_semantic()` and `evaluate_agentic()` for range-based absolute error tolerances on numeric property value comparisons:
 
-  - Accepts a dict mapping `(min, max)` tuples to absolute error thresholds. When a ground-truth value falls inside a range, the extracted value is accepted if `|extracted - ground_truth| ≤ threshold`. Values outside all configured ranges fall back to exact comparison.
+  - Accepts a dict mapping `(min, max)` tuples to absolute error thresholds. Ranges are interpreted as **layers**: the narrowest range containing the ground-truth value determines the tolerance. For example, `(-150, 150): 1` applies only to values in (-150, -50) and (50, 150) when `(-50, 50): 0.5` is also present — no need for separate positive/negative sub-ranges. Tuple element order is irrelevant: `(-150, 150)` and `(150, -150)` are equivalent. Values outside all configured ranges fall back to exact comparison.
 
   - **Semantic evaluation**: handled inside `_is_value_in_range()` via the new `_get_error_threshold()` helper in `MaterialsDataSemanticEvaluator`.
 
@@ -15,13 +20,48 @@
 
   - New `FigureExtractor` utility — shared helper for caption keyword-based figure filtering and saving, used by all article processors.
 
-  - New `caption_keywords` parameter in `process_articles()` and `extract_composition_property_data()`, and new `vlm_model` and `related_figures_base_path` parameters in `extract_composition_property_data()`.
+  - New `main_figure_keywords` parameter in `process_articles()` and `extract_composition_property_data()`, and new `vlm_model` and `related_figures_base_path` parameters in `extract_composition_property_data()`.
 
 - New unit tests added for all three agent tools in `tests/test_agent_tools/`.
 
+- Added `save_failed_pdf_report` and `failed_pdf_report_path` to `process_articles()`, with filename-derived DOI validation and failed-PDF reporting for local PDF workflows.
+
+- Added `save_failed_automated_report` and `failed_automated_report_path` to `process_articles()` for automated publisher sources (Elsevier, Springer Nature, IOP, Wiley), mirroring the existing PDF failure report. Failed articles are written as tab-separated `doi`, `publisher`, `reason` entries to `results/failed_automated_articles.txt` by default.
+
+- Added image-aware fallback in `DataExtractionFlow.identify_materials_data_presence()`:
+
+  - The Materials Data Identifier still runs text RAG first.
+  - If RAG returns `no`, the flow now checks saved DOI figures with VLM and upgrades the decision to `yes` when relevant graph/figure evidence is found (including doping concentration vs property plots where full formulas are absent).
+
+- Added `is_store_unresolved_compositions` and `unresolved_compositions_file` parameters to `clean_data()` to optionally log split composition-property resolution statistics (`source`, `filtered`, `unresolved`, `resolved` counts) and persist filtered and unresolved composition keys in a JSON file keyed by DOI under `"filtered"` and `"unresolved"` top-level keys.
+
+- Added explicit Equation Tool model control:
+
+  - New `equation_model` parameter in `extract_composition_property_data()` (threaded through `DataExtractionFlow` and `CompositionExtractionCrew` into `EquationTool`).
+  - EquationTool model precedence is now: `equation_model` argument -> API-key-based auto-selection.
+
+- Clarified Equation Tool instruction customization in extraction docs and API:
+
+  - `formula_instruction` remains available in `extract_composition_property_data()` for domain-specific formula-derivation guidance, while preserving the built-in default instruction when unset.
+
+### Changed
+
+- Versioning scheme migrated from [Semantic Versioning](https://semver.org/) (SemVer) to [Calendar Versioning](https://calver.org/) (CalVer) using the `YYYY.MM.DD` format. Starting from this release, version numbers reflect the release date rather than an incrementing major/minor/patch scheme.
+
 ### Fixed
 
+- `_parse_json_output()` now recovers JSON from mixed-text crew outputs (e.g. `Thought: … { "json": "here" }`) by scanning for the first `{` / `[` and last `}` / `]` and retrying `json.loads()` on the extracted substring, before falling back to `ast.literal_eval()`.
+
+- Composition formatter agent now verifies `MaterialParserTool` output for incomplete variable substitution (e.g. `(1-x-y)` partially resolved as `(0.9-0.010)`) and overrides with the correct fully-substituted BODMAS expression when the tool is wrong.
+
 - `process_articles()` now routes user-provided `doi_list` by `general_publisher` from metadata and sends each DOI only to its matching source processor.
+
+- PNG, GIF, and WEBP figures now convert correctly to JPEG: transparent images are composited onto a white background, animated GIFs are pinned to frame 0, and two additional Springer Nature CDN URL patterns are tried to improve download success for these formats.
+
+- Added and updated tests for new extraction-flow behavior:
+
+  - EquationTool model selection tests now cover explicit arg override, env override, and updated model defaults.
+  - DataExtractionFlow tests now cover figure-based materials-data fallback and `equation_model` forwarding into `CompositionExtractionCrew`.
 
 ---
 ## [0.1.6] - 2026-04-02

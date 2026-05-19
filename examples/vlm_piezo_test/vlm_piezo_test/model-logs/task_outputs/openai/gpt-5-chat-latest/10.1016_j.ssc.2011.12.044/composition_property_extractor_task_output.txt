@@ -1,0 +1,1 @@
+{"composition_extracted_data":{"compositions_property_values":{"BiFeO3":35,"Bi0.975Sm0.025FeO3":38,"Bi0.95Sm0.05FeO3":42,"Bi0.925Sm0.075FeO3":46,"Bi0.9Sm0.1FeO3":35,"Bi0.875Sm0.125FeO3":42,"Bi0.855Sm0.145FeO3":63,"Bi0.835Sm0.165FeO3":50,"Bi0.8Sm0.2FeO3":9,"Bi0.75Sm0.25FeO3":0},"abbreviations":{},"property_unit":"pC/N","family":"BiFeO3"}}

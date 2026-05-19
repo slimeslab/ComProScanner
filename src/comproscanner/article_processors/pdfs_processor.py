@@ -34,9 +34,9 @@ from ..utils.logger import setup_logger
 from ..utils.pdf_to_markdown_text import PDFToMarkdownText
 from ..utils.common_functions import (
     get_paper_metadata_from_openalex,
+    get_doi_from_crossref,
     return_error_message,
 )
-
 
 # configure logger
 logger = setup_logger("comproscanner.log", module_name="pdfs_processor")
@@ -53,7 +53,10 @@ class PDFsProcessor:
         csv_batch_size: int = 1,
         is_sql_db: bool = False,
         rag_config: RAGConfig = RAGConfig(),
-        caption_keywords: dict = None,
+        main_figure_keywords: dict = None,
+        additional_figure_keywords: dict = None,
+        save_failed_pdf_report: bool = True,
+        failed_pdf_report_path: str = None,
     ):
         """Class to process PDFs in a folder and process them to extract the required sections of the articles and save them to the MySQL database and CSV files and create a vector store if the relevant data is present in the article.
 
@@ -88,7 +91,17 @@ class PDFsProcessor:
             logger.error(f"{property_keywords_message}")
             raise ValueErrorHandler(f"{property_keywords_message}")
         self.is_sql_db = is_sql_db
-        self.caption_keywords = caption_keywords
+        self.main_figure_keywords = (
+            main_figure_keywords
+            if main_figure_keywords is not None
+            else property_keywords
+        )
+        self.additional_figure_keywords = additional_figure_keywords
+        self.save_failed_pdf_report = save_failed_pdf_report
+        self.failed_pdf_report_path = failed_pdf_report_path or os.path.join(
+            self.folder_path, "failed_pdf_filenames.txt"
+        )
+        self.failed_pdf_records = []
 
         self.identifier = ""
         self.doi = ""
@@ -125,6 +138,33 @@ class PDFsProcessor:
             self.sql_db_manager = MySQLDatabaseManager(self.keyword, self.is_sql_db)
         self.csv_db_manager = CSVDatabaseManager()
         self.vector_db_manager = VectorDatabaseManager(rag_config=self.rag_config)
+
+    @staticmethod
+    def _is_valid_doi(doi: str) -> bool:
+        """Check whether a string is a valid DOI format."""
+        if not doi:
+            return False
+        doi_pattern = r"^10\.\d{4,9}/[-._;()/:a-zA-Z0-9]+$"
+        return bool(re.match(doi_pattern, doi.strip()))
+
+    def _filename_to_valid_doi(self, pdf_file: str) -> str:
+        """Convert filename to DOI candidate and validate it."""
+        filename = os.path.basename(pdf_file)
+        candidate = filename.replace(".pdf", "").replace("_", "/").strip()
+        return candidate if self._is_valid_doi(candidate) else ""
+
+    def _record_failed_pdf(self, pdf_file: str, reason: str) -> None:
+        """Record failed PDF filename cases and optionally write to report file."""
+        filename = os.path.basename(pdf_file)
+        entry = f"{filename}\t{reason}"
+        self.failed_pdf_records.append(entry)
+        logger.warning(f"Skipping {filename}: {reason}")
+        if self.save_failed_pdf_report:
+            try:
+                with open(self.failed_pdf_report_path, "a", encoding="utf-8") as f:
+                    f.write(entry + "\n")
+            except Exception as e:
+                logger.error(f"Error writing failed PDF report: {e}")
 
     def _extract_doi_from_text(self, text: str):
         """Extract DOI from text using regex pattern matching.
@@ -224,11 +264,11 @@ class PDFsProcessor:
         try:
             if not os.path.exists(self.metadata_csv_filename):
                 return "", "", ""
-            
+
             # Load metadata CSV if not already loaded
             if self.df is None:
                 self.df = pd.read_csv(self.metadata_csv_filename)
-            
+
             matching_rows = self.df[self.df["doi"] == doi]
             if not matching_rows.empty:
                 row = matching_rows.iloc[0]
@@ -258,27 +298,46 @@ class PDFsProcessor:
                 # Convert PDF to Markdown text
                 pdf_to_md = PDFToMarkdownText(source=pdf_file)
                 md_text = pdf_to_md.convert_to_markdown()
+                print(
+                    f"\n{'='*30} MARKDOWN DEBUG START: {os.path.basename(pdf_file)} {'='*30}\n"
+                )
+                print(md_text if md_text is not None else "None")
+                print(
+                    f"\n{'='*30} MARKDOWN DEBUG END: {os.path.basename(pdf_file)} {'='*30}\n"
+                )
 
                 # Handle empty or corrupted text detection result
-                if md_text is None or not md_text.strip() or self._is_corrupted_text(md_text):
+                if (
+                    md_text is None
+                    or not md_text.strip()
+                    or self._is_corrupted_text(md_text)
+                ):
                     logger.warning(
                         f"Text detection result is empty or corrupted for {pdf_file}. "
                         "Storing with is_property_mentioned=0 and skipping vector database creation."
                     )
-                    # Try to extract DOI from filename if possible
+                    # Try to extract DOI from filename (only if valid DOI format)
                     filename = os.path.basename(pdf_file)
-                    self.doi = filename.replace(".pdf", "").replace("_", "/")
-                    self.identifier = self.doi
+                    self.doi = self._filename_to_valid_doi(pdf_file)
+                    self.identifier = filename.replace(".pdf", "")
+                    if not self.doi:
+                        self._record_failed_pdf(
+                            pdf_file,
+                            "empty_or_corrupted_text_and_filename_not_valid_doi",
+                        )
+                        continue
 
                     # Try to get metadata (API first, then CSV)
                     title, journal_name, publisher = "", "", ""
                     if self.doi.startswith("10."):
-                        title, journal_name, publisher = get_paper_metadata_from_openalex(
-                            self.doi
+                        title, journal_name, publisher = (
+                            get_paper_metadata_from_openalex(self.doi)
                         )
-                        
+
                         if not title or not journal_name or not publisher:
-                            csv_title, csv_journal, csv_publisher = self._get_metadata_from_csv(self.doi)
+                            csv_title, csv_journal, csv_publisher = (
+                                self._get_metadata_from_csv(self.doi)
+                            )
                             title = title or csv_title
                             journal_name = journal_name or csv_journal
                             publisher = publisher or csv_publisher
@@ -317,12 +376,28 @@ class PDFsProcessor:
                     self.identifier = self.doi
                     logger.debug(f"DOI found: {self.doi}")
                 else:
-                    # Use filename as identifier if DOI not found
-                    logger.warning(
-                        f"DOI not found for {pdf_file}. Using filename as identifier."
-                    )
-                    filename = os.path.basename(pdf_file)
-                    self.identifier = filename.replace(".pdf", "")
+                    # Try CrossRef API as fallback before using filename
+                    crossref_doi = get_doi_from_crossref(md_text)
+                    if crossref_doi:
+                        self.doi = crossref_doi
+                        self.identifier = crossref_doi
+                        logger.info(
+                            f"DOI resolved via CrossRef for {pdf_file}: {self.doi}"
+                        )
+                    else:
+                        # Final fallback: derive DOI from filename only if valid DOI format.
+                        filename = os.path.basename(pdf_file)
+                        self.identifier = filename.replace(".pdf", "")
+                        self.doi = self._filename_to_valid_doi(pdf_file)
+                        if not self.doi:
+                            self._record_failed_pdf(
+                                pdf_file, "doi_not_found_and_filename_not_valid_doi"
+                            )
+                            continue
+                        logger.warning(
+                            f"DOI not found in text/CrossRef for {pdf_file}. "
+                            f"Using filename-derived DOI: {self.doi}"
+                        )
 
                 # Get metadata from external API (with CSV fallback) using DOI
                 title, journal_name, publisher = "", "", ""
@@ -330,9 +405,11 @@ class PDFsProcessor:
                     title, journal_name, publisher = get_paper_metadata_from_openalex(
                         self.doi
                     )
-                    
+
                     if not title or not journal_name or not publisher:
-                        csv_title, csv_journal, csv_publisher = self._get_metadata_from_csv(self.doi)
+                        csv_title, csv_journal, csv_publisher = (
+                            self._get_metadata_from_csv(self.doi)
+                        )
                         title = title or csv_title
                         journal_name = journal_name or csv_journal
                         publisher = publisher or csv_publisher
@@ -340,11 +417,15 @@ class PDFsProcessor:
                     if not title:
                         logger.warning(f"Metadata not found for DOI: {self.doi}")
 
-                # Extract and save figures matching caption_keywords
-                if self.caption_keywords:
+                has_caption_keyword_match = pdf_to_md.extract_and_save_figures(
+                    self.doi,
+                    self.main_figure_keywords,
+                    base_path=f"results/extracted_data/{self.keyword}/related_figures",
+                )
+                if self.additional_figure_keywords:
                     pdf_to_md.extract_and_save_figures(
                         self.doi,
-                        self.caption_keywords,
+                        self.additional_figure_keywords,
                         base_path=f"results/extracted_data/{self.keyword}/related_figures",
                     )
 
@@ -359,6 +440,7 @@ class PDFsProcessor:
                     self.property_keywords,
                     self.vector_db_manager,
                     logger,
+                    has_caption_keyword_match=has_caption_keyword_match,
                 )
                 sql_dataframes.append(row)
                 csv_dataframes.append(row)
@@ -413,3 +495,11 @@ class PDFsProcessor:
                 logger.error(f"Error writing remaining dataframes: {e}")
         logger.verbose(f"\n\nParsing of PDFs completed...")
         logger.info(f"\nTotal valid property articles: {self.valid_property_articles}")
+        if self.failed_pdf_records:
+            logger.warning(
+                f"Total skipped PDFs due to invalid filename DOI fallback: {len(self.failed_pdf_records)}"
+            )
+            if self.save_failed_pdf_report:
+                logger.info(
+                    f"Failed PDF report saved to: {self.failed_pdf_report_path}"
+                )

@@ -158,6 +158,98 @@
   fill: currentColor;
 }
 
+/* News index: 2-column card grid */
+.md-blog__list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  align-items: stretch;
+  margin-top: 1rem;
+}
+
+/* Card shell */
+.md-blog__list .md-post {
+  position: relative;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.09);
+  overflow: hidden;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  background: var(--md-default-bg-color);
+}
+
+.md-blog__list .md-post:hover {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
+  transform: translateY(-4px);
+  cursor: pointer;
+}
+
+/* Cover image link — full-bleed at top of card */
+.md-post__cover {
+  display: block;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.md-post__cover img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.md-blog__list .md-post:hover .md-post__cover img {
+  transform: scale(1.04);
+}
+
+/* Header: authors + date */
+.md-blog__list .md-post .md-post__header {
+  padding: 0.75rem 1.1rem 0.3rem;
+}
+
+/* Title */
+.md-blog__list .md-post .md-post__content {
+  padding: 0 1.1rem 1.1rem;
+}
+
+.md-blog__list .md-post .md-post__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+/* Make entire card clickable via title link overlay */
+.md-blog__list .md-post .md-post__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.md-blog__list .md-post .md-post__link {
+  color: var(--md-default-fg-color);
+  text-decoration: none;
+}
+
+.md-blog__list .md-post:hover .md-post__link {
+  color: var(--md-primary-fg-color);
+}
+
+/* Keep meta links above the overlay */
+.md-blog__list .md-post .md-post__header a {
+  position: relative;
+  z-index: 2;
+}
+
+/* Responsive: single column only on small phones */
+@media screen and (max-width: 37.4375em) {
+  .md-blog__list {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Responsive footer for smaller screens */
 @media screen and (max-width: 76.1875em) {
   .md-footer-meta__inner {

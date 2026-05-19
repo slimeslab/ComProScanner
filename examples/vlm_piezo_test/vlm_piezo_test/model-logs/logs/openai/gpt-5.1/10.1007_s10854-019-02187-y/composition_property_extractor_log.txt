@@ -1,0 +1,241 @@
+2026-05-01 12:54:04: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1007/s10854-019-02187-y.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1007/s10854-019-02187-y and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Figure a is the XRD pattern of the BSTZx ceramics measured at room temperature and the diffraction angle 2\u03b8 of 20\xb0\u201360\xb0. It shows that the added ZrE^{4+} is completely integrated into the BST lattice to form a stable perovskite solid solution. The standard diffraction peaks with R, O, T and C phase which correspond to respective PDF#85-1797, PDF#81-2200, PDF#05-0626, and PDF#75-0212 are indicated by the vertical lines. It can be seen from the Fig. b that the diffraction peaks near the 46\xb0 in the ceramics with x = 0 have two peaks of the left low and right high, indicating that the T phase boundary is obtained. As increasing ZrE^{4+} content, there are signs of fusion in the double peaks, presenting that the multiphase boundaries are formed in the components with 0.02 \u2264 x \u2264 0.10 at room temperature.Fig. 1XRD patterns of the BSTZx ceramics in the 2\u03b8 range of 20\u201360\xb0 (a), 43\u201348\xb0 (b) XRD patterns of the BSTZx ceramics in the 2\u03b8 range of 20\u201360\xb0 (a), 43\u201348\xb0 (b) To further observe the phase structure of the ceramics, we have made dielectric constant (\u03b5r) versus temperature for BSTZx ceramics measured at temperature range from \u2212 100 to 150 \xb0C and 100 kHz, as shown in Fig.. Three phase transition peaks were detected at 0 \u2264 x \u2264 0.08, respectively corresponding to rhombohedral\u2013orthorhombic phase transition temperature (TR\u2013O), orthorhombic\u2013tetragonal phase transition temperature (TO\u2013T) and cubic phase transition temperature (TC). When x = 0, both TR\u2013O (~ \u2212 64 \xb0C) and TO-T (~ \u2212 8 \xb0C) were below room temperature, confirming the observation of the T phase (see Fig. a), which is consistent with the results of XRD. For ceramics with 0.02 \u2264 x \u2264 0.04, TO-T (~ 13 \xb0C \u2192 20 \xb0C) is close to room temperature and TR-O (~ \u2212 42 \xb0C \u2192 \u2212 15 \xb0C) is below room temperature, indicating that the O\u2013T phase is obtained (see Fig. b, c). As the Zr content increasing from 0.06 to 0.08, TR\u2013O (~ 10 \xb0C \u2192 25 \xb0C) and TO\u2013T (~ 25 \xb0C \u2192 34 \xb0C) approached room temperature, indicating the R\u2013O\u2013T phase was the formation in these samples (see Fig. d, e). Then the three dielectric peaks are fused together (see Fig. f), such a phenomenon has been observed in other BT-based ceramics. Figure shows the phase diagram of BSTZx ceramics based on \u03b5r\u2013T curve. It can be clearly seen that both TR\u2013O and TO\u2013T move to room temperature, and TC decreases as the content of Zr increases (see Fig. ). Hence, the phase structure of BSTZx ceramics are as follows: T phase (x = 0), O\u2013T phase (0.02 \u2264 x \u2264 0.04), R\u2013O\u2013T phase (0.06 \u2264 x \u2264 0.08) and R\u2013C phase (x = 0.10).Fig. 2a\u2013f Dielectric curves from \u2212 100 to 150 \xb0C of the BSTZx ceramics with different x content at 100 kHzFig. 3Phase diagram of BSTZx ceramics a\u2013f Dielectric curves from \u2212 100 to 150 \xb0C of the BSTZx ceramics with different x content at 100 kHz Phase diagram of BSTZx ceramics Figure shows the variation of dielectric constant (\u03b5r) and dielectric loss (tan\u03b4) of BSTZx ceramics at room temperature,measured at the frequency of 100 kHz. \u03b5r values (1835 \u2264 \u03b5r \u2264 6137) increase with increasing x, which is larger than Sr-doped BT-based ceramics, as is shown in Table , proving that Zr significantly increases the dielectric constant of BSTZx ceramics. The enhanced \u03b5r values benefit to multiphase coexistence near room temperature with increasing of Zr content. In addition, tan\u03b4 values almost no change with the increase of x, and generally floats around 0.03.Fig. 4The room temperature values of \u03b5r and tan\u03b4 of BSTZx ceramics at 100 kHzTable 1Piezoelectric property and dielectric constant of previously reported BT-based ceramicsMaterials systemd33(pC/N)\u03b5rRef.(Ba0.98Ca0.02)(Ti0.94Sn0.04Zr0.02)O35453153Wu et al. (Ba0.95Ca0.05)(Ti0.06Zr0.04)O33382070Zhang et al. (Ba0.88Sr0.1Ca0.02)(Ti0.95Zr0.05)O33202150Roy et al. 0.3Ba(Zr0.15Ti0.85)O3\u20130.7(Ba0.8Sr0.2)TiO34504070Liang et al. Ba0.86Sr0.14Ti1\u2212xZrxO3(x = 0.08)6204744This work The room temperature values of \u03b5r and tan\u03b4 of BSTZx ceramics at 100 kHz Piezoelectric property and dielectric constant of previously reported BT-based ceramics Materials system d33(pC/N) \u03b5r Ref. (Ba0.98Ca0.02)(Ti0.94Sn0.04Zr0.02)O3 545 3153 Wu et al.  (Ba0.95Ca0.05)(Ti0.06Zr0.04)O3 338 2070 Zhang et al.  (Ba0.88Sr0.1Ca0.02)(Ti0.95Zr0.05)O3 320 2150 Roy et al.  0.3Ba(Zr0.15Ti0.85)O3\u20130.7(Ba0.8Sr0.2)TiO3 450 4070 Liang et al. Ba0.86Sr0.14Ti1\u2212xZrxO3(x = 0.08) 620 4744 This work Figure a shows the room temperature ferroelectric hysteresis loops (P\u2013E) of BSTZx ceramics at 1 Hz and 30 kV/cm. All curves exhibit a typical P\u2013E loop, indicating that all components are ferroelectrics. Figure b plots the residual polarization (Pr) and coercive field (Ec) as a function of Zr content, which is extracting from P\u2013E loops in Fig. a. Therefore, the reduction of Ec values in the ceramics are mainly attributed to the evolution phase boundary from single T phase to multiphase coexistence (e.g., O\u2013T, R\u2013O\u2013T).Fig. 5a The P\u2013E hysteresis and bPr and Ec of BSTZx ceramics a The P\u2013E hysteresis and bPr and Ec of BSTZx ceramics One can see from Fig. that d33 increases first and then decreases as the amount of Zr content increases, reaching the maximum value (d33 = 620 pC/N) at x = 0.08, which is superior or comparable to the other BT-based [, , , , , , \u2013], as shown in the Table. Such a large d33 is due to the successful construction of the R\u2013O\u2013T phase boundary around room temperature. To describe the relationship of d33 and \u03b5rPr, we plot the curve of d33 and \u03b5rPr vs. x, as is shown in Fig.. There is an empirical relationship between d33 and \u03b5rPr, that is, d33 is proportional to \u03b5rPr. \u03b5rPr has a similar trend to d33, so dielectric and ferroelectric properties also play a key role in the improvement of piezoelectric properties.Fig. 6The d33, \u03b5rPr values of BSTZx ceramics as a function of x The d33, \u03b5rPr values of BSTZx ceramics as a function of x Figure a shows bipolar strain loop (S\u2013E) of BSTZx ceramics, measured at the room temperature, 30 kV/cm and f = 1 Hz. The \u201cbutterfly curve\u201d of S\u2013E is mainly caused by the switching of domains. One can see from Fig. b that the negative strain (Sneg) first increases and then decreases, and gets the maximum value at x = 0.08, which can be explained by the amount of non-180E^{o} domains because the non-180\xb0 domains in T (90\xb0), R (71\xb0, 109\xb0) and O (60\xb0, 90\xb0, 120\xb0) phase structure successively increase in the ceramics. One can see that it first increases and then decreases with the increase of x, and reaches the maximum value (strain ~ 0.152%) when x = 0.08 as shown in Fig. d. The inverse piezoelectric coefficient (d33E^{\u2217} = Smax/Emax) of BSTZx ceramics is shown in Fig. e. Similar to strain, d33E^{\u2217} also increase with x increasing to 0.08, and have the maximum (d33* ~ 407 pm/V) at x = 0.08. As x increases to 0.10, d33E^{\u2217} decrease. The large strain and d33* are obtained in R\u2013O\u2013T phase boundary because the low energy barrier in multiphase boundary can greatly promote polarization rotation.Fig. 7a Bipolar electric field induced strain of BSTZx ceramics; b negative strain of BSTZx ceramics; c unipolar electric field induced strain of BSTZx ceramics; d strain for the BSTZx ceramics with different x; ed33E^{*} for the BSTZx ceramics with different x a Bipolar electric field induced strain of BSTZx ceramics; b negative strain of BSTZx ceramics; c unipolar electric field induced strain of BSTZx ceramics; d strain for the BSTZx ceramics with different x; ed33E^{*} for the BSTZx ceramics with different x Figure a shows the P\u2013E loop of the ceramics with x = 0.08, measured at the temperature range of 30\u201380 \xb0C, 20 kV/cm. The decreasing of Pr values at T = 30\u201360 \xb0C are due to the increasing of temperature, which destroys the long-term order and domain structure of ceramics. Continuing increasing the temperature to 80 \xb0C, the ferroelectrics gradually turn into a paraelectric phase, and the anisotropy almost disappears. Unlike the Pr, the Ec drops first at T = 30\u201360 \xb0C and then stabilizes in the range of T = 60\u201380 \xb0C. Therefore, the decrease in Ec at T = 30\u201360 \xb0C is mainly due to the increasing of temperature, while the stabilization at 60\u201380 \xb0C is mainly due to the gradual transition of phase to paraelectric phase. The unipolar strain (Suni), d33E^{*} and strain in the ceramics with x = 0.08 as a function of temperature are shown in Fig. c\u2013e. One can see that d33E^{*} and strain gradually decrease as the temperature increases. With the increase of temperature, the phase structure is far away the R\u2013O\u2013T multiphase, resulting in the decrease of strain and d33E^{*}. According to reports, the Suni has the same tendency as the square of the maximum polarization (Pmax) minus the square of Pr [, \u2013]. The results of temperature dependence on Suni and PmaxE^{2}\u2013PrE^{2} of x = 0.08 are shown in Fig. e. It can be seen that Suni and PmaxE^{2}\u2013PrE^{2} have a high degree of similarity. Thus, there is a way to improve strain temperature stability by increasing Pmax or reducing Pr.Fig. 8a The P\u2013E hysteresis with different temperatures; bPr and Ec of BSTZx ceramics with different temperatures; c unipolar electric field induced strain of BSTZx ceramics with different temperatures; dd33E^{*} of the BSTZx ceramics with different temperatures; eSuni and PmaxE^{2} \u2212 PrE^{2} for the BSTZx ceramics with different temperatures a The P\u2013E hysteresis with different temperatures; bPr and Ec of BSTZx ceramics with different temperatures; c unipolar electric field induced strain of BSTZx ceramics with different temperatures; dd33E^{*} of the BSTZx ceramics with different temperatures; eSuni and PmaxE^{2} \u2212 PrE^{2} for the BSTZx ceramics with different temperatures
+
+# TITLE
+Large piezoelectric performance in zirconium doped Ba0.86Sr0.14TiO3 lead-free ceramics through utilizing multiphase coexistence
+
+# ABSTRACT
+Lead-free piezoceramics of BaSrTiZrO (BSTZ) are prepared by the conventional solid-state method. The microstructure, phase structure and electrical properties of BSTZ ceramics in the composition range of 0 ≤ ≤ 0.1 are systematically studied. The coexistence of the rhombohedral phase, tetragonal phase, and orthorhombic phase is determined in the ceramic with 0.06 ≤ ≤ 0.08, showing enhanced electrical properties in the ceramics with = 0.08, especially the large piezoelectric property (~ 620 pC/N) and high  value (~ 4743), which is superior or comparable to the other BT-based ceramics. As a result, the addition of the Zr can effectively improve the electricity of the BaTiO-based ceramics, which can be beneficial to facilitate the practical process of BT-based ceramics.
+
+# INTRODUCTION
+Since the 1950s, Pb(Zr1\u2212xTix)O3 (PZT) piezoelectric ceramics have dominated the field of piezoelectric ceramic materials, due to excellent piezoelectric properties and high Curie temperature. However, the content of lead is 60% in PZT-based piezoelectric ceramics, which is a highly toxic substance that can cause serious environmental and human health problems. In 1956, Bechmann et al. obtained BaTiO3 (BT) materials with its excellent electric properties, which is considered to be one of the most promising lead-free piezoelectric ceramic systems. Subsequently, the researchers conducted much work on BT-based ceramics, including reducing sintering temperature, chemical modification and so on. Among those, the doping project has achieved a series of breakthroughs in d33 through phase boundary regulation. It is realized that the increase of piezoelectric performance can be attributed to the construction of multiphase boundaries by chemical modification (e.g., Ca, Zr, Sn and Hf) [, , , , , , , , , , , , , , , , , \u2013]. Liu et al. reported a barium titanate-based material with a d33 value of around 620 pC/N by constructing the cubic\u2013rhombohedral\u2013tetragonal (C\u2013R\u2013T) phase boundary, even higher than some lead-based ceramics. It is reported that a little Sr doping can improve the dielectric and ferroelectric properties of BT materials, but their piezoelectric property is still inferior to the PZT-based ceramics [, ]. Therefore, Sr doped BT-based ceramics with high piezoelectric property have been an important research direction in lead-free ceramics. In this work, Ba0.86Sr0.14Ti1\u2212xZrxO3 (BSTZx) lead-free piezoceramics are synthesized by conventional solid state method. The effect of Zr on the phase structure, dielectric, ferroelectric, and piezoelectric properties of Ba0.86Sr0.14TiO3 is comprehensively studied. The coexistence of the rhombohedral, orthorhombic, and tetragonal phase is determined in the ceramic with 0.06 \u2264 x \u2264 0.08, showing enhanced electrical properties in the ceramics with x = 0.08, especially the large piezoelectric property (~ 620 pC/N) and high \u03b5r value (~ 4743), which is a potential candidate for lead-free piezoceramics.
+
+# CONCLUSION
+In this work, Ba0.86Sr0.14Ti1\u2212xZrxO3 (BSTZx) lead-free piezoceramics are synthesized by conventional solid-state method. The evolution of microstructure, phase structure and electrical properties of Ba0.86Sr0.14Ti1\u2212xZrxO3 ceramics in the range of 0 \u2264 x \u2264 0.1 are systematically investigated. Zr can move the TR\u2013O and TO\u2013T to room temperature, eventually forming multiphase boundary of R\u2013O\u2013T, resulting in an enhanced electrical performance (e.g., d33 ~ 620 pC/N, \u03b5r ~ 4743, tan\u03b4 ~ 0.016, strain ~ 0.152%, and d33* ~ 407 pm/V) at x = 0.08. Therefore, the addition of Zr content can effectively improve the dielectric and piezoelectric properties of BT-based ceramics, which is a potential candidate for lead-free piezoceramics.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 12:54:41: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1007/s10854-019-02187-y.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1007/s10854-019-02187-y and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+Figure a is the XRD pattern of the BSTZx ceramics measured at room temperature and the diffraction angle 2\u03b8 of 20\xb0\u201360\xb0. It shows that the added ZrE^{4+} is completely integrated into the BST lattice to form a stable perovskite solid solution. The standard diffraction peaks with R, O, T and C phase which correspond to respective PDF#85-1797, PDF#81-2200, PDF#05-0626, and PDF#75-0212 are indicated by the vertical lines. It can be seen from the Fig. b that the diffraction peaks near the 46\xb0 in the ceramics with x = 0 have two peaks of the left low and right high, indicating that the T phase boundary is obtained. As increasing ZrE^{4+} content, there are signs of fusion in the double peaks, presenting that the multiphase boundaries are formed in the components with 0.02 \u2264 x \u2264 0.10 at room temperature.Fig. 1XRD patterns of the BSTZx ceramics in the 2\u03b8 range of 20\u201360\xb0 (a), 43\u201348\xb0 (b) XRD patterns of the BSTZx ceramics in the 2\u03b8 range of 20\u201360\xb0 (a), 43\u201348\xb0 (b) To further observe the phase structure of the ceramics, we have made dielectric constant (\u03b5r) versus temperature for BSTZx ceramics measured at temperature range from \u2212 100 to 150 \xb0C and 100 kHz, as shown in Fig.. Three phase transition peaks were detected at 0 \u2264 x \u2264 0.08, respectively corresponding to rhombohedral\u2013orthorhombic phase transition temperature (TR\u2013O), orthorhombic\u2013tetragonal phase transition temperature (TO\u2013T) and cubic phase transition temperature (TC). When x = 0, both TR\u2013O (~ \u2212 64 \xb0C) and TO-T (~ \u2212 8 \xb0C) were below room temperature, confirming the observation of the T phase (see Fig. a), which is consistent with the results of XRD. For ceramics with 0.02 \u2264 x \u2264 0.04, TO-T (~ 13 \xb0C \u2192 20 \xb0C) is close to room temperature and TR-O (~ \u2212 42 \xb0C \u2192 \u2212 15 \xb0C) is below room temperature, indicating that the O\u2013T phase is obtained (see Fig. b, c). As the Zr content increasing from 0.06 to 0.08, TR\u2013O (~ 10 \xb0C \u2192 25 \xb0C) and TO\u2013T (~ 25 \xb0C \u2192 34 \xb0C) approached room temperature, indicating the R\u2013O\u2013T phase was the formation in these samples (see Fig. d, e). Then the three dielectric peaks are fused together (see Fig. f), such a phenomenon has been observed in other BT-based ceramics. Figure shows the phase diagram of BSTZx ceramics based on \u03b5r\u2013T curve. It can be clearly seen that both TR\u2013O and TO\u2013T move to room temperature, and TC decreases as the content of Zr increases (see Fig. ). Hence, the phase structure of BSTZx ceramics are as follows: T phase (x = 0), O\u2013T phase (0.02 \u2264 x \u2264 0.04), R\u2013O\u2013T phase (0.06 \u2264 x \u2264 0.08) and R\u2013C phase (x = 0.10).Fig. 2a\u2013f Dielectric curves from \u2212 100 to 150 \xb0C of the BSTZx ceramics with different x content at 100 kHzFig. 3Phase diagram of BSTZx ceramics a\u2013f Dielectric curves from \u2212 100 to 150 \xb0C of the BSTZx ceramics with different x content at 100 kHz Phase diagram of BSTZx ceramics Figure shows the variation of dielectric constant (\u03b5r) and dielectric loss (tan\u03b4) of BSTZx ceramics at room temperature,measured at the frequency of 100 kHz. \u03b5r values (1835 \u2264 \u03b5r \u2264 6137) increase with increasing x, which is larger than Sr-doped BT-based ceramics, as is shown in Table , proving that Zr significantly increases the dielectric constant of BSTZx ceramics. The enhanced \u03b5r values benefit to multiphase coexistence near room temperature with increasing of Zr content. In addition, tan\u03b4 values almost no change with the increase of x, and generally floats around 0.03.Fig. 4The room temperature values of \u03b5r and tan\u03b4 of BSTZx ceramics at 100 kHzTable 1Piezoelectric property and dielectric constant of previously reported BT-based ceramicsMaterials systemd33(pC/N)\u03b5rRef.(Ba0.98Ca0.02)(Ti0.94Sn0.04Zr0.02)O35453153Wu et al. (Ba0.95Ca0.05)(Ti0.06Zr0.04)O33382070Zhang et al. (Ba0.88Sr0.1Ca0.02)(Ti0.95Zr0.05)O33202150Roy et al. 0.3Ba(Zr0.15Ti0.85)O3\u20130.7(Ba0.8Sr0.2)TiO34504070Liang et al. Ba0.86Sr0.14Ti1\u2212xZrxO3(x = 0.08)6204744This work The room temperature values of \u03b5r and tan\u03b4 of BSTZx ceramics at 100 kHz Piezoelectric property and dielectric constant of previously reported BT-based ceramics Materials system d33(pC/N) \u03b5r Ref. (Ba0.98Ca0.02)(Ti0.94Sn0.04Zr0.02)O3 545 3153 Wu et al.  (Ba0.95Ca0.05)(Ti0.06Zr0.04)O3 338 2070 Zhang et al.  (Ba0.88Sr0.1Ca0.02)(Ti0.95Zr0.05)O3 320 2150 Roy et al.  0.3Ba(Zr0.15Ti0.85)O3\u20130.7(Ba0.8Sr0.2)TiO3 450 4070 Liang et al. Ba0.86Sr0.14Ti1\u2212xZrxO3(x = 0.08) 620 4744 This work Figure a shows the room temperature ferroelectric hysteresis loops (P\u2013E) of BSTZx ceramics at 1 Hz and 30 kV/cm. All curves exhibit a typical P\u2013E loop, indicating that all components are ferroelectrics. Figure b plots the residual polarization (Pr) and coercive field (Ec) as a function of Zr content, which is extracting from P\u2013E loops in Fig. a. Therefore, the reduction of Ec values in the ceramics are mainly attributed to the evolution phase boundary from single T phase to multiphase coexistence (e.g., O\u2013T, R\u2013O\u2013T).Fig. 5a The P\u2013E hysteresis and bPr and Ec of BSTZx ceramics a The P\u2013E hysteresis and bPr and Ec of BSTZx ceramics One can see from Fig. that d33 increases first and then decreases as the amount of Zr content increases, reaching the maximum value (d33 = 620 pC/N) at x = 0.08, which is superior or comparable to the other BT-based [, , , , , , \u2013], as shown in the Table. Such a large d33 is due to the successful construction of the R\u2013O\u2013T phase boundary around room temperature. To describe the relationship of d33 and \u03b5rPr, we plot the curve of d33 and \u03b5rPr vs. x, as is shown in Fig.. There is an empirical relationship between d33 and \u03b5rPr, that is, d33 is proportional to \u03b5rPr. \u03b5rPr has a similar trend to d33, so dielectric and ferroelectric properties also play a key role in the improvement of piezoelectric properties.Fig. 6The d33, \u03b5rPr values of BSTZx ceramics as a function of x The d33, \u03b5rPr values of BSTZx ceramics as a function of x Figure a shows bipolar strain loop (S\u2013E) of BSTZx ceramics, measured at the room temperature, 30 kV/cm and f = 1 Hz. The \u201cbutterfly curve\u201d of S\u2013E is mainly caused by the switching of domains. One can see from Fig. b that the negative strain (Sneg) first increases and then decreases, and gets the maximum value at x = 0.08, which can be explained by the amount of non-180E^{o} domains because the non-180\xb0 domains in T (90\xb0), R (71\xb0, 109\xb0) and O (60\xb0, 90\xb0, 120\xb0) phase structure successively increase in the ceramics. One can see that it first increases and then decreases with the increase of x, and reaches the maximum value (strain ~ 0.152%) when x = 0.08 as shown in Fig. d. The inverse piezoelectric coefficient (d33E^{\u2217} = Smax/Emax) of BSTZx ceramics is shown in Fig. e. Similar to strain, d33E^{\u2217} also increase with x increasing to 0.08, and have the maximum (d33* ~ 407 pm/V) at x = 0.08. As x increases to 0.10, d33E^{\u2217} decrease. The large strain and d33* are obtained in R\u2013O\u2013T phase boundary because the low energy barrier in multiphase boundary can greatly promote polarization rotation.Fig. 7a Bipolar electric field induced strain of BSTZx ceramics; b negative strain of BSTZx ceramics; c unipolar electric field induced strain of BSTZx ceramics; d strain for the BSTZx ceramics with different x; ed33E^{*} for the BSTZx ceramics with different x a Bipolar electric field induced strain of BSTZx ceramics; b negative strain of BSTZx ceramics; c unipolar electric field induced strain of BSTZx ceramics; d strain for the BSTZx ceramics with different x; ed33E^{*} for the BSTZx ceramics with different x Figure a shows the P\u2013E loop of the ceramics with x = 0.08, measured at the temperature range of 30\u201380 \xb0C, 20 kV/cm. The decreasing of Pr values at T = 30\u201360 \xb0C are due to the increasing of temperature, which destroys the long-term order and domain structure of ceramics. Continuing increasing the temperature to 80 \xb0C, the ferroelectrics gradually turn into a paraelectric phase, and the anisotropy almost disappears. Unlike the Pr, the Ec drops first at T = 30\u201360 \xb0C and then stabilizes in the range of T = 60\u201380 \xb0C. Therefore, the decrease in Ec at T = 30\u201360 \xb0C is mainly due to the increasing of temperature, while the stabilization at 60\u201380 \xb0C is mainly due to the gradual transition of phase to paraelectric phase. The unipolar strain (Suni), d33E^{*} and strain in the ceramics with x = 0.08 as a function of temperature are shown in Fig. c\u2013e. One can see that d33E^{*} and strain gradually decrease as the temperature increases. With the increase of temperature, the phase structure is far away the R\u2013O\u2013T multiphase, resulting in the decrease of strain and d33E^{*}. According to reports, the Suni has the same tendency as the square of the maximum polarization (Pmax) minus the square of Pr [, \u2013]. The results of temperature dependence on Suni and PmaxE^{2}\u2013PrE^{2} of x = 0.08 are shown in Fig. e. It can be seen that Suni and PmaxE^{2}\u2013PrE^{2} have a high degree of similarity. Thus, there is a way to improve strain temperature stability by increasing Pmax or reducing Pr.Fig. 8a The P\u2013E hysteresis with different temperatures; bPr and Ec of BSTZx ceramics with different temperatures; c unipolar electric field induced strain of BSTZx ceramics with different temperatures; dd33E^{*} of the BSTZx ceramics with different temperatures; eSuni and PmaxE^{2} \u2212 PrE^{2} for the BSTZx ceramics with different temperatures a The P\u2013E hysteresis with different temperatures; bPr and Ec of BSTZx ceramics with different temperatures; c unipolar electric field induced strain of BSTZx ceramics with different temperatures; dd33E^{*} of the BSTZx ceramics with different temperatures; eSuni and PmaxE^{2} \u2212 PrE^{2} for the BSTZx ceramics with different temperatures
+
+# TITLE
+Large piezoelectric performance in zirconium doped Ba0.86Sr0.14TiO3 lead-free ceramics through utilizing multiphase coexistence
+
+# ABSTRACT
+Lead-free piezoceramics of BaSrTiZrO (BSTZ) are prepared by the conventional solid-state method. The microstructure, phase structure and electrical properties of BSTZ ceramics in the composition range of 0 ≤ ≤ 0.1 are systematically studied. The coexistence of the rhombohedral phase, tetragonal phase, and orthorhombic phase is determined in the ceramic with 0.06 ≤ ≤ 0.08, showing enhanced electrical properties in the ceramics with = 0.08, especially the large piezoelectric property (~ 620 pC/N) and high  value (~ 4743), which is superior or comparable to the other BT-based ceramics. As a result, the addition of the Zr can effectively improve the electricity of the BaTiO-based ceramics, which can be beneficial to facilitate the practical process of BT-based ceramics.
+
+# INTRODUCTION
+Since the 1950s, Pb(Zr1\u2212xTix)O3 (PZT) piezoelectric ceramics have dominated the field of piezoelectric ceramic materials, due to excellent piezoelectric properties and high Curie temperature. However, the content of lead is 60% in PZT-based piezoelectric ceramics, which is a highly toxic substance that can cause serious environmental and human health problems. In 1956, Bechmann et al. obtained BaTiO3 (BT) materials with its excellent electric properties, which is considered to be one of the most promising lead-free piezoelectric ceramic systems. Subsequently, the researchers conducted much work on BT-based ceramics, including reducing sintering temperature, chemical modification and so on. Among those, the doping project has achieved a series of breakthroughs in d33 through phase boundary regulation. It is realized that the increase of piezoelectric performance can be attributed to the construction of multiphase boundaries by chemical modification (e.g., Ca, Zr, Sn and Hf) [, , , , , , , , , , , , , , , , , \u2013]. Liu et al. reported a barium titanate-based material with a d33 value of around 620 pC/N by constructing the cubic\u2013rhombohedral\u2013tetragonal (C\u2013R\u2013T) phase boundary, even higher than some lead-based ceramics. It is reported that a little Sr doping can improve the dielectric and ferroelectric properties of BT materials, but their piezoelectric property is still inferior to the PZT-based ceramics [, ]. Therefore, Sr doped BT-based ceramics with high piezoelectric property have been an important research direction in lead-free ceramics. In this work, Ba0.86Sr0.14Ti1\u2212xZrxO3 (BSTZx) lead-free piezoceramics are synthesized by conventional solid state method. The effect of Zr on the phase structure, dielectric, ferroelectric, and piezoelectric properties of Ba0.86Sr0.14TiO3 is comprehensively studied. The coexistence of the rhombohedral, orthorhombic, and tetragonal phase is determined in the ceramic with 0.06 \u2264 x \u2264 0.08, showing enhanced electrical properties in the ceramics with x = 0.08, especially the large piezoelectric property (~ 620 pC/N) and high \u03b5r value (~ 4743), which is a potential candidate for lead-free piezoceramics.
+
+# CONCLUSION
+In this work, Ba0.86Sr0.14Ti1\u2212xZrxO3 (BSTZx) lead-free piezoceramics are synthesized by conventional solid-state method. The evolution of microstructure, phase structure and electrical properties of Ba0.86Sr0.14Ti1\u2212xZrxO3 ceramics in the range of 0 \u2264 x \u2264 0.1 are systematically investigated. Zr can move the TR\u2013O and TO\u2013T to room temperature, eventually forming multiphase boundary of R\u2013O\u2013T, resulting in an enhanced electrical performance (e.g., d33 ~ 620 pC/N, \u03b5r ~ 4743, tan\u03b4 ~ 0.016, strain ~ 0.152%, and d33* ~ 407 pm/V) at x = 0.08. Therefore, the addition of Zr content can effectively improve the dielectric and piezoelectric properties of BT-based ceramics, which is a potential candidate for lead-free piezoceramics.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="Thought: The Graph Data Extractor returned d33 values from Fig. 6 for the series "d33" with x values 0.00, 0.02, 0.04, 0.06, 0.08, 0.10. However, the text explicitly states the maximum d33 = 620 pC/N at x = 0.08. The graph values (e.g., 490 pC/N at x=0.08) are lower, likely because the graph is for εrPr vs x and d33 vs x on a different scale, or the graph extraction may have inaccuracies. According to the conflict resolution rule: if the same composition appears in both text and graph with different values, keep the text-extracted value. The text explicitly says "d33 = 620 pC/N" at x=0.08. For other x values, the text does not provide explicit d33 values, only the graph does. So I will use the text value for x=0.08 (620 pC/N) and supplement with graph values for other x values (x=0, 0.02, 0.04, 0.06, 0.10) from Fig. 6.
+
+The canonical formula from Equation Tool is (Ba0.86Sr0.14)(Ti(1-x)Zr(x))O3. I need to write the compositions with the variable x substituted.
+
+For x=0: (Ba0.86Sr0.14)TiO3
+For x=0.02: (Ba0.86Sr0.14)(Ti0.98Zr0.02)O3
+For x=0.04: (Ba0.86Sr0.14)(Ti0.96Zr0.04)O3
+For x=0.06: (Ba0.86Sr0.14)(Ti0.94Zr0.06)O3
+For x=0.08: (Ba0.86Sr0.14)(Ti0.92Zr0.08)O3
+For x=0.10: (Ba0.86Sr0.14)(Ti0.90Zr0.10)O3
+
+The abbreviation BSTZx is used in the text. I should include it in abbreviations.
+
+The family is BaTiO3 (BT-based).
+
+The property unit is pC/N.
+
+Now, I need to construct the final JSON.
+
+Compositions and d33 values:
+- (Ba0.86Sr0.14)TiO3: 210 (from graph, x=0.00)
+- (Ba0.86Sr0.14)(Ti0.98Zr0.02)O3: 290 (from graph, x=0.02)
+- (Ba0.86Sr0.14)(Ti0.96Zr0.04)O3: 380 (from graph, x=0.04)
+- (Ba0.86Sr0.14)(Ti0.94Zr0.06)O3: 430 (from graph, x=0.06)
+- (Ba0.86Sr0.14)(Ti0.92Zr0.08)O3: 620 (from text, x=0.08)
+- (Ba0.86Sr0.14)(Ti0.90Zr0.10)O3: 360 (from graph, x=0.10)
+
+Abbreviations: BSTZx -> (Ba0.86Sr0.14)(Ti(1-x)Zr(x))O3
+
+Family: BaTiO3
+
+Let me format the JSON.{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(Ba0.86Sr0.14)TiO3": 210,
+      "(Ba0.86Sr0.14)(Ti0.98Zr0.02)O3": 290,
+      "(Ba0.86Sr0.14)(Ti0.96Zr0.04)O3": 380,
+      "(Ba0.86Sr0.14)(Ti0.94Zr0.06)O3": 430,
+      "(Ba0.86Sr0.14)(Ti0.92Zr0.08)O3": 620,
+      "(Ba0.86Sr0.14)(Ti0.90Zr0.10)O3": 360
+    },
+    "abbreviations": {
+      "BSTZx": "(Ba0.86Sr0.14)(Ti(1-x)Zr(x))O3"
+    },
+    "property_unit": "pC/N",
+    "family": "BaTiO3"
+  }
+}"

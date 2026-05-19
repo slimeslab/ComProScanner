@@ -1,0 +1,225 @@
+2026-05-01 15:16:40: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1007/s10854-013-1691-3.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1007/s10854-013-1691-3 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+To observe the sintering behavior of (K0.5Na0.5)(Nb0.9Ta0.1)O3 ceramics, the thermo-gravimetric/differential scanning calorimetry (TG/DSC analysis) is performed and the curves are collected in Fig.. From the TG/DSC results, weight loss due to the removal of water, organic compounds, and carbonate occurs at about 90, 190 and 470 \xb0C, respectively. The decomposition reaction is basically completed at 690 \xb0C. Meanwhile, it is seen that the melting point of (K0.5Na0.5)(Nb0.9Ta0.1)O3 is 1,140 \xb0C. Based on the analysis above, the mixtures were calcined and sintered at 890 and 1,120 \xb0C, respectively.Fig. 1TG\u2013DSC of (K0.5Na0.5)(Nb0.9Ta0.1)O3 ceramics TG\u2013DSC of (K0.5Na0.5)(Nb0.9Ta0.1)O3 ceramics Figure shows the X-ray diffraction patterns of KN(NT)1+x ceramics. A trace amount of Nb2O5 and K3NbO8s phases indicated by the asterisk and hash can be detected for all compositions. The lattice parameters were calculated by lattice parameter calculation software from the XRD patterns. The lattice parameters obey relationship: a = c \u2260 b, \u03b2 > 90E^{o}, and \u03b2 is the angle between two adjacent sides (a and c) of the parallelepiped. Therefore, small lattice distortion is occurred by the deficient or excess addition of B-site (NT)E^{5+} at the ABO3 perovskite structure.Fig. 2XRD patterns of KN(NT)1+x ceramics. (The inset shows the variation of the lattice parameters of the KN(NT)1+x ceramics as a function of x) XRD patterns of KN(NT)1+x ceramics. (The inset shows the variation of the lattice parameters of the KN(NT)1+x ceramics as a function of x) Figure shows the SEM images of the KN(NT)1+x ceramics at amplification factors of 1,000 and 3,000, respectively. The microstructure of the compositions with x = \u22120.010 up to x = 0.000 shows square or rectangular shaped grains and some large abnormal grains. Because of the quadrate grains, the x = \u22120.010, \u22120.005 and 0.000 ceramics show higher porosity, which is consistent with the measurement of low bulk densities. By increasing x to 0.005, the grain morphologies change from quadrate shape to polyhedral shape and the average grain size decreases. The compositions with x = 0.005 and 0.010 have a dense structure compared with other samples.Fig. 3a\u2013e Surface SEM micrographs of the KN(NT)1+x ceramics at amplification factors of 1,000. f\u2013j Surface SEM micrographs of the KN(NT)1+x ceramics at amplification factors of 3,000. a, fx = \u22120.010, b, gx = \u22120.005, c, hx = 0.000, d, ix = 0.005, e, jx = 0.010 a\u2013e Surface SEM micrographs of the KN(NT)1+x ceramics at amplification factors of 1,000. f\u2013j Surface SEM micrographs of the KN(NT)1+x ceramics at amplification factors of 3,000. a, fx = \u22120.010, b, gx = \u22120.005, c, hx = 0.000, d, ix = 0.005, e, jx = 0.010 Perovskite structure is constructed of BO6 octahedron by sharing vertices. A-site ions are located at the interstitial site of the BO6 octahedron. Other superfluous A-site ions could not enter the BO6 interstitial site and segregate at grain boundaries. Figure shows the variations of kp, d33, tan\u03b4 and relative density with x for KN(NT)1+x ceramics. The d33 and kp values exhibit a clear dependency on (NT)E^{5+} content and the relative densities. The d33 and kp values increase and then decrease with increasing x, giving a maximum value of 167pC/N and 41 % at x = 0.005. Compared with d33 and kp, the dielectric loss tan\u03b4 shows a reverse tendency. The minimum value tan\u03b4 = 3.2 % is obtained for x = 0.005. The A-site vacancies caused by the excess B-site ions are helpful to the densification and piezoelectric properties of the KN(NT)1+x ceramics. However, when adding over amounts of B-site ions, the electrical properties will decrease due to the solubility limit in KN(NT)1+x system.Fig. 4Electrical properties of KN(NT)1+x ceramics Electrical properties of KN(NT)1+x ceramics Study on the aging problem of piezoelectric ceramics is important to the practical applications. The d33 and kp of the ceramics aging about 30 days are shown in Fig. , also the initial data determined 24 h after poling is provided for comparison. The internal stress is induced due to the 90\xb0 domain-rotation in the process of polarization. The disordering of 90\xb0 new domain is the essential reason of performance degradation. As observed in Fig. that the x = 0.005 and x = 0.010 ceramics have fine grain structures, therefore, they have better time stability.Fig. 5Values of d33 and kp of the KN(NT)1+x ceramics after exposed in air for 30 days Values of d33 and kp of the KN(NT)1+x ceramics after exposed in air for 30 days
+
+# TITLE
+Properties of B-site non-stoichiometric (K0.5Na 0.5)(Nb0.9Ta0.1)1+x O3 lead-free piezoelectric ceramics
+
+# ABSTRACT
+The non-stoichiometric (KNa)(NbTa)O ( = 0, ±0.005, ±0.010) [KN(NT)] lead-free piezoelectric ceramics were prepared by normal sintering. All the KN(NT) ceramics possess orthorhombic perovskite structure. The grain growth of the ceramics is inhibited and the relative density is improved with increasing . 0.5 mol% (NT)E^{5+} excess KN(NT) ceramic which sintered at 1,120 °C has the highest piezoelectric performances among with other samples. Meanwhile, the (NT)E^{5+} excess ceramics have better time stability than the (NT)E^{5+} deficient ones. These results show that the KN(NT) ceramic with  = 0.005 is a promising lead-free piezoelectric material.
+
+# INTRODUCTION
+Pb(Zr, Ti)O3 (PZT) based piezoelectric ceramics are widely used because they have good piezoelectric properties. However, the PZT based ceramics contain high content of toxic lead and are bringing health and environment concerns aggravated with their expanded applications. The best way to solve this problem is to search lead-free piezoelectric ceramic materials which will replace the lead-based materials [\u2013]. The composition (K0.5Na0.5)NbO3 (KNN) has been attracted much attention and considered as one of the most potential candidate for the replacement of PZT ceramics. However, a few drawbacks still prevent wide scale industrial use of KNN ceramics owing to the volatility of the alkali species at high temperatures. In order to improve the densification and the electrical properties of the KNN ceramics, many KNN-based systems have been investigated [\u2013]. It is known that the crystal structure, microstructure and electrical properties can be affected profoundly by a small deviation from stoichiometry in the KNN-based ceramics. Up to now, many researches on the A-site non-stoichiometric composition ceramics have been tried to improve piezoelectric properties of KNN-based ceramics [\u2013]. However, few researches on the B-site non-stoichiometric KNN-based compositions are systematically studied. Therefore, in this paper, we systematically investigate the phase structure, microstructure, and piezoelectric properties of B-site non-stoichiometric (K0.5Na0.5)(Nb0.9Ta0.1)1+xO3 ceramics.
+
+# CONCLUSION
+B-site non-stoichiometric (K0.5Na0.5)(Nb0.9Ta0.1)1+xO3 ceramics were manufactured by conventional solid state method. The influences of deficient or excess amount of (NT)E^{5+} on structure and electrical properties are investigated. 0.5 mol% (NT)E^{5+} excess KN(NT)1+x ceramics sintered at 1,120 \xb0C show the optimum piezoelectric performances such as piezoelectric constant of 167 pC/N, planar electromechanical coupling coefficient of 0.41, and dielectric loss of 3.2 %. Piezoelectric properties of the B-site excess ceramics show no obvious reduction when exposed in air for 30 days. The results may be instructive for further design and development of new KNN-based piezoelectric systems.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 15:17:46: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1007/s10854-013-1691-3.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1007/s10854-013-1691-3 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+To observe the sintering behavior of (K0.5Na0.5)(Nb0.9Ta0.1)O3 ceramics, the thermo-gravimetric/differential scanning calorimetry (TG/DSC analysis) is performed and the curves are collected in Fig.. From the TG/DSC results, weight loss due to the removal of water, organic compounds, and carbonate occurs at about 90, 190 and 470 \xb0C, respectively. The decomposition reaction is basically completed at 690 \xb0C. Meanwhile, it is seen that the melting point of (K0.5Na0.5)(Nb0.9Ta0.1)O3 is 1,140 \xb0C. Based on the analysis above, the mixtures were calcined and sintered at 890 and 1,120 \xb0C, respectively.Fig. 1TG\u2013DSC of (K0.5Na0.5)(Nb0.9Ta0.1)O3 ceramics TG\u2013DSC of (K0.5Na0.5)(Nb0.9Ta0.1)O3 ceramics Figure shows the X-ray diffraction patterns of KN(NT)1+x ceramics. A trace amount of Nb2O5 and K3NbO8s phases indicated by the asterisk and hash can be detected for all compositions. The lattice parameters were calculated by lattice parameter calculation software from the XRD patterns. The lattice parameters obey relationship: a = c \u2260 b, \u03b2 > 90E^{o}, and \u03b2 is the angle between two adjacent sides (a and c) of the parallelepiped. Therefore, small lattice distortion is occurred by the deficient or excess addition of B-site (NT)E^{5+} at the ABO3 perovskite structure.Fig. 2XRD patterns of KN(NT)1+x ceramics. (The inset shows the variation of the lattice parameters of the KN(NT)1+x ceramics as a function of x) XRD patterns of KN(NT)1+x ceramics. (The inset shows the variation of the lattice parameters of the KN(NT)1+x ceramics as a function of x) Figure shows the SEM images of the KN(NT)1+x ceramics at amplification factors of 1,000 and 3,000, respectively. The microstructure of the compositions with x = \u22120.010 up to x = 0.000 shows square or rectangular shaped grains and some large abnormal grains. Because of the quadrate grains, the x = \u22120.010, \u22120.005 and 0.000 ceramics show higher porosity, which is consistent with the measurement of low bulk densities. By increasing x to 0.005, the grain morphologies change from quadrate shape to polyhedral shape and the average grain size decreases. The compositions with x = 0.005 and 0.010 have a dense structure compared with other samples.Fig. 3a\u2013e Surface SEM micrographs of the KN(NT)1+x ceramics at amplification factors of 1,000. f\u2013j Surface SEM micrographs of the KN(NT)1+x ceramics at amplification factors of 3,000. a, fx = \u22120.010, b, gx = \u22120.005, c, hx = 0.000, d, ix = 0.005, e, jx = 0.010 a\u2013e Surface SEM micrographs of the KN(NT)1+x ceramics at amplification factors of 1,000. f\u2013j Surface SEM micrographs of the KN(NT)1+x ceramics at amplification factors of 3,000. a, fx = \u22120.010, b, gx = \u22120.005, c, hx = 0.000, d, ix = 0.005, e, jx = 0.010 Perovskite structure is constructed of BO6 octahedron by sharing vertices. A-site ions are located at the interstitial site of the BO6 octahedron. Other superfluous A-site ions could not enter the BO6 interstitial site and segregate at grain boundaries. Figure shows the variations of kp, d33, tan\u03b4 and relative density with x for KN(NT)1+x ceramics. The d33 and kp values exhibit a clear dependency on (NT)E^{5+} content and the relative densities. The d33 and kp values increase and then decrease with increasing x, giving a maximum value of 167pC/N and 41 % at x = 0.005. Compared with d33 and kp, the dielectric loss tan\u03b4 shows a reverse tendency. The minimum value tan\u03b4 = 3.2 % is obtained for x = 0.005. The A-site vacancies caused by the excess B-site ions are helpful to the densification and piezoelectric properties of the KN(NT)1+x ceramics. However, when adding over amounts of B-site ions, the electrical properties will decrease due to the solubility limit in KN(NT)1+x system.Fig. 4Electrical properties of KN(NT)1+x ceramics Electrical properties of KN(NT)1+x ceramics Study on the aging problem of piezoelectric ceramics is important to the practical applications. The d33 and kp of the ceramics aging about 30 days are shown in Fig. , also the initial data determined 24 h after poling is provided for comparison. The internal stress is induced due to the 90\xb0 domain-rotation in the process of polarization. The disordering of 90\xb0 new domain is the essential reason of performance degradation. As observed in Fig. that the x = 0.005 and x = 0.010 ceramics have fine grain structures, therefore, they have better time stability.Fig. 5Values of d33 and kp of the KN(NT)1+x ceramics after exposed in air for 30 days Values of d33 and kp of the KN(NT)1+x ceramics after exposed in air for 30 days
+
+# TITLE
+Properties of B-site non-stoichiometric (K0.5Na 0.5)(Nb0.9Ta0.1)1+x O3 lead-free piezoelectric ceramics
+
+# ABSTRACT
+The non-stoichiometric (KNa)(NbTa)O ( = 0, ±0.005, ±0.010) [KN(NT)] lead-free piezoelectric ceramics were prepared by normal sintering. All the KN(NT) ceramics possess orthorhombic perovskite structure. The grain growth of the ceramics is inhibited and the relative density is improved with increasing . 0.5 mol% (NT)E^{5+} excess KN(NT) ceramic which sintered at 1,120 °C has the highest piezoelectric performances among with other samples. Meanwhile, the (NT)E^{5+} excess ceramics have better time stability than the (NT)E^{5+} deficient ones. These results show that the KN(NT) ceramic with  = 0.005 is a promising lead-free piezoelectric material.
+
+# INTRODUCTION
+Pb(Zr, Ti)O3 (PZT) based piezoelectric ceramics are widely used because they have good piezoelectric properties. However, the PZT based ceramics contain high content of toxic lead and are bringing health and environment concerns aggravated with their expanded applications. The best way to solve this problem is to search lead-free piezoelectric ceramic materials which will replace the lead-based materials [\u2013]. The composition (K0.5Na0.5)NbO3 (KNN) has been attracted much attention and considered as one of the most potential candidate for the replacement of PZT ceramics. However, a few drawbacks still prevent wide scale industrial use of KNN ceramics owing to the volatility of the alkali species at high temperatures. In order to improve the densification and the electrical properties of the KNN ceramics, many KNN-based systems have been investigated [\u2013]. It is known that the crystal structure, microstructure and electrical properties can be affected profoundly by a small deviation from stoichiometry in the KNN-based ceramics. Up to now, many researches on the A-site non-stoichiometric composition ceramics have been tried to improve piezoelectric properties of KNN-based ceramics [\u2013]. However, few researches on the B-site non-stoichiometric KNN-based compositions are systematically studied. Therefore, in this paper, we systematically investigate the phase structure, microstructure, and piezoelectric properties of B-site non-stoichiometric (K0.5Na0.5)(Nb0.9Ta0.1)1+xO3 ceramics.
+
+# CONCLUSION
+B-site non-stoichiometric (K0.5Na0.5)(Nb0.9Ta0.1)1+xO3 ceramics were manufactured by conventional solid state method. The influences of deficient or excess amount of (NT)E^{5+} on structure and electrical properties are investigated. 0.5 mol% (NT)E^{5+} excess KN(NT)1+x ceramics sintered at 1,120 \xb0C show the optimum piezoelectric performances such as piezoelectric constant of 167 pC/N, planar electromechanical coupling coefficient of 0.41, and dielectric loss of 3.2 %. Piezoelectric properties of the B-site excess ceramics show no obvious reduction when exposed in air for 30 days. The results may be instructive for further design and development of new KNN-based piezoelectric systems.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="Thought: The Graph Data Extractor returned data from Fig. 5 (d33 values after 24 h and 1 month). However, the text explicitly states: "The d33 and kp values increase and then decrease with increasing x, giving a maximum value of 167pC/N and 41 % at x = 0.005." This is the initial d33 value determined 24 h after poling. The graph extraction gives 165 pC/N for x=0.005 at 24 h, which is close but not exactly 167. According to the conflict resolution rule, I must keep the text-derived value (167 pC/N) for x=0.005. For other compositions, the text does not provide explicit d33 values, so I can use the graph-extracted values for the "24 h later" series as supplementary data.
+
+The text mentions x values: -0.010, -0.005, 0.000, 0.005, 0.010. The base formula is (K0.5Na0.5)(Nb0.9Ta0.1)1+xO3. I need to write the compositions with the variable x substituted.
+
+For x = -0.010: (K0.5Na0.5)(Nb0.9Ta0.1)(1-0.010)O3 = (K0.5Na0.5)(Nb0.9Ta0.1)0.99O3
+For x = -0.005: (K0.5Na0.5)(Nb0.9Ta0.1)(1-0.005)O3 = (K0.5Na0.5)(Nb0.9Ta0.1)0.995O3
+For x = 0.000: (K0.5Na0.5)(Nb0.9Ta0.1)1.000O3 = (K0.5Na0.5)(Nb0.9Ta0.1)O3
+For x = 0.005: (K0.5Na0.5)(Nb0.9Ta0.1)(1+0.005)O3 = (K0.5Na0.5)(Nb0.9Ta0.1)1.005O3
+For x = 0.010: (K0.5Na0.5)(Nb0.9Ta0.1)(1+0.010)O3 = (K0.5Na0.5)(Nb0.9Ta0.1)1.010O3
+
+The text gives d33 = 167 pC/N for x=0.005. The graph gives for 24 h: x=-0.010: 105, x=-0.005: 120, x=0.000: 138, x=0.005: 165, x=0.010: 158. Since text says 167 for x=0.005, I use 167. For others, I use graph values.
+
+The abbreviation KN(NT) is used for (K0.5Na0.5)(Nb0.9Ta0.1)O3. I should include this abbreviation.
+
+The family is KNN-based or (K0.5Na0.5)NbO3-based. The paper title says "lead-free piezoelectric ceramics" and the base is KNN with Ta substitution. The family should be "KNN" or "(K0.5Na0.5)NbO3". I'll use "KNN".
+
+Now I'll construct the final JSON.{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(K0.5Na0.5)(Nb0.9Ta0.1)0.99O3": 105,
+      "(K0.5Na0.5)(Nb0.9Ta0.1)0.995O3": 120,
+      "(K0.5Na0.5)(Nb0.9Ta0.1)O3": 138,
+      "(K0.5Na0.5)(Nb0.9Ta0.1)1.005O3": 167,
+      "(K0.5Na0.5)(Nb0.9Ta0.1)1.010O3": 158
+    },
+    "abbreviations": {
+      "KN(NT)": "(K0.5Na0.5)(Nb0.9Ta0.1)O3"
+    },
+    "property_unit": "pC/N",
+    "family": "KNN"
+  }
+}"

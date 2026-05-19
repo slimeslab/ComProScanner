@@ -120,7 +120,22 @@ def test_run_returns_error_on_invalid_json_string():
     assert "error" in result
 
 
-def test_run_extracts_unit_from_composition_property_text_data_field(monkeypatch):
+def test_run_extracts_unit_from_property_unit_field(monkeypatch):
+    tool = _make_tool()
+    data = {
+        "compositions": {"PbZrTiO3": 300},
+        "property_unit": "pC/N",
+    }
+    monkeypatch.setattr(
+        "requests.post", lambda url, files: _api_response(200, "PbZrTiO3")
+    )
+
+    result = tool._run(data)
+
+    assert result["property_unit"] == "pC/N"
+
+
+def test_run_ignores_template_literal_unit_key(monkeypatch):
     tool = _make_tool()
     data = {
         "compositions": {"PbZrTiO3": 300},
@@ -132,7 +147,7 @@ def test_run_extracts_unit_from_composition_property_text_data_field(monkeypatch
 
     result = tool._run(data)
 
-    assert result["property_unit"] == "pC/N"
+    assert result["property_unit"] == ""
 
 
 # ---------------------------------------------------------------------------

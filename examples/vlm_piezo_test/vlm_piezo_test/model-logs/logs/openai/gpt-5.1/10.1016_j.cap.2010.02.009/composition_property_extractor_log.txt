@@ -1,0 +1,281 @@
+2026-05-01 12:11:15: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.cap.2010.02.009.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.cap.2010.02.009 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The SEM micrographs of the surface and fracture surface of the as-sintered (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x =0.05, 0.075, 0.10 and 0.15 are shown in , respectively. For the ceramic with x =0.05, the grains have a diameter in the range of 6\u20137\u03bcm (a). As x increases from 0.05 to 0.15, the grain size decreases significantly to about 2\u03bcm. The variations of the bulk density \u03c1, relative density D (to the theoretical value) and optimum sintering temperature T s of the ceramics with x are shown in. The observed \u03c1 increases from 5.66 to 5.80g/cmE^{3} as x increases from 0 to 0.05, and then remains almost unchanged (5.78\u20135.86g/cmE^{3}). The observed D exhibits similar variations with x, and all have a value larger than 95%, indicating that the ceramics are well-sintered. It is known that Li-free BNT-based ceramics, such as the BNT , BNT\u2013Bi0.5K0.5TiO3 , BNT\u2013BaTiO3 , BNT\u2013BaTiO3\u2013SrTiO3 and BNT\u2013BaTiO3\u2013Bi0.5K0.5TiO3 , can be sintered to a dense structure at 1150\u20131250\xb0C. For the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x =0.05\u20130.15, the sintering temperature is decreased by about 150\xb0C to 1075\u20131100\xb0C. These results clearly show that the addition of LiE^{+} can improve the sintering performance of BNT-based ceramics, by decreasing the sintering temperature and enhancing the densification. shows the XRD patterns of the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with 0\u2a7d x \u2a7d0.15. All the ceramics possess a pure perovskite structure, suggesting that LiE^{+}, BaE^{2+} and SrE^{2+} have diffused into the BNT lattices to form a solid solution. Similar to the BNT ceramic , all the ceramics have a rhombohedral symmetry. This may be attributed to the smaller ionic radius of LiE^{+} (0.68\xc5) compared to NaE^{+} (0.97\xc5). shows the P\u2013E loops of the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x =0.025, 0.075, 0.125 and 0.15. As shown in a, the major P\u2013E loop (i.e. the loop under an ac field with an amplitude of 6.2kV/mm) of the ceramic with x =0.025 is well-saturated and square-like, giving an E c of 3.13kV/mm and a P r of 43.5\u03bcC/cmE^{2} (a). As x increases to 0.075, the major P\u2013E loop becomes slightly broadened, and the observed E c and P r increase slightly to 3.38kV/mm and 44.4\u03bcC/cmE^{2}, respectively. For the ceramic with x =0.125, the major P\u2013E loop becomes narrow and slightly constricted at P =0\u03bcC/cmE^{2} (c). The observed E c decreases significantly to 1.91kV/mm, while P r remains almost unchanged. As x increases to 0.15, the major P\u2013E loop becomes slanted and deformed, giving a very small E c (1.74kV/mm) and a small P r (32.5\u03bcC/cmE^{2}). The observed P r increases after the addition of LiE^{+} and starts to decrease at x >0.125, having a large value of 43.0\u201345.3\u03bcC/cmE^{2} in the range of x from 0.025 to 0.125. The observed E c increases slightly from 3.08kV/mm to 3.44kV/mm with increasing x from 0 to 0.05, then remains almost unchanged (3.44\u20133.29kV/mm) at 0.05\u2a7d x \u2a7d0.10, and finally decreases to 1.74kV/mm with further increasing x to 0.15. The deformation in the P\u2013E loop (or the decrease in E c) and the decrease in P r of the ceramic with x =0.15 may be attributed to the existence of a non-polar phase induced by the partial substitution of LiE^{+} for NaE^{+}. Similar results have been reported in (Bi0.5Na0.5)0.94Ba0.06Zr y Ti1\u2212 y O3 , BNT\u2013KNbO3 and BNT\u2013SrTiO3 ceramics. The substitution of ZrE^{4+} for TiE^{4+} in the 0.94BNT\u20130.06BaTiO3 and the introduction of KNbO3 or SrTiO3 into BNT shift the depolarization temperature T d towards room temperature, leading to the appearance of the non-polar phase at room temperature. The interaction between the polar and non-polar phases give rise to the deformation of the P\u2013E loop. shows the variations of d 33, k p, k t, \u03b5 r and tan \u03b4 of the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x. The observed d 33 increases with increasing x and then decreases rapidly, giving a maximum value of 235pC/N at x =0.125, which is the highest value reported for the BNT-based ceramics. In agreement with the deformed P\u2013E loop, the small d 33 value of the ceramic with x =0.15 (23pC/N) should be attributed to the induced non-polar phase. Similar results have been observed in (Bi0.5Na0.5)0.94Ba0.06Zr y Ti1\u2212 y O3 and BNT\u2013SrTiO3 ceramics. The observed k p and k t reach a optimum value of 36.3% and 54.3%, respectively, at x =0.075. As shown in b, the observed \u03b5 r and tan \u03b4 remain almost unchanged at x \u2a7d0.075. At x >0.075, both \u03b5 r and tan \u03b4 increase with increasing x. According to the thermodynamic theory, d 33 is correlated with the electrostriction coefficient Q 11, the (net) polarization P (which may be approximated by P r) and \u03b5 r via a general equation d 33 =2Q 11 \u03b5 0 \u03b5 r P s, where \u03b5 0 is the permittivity of free space. Q 11 is related to the domain structure and should not change significantly by doping for the ceramics studied here. Hence, the maximum d 33 value (235pC/N) observed for the ceramic with x =0.125 should also be attributed to the high \u03b5 r. shows the temperature dependences of \u03b5 r and tan \u03b4 for the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x =0.025, 0.10, 0.125 and 0.15 at 1kHz, 10kHz and 100kHz. As shown , the ceramics with x =0.025, 0.10 and 0.125 exhibit two dielectric anomalies at T d and T m. T d is the depolarization temperature which corresponds to the transition from a ferroelectric state to a alleged \u201cantiferroelectric\u201d state, while T m is the maximum temperature at which \u03b5 r reaches a maximum value and corresponds to a transition from an \u201cantiferroelectric state\u201d to a paraelectric state. For the ceramic with x =0.15, only the dielectric anomaly at T m is observed in the temperature range of 25\u2013500\xb0C (d). This suggests that at room temperature, the ceramic with x =0.15 may be in the intermediate phase zone and contains both the polar and non-polar phases, thus leading to the deformation in the P\u2013E loop and the decrease in piezoelectric properties as shown in a. As also shown in , the observed \u03b5 r for all the ceramics exhibits a strong frequency dependence, and the maximum value of \u03b5 r decreases as frequency increases while the corresponding T m increases. These suggest that the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics are relaxor ferroelectrics and the phase transition at T m is a diffuse phase transition. A diffuse phase transition has been observed in many ABO3-type perovskites and bismuth layer-structured compounds, such as BNT-based ceramics , K0.5La0.5Bi2Nb2O9 and Pb(Mg1/3Nb2/3)O3. For the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics, NaE^{+}, BiE^{3+}, LiE^{+}, BaE^{2+} and SrE^{2+} are randomly distributed in the 12-fold coordination sites. For relaxor ferroelectrics, the diffuseness of the phase transition can be determined from the equation 1/\u03b5 r \u22121/\u03b5 m = C E^{\u22121}(T \u2212 T m) E^{\u03b3} , where \u03b5 m is the maximum value of \u03b5 r at T m, \u03b3 is the degree of diffuseness, and C is the Curie-like coefficient. \u03b3 can have a value ranging from 1 for a normal ferroelectric to 2 for an ideal relaxor ferroelectric. Based on the temperature plots of \u03b5 r at 100kHz, the graphs of ln(1/\u03b5 r \u22121/\u03b5 m) vs. ln(T \u2212 T m) for the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x =0.025, 0.10 and 0.15 were plotted, and shown in. By least-squared-fitting the experimental data to the equation, \u03b3 was determined. The value of \u03b3 for the ceramic with x =0.025 is found to be 1.51, suggesting that it is a relaxor ferroelectric. As x increases to 0.15, \u03b3 increases to 1.87, indicating that the ceramic behaves as a typical relaxor ferroelectric. Because of the smaller ionic radius of LiE^{+} compared to NaE^{+} (0.67\xc5 vs. 0.97\xc5), highly disordered structures are probably formed. As a result, the diffuseness of the phase transition increases with increasing x, and the ceramic with x =0.15 exhibits the most broadened transition peak as shown in. shows the variations of T d and T m (determined from the temperature plots of tan \u03b4 and \u03b5 r, respectively) with x for the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics. The observed T m remains almost unchanged at x \u2a7d0.125, and increases rapidly to 340\xb0C at x =0.15. The observed T d increases slightly from 107 to 144\xb0C as x increases from 0 to 0.075, and then decreases rapidly to 55\xb0C at x =0.125. It is suggested that a macro\u2013micro domain switching occurs at T d, and thus T d can be considered as an indicator for the stability of ferroelectric domains. As a result, the reorientation of 90\xb0 domains becomes easier, which leads to the considerable improvement in the piezoelectric properties of the ceramics with x =0.125. As shown in d, T d of the ceramic with x =0.15 is \u2a7d25\xb0C, suggesting that the ceramic contains the polar and non-polar phases at room temperature. To provide additional evidence for the ferroelectric-to-\u201cantiferroelectric\u201d phase transition, the P\u2013E loops of the ceramics x =0.025, 0.10 and 0.15 at different temperatures have been measured. At room temperature, the ceramic with x =0.025 exhibits a typical ferroelectric P\u2013E loop. As temperature increases to 60\xb0C, the loop becomes more saturated because of the decrease in E c. At 80\xb0C, the loop is slightly deformed. As temperature reaches 120\xb0C, the P\u2013E loop becomes slant and slim, and is different from the typical ferroelectric characteristics. As determined from a, the depolarization temperature T d of the ceramic with x =0.025 is about 110\xb0C, which is close to the value determined from the plot of temperature vs. tan \u03b4 (126\xb0C) (a). The ceramic with x =0.10 exhibits similar temperature dependences of the ferroelectric properties (b), revealing a T d of about 90\xb0C. Unlike the ceramics with x =0.025 and 0.10, the ceramic with x =0.15 exhibits a slant and slim P\u2013E loop with a small P r and low E c at room temperature (c). As temperature increases, the P\u2013E loop becomes slimmer and narrower gradually. It should be noted that the change in the P\u2013E loop with temperature for the present ceramics is similar to that for the typical Pb-based relaxor ferroelectrics such as Pb(Sc0.5Ta0.5)TiO3. As discussed before, the deformed P\u2013E loop of the ceramic with x =0.15 may be attributed to the coexistence of the polar and non-polar phases at room temperature. As a result, the P\u2013E loop becomes slimmer at high temperatures. The variations of P r and E c with temperature for the ceramics with x =0.025, 0.10 and 0.15 are shown in. The observed P r for the ceramics with x =0.025 and 0.10 remains almost unchanged at temperatures below 80\xb0C, and then decreases significantly with increasing temperature. On the other hand, the observed P r for the ceramic with x =0.15 decreases continuously with increasing temperature. Double P\u2013E loops have been observed in BNT-based ceramics and were suggested as the results of the transition to an antiferroelectric phase at T d. On the other hand, deformed P\u2013E loops have also been reported in BNT-based ceramics at high temperatures. Together with the temperature dependences of ferroelectric and dielectric properties, it is reported that the anomalies in P\u2013E loop were resulted from the electromechanical interaction between the polar and non-polar phases which coexist in the ceramics at high temperatures. Recently, it has been shown that, by in situ transmission electron microscopy (TEM), there is no crystallographic evidence of antiferroelectric domains near/above T d and the depolarization is induced by the weakening of the macroscopic ferroelectric domains. Similar trends of the P\u2013E loop with temperature have been observed in typical Pb-based relaxor ferroelectrics such as Pb(Sc0.5Ta0.5)O3 and Pb(Sc0.5Nb0.5)O3. On the basis of the deformed loops shown in , it is then suggested that the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics contain both the polar and non-polar phases near/above T d. As the electrical field decreases and approaches to zero in the P\u2013E loop measurements, the induced macrodomain state disappears, thus resulting in a deformed P\u2013E loop. For the ceramics with x \u2a7d0.125 (T d >room temperature), deformed P\u2013E loops are observed at temperatures near T d (a and b). For the ceramic with x =0.15, the deformed loop is obtained at room temperature because T d may be below/at room temperature. So our results suggest that the polar and non-polar phases may coexist in the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics at temperatures above/near T d and the interaction between the polar and non-polar phases leads to the deformed P\u2013E loops.
+
+# TITLE
+Effect of Li-substitution on piezoelectric and ferroelectric properties of (Bi0.92Na0.92-xLix)0.5Ba0.06Sr0.02TiO3 lead-free ceramics
+
+# ABSTRACT
+New lead-free ceramics (Bi0.92Na0.92−
+                     
+                        x
+                     Li
+                        x
+                     )0.5Ba0.06Sr0.02TiO3 have been fabricated by a conventional ceramic technique and their electrical properties have been studied. X-ray diffraction studies reveal that Li+, Ba2+ and Sr2+ diffuse into the Bi0.5Na0.5TiO3 lattices to form a new solid solution with a pure perovskite structure. Because of the large P
+                     r and low coercive field E
+                     c, the ceramics with x
+                     =0.075–0.125 exhibit excellent piezoelectric properties: d
+                     33
+                     =189–235pC/N, k
+                     p
+                     =33.6–36.3% and k
+                     t
+                     =51.6–54.3%.
+
+# INTRODUCTION
+Pb(Zr,Ti)O3 (PZT) and PZT-based multi-component ceramics have been widely used in electromechanical devices due to their excellent piezoelectric properties. Bi0.5Na0.5TiO3 (BNT) is a perovskite-structured ferroelectric with a rhombohedral symmetry. Because of its large remanent polarization (P r =38\u03bcC/cmE^{2}), BNT has been considered as a good candidate for lead-free piezoelectric materials. However, the high coercive field (E c =7.3kV/mm) makes poling of the ceramic difficult. As a result, the BNT ceramic usually exhibits weak piezoelectric coefficient (d 33 =83pC/N) , which is significantly lower than that of the Pb(Zr0.52Ti0.48)O3 ceramic (d 33 =223pC/N). To improve the piezoelectric properties, a number of BNT-based solid solutions, such as BNT\u2013BaTiO3 , CeO2-doped BNT\u2013Bi0.5K0.5TiO3 , BNT\u2013Bi0.5K0.5TiO3\u2013KNbO3 , BNT\u2013NaNbO3 , (Bi0.5Na0.5)0.94Ba0.06Zr y Ti1\u2212 y O3 , BNT\u2013KNbO3 , BNT\u2013BaTiO3\u2013SrTiO3 , Ta-doped BNT\u2013BaTiO3 , (Bi0.5Na0.5)1+ x TiO3 , Bi0.5(Na1\u2212 x \u2212 y K x Li y )0.5TiO3 , BNT\u2013SrTiO3 and BNT\u2013Bi0.5K0.5TiO3\u2013BaTiO3 have been developed and studied intensively. Our previous works have shown that BNT\u2013BaTiO3\u2013SrTiO3 ceramics possess good piezoelectric properties and the substitution of LiE^{+} for NaE^{+} is effective in improving the piezoelectric properties and decreasing the sintering temperature of BNT-based ceramics. In the present work, a new BNT-based multi-component solid solution, (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3, is developed by partially substituting LiE^{+} for NaE^{+} in an A-site of 0.92BNT\u20130.06BaTiO3\u20130.02SrTiO3 ceramics.
+
+# CONCLUSION
+New multi-component lead-free ceramics (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 have been fabricated by a conventional ceramic technique, and their ferroelectric, piezoelectric and dielectric properties have been studied. The results of X-ray diffraction reveal that LiE^{+}, BaE^{2+} and SrE^{2+} diffuse into the Bi0.5Na0.5TiO3 lattices to form a solid solution with a pure perovskite structure. Because of the low E c and large P r, the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x =0.075\u20130.125 show the optimum piezoelectric properties: d 33 =189\u2013235pC/N, k P =33.6\u201336.3% and k t =51.6\u201354.3%. The ceramic with x =0.15 possesses poor piezoelectric properties because of the poor ferroelectric properties and the existence of the non-polar phase.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 12:12:14: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.cap.2010.02.009.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.cap.2010.02.009 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+
+
+# RESULTS AND DISCUSSION
+The SEM micrographs of the surface and fracture surface of the as-sintered (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x =0.05, 0.075, 0.10 and 0.15 are shown in , respectively. For the ceramic with x =0.05, the grains have a diameter in the range of 6\u20137\u03bcm (a). As x increases from 0.05 to 0.15, the grain size decreases significantly to about 2\u03bcm. The variations of the bulk density \u03c1, relative density D (to the theoretical value) and optimum sintering temperature T s of the ceramics with x are shown in. The observed \u03c1 increases from 5.66 to 5.80g/cmE^{3} as x increases from 0 to 0.05, and then remains almost unchanged (5.78\u20135.86g/cmE^{3}). The observed D exhibits similar variations with x, and all have a value larger than 95%, indicating that the ceramics are well-sintered. It is known that Li-free BNT-based ceramics, such as the BNT , BNT\u2013Bi0.5K0.5TiO3 , BNT\u2013BaTiO3 , BNT\u2013BaTiO3\u2013SrTiO3 and BNT\u2013BaTiO3\u2013Bi0.5K0.5TiO3 , can be sintered to a dense structure at 1150\u20131250\xb0C. For the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x =0.05\u20130.15, the sintering temperature is decreased by about 150\xb0C to 1075\u20131100\xb0C. These results clearly show that the addition of LiE^{+} can improve the sintering performance of BNT-based ceramics, by decreasing the sintering temperature and enhancing the densification. shows the XRD patterns of the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with 0\u2a7d x \u2a7d0.15. All the ceramics possess a pure perovskite structure, suggesting that LiE^{+}, BaE^{2+} and SrE^{2+} have diffused into the BNT lattices to form a solid solution. Similar to the BNT ceramic , all the ceramics have a rhombohedral symmetry. This may be attributed to the smaller ionic radius of LiE^{+} (0.68\xc5) compared to NaE^{+} (0.97\xc5). shows the P\u2013E loops of the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x =0.025, 0.075, 0.125 and 0.15. As shown in a, the major P\u2013E loop (i.e. the loop under an ac field with an amplitude of 6.2kV/mm) of the ceramic with x =0.025 is well-saturated and square-like, giving an E c of 3.13kV/mm and a P r of 43.5\u03bcC/cmE^{2} (a). As x increases to 0.075, the major P\u2013E loop becomes slightly broadened, and the observed E c and P r increase slightly to 3.38kV/mm and 44.4\u03bcC/cmE^{2}, respectively. For the ceramic with x =0.125, the major P\u2013E loop becomes narrow and slightly constricted at P =0\u03bcC/cmE^{2} (c). The observed E c decreases significantly to 1.91kV/mm, while P r remains almost unchanged. As x increases to 0.15, the major P\u2013E loop becomes slanted and deformed, giving a very small E c (1.74kV/mm) and a small P r (32.5\u03bcC/cmE^{2}). The observed P r increases after the addition of LiE^{+} and starts to decrease at x >0.125, having a large value of 43.0\u201345.3\u03bcC/cmE^{2} in the range of x from 0.025 to 0.125. The observed E c increases slightly from 3.08kV/mm to 3.44kV/mm with increasing x from 0 to 0.05, then remains almost unchanged (3.44\u20133.29kV/mm) at 0.05\u2a7d x \u2a7d0.10, and finally decreases to 1.74kV/mm with further increasing x to 0.15. The deformation in the P\u2013E loop (or the decrease in E c) and the decrease in P r of the ceramic with x =0.15 may be attributed to the existence of a non-polar phase induced by the partial substitution of LiE^{+} for NaE^{+}. Similar results have been reported in (Bi0.5Na0.5)0.94Ba0.06Zr y Ti1\u2212 y O3 , BNT\u2013KNbO3 and BNT\u2013SrTiO3 ceramics. The substitution of ZrE^{4+} for TiE^{4+} in the 0.94BNT\u20130.06BaTiO3 and the introduction of KNbO3 or SrTiO3 into BNT shift the depolarization temperature T d towards room temperature, leading to the appearance of the non-polar phase at room temperature. The interaction between the polar and non-polar phases give rise to the deformation of the P\u2013E loop. shows the variations of d 33, k p, k t, \u03b5 r and tan \u03b4 of the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x. The observed d 33 increases with increasing x and then decreases rapidly, giving a maximum value of 235pC/N at x =0.125, which is the highest value reported for the BNT-based ceramics. In agreement with the deformed P\u2013E loop, the small d 33 value of the ceramic with x =0.15 (23pC/N) should be attributed to the induced non-polar phase. Similar results have been observed in (Bi0.5Na0.5)0.94Ba0.06Zr y Ti1\u2212 y O3 and BNT\u2013SrTiO3 ceramics. The observed k p and k t reach a optimum value of 36.3% and 54.3%, respectively, at x =0.075. As shown in b, the observed \u03b5 r and tan \u03b4 remain almost unchanged at x \u2a7d0.075. At x >0.075, both \u03b5 r and tan \u03b4 increase with increasing x. According to the thermodynamic theory, d 33 is correlated with the electrostriction coefficient Q 11, the (net) polarization P (which may be approximated by P r) and \u03b5 r via a general equation d 33 =2Q 11 \u03b5 0 \u03b5 r P s, where \u03b5 0 is the permittivity of free space. Q 11 is related to the domain structure and should not change significantly by doping for the ceramics studied here. Hence, the maximum d 33 value (235pC/N) observed for the ceramic with x =0.125 should also be attributed to the high \u03b5 r. shows the temperature dependences of \u03b5 r and tan \u03b4 for the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x =0.025, 0.10, 0.125 and 0.15 at 1kHz, 10kHz and 100kHz. As shown , the ceramics with x =0.025, 0.10 and 0.125 exhibit two dielectric anomalies at T d and T m. T d is the depolarization temperature which corresponds to the transition from a ferroelectric state to a alleged \u201cantiferroelectric\u201d state, while T m is the maximum temperature at which \u03b5 r reaches a maximum value and corresponds to a transition from an \u201cantiferroelectric state\u201d to a paraelectric state. For the ceramic with x =0.15, only the dielectric anomaly at T m is observed in the temperature range of 25\u2013500\xb0C (d). This suggests that at room temperature, the ceramic with x =0.15 may be in the intermediate phase zone and contains both the polar and non-polar phases, thus leading to the deformation in the P\u2013E loop and the decrease in piezoelectric properties as shown in a. As also shown in , the observed \u03b5 r for all the ceramics exhibits a strong frequency dependence, and the maximum value of \u03b5 r decreases as frequency increases while the corresponding T m increases. These suggest that the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics are relaxor ferroelectrics and the phase transition at T m is a diffuse phase transition. A diffuse phase transition has been observed in many ABO3-type perovskites and bismuth layer-structured compounds, such as BNT-based ceramics , K0.5La0.5Bi2Nb2O9 and Pb(Mg1/3Nb2/3)O3. For the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics, NaE^{+}, BiE^{3+}, LiE^{+}, BaE^{2+} and SrE^{2+} are randomly distributed in the 12-fold coordination sites. For relaxor ferroelectrics, the diffuseness of the phase transition can be determined from the equation 1/\u03b5 r \u22121/\u03b5 m = C E^{\u22121}(T \u2212 T m) E^{\u03b3} , where \u03b5 m is the maximum value of \u03b5 r at T m, \u03b3 is the degree of diffuseness, and C is the Curie-like coefficient. \u03b3 can have a value ranging from 1 for a normal ferroelectric to 2 for an ideal relaxor ferroelectric. Based on the temperature plots of \u03b5 r at 100kHz, the graphs of ln(1/\u03b5 r \u22121/\u03b5 m) vs. ln(T \u2212 T m) for the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x =0.025, 0.10 and 0.15 were plotted, and shown in. By least-squared-fitting the experimental data to the equation, \u03b3 was determined. The value of \u03b3 for the ceramic with x =0.025 is found to be 1.51, suggesting that it is a relaxor ferroelectric. As x increases to 0.15, \u03b3 increases to 1.87, indicating that the ceramic behaves as a typical relaxor ferroelectric. Because of the smaller ionic radius of LiE^{+} compared to NaE^{+} (0.67\xc5 vs. 0.97\xc5), highly disordered structures are probably formed. As a result, the diffuseness of the phase transition increases with increasing x, and the ceramic with x =0.15 exhibits the most broadened transition peak as shown in. shows the variations of T d and T m (determined from the temperature plots of tan \u03b4 and \u03b5 r, respectively) with x for the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics. The observed T m remains almost unchanged at x \u2a7d0.125, and increases rapidly to 340\xb0C at x =0.15. The observed T d increases slightly from 107 to 144\xb0C as x increases from 0 to 0.075, and then decreases rapidly to 55\xb0C at x =0.125. It is suggested that a macro\u2013micro domain switching occurs at T d, and thus T d can be considered as an indicator for the stability of ferroelectric domains. As a result, the reorientation of 90\xb0 domains becomes easier, which leads to the considerable improvement in the piezoelectric properties of the ceramics with x =0.125. As shown in d, T d of the ceramic with x =0.15 is \u2a7d25\xb0C, suggesting that the ceramic contains the polar and non-polar phases at room temperature. To provide additional evidence for the ferroelectric-to-\u201cantiferroelectric\u201d phase transition, the P\u2013E loops of the ceramics x =0.025, 0.10 and 0.15 at different temperatures have been measured. At room temperature, the ceramic with x =0.025 exhibits a typical ferroelectric P\u2013E loop. As temperature increases to 60\xb0C, the loop becomes more saturated because of the decrease in E c. At 80\xb0C, the loop is slightly deformed. As temperature reaches 120\xb0C, the P\u2013E loop becomes slant and slim, and is different from the typical ferroelectric characteristics. As determined from a, the depolarization temperature T d of the ceramic with x =0.025 is about 110\xb0C, which is close to the value determined from the plot of temperature vs. tan \u03b4 (126\xb0C) (a). The ceramic with x =0.10 exhibits similar temperature dependences of the ferroelectric properties (b), revealing a T d of about 90\xb0C. Unlike the ceramics with x =0.025 and 0.10, the ceramic with x =0.15 exhibits a slant and slim P\u2013E loop with a small P r and low E c at room temperature (c). As temperature increases, the P\u2013E loop becomes slimmer and narrower gradually. It should be noted that the change in the P\u2013E loop with temperature for the present ceramics is similar to that for the typical Pb-based relaxor ferroelectrics such as Pb(Sc0.5Ta0.5)TiO3. As discussed before, the deformed P\u2013E loop of the ceramic with x =0.15 may be attributed to the coexistence of the polar and non-polar phases at room temperature. As a result, the P\u2013E loop becomes slimmer at high temperatures. The variations of P r and E c with temperature for the ceramics with x =0.025, 0.10 and 0.15 are shown in. The observed P r for the ceramics with x =0.025 and 0.10 remains almost unchanged at temperatures below 80\xb0C, and then decreases significantly with increasing temperature. On the other hand, the observed P r for the ceramic with x =0.15 decreases continuously with increasing temperature. Double P\u2013E loops have been observed in BNT-based ceramics and were suggested as the results of the transition to an antiferroelectric phase at T d. On the other hand, deformed P\u2013E loops have also been reported in BNT-based ceramics at high temperatures. Together with the temperature dependences of ferroelectric and dielectric properties, it is reported that the anomalies in P\u2013E loop were resulted from the electromechanical interaction between the polar and non-polar phases which coexist in the ceramics at high temperatures. Recently, it has been shown that, by in situ transmission electron microscopy (TEM), there is no crystallographic evidence of antiferroelectric domains near/above T d and the depolarization is induced by the weakening of the macroscopic ferroelectric domains. Similar trends of the P\u2013E loop with temperature have been observed in typical Pb-based relaxor ferroelectrics such as Pb(Sc0.5Ta0.5)O3 and Pb(Sc0.5Nb0.5)O3. On the basis of the deformed loops shown in , it is then suggested that the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics contain both the polar and non-polar phases near/above T d. As the electrical field decreases and approaches to zero in the P\u2013E loop measurements, the induced macrodomain state disappears, thus resulting in a deformed P\u2013E loop. For the ceramics with x \u2a7d0.125 (T d >room temperature), deformed P\u2013E loops are observed at temperatures near T d (a and b). For the ceramic with x =0.15, the deformed loop is obtained at room temperature because T d may be below/at room temperature. So our results suggest that the polar and non-polar phases may coexist in the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics at temperatures above/near T d and the interaction between the polar and non-polar phases leads to the deformed P\u2013E loops.
+
+# TITLE
+Effect of Li-substitution on piezoelectric and ferroelectric properties of (Bi0.92Na0.92-xLix)0.5Ba0.06Sr0.02TiO3 lead-free ceramics
+
+# ABSTRACT
+New lead-free ceramics (Bi0.92Na0.92−
+                     
+                        x
+                     Li
+                        x
+                     )0.5Ba0.06Sr0.02TiO3 have been fabricated by a conventional ceramic technique and their electrical properties have been studied. X-ray diffraction studies reveal that Li+, Ba2+ and Sr2+ diffuse into the Bi0.5Na0.5TiO3 lattices to form a new solid solution with a pure perovskite structure. Because of the large P
+                     r and low coercive field E
+                     c, the ceramics with x
+                     =0.075–0.125 exhibit excellent piezoelectric properties: d
+                     33
+                     =189–235pC/N, k
+                     p
+                     =33.6–36.3% and k
+                     t
+                     =51.6–54.3%.
+
+# INTRODUCTION
+Pb(Zr,Ti)O3 (PZT) and PZT-based multi-component ceramics have been widely used in electromechanical devices due to their excellent piezoelectric properties. Bi0.5Na0.5TiO3 (BNT) is a perovskite-structured ferroelectric with a rhombohedral symmetry. Because of its large remanent polarization (P r =38\u03bcC/cmE^{2}), BNT has been considered as a good candidate for lead-free piezoelectric materials. However, the high coercive field (E c =7.3kV/mm) makes poling of the ceramic difficult. As a result, the BNT ceramic usually exhibits weak piezoelectric coefficient (d 33 =83pC/N) , which is significantly lower than that of the Pb(Zr0.52Ti0.48)O3 ceramic (d 33 =223pC/N). To improve the piezoelectric properties, a number of BNT-based solid solutions, such as BNT\u2013BaTiO3 , CeO2-doped BNT\u2013Bi0.5K0.5TiO3 , BNT\u2013Bi0.5K0.5TiO3\u2013KNbO3 , BNT\u2013NaNbO3 , (Bi0.5Na0.5)0.94Ba0.06Zr y Ti1\u2212 y O3 , BNT\u2013KNbO3 , BNT\u2013BaTiO3\u2013SrTiO3 , Ta-doped BNT\u2013BaTiO3 , (Bi0.5Na0.5)1+ x TiO3 , Bi0.5(Na1\u2212 x \u2212 y K x Li y )0.5TiO3 , BNT\u2013SrTiO3 and BNT\u2013Bi0.5K0.5TiO3\u2013BaTiO3 have been developed and studied intensively. Our previous works have shown that BNT\u2013BaTiO3\u2013SrTiO3 ceramics possess good piezoelectric properties and the substitution of LiE^{+} for NaE^{+} is effective in improving the piezoelectric properties and decreasing the sintering temperature of BNT-based ceramics. In the present work, a new BNT-based multi-component solid solution, (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3, is developed by partially substituting LiE^{+} for NaE^{+} in an A-site of 0.92BNT\u20130.06BaTiO3\u20130.02SrTiO3 ceramics.
+
+# CONCLUSION
+New multi-component lead-free ceramics (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 have been fabricated by a conventional ceramic technique, and their ferroelectric, piezoelectric and dielectric properties have been studied. The results of X-ray diffraction reveal that LiE^{+}, BaE^{2+} and SrE^{2+} diffuse into the Bi0.5Na0.5TiO3 lattices to form a solid solution with a pure perovskite structure. Because of the low E c and large P r, the (Bi0.92Na0.92\u2212 x Li x )0.5Ba0.06Sr0.02TiO3 ceramics with x =0.075\u20130.125 show the optimum piezoelectric properties: d 33 =189\u2013235pC/N, k P =33.6\u201336.3% and k t =51.6\u201354.3%. The ceramic with x =0.15 possesses poor piezoelectric properties because of the poor ferroelectric properties and the existence of the non-polar phase.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="Now I have the graph data. The text explicitly states:
+- d33 = 235 pC/N at x=0.125 (maximum)
+- d33 = 23 pC/N at x=0.15
+- Abstract says d33 = 189–235 pC/N for x=0.075–0.125
+
+The graph data provides more granular values. According to the conflict resolution rule: if the same composition appears in both text and graph with different values, keep the text value. The text gives specific values for x=0.125 (235 pC/N) and x=0.15 (23 pC/N). The graph gives x=0.125 as 240 pC/N and x=0.15 as 155 pC/N. So I keep the text values for those.
+
+For x=0.075, the text says d33 = 189–235 pC/N (range), but the graph gives 220 pC/N. Since the text doesn't give a single explicit value for x=0.075, I can use the graph value.
+
+For x=0, 0.025, 0.05, 0.10 — the text doesn't give explicit single values, so I use graph values.
+
+Now I need to construct the compositions. The base formula from the paper is (Bi0.92Na0.92-xLix)0.5Ba0.06Sr0.02TiO3. I'll write it following the rules: no underscore subscripts, use parentheses for clarity.
+
+The formula: (Bi0.92Na(0.92-x)Li(x))0.5Ba0.06Sr0.02TiO3
+
+For each x value, I substitute and write the full formula.
+
+Let me compile the compositions:
+
+x=0: (Bi0.92Na0.92)0.5Ba0.06Sr0.02TiO3 → d33=190 (graph)
+x=0.025: (Bi0.92Na(0.92-0.025)Li0.025)0.5Ba0.06Sr0.02TiO3 = (Bi0.92Na0.895Li0.025)0.5Ba0.06Sr0.02TiO3 → d33=205 (graph)
+x=0.05: (Bi0.92Na0.87Li0.05)0.5Ba0.06Sr0.02TiO3 → d33=215 (graph)
+x=0.075: (Bi0.92Na0.845Li0.075)0.5Ba0.06Sr0.02TiO3 → d33=220 (graph)
+x=0.10: (Bi0.92Na0.82Li0.10)0.5Ba0.06Sr0.02TiO3 → d33=225 (graph)
+x=0.125: (Bi0.92Na0.795Li0.125)0.5Ba0.06Sr0.02TiO3 → d33=235 (text, keep over graph's 240)
+x=0.15: (Bi0.92Na0.77Li0.15)0.5Ba0.06Sr0.02TiO3 → d33=23 (text, keep over graph's 155)
+
+Now, the family: The base is Bi0.5Na0.5TiO3 (BNT), so the family is "BNT" or "Bi0.5Na0.5TiO3". The paper refers to "BNT-based ceramics", so family = "BNT".
+
+Abbreviations: BNT is used in the paper. Let me check if there are any other abbreviations. The paper uses "BNT" for Bi0.5Na0.5TiO3. I should include that.
+
+Let me format the final answer.
+
+Final compositions with proper notation following the rules:
+- Write coefficients in normal text
+- Use parentheses for grouped elements
+- No underscore subscripts
+
+The formula (Bi0.92Na(0.92-x)Li(x))0.5Ba0.06Sr0.02TiO3 — I need to expand the 0.5 factor for clarity or keep it as is. The paper keeps it as (Bi0.92Na0.92-xLix)0.5Ba0.06Sr0.02TiO3. I'll follow the paper's notation style.
+
+For the JSON, I'll write each composition with the x value substituted.
+
+Let me write the final answer.{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(Bi0.92Na0.92)0.5Ba0.06Sr0.02TiO3": 190,
+      "(Bi0.92Na0.895Li0.025)0.5Ba0.06Sr0.02TiO3": 205,
+      "(Bi0.92Na0.87Li0.05)0.5Ba0.06Sr0.02TiO3": 215,
+      "(Bi0.92Na0.845Li0.075)0.5Ba0.06Sr0.02TiO3": 220,
+      "(Bi0.92Na0.82Li0.10)0.5Ba0.06Sr0.02TiO3": 225,
+      "(Bi0.92Na0.795Li0.125)0.5Ba0.06Sr0.02TiO3": 235,
+      "(Bi0.92Na0.77Li0.15)0.5Ba0.06Sr0.02TiO3": 23
+    },
+    "abbreviations": {
+      "BNT": "Bi0.5Na0.5TiO3"
+    },
+    "property_unit": "pC/N",
+    "family": "BNT"
+  }
+}"

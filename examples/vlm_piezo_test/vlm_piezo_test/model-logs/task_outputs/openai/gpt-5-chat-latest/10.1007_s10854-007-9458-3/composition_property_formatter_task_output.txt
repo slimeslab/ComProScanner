@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"(K0.5Na0.5)NbO3":118,"(K0.5Na0.5)0.98Ag0.02NbO3":128,"(K0.5Na0.5)0.95Ag0.05NbO3":134,"(K0.5Na0.5)0.90Ag0.10NbO3":135,"(K0.5Na0.5)0.85Ag0.15NbO3":128,"(K0.5Na0.5)0.80Ag0.20NbO3":120,"(K0.5Na0.5)0.75Ag0.25NbO3":108,"(K0.5Na0.5)0.70Ag0.30NbO3":96},"property_unit":"pC/N","family":"KNN"}}

@@ -52,6 +52,10 @@ class RAGTool(BaseTool):
     model_config = {"arbitrary_types_allowed": True}
 
     def __init__(self, rag_config: None):
+        """
+        Args:
+            rag_config (RAGConfig or None): RAG configuration. When None a default RAGConfig is used.
+        """
         load_dotenv()
         super().__init__()
         if rag_config is None:
@@ -61,7 +65,15 @@ class RAGTool(BaseTool):
         self._vector_db_manager = VectorDatabaseManager(self.rag_config)
 
     def _check_package_exists(self, package_name, model):
-        """Check if a required package is installed"""
+        """Check if a required package is installed, raising ImportErrorHandler if not.
+
+        Args:
+            package_name (str): Name of the Python package to check (importlib spec name).
+            model (str): Model name included in the error message for context.
+
+        Raises:
+            ImportErrorHandler: If the package is not found.
+        """
         if not importlib.util.find_spec(package_name):
             logger.error(
                 f"The package required to run model '{model}' is missing: '{package_name}'."
@@ -154,7 +166,14 @@ class RAGTool(BaseTool):
             raise ValueErrorHandler(f"Unrecognized or unsupported model name: {model}")
 
     def _format_documents(self, docs: list) -> str:
-        """Format retrieved documents for LLM input"""
+        """Format retrieved (document, score) pairs into a numbered string for LLM context.
+
+        Args:
+            docs (list): List of (Document, float) tuples from a similarity search.
+
+        Returns:
+            str: Newline-separated document blocks, each prefixed with its relevance score.
+        """
         formatted_docs = []
         for i, doc_with_score in enumerate(docs):
             doc, score = doc_with_score
@@ -164,7 +183,15 @@ class RAGTool(BaseTool):
         return "\n\n".join(formatted_docs)
 
     def _generate_response(self, query: str, docs: list) -> str:
-        """Generate response using the LLM"""
+        """Generate an LLM answer grounded in the retrieved documents.
+
+        Args:
+            query (str): The user question to answer.
+            docs (list): List of (Document, float) tuples returned by the vector search.
+
+        Returns:
+            str: The LLM-generated answer string.
+        """
         combined_input = (
             f"Question: {query}\n\n"
             f"""Context:\n{self._format_documents(docs)}\n\n
@@ -182,7 +209,15 @@ class RAGTool(BaseTool):
         return result.content
 
     def _run(self, doi: str, query: str) -> str:
-        """Execute the RAG tool with detailed debugging"""
+        """Query the vector database for the given DOI and return an LLM-generated answer.
+
+        Args:
+            doi (str): DOI of the article whose vector database to query.
+            query (str): Question to answer using the retrieved document chunks.
+
+        Returns:
+            str: LLM-generated answer, or an error message string if the query fails.
+        """
         logger.info(f"\nDOI: {doi}")
         logger.info(f"Query: {query}")
 

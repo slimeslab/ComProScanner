@@ -18,6 +18,8 @@ logging.addLevelName(VERBOSE, "VERBOSE")
 
 
 class LoggerTextColours:
+    """ANSI colour codes applied per log level in the console handler."""
+
     OKCYAN = "\033[96m"
     OKGREEN = "\033[92m"
     WARNING = "\033[93m"
@@ -28,6 +30,8 @@ class LoggerTextColours:
 
 
 class CustomFormatter(logging.Formatter):
+    """Logging formatter that applies per-level colour codes and format strings to console output."""
+
     DEBUG_INFO_FORMAT = "[%(name)s] %(message)s"
     DETAILED_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     datefmt = "%d-%m-%Y %H:%M:%S"
@@ -53,6 +57,14 @@ class CustomFormatter(logging.Formatter):
     }
 
     def format(self, record):
+        """Select the colour-coded format string for this record's level and apply it.
+
+        Args:
+            record (logging.LogRecord): The log record to format.
+
+        Returns:
+            str: The formatted log string with ANSI colour codes.
+        """
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = logging.Formatter(log_fmt, datefmt=self.datefmt)
         if hasattr(record, "created"):
@@ -62,6 +74,13 @@ class CustomFormatter(logging.Formatter):
 
 # Add method to Logger class for verbose level
 def verbose(self, message, *args, **kwargs):
+    """Emit a log record at the custom VERBOSE level (between DEBUG and INFO).
+
+    Args:
+        message (str): The message to log.
+        *args: Positional arguments forwarded to Logger._log.
+        **kwargs: Keyword arguments forwarded to Logger._log.
+    """
     if self.isEnabledFor(VERBOSE):
         self._log(VERBOSE, message, args, **kwargs)
 

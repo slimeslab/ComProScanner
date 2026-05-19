@@ -2,7 +2,16 @@ composition_property_extractor:
   role: Material Composition and Property Extractor
   goal: >
     Extract the material compositions, corresponding {main_extraction_keyword} values, used unit and composition family from the given text data:\n\n {composition_property_text_data}
-    You MUST call the Graph Data Extractor tool once with doi={doi} before finalizing your answer.
+    You MUST first call the Equation Tool with doi={doi}.
+    For the Equation Tool input text, provide a concise, evidence-focused synthesis summary only (not the full article text).
+    Include only the details needed for formula derivation: host/base formula, dopant identity, replacement/incorporation site (A-site/B-site/other), replaced ion, concentration variable and values (x, y, mol%, at%), phase-purity/single-phase evidence (XRD/SEM/TEM statements), and any explicit charge-compensation clues.
+    Keep this summary short and factual, and avoid unrelated background, literature review, and non-essential experimental details.
+    If Equation Tool returns a formula, you MUST treat it as the canonical variable-composition template and use it in final composition writing (unless directly contradicted by explicit article evidence).
+    Do NOT ignore Equation Tool output when variable-site substitution or charge-balanced doping form is required.
+    For formula notation, DO NOT use underscore-style subscripts (no forms like Ti_0.93 or O_3).
+    Write coefficients in normal text with explicit parentheses where needed for clarity, e.g. Ti(1-x), (Pr1/2Nb1/2)(x), (Bi1/2Na1/2)(0.935+x).
+    Use parentheses to avoid ambiguity whenever a variable term could be misread as belonging to the next species.
+    You MUST then call the Graph Data Extractor tool with doi={doi} before finalizing your answer.
     Precedence rule: if a composition has a value from the text and also from graph extraction, KEEP the text-derived value for that composition.
     Use graph-derived values only to add missing composition-value pairs or fill missing values not explicitly available in the text.
   backstory: >

@@ -8,6 +8,7 @@ Date: 23-02-2025
 """
 
 # Standard library imports
+import re
 import requests
 import os
 import time
@@ -19,12 +20,10 @@ def get_paper_metadata_from_openalex(doi: str):
     Function to get the paper metadata from the OpenAlex API.
 
     Args:
-        doi (str: required): DOI of the paper
+        doi (str): DOI of the paper.
 
     Returns:
-        title (str): Title of the paper.
-        journal_name (str): Name of the journal.
-        publisher (str): Name of the publisher.
+        tuple: (title, journal_name, publisher) strings; all empty strings on failure.
     """
     try:
         url = f"https://api.openalex.org/works/doi:{doi}"
@@ -59,10 +58,10 @@ def return_error_message(missing_variable: str):
     Function to return an error message based on the missing variable.
 
     Args:
-        missing_variable (str: required): Variable which is missing.
+        missing_variable (str): Name of the missing variable (e.g. "main_property_keyword").
 
     Returns:
-        error_message (str): Error message based on the missing variable.
+        str: Human-readable error message describing how to fix the missing variable.
     """
     if missing_variable == None:
         raise ValueError("The variable is missing.")
@@ -80,12 +79,63 @@ def return_error_message(missing_variable: str):
 
 
 @staticmethod
+def get_doi_from_crossref(text: str):
+    """Try to get DOI from CrossRef API using the title extracted from markdown text.
+
+    Extracts the first heading from the markdown and queries CrossRef's
+    bibliographic search. Only returns a DOI when the relevance score is
+    high enough to be trustworthy.
+
+    Args:
+        text (str): Markdown text of the article.
+
+    Returns:
+        str: DOI if found with sufficient confidence, empty string otherwise.
+    """
+    try:
+        title_match = re.search(r"^#{1,3}\s+(.+)$", text, re.MULTILINE)
+        if not title_match:
+            return ""
+
+        title = title_match.group(1).strip()
+        if not title or len(title) < 10:
+            return ""
+
+        url = "https://api.crossref.org/works"
+        params = {
+            "query.bibliographic": title,
+            "select": "DOI,title,score",
+            "rows": 1,
+        }
+        response = requests.get(url, params=params, timeout=10)
+        if response.status_code != 200:
+            return ""
+
+        data = response.json()
+        items = data.get("message", {}).get("items", [])
+        if not items:
+            return ""
+
+        item = items[0]
+        score = item.get("score", 0)
+        doi = item.get("DOI", "")
+
+        if score >= 50 and doi:
+            return doi
+
+        return ""
+    except Exception:
+        return ""
+
+
+@staticmethod
 def write_timeout_file(doi, timeout_file):
     """
     Write the DOI to the timeout file.
 
     Args:
-        doi (str: Required): The DOI of the article.
+        doi (str): The DOI of the article to record.
+        timeout_file (str): Path to the file where timed-out DOIs are appended.
     """
     timeout_dir = os.path.dirname(timeout_file)
     if not os.path.exists(timeout_dir):

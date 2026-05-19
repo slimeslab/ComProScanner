@@ -32,10 +32,18 @@ class CleaningStrategy(str, Enum):
 
 
 class DataCleaner:
+    """Cleans and normalises composition-property data extracted from research articles."""
+
     def __init__(self, results_file: str):
+        """
+        Args:
+            results_file (str): Path to the JSON file containing raw extraction results.
+        """
         self.results_file = results_file
         self.all_data = self._load_results()
         self.all_elements = get_all_elements()
+        self.filtered_compositions: Dict[str, List[str]] = {}
+        self.unresolved_compositions: Dict[str, List[str]] = {}
 
     def _load_results(self) -> Dict[str, Any]:
         """Load results from JSON file."""
@@ -50,15 +58,27 @@ class DataCleaner:
         """Get all composition-property pairs."""
         return [{comp: prop} for comp, prop in comp_data.items()]
 
-    def _filter_invalid_keys(self, dict_list):
+    def _filter_invalid_keys(self, dict_list, doi: str = ""):
         """Filter dictionaries with invalid keys (more than 2 consecutive capital letters)."""
         pattern = r"(?<![a-z0-9])[A-Z]{2,}(?![a-z0-9])"
-
-        return [
-            d for d in dict_list if not any(re.search(pattern, key) for key in d.keys())
-        ]
+        valid = []
+        for d in dict_list:
+            if any(re.search(pattern, key) for key in d.keys()):
+                if doi:
+                    self.filtered_compositions.setdefault(doi, []).extend(d.keys())
+            else:
+                valid.append(d)
+        return valid
 
     def _is_elements(self, comp_pro_pair: Dict[str, Any]) -> bool:
+        """Check whether the composition key in a pair can be fully parsed as a sequence of valid element symbols.
+
+        Args:
+            comp_pro_pair (Dict[str, Any]): A single {composition: value} dictionary.
+
+        Returns:
+            bool: True if the key resolves to a valid chemical composition, False otherwise.
+        """
         def _convert_subscript_unicode(string: str) -> str:
             """Convert Unicode subscript digits to regular digits."""
             subscript_unicode = {
@@ -130,21 +150,32 @@ class DataCleaner:
             return False
 
     def _remove_extra_spaces(self, dict_list):
+        """Remove all spaces from composition keys in a list of {composition: value} dicts.
+
+        Args:
+            dict_list (list): List of single-entry dicts mapping composition strings to values.
+
+        Returns:
+            list: Same structure with spaces stripped from every key.
+        """
         # remove any spaces in the key
         return [
             {key.replace(" ", ""): value for key, value in d.items()} for d in dict_list
         ]
 
     def _clean_comp_prop_data_with_element_check(
-        self, comp_prop_data: Dict[str, Any]
+        self, comp_prop_data: Dict[str, Any], doi: str = ""
     ) -> Dict[str, Any]:
         """Clean composition-property data with element validation from periodic table."""
         comp_prop_data = self._get_comp_prop_pairs(comp_prop_data)
-        comp_prop_data = self._filter_invalid_keys(comp_prop_data)
+        comp_prop_data = self._filter_invalid_keys(comp_prop_data, doi)
         valid_comp_prop_pairs = []
         for single_data in comp_prop_data:
             if self._is_elements(single_data):
                 valid_comp_prop_pairs.append(single_data)
+            else:
+                if doi:
+                    self.filtered_compositions.setdefault(doi, []).extend(single_data.keys())
         valid_comp_prop_pairs = self._remove_extra_spaces(valid_comp_prop_pairs)
         valid_comp_prop_pairs = self._convert_fractions_and_resolve_compositions(
             valid_comp_prop_pairs
@@ -152,11 +183,11 @@ class DataCleaner:
         return valid_comp_prop_pairs
 
     def _clean_comp_prop_data_without_element_check(
-        self, comp_prop_data: Dict[str, Any]
+        self, comp_prop_data: Dict[str, Any], doi: str = ""
     ) -> Dict[str, Any]:
         """Clean composition-property data without element validation."""
         comp_prop_data = self._get_comp_prop_pairs(comp_prop_data)
-        comp_prop_data = self._filter_invalid_keys(comp_prop_data)
+        comp_prop_data = self._filter_invalid_keys(comp_prop_data, doi)
         valid_comp_prop_pairs = comp_prop_data
         valid_comp_prop_pairs = self._remove_extra_spaces(valid_comp_prop_pairs)
         valid_comp_prop_pairs = self._convert_fractions_and_resolve_compositions(
@@ -166,7 +197,7 @@ class DataCleaner:
 
     def _convert_fractions_and_resolve_compositions(self, dict_list):
         """
-        Convert fractions to decimal format and resolve composition formulas by ahndling mathematical operations and normalizing bracket notation.
+        Convert fractions to decimal format and resolve composition formulas by handling mathematical operations and normalizing bracket notation.
         """
 
         def _replace_fraction(match):
@@ -196,32 +227,44 @@ class DataCleaner:
                 for match in matches:
                     expression = match.group(1).strip()
 
-                    # Check if it's a purely arithmetic expression (only numbers and operators)
-                    if re.match(r"^[0-9.\s+\-*/]+$", expression) and any(
-                        op in expression for op in ["+", "-", "*", "/"]
-                    ):
-                        try:
-                            # Evaluate the expression using BODMAS rule and format result
-                            result = eval(expression)
-                            if isinstance(result, float):
-                                if result.is_integer():
-                                    evaluated_value = str(int(result))
+                    # Check if it's a purely numeric/arithmetic expression (only numbers and operators)
+                    if re.match(r"^[0-9.\s+\-*/]+$", expression):
+                        if any(op in expression for op in ["+", "-", "*", "/"]):
+                            try:
+                                # Evaluate the expression using BODMAS rule and format result
+                                result = eval(expression)
+                                if isinstance(result, float):
+                                    if result.is_integer():
+                                        evaluated_value = str(int(result))
+                                    else:
+                                        evaluated_value = str(round(result, 5))
                                 else:
-                                    evaluated_value = str(round(result, 5))
-                            else:
-                                evaluated_value = str(result)
+                                    evaluated_value = str(result)
 
-                            # Replace in formula (remove the parentheses entirely)
+                                # Replace in formula (remove the parentheses entirely)
+                                formula = (
+                                    formula[: match.start()]
+                                    + evaluated_value
+                                    + formula[match.end() :]
+                                )
+                                changed = True
+                                break  # Start over after making a change
+                            except Exception:
+                                # If evaluation fails, skip this match
+                                continue
+                        else:
+                            # Bare number in brackets — strip brackets without evaluating.
+                            # e.g. Gd(0) → Gd0, (0.00) blocking (0.972-(0.00)) → unblocks outer.
+                            # Skip if preceded by * so _multiply_pure_number_coefficients can handle it.
+                            if match.start() > 0 and formula[match.start() - 1] == "*":
+                                continue
                             formula = (
                                 formula[: match.start()]
-                                + evaluated_value
+                                + expression
                                 + formula[match.end() :]
                             )
                             changed = True
-                            break  # Start over after making a change
-                        except Exception:
-                            # If evaluation fails, skip this match
-                            continue
+                            break
 
                 iteration_count += 1
 
@@ -348,6 +391,32 @@ class DataCleaner:
 
             return formula
 
+        def _resolve_element_coefficient_multiplications(formula):
+            """
+            Resolve ElementCoeff*Multiplier patterns such as Zr0.1*1, Ti0.9*0.999, Ta*0.
+            Each match is replaced by the element with its base coefficient multiplied by
+            the trailing multiplier. Elements whose result is zero are removed entirely.
+            """
+            element_mult_pattern = r"([A-Z][a-z]?)(\d+(?:\.\d+)?)?\*(\d+(?:\.\d+)?)"
+
+            def _replace_element_mult(match):
+                element = match.group(1)
+                base_coeff_str = match.group(2)
+                multiplier_str = match.group(3)
+                base_coeff = float(base_coeff_str) if base_coeff_str else 1.0
+                result_coeff = round(base_coeff * float(multiplier_str), 8)
+                if result_coeff == 0:
+                    return ""
+                elif result_coeff == 1.0:
+                    return element
+                elif result_coeff == int(result_coeff):
+                    return f"{element}{int(result_coeff)}"
+                else:
+                    formatted = f"{result_coeff:.8f}".rstrip("0").rstrip(".")
+                    return f"{element}{formatted}" if formatted not in ("0", "0.") else ""
+
+            return re.sub(element_mult_pattern, _replace_element_mult, formula)
+
         def _resolve_arithmetic_and_multiply(formula):
             """
             Resolve arithmetic expressions and handle multiplication operations.
@@ -364,6 +433,9 @@ class DataCleaner:
 
             # Step 3: Remove * between digit and letter/parenthesis (if parenthesis contains non-digits)
             formula = _remove_redundant_multiply_signs(formula)
+
+            # Step 4: Resolve ElementCoeff*Multiplier patterns (e.g. Zr0.1*1, Ta*0)
+            formula = _resolve_element_coefficient_multiplications(formula)
 
             return formula
 
@@ -485,8 +557,8 @@ class DataCleaner:
                 # Step 0: Convert Unicode subscripts to regular digits
                 processed_key = _convert_subscript_unicode_to_digits(str(key))
 
-                # Step 1: Convert simple fractions to decimals
-                processed_key = re.sub(r"(\d+)/(\d+)", _replace_fraction, processed_key)
+                # Step 1: Convert simple fractions to decimals (handles both integer and decimal numerators/denominators)
+                processed_key = re.sub(r"(\d+(?:\.\d+)?)/(\d+(?:\.\d+)?)", _replace_fraction, processed_key)
 
                 # Step 2: Resolve compositions
                 processed_key = _resolve_composition(processed_key)
@@ -965,7 +1037,26 @@ class DataCleaner:
 
         return cleaned_dict
 
+    def _filter_unresolved_compositions(self, comp_prop_dict: Dict[str, Any], doi: str = "") -> Dict[str, Any]:
+        """Remove individual compositions that still contain unresolved parentheses, brackets, or multiplication operators."""
+        resolved = {}
+        for comp, val in comp_prop_dict.items():
+            if re.search(r"[()[\]*]", comp):
+                if doi:
+                    self.unresolved_compositions.setdefault(doi, []).append(comp)
+            else:
+                resolved[comp] = val
+        return resolved
+
     def _return_in_dict(self, dict_list):
+        """Merge a list of single-entry dicts into one flat dict.
+
+        Args:
+            dict_list (list): List of {composition: value} dicts.
+
+        Returns:
+            dict: Single merged dictionary of all composition-value pairs.
+        """
         final_dict = {}
         for d in dict_list:
             final_dict.update(d)
@@ -1040,7 +1131,7 @@ class DataCleaner:
         result = {}
         for key, value in self.all_data.items():
             comp_prop_data = self._get_comp_prop_data(value)
-            cleaned_data = self._clean_comp_prop_data_with_element_check(comp_prop_data)
+            cleaned_data = self._clean_comp_prop_data_with_element_check(comp_prop_data, doi=key)
             # Only include entries with valid compositions
             if cleaned_data:
                 result[key] = value.copy()
@@ -1048,6 +1139,8 @@ class DataCleaner:
                 # Apply advanced composition cleaning if requested
                 if apply_advanced_cleaning:
                     comp_prop_dict = self._apply_advanced_composition_cleaning(comp_prop_dict)
+                # Remove compositions that still have unresolved brackets or math ops
+                comp_prop_dict = self._filter_unresolved_compositions(comp_prop_dict, doi=key)
                 result[key]["composition_data"]["compositions_property_values"] = comp_prop_dict
         return result
 
@@ -1064,7 +1157,7 @@ class DataCleaner:
         for key, value in self.all_data.items():
             comp_prop_data = self._get_comp_prop_data(value)
             cleaned_data = self._clean_comp_prop_data_without_element_check(
-                comp_prop_data
+                comp_prop_data, doi=key
             )
             # Include all entries that passed other cleaning steps
             if cleaned_data:
@@ -1073,6 +1166,8 @@ class DataCleaner:
                 # Apply advanced composition cleaning if requested
                 if apply_advanced_cleaning:
                     comp_prop_dict = self._apply_advanced_composition_cleaning(comp_prop_dict)
+                # Remove compositions that still have unresolved brackets or math ops
+                comp_prop_dict = self._filter_unresolved_compositions(comp_prop_dict, doi=key)
                 result[key]["composition_data"]["compositions_property_values"] = comp_prop_dict
         return result
 

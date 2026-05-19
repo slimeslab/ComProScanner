@@ -1,0 +1,276 @@
+2026-05-01 23:17:15: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2015.07.117.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2015.07.117 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. EDS analysis of the molar ratio of Ta5+/(Nb5++Ta5+) of powders synthesized with different reaction temperatures.
+|Temperature (\xb0C)|Designed TaE^{5+}/(NbE^{5+}+TaE^{5+})|Actual TaE^{5+}/(NbE^{5+}+TaE^{5+})|
+|---|---|---|
+|170|0.3|0.12|
+|180|0.3|0.17|
+|190|0.3|0.18|
+
+Table 2. ICP analysis of the molar ratio of TaE^{5+}/(NbE^{5+}+TaE^{5+}) and KE^{+}/NaE^{+} in KNN1\u2212x T x powders.
+|Sample|Designed TaE^{5+}/(NbE^{5+}+TaE^{5+})|Actual TaE^{5+}/(NbE^{5+}+TaE^{5+})|KE^{+}:NaE^{+}(mol ratio)|
+|---|---|---|---|
+|KNN0.8T0.2|0.2|0.177|0.26:0.25|
+|KNN0.7T0.3|0.3|0.280|0.26:0.24|
+|KNN0.6T0.4|0.4|0.386|0.27:0.21|
+
+Table 3. EDS analysis of the molar ratio of TaE^{5+}/(NbE^{5+}+TaE^{5+}) and KE^{+}/NaE^{+} in KNN1\u2212x T x ceramics.
+|Sample|Designed TaE^{5+}/(NbE^{5+}+TaE^{5+})|Actual TaE^{5+}/(NbE^{5+}+TaE^{5+})|KE^{+}:NaE^{+} (mol ratio)|
+|---|---|---|---|
+|KNN0.8T0.2|0.2|0.183|1:1.18|
+|KNN0.7T0.3|0.3|0.294|1:0.98|
+|KNN0.6T0.4|0.4|0.402|1:0.92|
+
+# RESULTS AND DISCUSSION
+To synthesize pure perovskite KNNT powders, MH experiments were carried out at different temperatures (170\xb0C, 180\xb0C and 190\xb0C) for 7.5h with an alkali concentration of 6mol/L. The XRD patterns of the obtained KNNT powders are shown in ; (b) is the magnification of (a) in the 2\u03b8=43\u201348\xb0 range. It can be observed that all of the samples exhibit a monoclinic perovskite structure (JCPDS Card no. 01-077-0038). However, both the KNNT and Ta2O5 phase peaks are observed in the patterns of prepared powders, indicating that although the KNNT powders were successfully synthesized, Ta2O5 was not sufficiently reacted at the increased temperatures; this was also confirmed by the EDS results ( ). shows that the actual Ta-doping amount is much less than designed, indicating that an unreacted Ta2O5 phase is present in the obtained powders. In addition, as shown in , the Ta2O5 peaks gradually weakened and the KNNT diffraction peaks at approximately 45\xb0 slightly shifted to the right with increasing temperature ((b)) due to the substitution of Nb (0.069nm) by Ta (0.068nm). This may indicate that a higher temperature can enhance the synthesis of the KNNT powders by facilitating Ta dissolving into the KNNT crystal lattice. shows the SEM images of KNNT powders obtained at different reaction temperatures. The cubic-like particles become larger with the increasing reaction temperature, indicating that the higher temperatures are beneficial for the synthesis of KNNT powder; these results are in agreement with the XRD results. Although well crystallized KNNT grains were obtained at 170\xb0C and 190\xb0C, the phenomenon of agglomeration was still serious. However, well-dispersed powders were obtained for a reaction temperature of 180\xb0C ((b)). Moreover, the amount of Ta-doping at 180\xb0C is larger than that at 170\xb0C and is similar to that at 190\xb0C, as shown in. Therefore, it can be concluded that microwave hydrothermal reaction at 180\xb0C was beneficial for the synthesis of KNNT powders. shows the XRD patterns of KNNT powders synthesized at 180\xb0C for 7.5h and 9.5h. The intensities of the Ta2O5 diffraction peaks did not decrease when the reaction time was increased from 7.5h to 9.5h, as expected, indicating that the increased the reaction time did not help Ta2O5 to react sufficiently. Hence, it is reasonable to suggest that it is difficult to obtain a complete reaction of Ta2O5 by either increasing the reaction temperature or prolonging the holding time. This may be attributed to the fact that the Ta2O5 density (\u03c1=8.2g/cmE^{3}) is higher than that of Nb2O5 (\u03c1=4.5g/cmE^{3}) so that Ta2O5 powders tend to sediment at the bottom of the autoclave with some Nb2O5 powders located on the top, making it difficult for the Ta2O5 to sufficiently contact the alkaline solution. Consequently, it is necessary to enhance the activity of Ta2O5 powders prior to the crystallization. To enhance Ta2O5 activity first and then obtain pure KNN1\u2212x T x powders, a two-stage synthesis procedure during MH was adopted to prepare the KNN1\u2212x T x (designed x=0.3) particles. Following a certain time of holding at the low temperature T1 (110\xb0C, 120\xb0C, 130\xb0C or 140\xb0C), the temperature was rapidly increased to second stage with T2=180\xb0C for 7.5h. shows the XRD patterns of the prepared powders synthesized in the first stage under various conditions. The diffraction peaks of K4Na4(Nb, Ta)6O19\xb79H2O (JCPDS Card no. 00-014-0360) and (K, Na)(Nb, Ta)O3 (JCPDS Card no. 01-074-2442) can be clearly seen in all samples. The SEM images of the prepared powders are shown in. Large K4Na4(Nb, Ta)6O19\xb79H2O particles are observed with the small (K, Na)(Nb, Ta)O3 crystals grown on their surface (shown by arrows in ) that were analyzed by EDS. shows that as temperature T1 increased from 110\xb0C to 130\xb0C, the large K4Na4(Nb, Ta)6O19\xb79H2O particles gradually became smaller and the amount of Ta2O5 decreased, suggesting that K4Na4(Nb, Ta)6O19\xb79H2O was an intermediate compound that further reacted with Ta2O5 to form (K, Na)(Nb, Ta)O3 crystals. Therefore, it can be concluded that the small (K, Na)(Nb, Ta)O3 crystals that were generated in the first stage acted as the crystal nuclei in the second stage of MH synthesis. shows the representative XRD pattern of final KNN1\u2212x T x powders obtained by the two-stage MH synthesis method. Examination of (a)\u2013(c) found that the intensity of the Ta2O5 diffraction peaks decreased with increasing T1, with the Ta2O5 diffraction disappearing completely when T1 was increased to 130\xb0C. This may be attributed to the increased rate of nucleation of KNNT nuclei with the rising first synthesis temperature. It is known that the kinetics of the Ta2O5 and Nb2O5 reactions and the nucleation and crystal growth processes all depend on the temperature during synthesis, so the Ta2O5 and Nb2O5 activities increased with increasing temperature. As mentioned above, in this study, the reaction with the alkaline solution was more difficult for Ta2O5 than for Nb2O5. Therefore, the two-stage synthesis method was proposed to accelerate the reaction rate of Ta2O5 by increasing the first-stage temperature T1, which subsequently led to the acceleration of the KNNT crystal nucleation rate. However, as T1 was continuously increased from 130\xb0C to 140\xb0C and the holding time was shortened from 2h to 1h, the characteristic Ta2O5 peaks appeared again ((c) and (d)); this means that despite the increased T1, the holding time cannot be reduced, so T130(2h)\u2013T180(7.5h) is optimal for the synthesis of pure KNN1\u2212x T x powders. shows the SEM images of the final KNNT powders obtained by the two-stage MH method. All of the as-prepared samples are well crystallized, homogeneous, regular and well-dispersed compared to the sample synthesized with the one-stage synthesis process (T180(7.5h)) ((b)). The grain sizes of these samples are close to 500\u2013800nm. This may be due to great number of nuclei introduced at the first stage of the synthesis; as the temperature was continuously raised to T2, the rate of crystallization was accelerated, leading to the generation of homogeneous and regular crystals. These results confirmed that the two-stage method during MH is beneficial for the synthesis KNN1\u2212x T x powders with better morphology. Therefore, based on the XRD and SEM results, to obtain well crystallized, homogeneous and fine KNNT samples without a Ta2O5 impurity phase, which may significantly affect the sintering activity, two-stage synthesis at temperatures T1=130\xb0C (2h) and T2=180\xb0C (7.5h) was adopted for the following studies. shows the XRD patterns of the KNN1\u2212x T x (x=0, x=0.2, x=0.3, x=0.4) powders that were obtained by applying the two-stage MH synthesis. Inspection of shows that pure perovskite structure KNN1\u2212x T x powders were obtained without any secondary phases, indicating that all of the Ta2O5 had reacted completely. The pure KNN powders (x=0) show a structure with orthorhombic symmetry, which is in agreement with the standard KNbO3 data ((a), JCPDS Card no. 01-0071-2171). The crystal structure changed to monoclinic ((b)\u2013(d), JCPDS Card no. 01-077-0038) when TaE^{5+} was dissolved into the KNN lattice. As the amount of Ta doping increased, all of the KNN1\u2212x T x (x=0.2, x=0.3, x=0.4) peaks shifted slightly to the right; this is due to the smaller ionic radius of Ta. These results were confirmed by the ICP analysis ( ). As shown in , the molar ratios of TaE^{5+}/(NbE^{5+}+TaE^{5+}) in the KNN1\u2212x T x powders are close to the designed values, implying that both TaE^{5+} and NbE^{5+} were sufficiently doped into the KNN1\u2212x T x crystal lattice according to the designed x (x=TaE^{5+}/(NbE^{5+}+TaE^{5+})). Furthermore, the data shown in show that the molar ratios of KE^{+}/NaE^{+} of samples are approximately 1:1, indicating that the K0.5Na0.5Nb1\u2212x Ta x 03 powders (x=0.2, x=0.3, x=0.4) were prepared when the molar ratio of n(KOH)/n(NaOH) was 5:1 in the precursor solutions. shows the SEM images of the KNN1\u2212x T x (x=0, x=0.2, x=0.3, x=0.4) powders. The particle sizes are distributed in the 500\u2013800nm range. Therefore, it is reasonable to suggest that homogeneous and dense KNN1\u2212x T x ceramics may be achieved. KNN1\u2212x T x (x=0.2, 0.3, 0.4) powders were sintered at 1090\xb0C for 2h under atmospheric conditions and KNN1\u2212x T x ceramics were obtained, with their XRD patterns shown in (1), and (2) shows the magnification of (1) in the 45\u201347\xb0 range of 2\u03b8. It is known that K0.5N0.5NbO3-based ceramics exhibit high piezoelectric properties due to phase coexistence, namely, a polymorphic phase transition (PPT) occurs near room temperature. As shown in (2), the difference in the intensities of the (202) peak and (020) peak are small for x=0.3 and 0.4, suggesting that a polymorphic phase boundary was formed approximately at room temperature. This phenomenon also revealed that the KE^{+}/NaE^{+} molar ratio remained close to 1:1, as confirmed by the EDS results ( ). The SEM micrographs of KNN1\u2212x T x (x=0.2, 0.3, 0.4) ceramics are shown in. Some small grains (400\u2013600nm) were distributed at the boundary of normal grains, potentially leading to the larger density. According to , the relative density increases from 89.5% to 92.4% as the Ta content increases from 0.2 to 0.3 and then decreases to 88.8% when Ta content is further increased to 0.4. Hence, the small particles and well dispersed powders obtained by the MH method were fairly efficient in improving the sintering of the KNN1\u2212x T x ceramics by the ordinary sintering method under atmospheric pressure, resulting in the higher density. Correspondingly, the d33 values of the KNN1\u2212x T x ceramics showed the same dependence on the increasing Ta content as the relative density. The highest d33 value of 233 pC/N was achieved for a Ta content of 0.3, suggesting that a suitable amount of Ta-doping can improve the piezoelectric properties. Hence, it can be concluded that the initial crystallite powders with better morphology synthesized by the two-stage method during the MH process and Ta-doping played important roles in improving the piezoelectric properties. In the previous studies, Zhou et al. had sintered the (K0.5Na0.5)(Nb0.7Ta0.3)O3 ceramics from the pellets pressed by cold isostatic compaction, obtaining a d33 value of 210 pC/N. Gu et al. synthesized (K, Na)(Nb, Ta)O3 powders via the high temperature mixing method; when these were used as precursors for the ceramics sintered at 1180\xb0C for 2h, the highest obtained d33 value was 210 pC/N. Qian et al. sintered (K0.4425Na0.52Li0.0375)(Nb0.93\u2212x Ta x Sb0.07)O3 ceramics using the conventional solid-state reaction method, obtaining the highest d33 of 313 pC/N. However, in this study, the (K0.5Na0.5)(Nb0.7Ta0.3)O3 ceramics were obtained by using a simple two-stage MH synthesis of precursor powders followed by ordinary sintering and exhibited a higher d33 of 233 pC/N. Hence, a combination of a simple two-stage MH process and the higher piezoelectric properties makes this approach much more promising compared to the other methods.
+
+# TITLE
+(K0.5Na0.5)(Nb1−xTax)O3 ceramics with a higher d33: Preparation from a two-stage microwave hydrothermal process
+
+# ABSTRACT
+In this work, K0.5Na0.5Nb1−x
+                     Ta
+                        x
+                     O3 (KNN1−x
+                     T
+                        x
+                     ) powders with x=0.0–0.4 were synthesized by a two-stage microwave–hydrothermal (MH) method and were then used to obtain ceramics by sintering at 1090°C for 2h under normal atmospheric conditions. The effects of the MH temperature, holding time, two-stage synthesis procedures and Ta doping on the as-prepared powders were investigated. The phase compositions and micro-morphology of KNN1−x
+                     T
+                        x
+                      powders and ceramics were characterized by X-ray diffraction and field emission scanning electron microscopy. The results showed that homogeneous, well dispersed, crystalline pure KNN1−x
+                     T
+                        x
+                      (0≤x≤0.4) powders had been successfully synthesized by the two-stage microwave–hydrothermal synthesis, where the samples were first heated at 130°C for 2h and the temperature was then raised to 180°C for 7.5h with an alkali concentration of 6mol/L and a K+/Na+ mole ratio of 5:1. The d33 piezoelectric constant of the KNN1−x
+                     T
+                        x
+                      ceramics sintered from the obtained powders reached its highest value of 233 pC/N at x=0.3.
+
+# INTRODUCTION
+Among these ceramics, K0.5Na0.5NbO3 (abbreviated as KNN) is considered to be one of the most promising candidates for lead-free piezoelectric ceramics. KNN is a solid solution of ferroelectric KNbO3 and antiferroelectric NaNbO3 ; near the morphotropic phase boundary (MPB), KNN exhibits ferroelectric and piezoelectric properties that are enhanced relative to those of pure KNbO3. Currently, an increasing number of researchers believe that the existence of polymorphic phase transitions (PPT) also contributes to the good piezoelectric properties at room temperature exhibited by KNN. Nevertheless, one of the main obstacles for the development of KNN ceramics is the difficulty in processing and densification. It is usually very difficult to obtain dense and well-sintered pure KNN ceramics by conventional sintering methods because the alkaline constituent elements of KNN are highly volatile at the higher temperatures required for the sintering of KNN. To obtain dense KNN ceramics, a number of investigations have focused on improving sintering activity. One approach is to synthesize fine KNN powder precursors to enhance the sintering activity to take advantage of the inverse proportionality between the driving force for sintering and the grain size. To reduce the grain size, sol-gel routine, molten salt synthesis, hydrothermal and microwave\u2013hydrothermal (MH) methods have been used to prepare KNN powders. In our previous work , fine powders were prepared by using the hydrothermal method at 230\xb0C for 24h. On the contrary, crystalline and homogeneous KNN powders were successfully prepared at 160\xb0C for 7h by using the microwave\u2013hydrothermal method. The advantages of an lower temperature and a shorter holding time than those required in the hydrothermal method make the microwave\u2013hydrothermal method much more attractive for synthesis of KNN powders with a small grain size. It is well known that Ta ions possess the same chemical valence (+5) and similar atomic radius (0.068nm for Ta compared with 0.069nm for Nb) as Nb ions. To improve the piezoelectric properties of KNN ceramics, some studies have examined doping Ta ions into a KNN solid solution, partially substituting NbE^{5+}. Saito et al. found that the highest piezoelectric d33 constant in the (K, Na)NbO3\u2013LiTaO3 system was 300 pC/N, with texturing the materials resulting in an enhanced value of d33=416 pC/N. Lv et al. studied the (K0.5Na0.5)(Nb1\u2212x Ta x )O3 (KNNT) ceramics system. It was found that Ta substitution decreases both T C and T O\u2013T, but increases T R\u2013O. The ceramics with x=0.30 show a high value of piezoelectric coefficient with d33=205 pC/N. Matsubara et al. have also shown that (K0.5Na0.5)(Nb0.7Ta0.3)O3 ceramics exhibit an enhanced d33 value. In our previous studies , it was found that the value of d33 increased with the increasing amount of Ta-doping (x\u22640.3), and the highest d33 value of 210 pC/N was obtained for (K0.5Na0.5)(Nb0.7Ta0.3)O3 ceramics. Thus, KNN ceramics with Ta-doping synthesized from KNNT powders obtained by MH have been shown to exhibit enhanced piezoelectric property. In this paper, (K0.5Na0.5)(Nb1\u2212x Ta x )O3 (0\u2264x\u22640.4) powders were successfully synthesized by the microwave\u2013hydrothermal method, and (K0.5Na0.5)(Nb1\u2212x Ta x )O3 ceramics were sintered under atmospheric pressure using an ordinary sintering method.
+
+# CONCLUSION
+Dispersive, homogeneous and highly crystalline K0.5Na0.5Nb1\u2212x Ta x O3 (x=0.2, 0.3, 0.4) powders have been successfully synthesized by a two-stage MH synthesis method. The first stage of the reaction was performed at 130\xb0C for 2h, and then, the temperature was raised to 180\xb0C for 7.5h. The results show that the pure K0.5Na0.5Nb1\u2212x Ta x O3 and particles with small sizes close to 500\u2013800nm were obtained. The dense K0.5Na0.5Nb1\u2212x Ta x O3 ceramics were obtained by sintering at 1090\xb0C for 2h under normal atmospheric conditions. Following polarization, it was observed that the d33 piezoelectric coefficient increased with the increasing Ta content and reached its highest value of 233 pC/N when x=0.3; this can be attributed to Ta doping and the better morphology of the initial crystallite powders synthesized by the two-stage MH method. Moreover, the two-stage MH method is simple and efficient and may be an attractive route for preparing other piezoelectric ceramics.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 23:18:39: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2015.07.117.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2015.07.117 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. EDS analysis of the molar ratio of Ta5+/(Nb5++Ta5+) of powders synthesized with different reaction temperatures.
+|Temperature (\xb0C)|Designed TaE^{5+}/(NbE^{5+}+TaE^{5+})|Actual TaE^{5+}/(NbE^{5+}+TaE^{5+})|
+|---|---|---|
+|170|0.3|0.12|
+|180|0.3|0.17|
+|190|0.3|0.18|
+
+Table 2. ICP analysis of the molar ratio of TaE^{5+}/(NbE^{5+}+TaE^{5+}) and KE^{+}/NaE^{+} in KNN1\u2212x T x powders.
+|Sample|Designed TaE^{5+}/(NbE^{5+}+TaE^{5+})|Actual TaE^{5+}/(NbE^{5+}+TaE^{5+})|KE^{+}:NaE^{+}(mol ratio)|
+|---|---|---|---|
+|KNN0.8T0.2|0.2|0.177|0.26:0.25|
+|KNN0.7T0.3|0.3|0.280|0.26:0.24|
+|KNN0.6T0.4|0.4|0.386|0.27:0.21|
+
+Table 3. EDS analysis of the molar ratio of TaE^{5+}/(NbE^{5+}+TaE^{5+}) and KE^{+}/NaE^{+} in KNN1\u2212x T x ceramics.
+|Sample|Designed TaE^{5+}/(NbE^{5+}+TaE^{5+})|Actual TaE^{5+}/(NbE^{5+}+TaE^{5+})|KE^{+}:NaE^{+} (mol ratio)|
+|---|---|---|---|
+|KNN0.8T0.2|0.2|0.183|1:1.18|
+|KNN0.7T0.3|0.3|0.294|1:0.98|
+|KNN0.6T0.4|0.4|0.402|1:0.92|
+
+# RESULTS AND DISCUSSION
+To synthesize pure perovskite KNNT powders, MH experiments were carried out at different temperatures (170\xb0C, 180\xb0C and 190\xb0C) for 7.5h with an alkali concentration of 6mol/L. The XRD patterns of the obtained KNNT powders are shown in ; (b) is the magnification of (a) in the 2\u03b8=43\u201348\xb0 range. It can be observed that all of the samples exhibit a monoclinic perovskite structure (JCPDS Card no. 01-077-0038). However, both the KNNT and Ta2O5 phase peaks are observed in the patterns of prepared powders, indicating that although the KNNT powders were successfully synthesized, Ta2O5 was not sufficiently reacted at the increased temperatures; this was also confirmed by the EDS results ( ). shows that the actual Ta-doping amount is much less than designed, indicating that an unreacted Ta2O5 phase is present in the obtained powders. In addition, as shown in , the Ta2O5 peaks gradually weakened and the KNNT diffraction peaks at approximately 45\xb0 slightly shifted to the right with increasing temperature ((b)) due to the substitution of Nb (0.069nm) by Ta (0.068nm). This may indicate that a higher temperature can enhance the synthesis of the KNNT powders by facilitating Ta dissolving into the KNNT crystal lattice. shows the SEM images of KNNT powders obtained at different reaction temperatures. The cubic-like particles become larger with the increasing reaction temperature, indicating that the higher temperatures are beneficial for the synthesis of KNNT powder; these results are in agreement with the XRD results. Although well crystallized KNNT grains were obtained at 170\xb0C and 190\xb0C, the phenomenon of agglomeration was still serious. However, well-dispersed powders were obtained for a reaction temperature of 180\xb0C ((b)). Moreover, the amount of Ta-doping at 180\xb0C is larger than that at 170\xb0C and is similar to that at 190\xb0C, as shown in. Therefore, it can be concluded that microwave hydrothermal reaction at 180\xb0C was beneficial for the synthesis of KNNT powders. shows the XRD patterns of KNNT powders synthesized at 180\xb0C for 7.5h and 9.5h. The intensities of the Ta2O5 diffraction peaks did not decrease when the reaction time was increased from 7.5h to 9.5h, as expected, indicating that the increased the reaction time did not help Ta2O5 to react sufficiently. Hence, it is reasonable to suggest that it is difficult to obtain a complete reaction of Ta2O5 by either increasing the reaction temperature or prolonging the holding time. This may be attributed to the fact that the Ta2O5 density (\u03c1=8.2g/cmE^{3}) is higher than that of Nb2O5 (\u03c1=4.5g/cmE^{3}) so that Ta2O5 powders tend to sediment at the bottom of the autoclave with some Nb2O5 powders located on the top, making it difficult for the Ta2O5 to sufficiently contact the alkaline solution. Consequently, it is necessary to enhance the activity of Ta2O5 powders prior to the crystallization. To enhance Ta2O5 activity first and then obtain pure KNN1\u2212x T x powders, a two-stage synthesis procedure during MH was adopted to prepare the KNN1\u2212x T x (designed x=0.3) particles. Following a certain time of holding at the low temperature T1 (110\xb0C, 120\xb0C, 130\xb0C or 140\xb0C), the temperature was rapidly increased to second stage with T2=180\xb0C for 7.5h. shows the XRD patterns of the prepared powders synthesized in the first stage under various conditions. The diffraction peaks of K4Na4(Nb, Ta)6O19\xb79H2O (JCPDS Card no. 00-014-0360) and (K, Na)(Nb, Ta)O3 (JCPDS Card no. 01-074-2442) can be clearly seen in all samples. The SEM images of the prepared powders are shown in. Large K4Na4(Nb, Ta)6O19\xb79H2O particles are observed with the small (K, Na)(Nb, Ta)O3 crystals grown on their surface (shown by arrows in ) that were analyzed by EDS. shows that as temperature T1 increased from 110\xb0C to 130\xb0C, the large K4Na4(Nb, Ta)6O19\xb79H2O particles gradually became smaller and the amount of Ta2O5 decreased, suggesting that K4Na4(Nb, Ta)6O19\xb79H2O was an intermediate compound that further reacted with Ta2O5 to form (K, Na)(Nb, Ta)O3 crystals. Therefore, it can be concluded that the small (K, Na)(Nb, Ta)O3 crystals that were generated in the first stage acted as the crystal nuclei in the second stage of MH synthesis. shows the representative XRD pattern of final KNN1\u2212x T x powders obtained by the two-stage MH synthesis method. Examination of (a)\u2013(c) found that the intensity of the Ta2O5 diffraction peaks decreased with increasing T1, with the Ta2O5 diffraction disappearing completely when T1 was increased to 130\xb0C. This may be attributed to the increased rate of nucleation of KNNT nuclei with the rising first synthesis temperature. It is known that the kinetics of the Ta2O5 and Nb2O5 reactions and the nucleation and crystal growth processes all depend on the temperature during synthesis, so the Ta2O5 and Nb2O5 activities increased with increasing temperature. As mentioned above, in this study, the reaction with the alkaline solution was more difficult for Ta2O5 than for Nb2O5. Therefore, the two-stage synthesis method was proposed to accelerate the reaction rate of Ta2O5 by increasing the first-stage temperature T1, which subsequently led to the acceleration of the KNNT crystal nucleation rate. However, as T1 was continuously increased from 130\xb0C to 140\xb0C and the holding time was shortened from 2h to 1h, the characteristic Ta2O5 peaks appeared again ((c) and (d)); this means that despite the increased T1, the holding time cannot be reduced, so T130(2h)\u2013T180(7.5h) is optimal for the synthesis of pure KNN1\u2212x T x powders. shows the SEM images of the final KNNT powders obtained by the two-stage MH method. All of the as-prepared samples are well crystallized, homogeneous, regular and well-dispersed compared to the sample synthesized with the one-stage synthesis process (T180(7.5h)) ((b)). The grain sizes of these samples are close to 500\u2013800nm. This may be due to great number of nuclei introduced at the first stage of the synthesis; as the temperature was continuously raised to T2, the rate of crystallization was accelerated, leading to the generation of homogeneous and regular crystals. These results confirmed that the two-stage method during MH is beneficial for the synthesis KNN1\u2212x T x powders with better morphology. Therefore, based on the XRD and SEM results, to obtain well crystallized, homogeneous and fine KNNT samples without a Ta2O5 impurity phase, which may significantly affect the sintering activity, two-stage synthesis at temperatures T1=130\xb0C (2h) and T2=180\xb0C (7.5h) was adopted for the following studies. shows the XRD patterns of the KNN1\u2212x T x (x=0, x=0.2, x=0.3, x=0.4) powders that were obtained by applying the two-stage MH synthesis. Inspection of shows that pure perovskite structure KNN1\u2212x T x powders were obtained without any secondary phases, indicating that all of the Ta2O5 had reacted completely. The pure KNN powders (x=0) show a structure with orthorhombic symmetry, which is in agreement with the standard KNbO3 data ((a), JCPDS Card no. 01-0071-2171). The crystal structure changed to monoclinic ((b)\u2013(d), JCPDS Card no. 01-077-0038) when TaE^{5+} was dissolved into the KNN lattice. As the amount of Ta doping increased, all of the KNN1\u2212x T x (x=0.2, x=0.3, x=0.4) peaks shifted slightly to the right; this is due to the smaller ionic radius of Ta. These results were confirmed by the ICP analysis ( ). As shown in , the molar ratios of TaE^{5+}/(NbE^{5+}+TaE^{5+}) in the KNN1\u2212x T x powders are close to the designed values, implying that both TaE^{5+} and NbE^{5+} were sufficiently doped into the KNN1\u2212x T x crystal lattice according to the designed x (x=TaE^{5+}/(NbE^{5+}+TaE^{5+})). Furthermore, the data shown in show that the molar ratios of KE^{+}/NaE^{+} of samples are approximately 1:1, indicating that the K0.5Na0.5Nb1\u2212x Ta x 03 powders (x=0.2, x=0.3, x=0.4) were prepared when the molar ratio of n(KOH)/n(NaOH) was 5:1 in the precursor solutions. shows the SEM images of the KNN1\u2212x T x (x=0, x=0.2, x=0.3, x=0.4) powders. The particle sizes are distributed in the 500\u2013800nm range. Therefore, it is reasonable to suggest that homogeneous and dense KNN1\u2212x T x ceramics may be achieved. KNN1\u2212x T x (x=0.2, 0.3, 0.4) powders were sintered at 1090\xb0C for 2h under atmospheric conditions and KNN1\u2212x T x ceramics were obtained, with their XRD patterns shown in (1), and (2) shows the magnification of (1) in the 45\u201347\xb0 range of 2\u03b8. It is known that K0.5N0.5NbO3-based ceramics exhibit high piezoelectric properties due to phase coexistence, namely, a polymorphic phase transition (PPT) occurs near room temperature. As shown in (2), the difference in the intensities of the (202) peak and (020) peak are small for x=0.3 and 0.4, suggesting that a polymorphic phase boundary was formed approximately at room temperature. This phenomenon also revealed that the KE^{+}/NaE^{+} molar ratio remained close to 1:1, as confirmed by the EDS results ( ). The SEM micrographs of KNN1\u2212x T x (x=0.2, 0.3, 0.4) ceramics are shown in. Some small grains (400\u2013600nm) were distributed at the boundary of normal grains, potentially leading to the larger density. According to , the relative density increases from 89.5% to 92.4% as the Ta content increases from 0.2 to 0.3 and then decreases to 88.8% when Ta content is further increased to 0.4. Hence, the small particles and well dispersed powders obtained by the MH method were fairly efficient in improving the sintering of the KNN1\u2212x T x ceramics by the ordinary sintering method under atmospheric pressure, resulting in the higher density. Correspondingly, the d33 values of the KNN1\u2212x T x ceramics showed the same dependence on the increasing Ta content as the relative density. The highest d33 value of 233 pC/N was achieved for a Ta content of 0.3, suggesting that a suitable amount of Ta-doping can improve the piezoelectric properties. Hence, it can be concluded that the initial crystallite powders with better morphology synthesized by the two-stage method during the MH process and Ta-doping played important roles in improving the piezoelectric properties. In the previous studies, Zhou et al. had sintered the (K0.5Na0.5)(Nb0.7Ta0.3)O3 ceramics from the pellets pressed by cold isostatic compaction, obtaining a d33 value of 210 pC/N. Gu et al. synthesized (K, Na)(Nb, Ta)O3 powders via the high temperature mixing method; when these were used as precursors for the ceramics sintered at 1180\xb0C for 2h, the highest obtained d33 value was 210 pC/N. Qian et al. sintered (K0.4425Na0.52Li0.0375)(Nb0.93\u2212x Ta x Sb0.07)O3 ceramics using the conventional solid-state reaction method, obtaining the highest d33 of 313 pC/N. However, in this study, the (K0.5Na0.5)(Nb0.7Ta0.3)O3 ceramics were obtained by using a simple two-stage MH synthesis of precursor powders followed by ordinary sintering and exhibited a higher d33 of 233 pC/N. Hence, a combination of a simple two-stage MH process and the higher piezoelectric properties makes this approach much more promising compared to the other methods.
+
+# TITLE
+(K0.5Na0.5)(Nb1−xTax)O3 ceramics with a higher d33: Preparation from a two-stage microwave hydrothermal process
+
+# ABSTRACT
+In this work, K0.5Na0.5Nb1−x
+                     Ta
+                        x
+                     O3 (KNN1−x
+                     T
+                        x
+                     ) powders with x=0.0–0.4 were synthesized by a two-stage microwave–hydrothermal (MH) method and were then used to obtain ceramics by sintering at 1090°C for 2h under normal atmospheric conditions. The effects of the MH temperature, holding time, two-stage synthesis procedures and Ta doping on the as-prepared powders were investigated. The phase compositions and micro-morphology of KNN1−x
+                     T
+                        x
+                      powders and ceramics were characterized by X-ray diffraction and field emission scanning electron microscopy. The results showed that homogeneous, well dispersed, crystalline pure KNN1−x
+                     T
+                        x
+                      (0≤x≤0.4) powders had been successfully synthesized by the two-stage microwave–hydrothermal synthesis, where the samples were first heated at 130°C for 2h and the temperature was then raised to 180°C for 7.5h with an alkali concentration of 6mol/L and a K+/Na+ mole ratio of 5:1. The d33 piezoelectric constant of the KNN1−x
+                     T
+                        x
+                      ceramics sintered from the obtained powders reached its highest value of 233 pC/N at x=0.3.
+
+# INTRODUCTION
+Among these ceramics, K0.5Na0.5NbO3 (abbreviated as KNN) is considered to be one of the most promising candidates for lead-free piezoelectric ceramics. KNN is a solid solution of ferroelectric KNbO3 and antiferroelectric NaNbO3 ; near the morphotropic phase boundary (MPB), KNN exhibits ferroelectric and piezoelectric properties that are enhanced relative to those of pure KNbO3. Currently, an increasing number of researchers believe that the existence of polymorphic phase transitions (PPT) also contributes to the good piezoelectric properties at room temperature exhibited by KNN. Nevertheless, one of the main obstacles for the development of KNN ceramics is the difficulty in processing and densification. It is usually very difficult to obtain dense and well-sintered pure KNN ceramics by conventional sintering methods because the alkaline constituent elements of KNN are highly volatile at the higher temperatures required for the sintering of KNN. To obtain dense KNN ceramics, a number of investigations have focused on improving sintering activity. One approach is to synthesize fine KNN powder precursors to enhance the sintering activity to take advantage of the inverse proportionality between the driving force for sintering and the grain size. To reduce the grain size, sol-gel routine, molten salt synthesis, hydrothermal and microwave\u2013hydrothermal (MH) methods have been used to prepare KNN powders. In our previous work , fine powders were prepared by using the hydrothermal method at 230\xb0C for 24h. On the contrary, crystalline and homogeneous KNN powders were successfully prepared at 160\xb0C for 7h by using the microwave\u2013hydrothermal method. The advantages of an lower temperature and a shorter holding time than those required in the hydrothermal method make the microwave\u2013hydrothermal method much more attractive for synthesis of KNN powders with a small grain size. It is well known that Ta ions possess the same chemical valence (+5) and similar atomic radius (0.068nm for Ta compared with 0.069nm for Nb) as Nb ions. To improve the piezoelectric properties of KNN ceramics, some studies have examined doping Ta ions into a KNN solid solution, partially substituting NbE^{5+}. Saito et al. found that the highest piezoelectric d33 constant in the (K, Na)NbO3\u2013LiTaO3 system was 300 pC/N, with texturing the materials resulting in an enhanced value of d33=416 pC/N. Lv et al. studied the (K0.5Na0.5)(Nb1\u2212x Ta x )O3 (KNNT) ceramics system. It was found that Ta substitution decreases both T C and T O\u2013T, but increases T R\u2013O. The ceramics with x=0.30 show a high value of piezoelectric coefficient with d33=205 pC/N. Matsubara et al. have also shown that (K0.5Na0.5)(Nb0.7Ta0.3)O3 ceramics exhibit an enhanced d33 value. In our previous studies , it was found that the value of d33 increased with the increasing amount of Ta-doping (x\u22640.3), and the highest d33 value of 210 pC/N was obtained for (K0.5Na0.5)(Nb0.7Ta0.3)O3 ceramics. Thus, KNN ceramics with Ta-doping synthesized from KNNT powders obtained by MH have been shown to exhibit enhanced piezoelectric property. In this paper, (K0.5Na0.5)(Nb1\u2212x Ta x )O3 (0\u2264x\u22640.4) powders were successfully synthesized by the microwave\u2013hydrothermal method, and (K0.5Na0.5)(Nb1\u2212x Ta x )O3 ceramics were sintered under atmospheric pressure using an ordinary sintering method.
+
+# CONCLUSION
+Dispersive, homogeneous and highly crystalline K0.5Na0.5Nb1\u2212x Ta x O3 (x=0.2, 0.3, 0.4) powders have been successfully synthesized by a two-stage MH synthesis method. The first stage of the reaction was performed at 130\xb0C for 2h, and then, the temperature was raised to 180\xb0C for 7.5h. The results show that the pure K0.5Na0.5Nb1\u2212x Ta x O3 and particles with small sizes close to 500\u2013800nm were obtained. The dense K0.5Na0.5Nb1\u2212x Ta x O3 ceramics were obtained by sintering at 1090\xb0C for 2h under normal atmospheric conditions. Following polarization, it was observed that the d33 piezoelectric coefficient increased with the increasing Ta content and reached its highest value of 233 pC/N when x=0.3; this can be attributed to Ta doping and the better morphology of the initial crystallite powders synthesized by the two-stage MH method. Moreover, the two-stage MH method is simple and efficient and may be an attractive route for preparing other piezoelectric ceramics.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(K0.5Na0.5)(Nb(1-x)Ta(x))O3 where x=0.2": 160,
+      "(K0.5Na0.5)(Nb(1-x)Ta(x))O3 where x=0.3": 233,
+      "(K0.5Na0.5)(Nb(1-x)Ta(x))O3 where x=0.4": 197
+    },
+    "abbreviations": {
+      "KNN": "K0.5Na0.5NbO3",
+      "KNNT": "(K0.5Na0.5)(Nb(1-x)Ta(x))O3"
+    },
+    "property_unit": "pC/N",
+    "family": "KNN"
+  }
+}"

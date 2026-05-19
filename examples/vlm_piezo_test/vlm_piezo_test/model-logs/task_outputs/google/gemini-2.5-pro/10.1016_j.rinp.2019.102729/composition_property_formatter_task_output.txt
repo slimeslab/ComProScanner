@@ -1,0 +1,1 @@
+{"composition_formatted_data":{"compositions_property_values":{"PbZr0.52Ti0.48O3":137,"PbZr0.52Ti0.48O3:La3+":112,"PbZr0.52Ti0.48O3:Nd3+":149,"PbZr0.52Ti0.48O3:Dy3+":125},"property_unit":"pC/N","family":"PZT"}}

@@ -1,0 +1,350 @@
+2026-05-01 10:39:55: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2006.05.004.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2006.05.004 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Lattice parameters of BNKAT(x/y) ceramics
+|Sample no.| x, y| a (nm)| \u03b1 (\xb0)|
+|---|---|---|---|
+|NKA-1|x =0.175, y =0.015|0.389440|89.556|
+|NKA-2|x =0.175, y =0.02|0.389503|89.592|
+|NKA-3|x =0.20, y =0.02|0.389506|89.593|
+|NKA-4|x =0.225, y =0.02|0.389515|89.597|
+|NKA-5|x =0.175, y =0.025|0.389499|89.59|
+|NKA-6|x =0.175, y =0.05|0.389497|89.59|
+|BNT|x =0, y =0|0.3886|89.36|
+
+# RESULTS AND DISCUSSION
+X-ray diffraction patterns shown in indicate that the BNKAT(x/y) ceramics with the composition of x =0.175\u20130.225 and y =0.015\u20130.075 possess pure perovskite phase with rhombohedral structure; no second phases were found, which shows that KE^{+} and AgE^{+} substitute for NaE^{+} in the BNT lattice to form solid solutions. The XRD peaks in the range of 2\u03b8 between 57\u201360\xb0 and 75\u201379\xb0 are used to calculate the lattice parameters (see ). The lattice constant obtained by this way increases with the increase of KE^{+} and AgE^{+} amount as y is lower than 0.02. However, the lattice constant decreases when y is over 0.02. As we know, the ionic radius of KE^{+} (r K+= pmE^{133}) is larger than that of NaE^{+} (r N a+= pmE^{97}) and BiE^{3+} (r B i += pmE^{3}E^{120}), which results in lattice distortion and increases the lattice constant of the material. shows the SEM images of BNKAT(x/y) ceramics sintered at 1170\xb0C for 2h in air atmosphere with (a) x =0.175 and y =0.015; (b) x =0.175 and y =0.020; (c) x =0.175 and y =0.025; and (d) x =0.225 and y =0.020, respectively. Moreover, the average grain size decreases with the increase of KE^{+} amount. The dependence of the piezoelectric properties of BNKAT(x/y) ceramics on the amount of KE^{+} and AgE^{+} is shown in (a)\u2013(c), respectively. (a) shows that regardless of the AgE^{+} amount, the piezoelectric constant d 33 of the BNKAT(x/y) ceramics increases with KE^{+} amount up to 20mol% and then decreases with further increase. The variation of the electromechanical coupling coefficients k p and k 31 with KE^{+} amount is almost similar to that of d 33, but their maximum occur at KE^{+} 17.5mol% ((b)). (a)\u2013(c) shows that the piezoelectric constant d 33 and electromechanical coupling coefficient k p reach the maximum at y =0.02 when x =0.175. The mechanical quality factor Q m decreases with the increase of KE^{+} amount. When the KE^{+} amount is less than 0.15, the d 33, k p, k 31 and Q m are slightly dependent on AgE^{+} concentration. At room temperature, the samples show optimal d 33 of 180pC/N when x =0.2 and y =0.02 and exhibit a high planar electromechanical coefficient k p of 35% when x =0.175 and y =0.02. gives the dielectric properties of BNKAT(x/y) ceramics as a function of x and y. The room temperature dielectric constant \u025b r and dissipation factor tan \u03b4 at 1kHz of the ceramics were found to increase with the increase of KE^{+} amount. For KE^{+} amount is lower than 0.175, the AgE^{+} amount can hardly affect the dielectric constant and the dissipation factor. shows the temperature dependence of the relative dielectric constant \u025b r and dissipation factor tan \u03b4 of the BNKAT(x/y) ceramics at 1kHz. It may be observed in that with the increase of KE^{+} there is an evident decrease in T f and a slight decrease in T m, but T f remains above 135\xb0C when x =0.2 and y =0.02, whereas the effect of the AgE^{+} amount on T f and T m is very slight.
+
+# TITLE
+Synthesis and properties of Bi0.5(Na1-x-yKxAgy)0.5TiO3 lead-free piezoelectric ceramics
+
+# ABSTRACT
+Bi0.5(Na1−x−y
+                     K
+                        x
+                     Ag
+                        y
+                     )0.5TiO3 piezoelectric ceramics were prepared by conventional ceramic processes. X-ray diffraction patterns show a pure perovskite structure, indicating that the K+ and Ag+ ions substitute for the Na+ ions in Bi0.5Na0.5TiO3. At room temperature, the ceramics containing 17.5–20mol% K+ and 2mol% Ag+ exhibit high piezoelectric constant (d
+                     33
+                     =180pC/N) and high electromechanical coupling factor (k
+                     p
+                     =35%).
+
+# INTRODUCTION
+Lead-based piezoelectric Pb(Zr,Ti)O3 (PZT) ceramics, are widely used for actuators, sensors and transducers due to their excellent piezoelectric properties. Therefore, in order to eliminate lead pollution it is necessary to develop environment-friendly lead-free piezoelectric ceramics to replace PZT-based ceramics. Sodium bismuth titanate, Bi0.5Na0.5TiO3 (BNT) discovered by Smolenskii et al. is considered to be an excellent candidate as a lead-free piezoelectric ceramic with a large remnant polarization (P r =38\u03bcC/cmE^{2}). However, BNT itself provides low piezoelectric properties due to its high coercive field (E c =7.3kV/mm) and high conductivity which cause difficulties in poling process. Recent investigations brought to BNT systems such as BNT\u2013BaTiO3, BNT\u2013Bi0.5K0.5TiO3, BNT\u2013Bi0.5K0.5TiO3\u2013BaTiO3, [Bi0.5(Na1\u2212x\u2212y Li x K y )0.5]TiO3, and so on that can be poled easily. The binary BNT\u2013BKT piezoelectric ceramics show relatively high piezoelectric and dielectric properties at the composition near the morphotropic phase boundary (MPB). Bi0.5Ag0.5TiO3 is ferroelectric with a low dissipation factor. In this paper, a new ternary BNT\u2013BKT\u2013Bi0.5Ag0.5TiO3 piezoelectric material was synthesized by traditional processes for electronic ceramics, and its piezoelectric properties were investigated.
+
+# CONCLUSION
+BNKAT(x/y) ceramics (x =10\u201325mol%, y =1\u20137.5mol%) were synthesized by a conventional ceramics technique. X-ray diffraction patterns show that the ceramics possess pure perovskite structure with a KE^{+} and AgE^{+} ions substituting for NaE^{+} in the BNT lattice. The transition temperature from ferroelectric to anti-ferroelectric phases and the temperature at which the dielectric constant reaches its maximum value decrease with the increase of the amount of KE^{+}. Dielectric and piezoelectric properties measurements show that the addition of KE^{+} and AgE^{+} improves the piezoelectric and dielectric properties. The composition with x =17.5\u201320% and y =2% performed satisfactorily with d 33 =180pC/N, k p =35%, Q m =125, and tan \u03b4 =0.028.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="started"
+2026-05-01 10:41:14: task_name="extract_composition_property", task="**Task**: Extract Material Compositions and Properties
+**Description**: Extract the material compositions and their corresponding d33 values, unit corresponding to d33 data and family of the materials from the given text to create a structured JSON output like the following-
+{{
+  "compositions": {{
+    "full chemical formula with proper fractions mentioned": d33 value,
+    ...
+  }},
+  "property_unit": "unit of d33 measurement",
+  "family": "material family name"
+}}
+If, any abbreviation is present with the composition, create another key with the abbreviation and full composition, for e.g.-
+"abbreviations": {{
+  "g-CN": "g-C3N4",
+}}
+*Abbreviation Note*:
+- DON'T consider greek letters for abbreviation, for e.g. α should not be taken as 'Alpha'.
+- DON'T consider any chemical composition in english word, for e.g. ZnO should not be taken as 'zinc oxide'.
+- FOCUS on abbreviations with all CAPITAL letters. They MUST be considered.
+
+*Other Points to Consider*
+- Before extracting final compositions, you MUST call Equation Tool once with doi=10.1016/j.ceramint.2006.05.004.
+- For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+- The summary should contain only: base/host formula, dopant and valence clues, substitution/replacement or incorporation site, replaced ion, variable definitions and values (x, y, mol%, at%), phase-purity evidence (single-phase/impurity statements), and relevant charge-compensation hints.
+- Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+- If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+- Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+- Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3).
+- Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x).
+- Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form.
+- If any composition has variable (x,y,z etc.) values, write the variable values with where and the variable values similar to the following manner-
+
+{
+"compositions": 
+  {
+    "0.5NaNbO3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0, y=0.5": 350, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.1, y=0.4": 325, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.2, y=0.3": 375, 
+    "(1-x)Na0.2K2(x)Bi0.5TiO3 - (y)NaNbO3 where x=0.3, y=0.1": 425 
+  },
+  "property_unit": "pC/N", 
+  "family": "NaNbO3"
+}
+Also, wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3.
+- Only consider the article's own work data. Don't consider referenced paper's data. Sometimes in the table compositions and corresponding property data from referenced papers are mentioned. However, DON'T consider abbreviations for referenced papers. Even don't consider similar phrases 'modified-composition' or 'composition-based' etc. phases where the full composition is not provided.
+- You MUST invoke the Graph Data Extractor tool once with doi=10.1016/j.ceramint.2006.05.004 and consider its extracted numeric points when producing the final JSON.
+- Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+- Use graph extraction only as fallback/supplement for compositions or values missing from text.
+
+**Parameters**:
+- Property: d33
+- Text data containing compositions and property details: 
+# TABLES:
+Table 1. Lattice parameters of BNKAT(x/y) ceramics
+|Sample no.| x, y| a (nm)| \u03b1 (\xb0)|
+|---|---|---|---|
+|NKA-1|x =0.175, y =0.015|0.389440|89.556|
+|NKA-2|x =0.175, y =0.02|0.389503|89.592|
+|NKA-3|x =0.20, y =0.02|0.389506|89.593|
+|NKA-4|x =0.225, y =0.02|0.389515|89.597|
+|NKA-5|x =0.175, y =0.025|0.389499|89.59|
+|NKA-6|x =0.175, y =0.05|0.389497|89.59|
+|BNT|x =0, y =0|0.3886|89.36|
+
+# RESULTS AND DISCUSSION
+X-ray diffraction patterns shown in indicate that the BNKAT(x/y) ceramics with the composition of x =0.175\u20130.225 and y =0.015\u20130.075 possess pure perovskite phase with rhombohedral structure; no second phases were found, which shows that KE^{+} and AgE^{+} substitute for NaE^{+} in the BNT lattice to form solid solutions. The XRD peaks in the range of 2\u03b8 between 57\u201360\xb0 and 75\u201379\xb0 are used to calculate the lattice parameters (see ). The lattice constant obtained by this way increases with the increase of KE^{+} and AgE^{+} amount as y is lower than 0.02. However, the lattice constant decreases when y is over 0.02. As we know, the ionic radius of KE^{+} (r K+= pmE^{133}) is larger than that of NaE^{+} (r N a+= pmE^{97}) and BiE^{3+} (r B i += pmE^{3}E^{120}), which results in lattice distortion and increases the lattice constant of the material. shows the SEM images of BNKAT(x/y) ceramics sintered at 1170\xb0C for 2h in air atmosphere with (a) x =0.175 and y =0.015; (b) x =0.175 and y =0.020; (c) x =0.175 and y =0.025; and (d) x =0.225 and y =0.020, respectively. Moreover, the average grain size decreases with the increase of KE^{+} amount. The dependence of the piezoelectric properties of BNKAT(x/y) ceramics on the amount of KE^{+} and AgE^{+} is shown in (a)\u2013(c), respectively. (a) shows that regardless of the AgE^{+} amount, the piezoelectric constant d 33 of the BNKAT(x/y) ceramics increases with KE^{+} amount up to 20mol% and then decreases with further increase. The variation of the electromechanical coupling coefficients k p and k 31 with KE^{+} amount is almost similar to that of d 33, but their maximum occur at KE^{+} 17.5mol% ((b)). (a)\u2013(c) shows that the piezoelectric constant d 33 and electromechanical coupling coefficient k p reach the maximum at y =0.02 when x =0.175. The mechanical quality factor Q m decreases with the increase of KE^{+} amount. When the KE^{+} amount is less than 0.15, the d 33, k p, k 31 and Q m are slightly dependent on AgE^{+} concentration. At room temperature, the samples show optimal d 33 of 180pC/N when x =0.2 and y =0.02 and exhibit a high planar electromechanical coefficient k p of 35% when x =0.175 and y =0.02. gives the dielectric properties of BNKAT(x/y) ceramics as a function of x and y. The room temperature dielectric constant \u025b r and dissipation factor tan \u03b4 at 1kHz of the ceramics were found to increase with the increase of KE^{+} amount. For KE^{+} amount is lower than 0.175, the AgE^{+} amount can hardly affect the dielectric constant and the dissipation factor. shows the temperature dependence of the relative dielectric constant \u025b r and dissipation factor tan \u03b4 of the BNKAT(x/y) ceramics at 1kHz. It may be observed in that with the increase of KE^{+} there is an evident decrease in T f and a slight decrease in T m, but T f remains above 135\xb0C when x =0.2 and y =0.02, whereas the effect of the AgE^{+} amount on T f and T m is very slight.
+
+# TITLE
+Synthesis and properties of Bi0.5(Na1-x-yKxAgy)0.5TiO3 lead-free piezoelectric ceramics
+
+# ABSTRACT
+Bi0.5(Na1−x−y
+                     K
+                        x
+                     Ag
+                        y
+                     )0.5TiO3 piezoelectric ceramics were prepared by conventional ceramic processes. X-ray diffraction patterns show a pure perovskite structure, indicating that the K+ and Ag+ ions substitute for the Na+ ions in Bi0.5Na0.5TiO3. At room temperature, the ceramics containing 17.5–20mol% K+ and 2mol% Ag+ exhibit high piezoelectric constant (d
+                     33
+                     =180pC/N) and high electromechanical coupling factor (k
+                     p
+                     =35%).
+
+# INTRODUCTION
+Lead-based piezoelectric Pb(Zr,Ti)O3 (PZT) ceramics, are widely used for actuators, sensors and transducers due to their excellent piezoelectric properties. Therefore, in order to eliminate lead pollution it is necessary to develop environment-friendly lead-free piezoelectric ceramics to replace PZT-based ceramics. Sodium bismuth titanate, Bi0.5Na0.5TiO3 (BNT) discovered by Smolenskii et al. is considered to be an excellent candidate as a lead-free piezoelectric ceramic with a large remnant polarization (P r =38\u03bcC/cmE^{2}). However, BNT itself provides low piezoelectric properties due to its high coercive field (E c =7.3kV/mm) and high conductivity which cause difficulties in poling process. Recent investigations brought to BNT systems such as BNT\u2013BaTiO3, BNT\u2013Bi0.5K0.5TiO3, BNT\u2013Bi0.5K0.5TiO3\u2013BaTiO3, [Bi0.5(Na1\u2212x\u2212y Li x K y )0.5]TiO3, and so on that can be poled easily. The binary BNT\u2013BKT piezoelectric ceramics show relatively high piezoelectric and dielectric properties at the composition near the morphotropic phase boundary (MPB). Bi0.5Ag0.5TiO3 is ferroelectric with a low dissipation factor. In this paper, a new ternary BNT\u2013BKT\u2013Bi0.5Ag0.5TiO3 piezoelectric material was synthesized by traditional processes for electronic ceramics, and its piezoelectric properties were investigated.
+
+# CONCLUSION
+BNKAT(x/y) ceramics (x =10\u201325mol%, y =1\u20137.5mol%) were synthesized by a conventional ceramics technique. X-ray diffraction patterns show that the ceramics possess pure perovskite structure with a KE^{+} and AgE^{+} ions substituting for NaE^{+} in the BNT lattice. The transition temperature from ferroelectric to anti-ferroelectric phases and the temperature at which the dielectric constant reaches its maximum value decrease with the increase of the amount of KE^{+}. Dielectric and piezoelectric properties measurements show that the addition of KE^{+} and AgE^{+} improves the piezoelectric and dielectric properties. The composition with x =17.5\u201320% and y =2% performed satisfactorily with d 33 =180pC/N, k p =35%, Q m =125, and tan \u03b4 =0.028.
+
+**Notes**:
+- Write complete chemical formulas (e.g. '(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don't use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: 'LiNbO3-Air' and 'LiNbO3-Vacuum'.
+- If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+- Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+- Use element symbols (e.g. 'K' not 'Potassium')
+- For compositions with variables:
+   * If multiple d33 values exist: Extract all compositions by substituting each variable value
+   * If single d33 value: Extract only the best composition
+- Prioritize data from tables
+- Preserve proper chemical notation including:
+   * Subscripts for atom counts
+   * Parentheses for grouped elements
+   * Proper fraction formatting
+- IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+   1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+   Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+   Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+   Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+   Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+   NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+   Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+- If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+- Identify the broader family/class of materials - can be abbreviated forms
+- Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+- Don't modify the abbreviation from referenced papers unless full composition is not available.
+- ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+", agent="Material Composition and Property Extractor", status="completed", output="Thought: I now have the canonical formula from the Equation Tool: (Bi0.5Na(0.5*(1-x-y))K(0.5*x)Ag(0.5*y))TiO3. The text explicitly states the optimal d33 of 180 pC/N at x=0.2 and y=0.02. The graph data provides many additional points, but per the conflict resolution rule, I keep the text-derived value (180 pC/N) for the composition x=0.2, y=0.02. The graph also gives values for other compositions not explicitly stated in the text. I need to include the text-derived value and supplement with graph values for missing compositions.
+
+The text also mentions: "the samples show optimal d33 of 180pC/N when x=0.2 and y=0.02". The conclusion says "The composition with x=17.5–20% and y=2% performed satisfactorily with d33=180pC/N". So the text explicitly gives d33=180 for x=0.2, y=0.02.
+
+From the graph, I have many points. I'll include the key ones that are explicitly mentioned in the text or are representative. The text also mentions "d33 of 180pC/N when x=0.2 and y=0.02" - this is the text value, so I keep it.
+
+Now, I need to construct the full chemical formulas using the template from Equation Tool. The template is: (Bi0.5Na(0.5*(1-x-y))K(0.5*x)Ag(0.5*y))TiO3
+
+For each (x,y) pair, I substitute the values. Note that the formula uses 0.5*(1-x-y), 0.5*x, 0.5*y. I need to write these with explicit multiplication.
+
+Let me construct the compositions for the text-derived value and some key graph values.
+
+Text-derived: x=0.2, y=0.02 -> d33=180 pC/N
+Formula: (Bi0.5Na(0.5*(1-0.2-0.02))K(0.5*0.2)Ag(0.5*0.02))TiO3 = (Bi0.5Na(0.5*0.78)K(0.1)Ag(0.01))TiO3 = (Bi0.5Na0.39K0.1Ag0.01)TiO3
+
+But I should write it in the variable form with the specific values substituted, like: (Bi0.5Na(0.5*(1-0.2-0.02))K(0.5*0.2)Ag(0.5*0.02))TiO3 where x=0.2, y=0.02
+
+Actually, looking at the example format, I should write the full formula with the specific values substituted, and then append "where x=..., y=..." for clarity.
+
+Let me also check the abbreviation: BNKAT is used for Bi0.5(Na1-x-yKxAgy)0.5TiO3. I should include this in abbreviations.
+
+Now, I'll include the text-derived value and supplement with graph values. The graph has many points, but I'll focus on the ones that are most relevant and not conflicting with text.
+
+From the text, the only explicit d33 value is 180 pC/N for x=0.2, y=0.02. The graph shows for x=0.20, y=0.020 a value of 188 pC/N, but I keep the text value of 180.
+
+I'll also include the BNT (x=0, y=0) composition. The text doesn't give a d33 for BNT, but the graph might have it. Looking at the graph data, there's no point for x=0, y=0. So I'll skip BNT.
+
+Let me include a few representative graph points that are not in the text. The text mentions "x=0.175 and y=0.02" for kp, but not d33. The graph gives d33=157 for x=0.175, y=0.02.
+
+I'll include the following compositions from the graph that are explicitly mentioned in the text or are key:
+- x=0.2, y=0.02 (text: 180)
+- x=0.175, y=0.02 (graph: 157, mentioned in text for kp)
+- x=0.175, y=0.015 (graph: from series y=0.015, x=0.175 -> value? The graph data for y=0.015 series has x=0.18 giving 197, x=0.16 giving 175. For x=0.175, it's between. But the graph data points are discrete. I'll use the closest or skip.)
+
+Actually, looking at the graph data more carefully:
+- For series y=0.015: x=0.16 -> 175, x=0.18 -> 197. So x=0.175 would be interpolated, but I don't have exact.
+- For series y=0.020: x=0.16 -> 185, x=0.18 -> 195. x=0.175 interpolated.
+- For series y=0.025: x=0.16 -> 175, x=0.18 -> 190.
+
+The text mentions "x=0.175 and y=0.02" in the context of kp, but not d33. The graph gives d33 for x=0.175, y=0.02 as part of the y=0.020 series? Actually, the graph data for y=0.020 series has x=0.16, 0.18, 0.20, etc. No exact x=0.175. But the second part of the graph (gr3) has a separate series for x=0.175 varying y: y=0.00 -> 140, y=0.02 -> 157, y=0.04 -> 120, etc. So for x=0.175, y=0.02, the graph gives 157 pC/N.
+
+I'll include the text-derived value and supplement with graph values for compositions that are explicitly mentioned in the text (like x=0.175, y=0.02) or are key.
+
+Let me construct the final JSON.
+
+Abbreviations: BNKAT -> Bi0.5(Na1-x-yKxAgy)0.5TiO3, BNT -> Bi0.5Na0.5TiO3
+
+Family: Bi0.5Na0.5TiO3 (BNT) based
+
+Now, for the compositions, I'll use the template from Equation Tool: (Bi0.5Na(0.5*(1-x-y))K(0.5*x)Ag(0.5*y))TiO3
+
+For each composition, I'll write the formula with the specific values substituted, and append "where x=..., y=..." for clarity.
+
+Let me write the formulas:
+
+1. x=0.2, y=0.02: (Bi0.5Na(0.5*(1-0.2-0.02))K(0.5*0.2)Ag(0.5*0.02))TiO3 where x=0.2, y=0.02 -> d33=180 (text)
+
+2. x=0.175, y=0.02: (Bi0.5Na(0.5*(1-0.175-0.02))K(0.5*0.175)Ag(0.5*0.02))TiO3 where x=0.175, y=0.02 -> d33=157 (graph)
+
+3. x=0.175, y=0.015: (Bi0.5Na(0.5*(1-0.175-0.015))K(0.5*0.175)Ag(0.5*0.015))TiO3 where x=0.175, y=0.015 -> d33=? The graph for y=0.015 series doesn't have exact x=0.175. But the text mentions this composition in Table 1. The graph for x=0.175 varying y has y=0.00, 0.02, 0.04, etc. No y=0.015. So I'll skip this.
+
+4. x=0.175, y=0.025: (Bi0.5Na(0.5*(1-0.175-0.025))K(0.5*0.175)Ag(0.5*0.025))TiO3 where x=0.175, y=0.025 -> d33=? The graph for x=0.175 varying y has y=0.02 -> 157, y=0.04 -> 120. No y=0.025. So skip.
+
+5. x=0.225, y=0.02: (Bi0.5Na(0.5*(1-0.225-0.02))K(0.5*0.225)Ag(0.5*0.02))TiO3 where x=0.225, y=0.02 -> d33=? The graph for y=0.020 series has x=0.22 -> 180. So x=0.225 would be close. But I don't have exact. Skip.
+
+I'll include the text-derived value and the graph values for the x=0.175, y=0.02 composition since it's explicitly mentioned in the text.
+
+Let me also include the BNT (x=0, y=0) composition. The text doesn't give d33 for BNT, and the graph doesn't have it either. So skip.
+
+Final compositions to include:
+1. (Bi0.5Na(0.5*(1-0.2-0.02))K(0.5*0.2)Ag(0.5*0.02))TiO3 where x=0.2, y=0.02: 180
+2. (Bi0.5Na(0.5*(1-0.175-0.02))K(0.5*0.175)Ag(0.5*0.02))TiO3 where x=0.175, y=0.02: 157
+
+I'll also include a few more from the graph that are representative.
+
+Actually, let me include the graph values for the x=0.175 varying y series since those are explicitly plotted:
+- y=0.00, x=0.175: 140
+- y=0.02, x=0.175: 157
+- y=0.04, x=0.175: 120
+- y=0.06, x=0.175: 100
+- y=0.08, x=0.175: 78
+- y=0.10, x=0.175: 60
+
+And for the y=0.02 series varying x:
+- x=0.10, y=0.02: 120
+- x=0.12, y=0.02: 130
+- x=0.14, y=0.02: 160
+- x=0.16, y=0.02: 185
+- x=0.18, y=0.02: 195
+- x=0.20, y=0.02: 188 (but text says 180, so I keep text value 180)
+- x=0.22, y=0.02: 180
+
+Per the conflict rule, for x=0.20, y=0.02, I use text value 180, not graph value 188.
+
+Now, I need to write the formulas properly. Let me use the format with "where x=..., y=..." as shown in the example.
+
+Let me construct the final JSON.{
+  "composition_extracted_data": {
+    "compositions_property_values": {
+      "(Bi0.5Na(0.5*(1-0.2-0.02))K(0.5*0.2)Ag(0.5*0.02))TiO3 where x=0.2, y=0.02": 180,
+      "(Bi0.5Na(0.5*(1-0.175-0.02))K(0.5*0.175)Ag(0.5*0.02))TiO3 where x=0.175, y=0.02": 157,
+      "(Bi0.5Na(0.5*(1-0.175-0.0))K(0.5*0.175)Ag(0.5*0.0))TiO3 where x=0.175, y=0.0": 140,
+      "(Bi0.5Na(0.5*(1-0.175-0.04))K(0.5*0.175)Ag(0.5*0.04))TiO3 where x=0.175, y=0.04": 120,
+      "(Bi0.5Na(0.5*(1-0.175-0.06))K(0.5*0.175)Ag(0.5*0.06))TiO3 where x=0.175, y=0.06": 100,
+      "(Bi0.5Na(0.5*(1-0.175-0.08))K(0.5*0.175)Ag(0.5*0.08))TiO3 where x=0.175, y=0.08": 78,
+      "(Bi0.5Na(0.5*(1-0.175-0.1))K(0.5*0.175)Ag(0.5*0.1))TiO3 where x=0.175, y=0.1": 60,
+      "(Bi0.5Na(0.5*(1-0.1-0.02))K(0.5*0.1)Ag(0.5*0.02))TiO3 where x=0.1, y=0.02": 120,
+      "(Bi0.5Na(0.5*(1-0.12-0.02))K(0.5*0.12)Ag(0.5*0.02))TiO3 where x=0.12, y=0.02": 130,
+      "(Bi0.5Na(0.5*(1-0.14-0.02))K(0.5*0.14)Ag(0.5*0.02))TiO3 where x=0.14, y=0.02": 160,
+      "(Bi0.5Na(0.5*(1-0.16-0.02))K(0.5*0.16)Ag(0.5*0.02))TiO3 where x=0.16, y=0.02": 185,
+      "(Bi0.5Na(0.5*(1-0.18-0.02))K(0.5*0.18)Ag(0.5*0.02))TiO3 where x=0.18, y=0.02": 195,
+      "(Bi0.5Na(0.5*(1-0.22-0.02))K(0.5*0.22)Ag(0.5*0.02))TiO3 where x=0.22, y=0.02": 180
+    },
+    "abbreviations": {
+      "BNKAT": "Bi0.5(Na1-x-yKxAgy)0.5TiO3",
+      "BNT": "Bi0.5Na0.5TiO3"
+    },
+    "property_unit": "pC/N",
+    "family": "Bi0.5Na0.5TiO3"
+  }
+}"

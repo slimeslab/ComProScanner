@@ -9,7 +9,9 @@ Date: 19-03-2025
 
 # Standard library imports
 from typing import Dict, Optional
+import base64
 import json
+import os
 import re
 from textwrap import dedent
 import ast
@@ -44,6 +46,42 @@ logger = setup_logger("comproscanner.log", module_name="main_extraction_flow")
 
 
 class MaterialsState(BaseModel):
+    """Shared state object passed between all crews in the extraction flow.
+
+    Attributes:
+        is_materials_mentioned (str): Crew output indicating whether materials data was found.
+        composition_extracted_data (Dict): Raw composition data from the extraction crew.
+        composition_formatted_data (Dict): Formatted composition data from the format crew.
+        synthesis_extracted_data (Dict): Raw synthesis data from the extraction crew.
+        synthesis_formatted_data (Dict): Formatted synthesis data from the format crew.
+        doi (str): DOI of the article being processed.
+        materials_data_identifier_query (str): Query used by the identifier crew.
+        main_extraction_keyword (str): Primary property keyword driving extraction.
+        composition_property_text_data (str): Article text passed to the composition crew.
+        synthesis_text_data (str): Article text passed to the synthesis crew.
+        is_extract_synthesis_data (bool): Whether synthesis data extraction is enabled.
+        vlm_model (str): Vision LLM model name for the graph extractor tool.
+        related_figures_base_path (str): Base directory for saved article figures.
+        formula_instruction (str, optional): Custom system prompt for the equation tool.
+        equation_model (str, optional): Explicit model override for the equation tool.
+        llm (LLM, optional): CrewAI LLM instance shared across all crews.
+        rag_config (RAGConfig, optional): RAG configuration for the RAG tool.
+        output_log_folder (str, optional): Directory for crew task output JSON logs.
+        task_output_folder (str, optional): Directory for crew task artefacts.
+        is_log_json (bool, optional): Whether to write per-task JSON logs.
+        verbose (bool, optional): Whether crews run in verbose mode.
+        expected_composition_property_example (str): Few-shot example for the composition extraction task.
+        expected_variable_composition_property_example (str): Few-shot variable-composition example.
+        composition_property_extraction_agent_note (str): Extra instructions for the extraction agent.
+        composition_property_extraction_task_note (str): Extra instructions for the extraction task.
+        composition_property_formatting_agent_note (str): Extra instructions for the format agent.
+        composition_property_formatting_task_note (str): Extra instructions for the format task.
+        synthesis_extraction_agent_note (str): Extra instructions for the synthesis extraction agent.
+        synthesis_extraction_task_note (str): Extra instructions for the synthesis extraction task.
+        synthesis_formatting_agent_note (str): Extra instructions for the synthesis format agent.
+        synthesis_formatting_task_note (str): Extra instructions for the synthesis format task.
+    """
+
     model_config = ConfigDict(arbitrary_types_allowed=True)
     is_materials_mentioned: str = ""
     composition_extracted_data: Dict = {}
@@ -58,6 +96,8 @@ class MaterialsState(BaseModel):
     is_extract_synthesis_data: bool = True
     vlm_model: str = "gemini/gemini-3-flash-preview"
     related_figures_base_path: str = "results/related_figures"
+    formula_instruction: Optional[str] = None
+    equation_model: Optional[str] = None
     llm: Optional[LLM] = None
     rag_config: Optional[RAGConfig] = None
     output_log_folder: Optional[str] = None
@@ -89,6 +129,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
         llm (LLM: optional): LLM instance for the agents. Default: None
         materials_data_identifier_query (str: optional): Query to identify if materials data is present in the text. Must be an 'yes/no' answer. Default: "Is there any material chemical composition (not abbreviations) and corresponding {main_extraction_keyword} value mentioned in the paper? GIVE ONE WORD ANSWER. Either yes or no."
         is_extract_synthesis_data (bool: optional): Flag to extract synthesis data. Default: True
+        equation_model (str: optional): Explicit litellm model name for EquationTool.
         rag_config (RAGConfig: optional): RAG configuration. Default: None
         output_log_folder (str, optional): Base folder path to save logs. Logs will be saved in {output_log_folder}/{doi}/ subdirectory. Logs will be in JSON format if is_log_json is True, otherwise plain text. Defaults to None (no logging).
         task_output_folder (str, optional): Base folder path to save task outputs. Task outputs will be saved as .txt files in {task_output_folder}/{doi}/ subdirectory. Defaults to None (no task output saving).
@@ -123,6 +164,8 @@ class DataExtractionFlow(Flow[MaterialsState]):
         is_extract_synthesis_data: bool = True,
         vlm_model: str = "gemini/gemini-3-flash-preview",
         related_figures_base_path: str = "results/related_figures",
+        formula_instruction: Optional[str] = None,
+        equation_model: Optional[str] = None,
         rag_config: Optional[RAGConfig] = None,
         output_log_folder: Optional[str] = None,
         task_output_folder: Optional[str] = None,
@@ -154,6 +197,8 @@ class DataExtractionFlow(Flow[MaterialsState]):
         self.state.is_extract_synthesis_data = is_extract_synthesis_data
         self.state.vlm_model = vlm_model
         self.state.related_figures_base_path = related_figures_base_path
+        self.state.formula_instruction = formula_instruction
+        self.state.equation_model = equation_model
         self.state.rag_config = rag_config
         self.state.output_log_folder = output_log_folder
         self.state.task_output_folder = task_output_folder
@@ -443,7 +488,25 @@ class DataExtractionFlow(Flow[MaterialsState]):
             except json.JSONDecodeError as e:
                 logger.debug(f"{log_prefix} - json.loads() failed: {str(e)[:100]}")
 
-            # Case 6: Try Python literal evaluation (handles escape sequences)
+            # Case 6: Extract JSON from mixed text (LLM reasoning + JSON output)
+            # Handles outputs like "Thought: ... reasoning ... { actual json }"
+            if parsed_output is None:
+                for start_char, end_char in [('{', '}'), ('[', ']')]:
+                    start_idx = cleaned_output.find(start_char)
+                    end_idx = cleaned_output.rfind(end_char)
+                    if start_idx != -1 and end_idx > start_idx:
+                        candidate = cleaned_output[start_idx:end_idx + 1]
+                        try:
+                            parsed_output = json.loads(candidate)
+                            logger.debug(
+                                f"{log_prefix} - Extracted JSON from mixed text using brace search"
+                            )
+                            cleaned_output = candidate
+                            break
+                        except json.JSONDecodeError:
+                            pass
+
+            # Case 7: Try Python literal evaluation (handles escape sequences)
             if parsed_output is None:
                 try:
                     # Convert JSON booleans/null to Python equivalents
@@ -461,7 +524,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
                         f"{log_prefix} - ast.literal_eval() failed: {str(e)[:100]}"
                     )
 
-            # Case 7: Parsing successful, now check if we need to extract from schema
+            # Case 8: Parsing successful, now check if we need to extract from schema
             if parsed_output is not None:
                 if isinstance(parsed_output, dict) and expected_keys:
                     # Check if this looks like a schema
@@ -489,7 +552,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
 
                 return parsed_output
 
-            # Case 8: All parsing methods failed
+            # Case 8 (final fallback): All parsing methods failed
             logger.error(f"{log_prefix} - All parsing methods failed")
             logger.error(f"{log_prefix} - First 300 chars: {cleaned_output[:300]}")
             return default_value
@@ -498,6 +561,99 @@ class DataExtractionFlow(Flow[MaterialsState]):
             logger.error(f"{log_prefix} - Unexpected error: {e}")
             logger.exception(f"{log_prefix} - Full traceback:")
             return default_value
+
+    def _check_figures_for_data(self) -> bool:
+        """Check saved figures for the DOI using VLM to identify if relevant property data is present.
+
+        In graphs, relevant data may appear as doping concentrations (x values, mol%, at%) on one
+        axis with property values on the other, rather than full chemical compositions.
+        Returns True if any figure contains relevant data, False otherwise.
+        """
+        doi = self.state.doi
+        doi_folder = doi.replace("/", "_")
+        fig_dir = os.path.join(self.state.related_figures_base_path, doi_folder)
+
+        if not os.path.isdir(fig_dir):
+            logger.debug(f"No figures directory found for DOI {doi} at {fig_dir}")
+            return False
+
+        info_path = os.path.join(fig_dir, "info.json")
+        captions = {}
+        if os.path.isfile(info_path):
+            try:
+                with open(info_path, "r", encoding="utf-8") as f:
+                    captions = json.load(f)
+            except Exception as e:
+                logger.warning(f"Could not read info.json for {doi}: {e}")
+
+        image_files = sorted(
+            f for f in os.listdir(fig_dir) if f.lower().endswith(".jpg")
+        )
+        if not image_files:
+            logger.debug(f"No .jpg figures found in {fig_dir}")
+            return False
+
+        try:
+            import litellm
+        except ImportError:
+            logger.error("litellm is not installed; image data checking requires litellm.")
+            return False
+
+        keyword = self.state.main_extraction_keyword.replace("_", " ")
+
+        for img_filename in image_files:
+            caption_id = os.path.splitext(img_filename)[0]
+            caption_text = captions.get(caption_id, "")
+            img_path = os.path.join(fig_dir, img_filename)
+
+            try:
+                with open(img_path, "rb") as f:
+                    b64_image = base64.b64encode(f.read()).decode("utf-8")
+            except Exception as e:
+                logger.warning(f"Could not read image {img_path}: {e}")
+                continue
+
+            prompt = (
+                f"You are a materials science expert.\n"
+                f'Figure caption: "{caption_text}"\n\n'
+                f"Examine this scientific figure. Does it contain {keyword} property data "
+                f"for ceramic, composite, doped, or crystal materials (excluding polymers like PVDF)?\n"
+                f"Note: In graphs, relevant data may appear as doping concentrations (e.g. x values, "
+                f"mol%, at%) on one axis with {keyword} values on the other axis — this counts as "
+                f"relevant data even without full chemical formulas.\n"
+                f"Answer with a single word only: 'yes' or 'no'."
+            )
+
+            try:
+                response = litellm.completion(
+                    model=self.state.vlm_model,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": [
+                                {"type": "text", "text": prompt},
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:image/jpeg;base64,{b64_image}"
+                                    },
+                                },
+                            ],
+                        }
+                    ],
+                )
+                answer = response.choices[0].message.content.strip().lower()
+                if "yes" in answer:
+                    logger.info(
+                        f"Image check found {keyword} data in figure '{caption_id}' for DOI {doi}"
+                    )
+                    return True
+            except Exception as e:
+                logger.warning(
+                    f"VLM image check failed for figure '{caption_id}' in {doi}: {e}"
+                )
+
+        return False
 
     @start()
     def identify_materials_data_presence(self):
@@ -561,6 +717,17 @@ class DataExtractionFlow(Flow[MaterialsState]):
             logger.warning(f"Invalid answer value: '{answer}', defaulting to 'no'")
             answer = "no"
 
+        # If text RAG returned no, also check saved figures with VLM
+        if answer == "no":
+            logger.info(
+                f"Text RAG check returned 'no' for {self.state.doi}, checking figures with VLM..."
+            )
+            if self._check_figures_for_data():
+                answer = "yes"
+                logger.info(
+                    f"Figure image check found relevant data for {self.state.doi}, overriding to 'yes'"
+                )
+
         self.state.is_materials_mentioned = answer
         logger.info(f"Materials identification result: '{answer}'")
 
@@ -589,6 +756,8 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 vlm_model=self.state.vlm_model,
                 related_figures_base_path=self.state.related_figures_base_path,
                 main_extraction_keyword=self.state.main_extraction_keyword,
+                formula_instruction=self.state.formula_instruction,
+                equation_model=self.state.equation_model,
             ).crew()
         else:
             composition_property_crew = CompositionExtractionCrew(
@@ -600,6 +769,8 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 vlm_model=self.state.vlm_model,
                 related_figures_base_path=self.state.related_figures_base_path,
                 main_extraction_keyword=self.state.main_extraction_keyword,
+                formula_instruction=self.state.formula_instruction,
+                equation_model=self.state.equation_model,
             ).crew()
 
         result = composition_property_crew.kickoff(
