@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "comproscanner"
-version = "0.1.6"
+version = "2026.05.19"
 description = "Multi-agent system for extracting and processing structured composition-property data from scientific literature"
 readme = "README.md"
 authors = [{ name = "Aritra Roy", email = "contact@aritraroy.live" }]
@@ -41,6 +41,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Chemistry",
     "Topic :: Scientific/Engineering :: Physics",
