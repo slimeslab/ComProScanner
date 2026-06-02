@@ -132,6 +132,14 @@ For `source_list=["pdfs"]` processing only. If `True`, saves a text report for P
 
 For `source_list=["pdfs"]` processing only. Custom output path for the failed PDF filename report. If not provided, defaults to `{folder_path}/failed_pdf_filenames.txt`.
 
+#### :material-square-medium:`is_track_pdfs` _(bool)_
+
+For `source_list=["pdfs"]` processing only. If `True`, each successfully processed PDF is recorded in a plain-text tracking file as a tab-separated `filename<TAB>doi` entry so that re-runs skip already-processed PDFs before any conversion or API calls. Falls back to scanning the output CSV when the tracking file does not yet exist. Defaults to `True`.
+
+#### :material-square-medium:`track_pdfs_report_path` _(str)_
+
+For `source_list=["pdfs"]` processing only. Custom path for the PDF tracking file. If not provided, defaults to `logs/{keyword}_pdf_processed_dois.txt`.
+
 #### :material-square-medium:`save_failed_automated_report` _(bool)_
 
 For automated publisher sources (`elsevier`, `springer`, `iop`, `wiley`). If `True`, appends a tab-separated record for every article that could not be downloaded or parsed to the failure report. Each line contains three fields: `doi`, `publisher`, and a short reason code:
@@ -150,7 +158,7 @@ Custom output path for the automated failure report. If not provided, defaults t
 
 !!! info "Default Values"
 
-    :material-square-small:**`source_list`** = ["elsevier", "wiley", "iop", "springer"]<br>:material-square-small:**`folder_path`** = None<br>:material-square-small:**`doi_list`** = None<br>:material-square-small:**`is_sql_db`** = False<br>:material-square-small:**`is_save_xml`** = False<br>:material-square-small:**`is_save_pdf`** = False<br>:material-square-small:**`rag_db_path`** = "db"<br>:material-square-small:**`chunk_size`** = 1000<br>:material-square-small:**`chunk_overlap`** = 25<br>:material-square-small:**`embedding_model`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`main_figure_keywords`** = `property_keywords`<br>:material-square-small:**`additional_figure_keywords`** = None<br>:material-square-small:**`save_failed_pdf_report`** = True<br>:material-square-small:**`failed_pdf_report_path`** = None (auto: `{folder_path}/failed_pdf_filenames.txt`)<br>:material-square-small:**`save_failed_automated_report`** = True<br>:material-square-small:**`failed_automated_report_path`** = None (auto: `results/failed_automated_articles.txt`)
+    :material-square-small:**`source_list`** = ["elsevier", "wiley", "iop", "springer"]<br>:material-square-small:**`folder_path`** = None<br>:material-square-small:**`doi_list`** = None<br>:material-square-small:**`is_sql_db`** = False<br>:material-square-small:**`is_save_xml`** = False<br>:material-square-small:**`is_save_pdf`** = False<br>:material-square-small:**`rag_db_path`** = "db"<br>:material-square-small:**`chunk_size`** = 1000<br>:material-square-small:**`chunk_overlap`** = 25<br>:material-square-small:**`embedding_model`** = "huggingface:thellert/physbert_cased"<br>:material-square-small:**`main_figure_keywords`** = `property_keywords`<br>:material-square-small:**`additional_figure_keywords`** = None<br>:material-square-small:**`save_failed_pdf_report`** = True<br>:material-square-small:**`failed_pdf_report_path`** = None (auto: `{folder_path}/failed_pdf_filenames.txt`)<br>:material-square-small:**`is_track_pdfs`** = True<br>:material-square-small:**`track_pdfs_report_path`** = None (auto: `logs/{keyword}_pdf_processed_dois.txt`)<br>:material-square-small:**`save_failed_automated_report`** = True<br>:material-square-small:**`failed_automated_report_path`** = None (auto: `results/failed_automated_articles.txt`)
 
 ## Processing Workflow
 

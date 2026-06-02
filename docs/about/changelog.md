@@ -1,3 +1,13 @@
+# Unreleased
+
+### Added
+
+- Added `is_track_pdfs` and `track_pdfs_report_path` to `process_articles()` for local PDF workflows. When enabled (default), each processed PDF is recorded as a `filename<TAB>doi` entry in `logs/{keyword}_pdf_processed_dois.txt`, allowing re-runs to skip already-processed PDFs before any conversion or API calls. Falls back to scanning the output CSV when the tracking file does not yet exist.
+
+- Centralised non-keyword default file paths (`results/failed_automated_articles.txt`, `agentic_evaluation_result.json`, `detailed_evaluation.json`) as class-level constants on `DefaultPaths` so they can be changed in one place.
+
+---
+
 # 2026.05.19
 
 ### Added
@@ -27,6 +37,10 @@
 - Added `save_failed_pdf_report` and `failed_pdf_report_path` to `process_articles()`, with filename-derived DOI validation and failed-PDF reporting for local PDF workflows.
 
 - Added `save_failed_automated_report` and `failed_automated_report_path` to `process_articles()` for automated publisher sources (Elsevier, Springer Nature, IOP, Wiley), mirroring the existing PDF failure report. Failed articles are written as tab-separated `doi`, `publisher`, `reason` entries to `results/failed_automated_articles.txt` by default.
+
+- Added `is_track_pdfs` and `track_pdfs_report_path` to `process_articles()` for local PDF workflows. When enabled (default), each processed PDF is recorded as a `filename<TAB>doi` entry in `logs/{keyword}_pdf_processed_dois.txt`, allowing re-runs to skip already-processed PDFs before any conversion or API calls. Falls back to scanning the output CSV when the tracking file does not yet exist.
+
+- Centralised default file paths (`results/failed_automated_articles.txt`, `agentic_evaluation_result.json`, `detailed_evaluation.json`) as class-level constants on `DefaultPaths` so they can be changed in one place.
 
 - Added image-aware fallback in `DataExtractionFlow.identify_materials_data_presence()`:
 

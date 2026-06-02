@@ -57,6 +57,8 @@ class PDFsProcessor:
         additional_figure_keywords: dict = None,
         save_failed_pdf_report: bool = True,
         failed_pdf_report_path: str = None,
+        is_track_pdfs: bool = True,
+        track_pdfs_report_path: str = None,
     ):
         """Class to process PDFs in a folder and process them to extract the required sections of the articles and save them to the MySQL database and CSV files and create a vector store if the relevant data is present in the article.
 
@@ -72,6 +74,8 @@ class PDFsProcessor:
             csv_batch_size (int): The number of rows to write to the CSV file at once (default: 1)
             is_sql_db (bool): A flag to indicate if the data should be written to the database (default: False)
             rag_config (RAGConfig): An instance of the RAGConfig class (default: RAGConfig())
+            is_track_pdfs (bool): Track processed DOIs in a txt file so re-runs skip already-processed PDFs (default: True)
+            track_pdfs_report_path (str): Path to the DOI tracking txt file; defaults to <csv_path>/pdf_<keyword>_processed_dois.txt
 
         Raises:
             ValueErrorHandler: If the folder_path, main_property_keyword, or property_keywords is not provided.
@@ -102,12 +106,17 @@ class PDFsProcessor:
             self.folder_path, "failed_pdf_filenames.txt"
         )
         self.failed_pdf_records = []
+        self.is_track_pdfs = is_track_pdfs
 
         self.identifier = ""
         self.doi = ""
         self.all_paths = DefaultPaths(self.keyword)
+        self.metadata_csv_filename = self.all_paths.METADATA_CSV_FILENAME
         self.db_configs = DatabaseConfig(self.keyword, self.is_sql_db)
         self.csv_path = self.db_configs.EXTRACTED_CSV_FOLDERPATH
+        self.track_pdfs_report_path = (
+            track_pdfs_report_path or self.all_paths.PDF_PROCESSED_DOIS_FILENAME
+        )
         self.paperdata_table_name = self.db_configs.PAPERDATA_TABLE_NAME
         self.sql_batch_size = sql_batch_size
         self.csv_batch_size = csv_batch_size
@@ -252,6 +261,59 @@ class PDFsProcessor:
         glyph_ratio = glyph_count / word_count
         return glyph_ratio > 0.1  # More than 10% GLYPH patterns indicates corruption
 
+    def _load_processed_pdfs(self) -> tuple:
+        """Return (processed_filenames, processed_dois) from the tracking file or CSV fallback.
+
+        Tracking file format: one ``basename<TAB>doi`` entry per line.
+        The filename set enables a pre-conversion skip; the DOI set handles the
+        CSV fallback path (where no filename mapping is available).
+        """
+        filenames, dois = set(), set()
+
+        if self.is_track_pdfs and os.path.exists(self.track_pdfs_report_path):
+            try:
+                with open(self.track_pdfs_report_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        parts = line.strip().split("\t", 1)
+                        if len(parts) == 2:
+                            filenames.add(parts[0])
+                            if parts[1]:
+                                dois.add(parts[1])
+                        elif len(parts) == 1 and parts[0]:
+                            dois.add(parts[0])
+                logger.debug(
+                    f"Loaded {len(filenames)} processed filename(s) and "
+                    f"{len(dois)} DOI(s) from tracking file."
+                )
+                return filenames, dois
+            except Exception as e:
+                logger.warning(
+                    f"Could not read tracking file, falling back to CSV: {e}"
+                )
+
+        # Fallback: DOI-only lookup from the output CSV (no filename info available)
+        output_file = f"{self.csv_path}/pdf_{self.keyword}_paragraphs.csv"
+        if os.path.exists(output_file):
+            try:
+                existing_df = pd.read_csv(output_file, dtype=str, usecols=["doi"])
+                dois = set(existing_df["doi"].dropna().str.strip())
+            except Exception as e:
+                logger.warning(f"Could not load processed DOIs from CSV: {e}")
+        return filenames, dois
+
+    def _mark_pdf_processed(self, pdf_file: str, doi: str) -> None:
+        """Append a ``basename<TAB>doi`` entry to the tracking file."""
+        if not self.is_track_pdfs:
+            return
+        try:
+            parent = os.path.dirname(self.track_pdfs_report_path)
+            if parent:
+                os.makedirs(parent, exist_ok=True)
+            with open(self.track_pdfs_report_path, "a", encoding="utf-8") as f:
+                f.write(f"{os.path.basename(pdf_file)}\t{doi}\n")
+        except Exception as e:
+            logger.warning(f"Could not write to tracking file: {e}")
+
     def _get_metadata_from_csv(self, doi: str):
         """Try to get metadata from the local metadata CSV file.
 
@@ -289,22 +351,30 @@ class PDFsProcessor:
         csv_dataframes = []
         pdf_files = glob.glob(f"{self.folder_path}/*.pdf")
         total_files = len(pdf_files)
+        processed_filenames, processed_dois = self._load_processed_pdfs()
+        skipped_count = 0
         logger.verbose(f"\n\nParsing of PDFs started...")
         logger.debug(f"\nTotal PDF files found: {total_files}")
+        if processed_filenames or processed_dois:
+            logger.info(
+                f"Tracking file loaded: {len(processed_filenames)} filename(s) and "
+                f"{len(processed_dois)} DOI(s) — matching PDFs will be skipped."
+            )
         for pdf_file in tqdm(
             pdf_files, desc="Processing PDFs", total=total_files, colour="#d6adff"
         ):
             try:
+                # Pre-conversion skip: by filename (works for any filename format)
+                if os.path.basename(pdf_file) in processed_filenames:
+                    skipped_count += 1
+                    logger.debug(
+                        f"Skipping already-processed PDF: {os.path.basename(pdf_file)}"
+                    )
+                    continue
+
                 # Convert PDF to Markdown text
                 pdf_to_md = PDFToMarkdownText(source=pdf_file)
                 md_text = pdf_to_md.convert_to_markdown()
-                print(
-                    f"\n{'='*30} MARKDOWN DEBUG START: {os.path.basename(pdf_file)} {'='*30}\n"
-                )
-                print(md_text if md_text is not None else "None")
-                print(
-                    f"\n{'='*30} MARKDOWN DEBUG END: {os.path.basename(pdf_file)} {'='*30}\n"
-                )
 
                 # Handle empty or corrupted text detection result
                 if (
@@ -367,6 +437,7 @@ class PDFsProcessor:
                         )
                         csv_dataframes = []
                         time.sleep(5)
+                    self._mark_pdf_processed(pdf_file, self.doi)
                     continue
 
                 # Extract DOI from the converted markdown text
@@ -398,6 +469,14 @@ class PDFsProcessor:
                             f"DOI not found in text/CrossRef for {pdf_file}. "
                             f"Using filename-derived DOI: {self.doi}"
                         )
+
+                # Secondary skip: DOI-based fallback (CSV path, or tracking file DOI column)
+                if self.doi and self.doi in processed_dois:
+                    skipped_count += 1
+                    logger.debug(
+                        f"Skipping already-processed PDF (DOI match): {os.path.basename(pdf_file)}"
+                    )
+                    continue
 
                 # Get metadata from external API (with CSV fallback) using DOI
                 title, journal_name, publisher = "", "", ""
@@ -447,6 +526,7 @@ class PDFsProcessor:
 
                 if row["is_property_mentioned"].iloc[0] == "1":
                     self.valid_property_articles += 1
+                self._mark_pdf_processed(pdf_file, self.doi)
 
                 if len(sql_dataframes) == self.sql_batch_size:
                     final_sql_df = pd.concat(sql_dataframes, ignore_index=True)
@@ -495,6 +575,8 @@ class PDFsProcessor:
                 logger.error(f"Error writing remaining dataframes: {e}")
         logger.verbose(f"\n\nParsing of PDFs completed...")
         logger.info(f"\nTotal valid property articles: {self.valid_property_articles}")
+        if skipped_count:
+            logger.info(f"Skipped {skipped_count} already-processed PDF(s).")
         if self.failed_pdf_records:
             logger.warning(
                 f"Total skipped PDFs due to invalid filename DOI fallback: {len(self.failed_pdf_records)}"

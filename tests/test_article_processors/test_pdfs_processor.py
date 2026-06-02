@@ -5,7 +5,7 @@ import glob
 import os
 from unittest.mock import patch, MagicMock, mock_open
 
-from comproscanner.utils.configs import RAGConfig, ArticleRelatedKeywords
+from comproscanner.utils.configs import RAGConfig, ArticleRelatedKeywords, DefaultPaths
 from comproscanner.utils.error_handler import (
     ValueErrorHandler,
     KeyboardInterruptHandler,
@@ -54,6 +54,99 @@ def test_init_valid_parameters(sample_property_keywords):
     assert processor.failed_pdf_report_path == os.path.join(
         "/test/path", "failed_pdf_filenames.txt"
     )
+    assert processor.is_track_pdfs is True
+    assert processor.track_pdfs_report_path == DefaultPaths("piezoelectric").PDF_PROCESSED_DOIS_FILENAME
+
+
+def test_init_tracking_disabled(sample_property_keywords):
+    """Test that tracking can be disabled"""
+    processor = PDFsProcessor(
+        folder_path="/test/path",
+        main_property_keyword="piezoelectric",
+        property_keywords=sample_property_keywords,
+        is_track_pdfs=False,
+    )
+    assert processor.is_track_pdfs is False
+
+
+def test_init_custom_track_pdfs_report_path(sample_property_keywords):
+    """Test initialization with a custom DOI tracking file path"""
+    processor = PDFsProcessor(
+        folder_path="/test/path",
+        main_property_keyword="piezoelectric",
+        property_keywords=sample_property_keywords,
+        track_pdfs_report_path="/custom/tracking.txt",
+    )
+    assert processor.track_pdfs_report_path == "/custom/tracking.txt"
+
+
+def test_load_processed_pdfs_from_tracking_file(pdfs_processor):
+    """_load_processed_pdfs reads basename+DOI pairs from the tracking file"""
+    tracking_content = "paper1.pdf\t10.1234/a\npaper2.pdf\t10.5678/b\n"
+    with (
+        patch("os.path.exists", return_value=True),
+        patch("builtins.open", mock_open(read_data=tracking_content)),
+    ):
+        filenames, dois = pdfs_processor._load_processed_pdfs()
+    assert filenames == {"paper1.pdf", "paper2.pdf"}
+    assert dois == {"10.1234/a", "10.5678/b"}
+
+
+def test_load_processed_pdfs_legacy_doi_only_format(pdfs_processor):
+    """_load_processed_pdfs handles legacy tracking files that contain only DOIs"""
+    tracking_content = "10.1234/a\n10.5678/b\n"
+    with (
+        patch("os.path.exists", return_value=True),
+        patch("builtins.open", mock_open(read_data=tracking_content)),
+    ):
+        filenames, dois = pdfs_processor._load_processed_pdfs()
+    assert filenames == set()
+    assert dois == {"10.1234/a", "10.5678/b"}
+
+
+def test_load_processed_pdfs_fallback_to_csv(pdfs_processor):
+    """_load_processed_pdfs falls back to the CSV when the tracking file is absent"""
+    csv_data = pd.DataFrame({"doi": ["10.1234/a", "10.9999/c"]})
+    with (
+        patch("os.path.exists", side_effect=lambda p: p.endswith(".csv")),
+        patch("pandas.read_csv", return_value=csv_data),
+    ):
+        filenames, dois = pdfs_processor._load_processed_pdfs()
+    assert filenames == set()
+    assert dois == {"10.1234/a", "10.9999/c"}
+
+
+def test_load_processed_pdfs_no_sources(pdfs_processor):
+    """_load_processed_pdfs returns empty sets when neither file exists"""
+    with patch("os.path.exists", return_value=False):
+        filenames, dois = pdfs_processor._load_processed_pdfs()
+    assert filenames == set()
+    assert dois == set()
+
+
+def test_mark_pdf_processed_writes_to_file(pdfs_processor):
+    """_mark_pdf_processed appends basename<TAB>doi to the tracking file"""
+    m = mock_open()
+    with (
+        patch("os.makedirs"),
+        patch("builtins.open", m),
+    ):
+        pdfs_processor._mark_pdf_processed("/some/path/paper1.pdf", "10.1234/test")
+    m().write.assert_called_once_with("paper1.pdf\t10.1234/test\n")
+
+
+def test_mark_pdf_processed_skipped_when_disabled(sample_property_keywords):
+    """_mark_pdf_processed does nothing when is_track_pdfs is False"""
+    processor = PDFsProcessor(
+        folder_path="/test/path",
+        main_property_keyword="piezoelectric",
+        property_keywords=sample_property_keywords,
+        is_track_pdfs=False,
+    )
+    m = mock_open()
+    with patch("builtins.open", m):
+        processor._mark_pdf_processed("/some/path/paper1.pdf", "10.1234/test")
+    m.assert_not_called()
 
 
 def test_init_custom_failed_pdf_report_path(sample_property_keywords):
@@ -305,6 +398,22 @@ def test_process_pdfs_keyboard_interrupt(mock_glob, pdfs_processor):
     ):
         with pytest.raises(KeyboardInterruptHandler):
             pdfs_processor.process_pdfs()
+
+
+@patch("glob.glob")
+def test_process_pdfs_skips_already_processed(mock_glob, pdfs_processor):
+    """PDFs whose basename is in the tracking file are skipped before conversion"""
+    mock_glob.return_value = ["/test/path/paper1.pdf"]
+
+    with (
+        patch(
+            "comproscanner.article_processors.pdfs_processor.PDFsProcessor._load_processed_pdfs",
+            return_value=({"paper1.pdf"}, {"10.1234/test.567"}),
+        ),
+        patch.object(PDFToMarkdownText, "convert_to_markdown") as mock_convert,
+    ):
+        pdfs_processor.process_pdfs()
+        mock_convert.assert_not_called()
 
 
 @patch("glob.glob")

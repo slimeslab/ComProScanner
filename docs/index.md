@@ -13,6 +13,7 @@
   <a href="https://pypistats.org/packages/comproscanner"><img src="https://custom-icon-badges.demolab.com/pypi/dm/comproscanner?logo=download&logoColor=white&color=purple" alt="Downloads"></a>
   <a href="https://deepwiki.com/slimeslab/ComProScanner"><img src="https://custom-icon-badges.demolab.com/badge/Ask%20DeepWiki-brightgreen.svg?logo=deepwikidevin&logoColor=white&labelColor=grey&color=5ab998" alt="Ask DeepWiki"></a>
   <a href="https://doi.org/10.1039/D5DD00521C"><img src="https://custom-icon-badges.demolab.com/badge/Digital_Discovery-10.1039/D5DD00521C-brightgreen.svg?logo=rsc&logoColor=white&color=c8c300" alt="Digital Discovery"></a>
+  <a href="https://arxiv.org/abs/2606.00065"><img src="https://custom-icon-badges.demolab.com/badge/arXiv-2606.00065-brightgreen.svg?logo=arxiv&logoColor=white&color=b22929" alt="arXiv Preprint"></a>
 </p>
 
 ## Welcome
@@ -155,15 +156,25 @@ Read the details of ComProScanner in the following Digital Discovery paper: [10.
 If you use ComProScanner in your research, please cite:
 
 ```bibtex
-@Article{roy2026comproscannermultiagentbasedframework,
-author ="Roy, Aritra and Grisan, Enrico and Buckeridge, John and Gattinoni, Chiara",
-title  ="ComProScanner: a multi-agent based framework for composition-property structured data extraction from scientific literature",
-journal  ="Digital Discovery",
-year  ="2026",
-pages  ="Accepted",
-publisher  ="RSC",
-doi  ="10.1039/D5DD00521C",
-url  ="https://doi.org/10.1039/D5DD00521C"
+@article{roy2026comproscannermultiagentbasedframework,
+      author ="Roy, Aritra and Grisan, Enrico and Buckeridge, John and Gattinoni, Chiara",
+      title  ="ComProScanner: a multi-agent based framework for composition-property structured data extraction from scientific literature",
+      journal  ="Digital Discovery",
+      year  ="2026",
+      pages  ="Accepted",
+      publisher  ="RSC",
+      doi  ="10.1039/D5DD00521C",
+      url  ="https://doi.org/10.1039/D5DD00521C"
+}
+@misc{roy2026comproscanner_vlm,
+      title={Beyond Text and Tables: Vision-Language Model Integration in ComProScanner for Extracting Materials Data from Scientific Figures with High Accuracy}, 
+      author={Aritra Roy and Enrico Grisan and Chiara Gattinoni and John Buckeridge},
+      year={2026},
+      eprint={2606.00065},
+      archivePrefix={arXiv},
+      primaryClass={cs.IR},
+      doi={10.48550/arXiv.2606.00065},
+      url={https://arxiv.org/abs/2606.00065}, 
 }
 ```
 

@@ -32,6 +32,7 @@ from comproscanner.post_processing.evaluation.eval_flow.eval_flow import (
 from comproscanner.post_processing.evaluation.eval_flow.crews.composition_evaluation_crew.composition_evaluation_crew import (
     GetValueErrorThresholdTool,
 )
+from comproscanner.utils.configs import DefaultPaths
 from comproscanner.utils.error_handler import ValueErrorHandler, BaseError
 from crewai import LLM
 
@@ -45,7 +46,7 @@ class TestAgentEvaluationState:
 
         assert state.ground_truth_file == ""
         assert state.test_data_file == ""
-        assert state.output_file == "agentic_evaluation_result.json"
+        assert state.output_file == DefaultPaths.AGENTIC_EVALUATION_RESULT_FILENAME
         assert state.extraction_agent_model_name == "gpt-4o-mini"
         assert state.is_synthesis_evaluation is True
         assert state.ground_truth_data == {}

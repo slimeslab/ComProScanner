@@ -50,6 +50,28 @@ preferred-citation:
   title: "ComProScanner: a multi-agent based framework for composition-property structured data extraction from scientific literature"
   type: article
   url: "https://doi.org/10.1039/D5DD00521C"
+references:
+  - authors:
+      - family-names: Roy
+        given-names: Aritra
+        orcid: "https://orcid.org/0000-0003-0243-9124"
+      - family-names: Grisan
+        given-names: Enrico
+        orcid: "https://orcid.org/0000-0002-7365-5652"
+      - family-names: Gattinoni
+        given-names: Chiara
+        orcid: "https://orcid.org/0000-0002-3376-6374"
+      - family-names: Buckeridge
+        given-names: John
+        orcid: "https://orcid.org/0000-0002-2537-5082"
+    identifiers:
+      - type: other
+        value: "arXiv:2606.00065"
+        description: "arXiv preprint"
+    title: "Beyond Text and Tables: Vision-Language Model Integration in ComProScanner for Extracting Materials Data from Scientific Figures with High Accuracy"
+    type: article
+    year: 2026
+    url: "https://arxiv.org/abs/2606.00065"
 repository-code: "https://github.com/slimeslab/ComProScanner"
 license: MIT
 title: "ComProScanner: A multi-agent based framework for composition-property structured data extraction from scientific literature"

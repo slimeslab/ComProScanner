@@ -16,6 +16,7 @@ Main functions:
 
 import sys
 import os
+from .utils.configs.paths_config import DefaultPaths
 
 # Check if the script is running under pytest
 _is_testing = "pytest" in sys.modules or "PYTEST_CURRENT_TEST" in os.environ
@@ -221,7 +222,7 @@ if not _is_testing:
     def evaluate_agentic(
         ground_truth_file=None,
         test_data_file=None,
-        output_file="agentic_evaluation_result.json",
+        output_file=DefaultPaths.AGENTIC_EVALUATION_RESULT_FILENAME,
         extraction_agent_model_name="gpt-4o-mini",
         is_synthesis_evaluation=True,
         weights=None,

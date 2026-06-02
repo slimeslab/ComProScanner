@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/aritraroy24/ComProScanner/refs/heads/main/assets/comproscanner_logo.png" alt="ComProScanner Logo" width="500"/>
 </p>
 
-[![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg?logo=python&logoColor=white)](https://www.python.org/downloads/) [![License: MIT](https://custom-icon-badges.demolab.com/badge/license-MIT-brown.svg?logo=law&logoColor=white)](https://opensource.org/licenses/MIT) [![PyPI](https://img.shields.io/pypi/v/comproscanner?logo=pypi&logoColor=white)](https://pypi.org/project/comproscanner/) [![Documentation](https://custom-icon-badges.demolab.com/badge/docs-latest-brightgreen.svg?logo=materialformkdocs&logoColor=white)](https://slimeslab.github.io/ComProScanner/) [![Coverage](https://img.shields.io/codecov/c/github/aritraroy24/ComProScanner?logo=codecov&logoColor=white&label=coverage&color=e62277)](https://codecov.io/gh/aritraroy24/ComProScanner) [![PyPI - Downloads](https://custom-icon-badges.demolab.com/pypi/dm/comproscanner?logo=download&logoColor=white&color=purple)](https://pypistats.org/packages/comproscanner) [![Ask DeepWiki](https://custom-icon-badges.demolab.com/badge/Ask%20DeepWiki-brightgreen.svg?logo=deepwikidevin&logoColor=white&labelColor=grey&color=5ab998)](https://deepwiki.com/slimeslab/ComProScanner) [![Digital Discovery](https://custom-icon-badges.demolab.com/badge/Digital_Discovery-10.1039/D5DD00521C-brightgreen.svg?logo=rsc&logoColor=white&color=c8c300)](https://doi.org/10.1039/D5DD00521C)
+[![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg?logo=python&logoColor=white)](https://www.python.org/downloads/) [![License: MIT](https://custom-icon-badges.demolab.com/badge/license-MIT-brown.svg?logo=law&logoColor=white)](https://opensource.org/licenses/MIT) [![PyPI](https://img.shields.io/pypi/v/comproscanner?logo=pypi&logoColor=white)](https://pypi.org/project/comproscanner/) [![Documentation](https://custom-icon-badges.demolab.com/badge/docs-latest-brightgreen.svg?logo=materialformkdocs&logoColor=white)](https://slimeslab.github.io/ComProScanner/) [![Coverage](https://img.shields.io/codecov/c/github/aritraroy24/ComProScanner?logo=codecov&logoColor=white&label=coverage&color=e62277)](https://codecov.io/gh/aritraroy24/ComProScanner) [![PyPI - Downloads](https://custom-icon-badges.demolab.com/pypi/dm/comproscanner?logo=download&logoColor=white&color=purple)](https://pypistats.org/packages/comproscanner) [![Ask DeepWiki](https://custom-icon-badges.demolab.com/badge/Ask%20DeepWiki-brightgreen.svg?logo=deepwikidevin&logoColor=white&labelColor=grey&color=5ab998)](https://deepwiki.com/slimeslab/ComProScanner) [![Digital Discovery](https://custom-icon-badges.demolab.com/badge/Digital_Discovery-10.1039/D5DD00521C-brightgreen.svg?logo=rsc&logoColor=white&color=c8c300)](https://doi.org/10.1039/D5DD00521C) [![arXiv Preprint](https://custom-icon-badges.demolab.com/badge/arXiv-2606.00065-brightgreen.svg?logo=arxiv&logoColor=white&color=b22929)](https://arxiv.org/abs/2606.00065)
 
 # ComProScanner
 
@@ -129,20 +129,30 @@ The ComProScanner workflow consists of four main stages:
 
 ## Citation
 
-If you use ComProScanner in your research, please cite:
+If you use ComProScanner in your research, please cite the following papers:
 
 ```bibtex
-@Article{roy2026comproscanner,
-  title={ComProScanner: a multi-agent based framework for composition-property structured data extraction from scientific literature},
-  author={Roy, Aritra and Grisan, Enrico and Buckeridge, John and Gattinoni, Chiara},
-  journal={Digital Discovery},
-  volume={5},
-  number={4},
-  pages={1794--1808},
-  year={2026},
-  publisher={Royal Society of Chemistry},
-  doi  ="10.1039/D5DD00521C",
-  url  ="https://doi.org/10.1039/D5DD00521C"
+@article{roy2026comproscanner,
+      title={ComProScanner: a multi-agent based framework for composition-property structured data extraction from scientific literature},
+      author={Roy, Aritra and Grisan, Enrico and Buckeridge, John and Gattinoni, Chiara},
+      journal={Digital Discovery},
+      volume={5},
+      number={4},
+      pages={1794--1808},
+      year={2026},
+      publisher={Royal Society of Chemistry},
+      doi  ="10.1039/D5DD00521C",
+      url  ="https://doi.org/10.1039/D5DD00521C"
+}
+@misc{roy2026comproscanner_vlm,
+      title={Beyond Text and Tables: Vision-Language Model Integration in ComProScanner for Extracting Materials Data from Scientific Figures with High Accuracy}, 
+      author={Aritra Roy and Enrico Grisan and Chiara Gattinoni and John Buckeridge},
+      year={2026},
+      eprint={2606.00065},
+      archivePrefix={arXiv},
+      primaryClass={cs.IR},
+      doi={10.48550/arXiv.2606.00065},
+      url={https://arxiv.org/abs/2606.00065}, 
 }
 ```
 

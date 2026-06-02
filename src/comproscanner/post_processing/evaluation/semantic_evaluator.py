@@ -14,7 +14,7 @@ from difflib import SequenceMatcher
 from pathlib import Path
 
 # Custom imports
-from ...utils.configs import CustomDictionary
+from ...utils.configs import CustomDictionary, DefaultPaths
 from ...utils.error_handler import ValueErrorHandler
 
 class MaterialsDataSemanticEvaluator:
@@ -1230,7 +1230,7 @@ class MaterialsDataSemanticEvaluator:
         test_data_file=None,
         extraction_agent_model_name=None,
         weights=None,
-        output_file="detailed_evaluation.json",
+        output_file=DefaultPaths.DETAILED_EVALUATION_FILENAME,
         is_synthesis_evaluation=True,
         value_error_thresholds=None,
     ):

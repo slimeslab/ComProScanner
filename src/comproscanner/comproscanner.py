@@ -44,6 +44,7 @@ from .post_processing.evaluation.eval_flow.eval_flow import (
 # utils
 from .utils.error_handler import ValueErrorHandler, KeyboardInterruptHandler
 from .utils.logger import setup_logger
+from .utils.configs.paths_config import DefaultPaths
 from .utils.configs.rag_config import RAGConfig
 from .utils.configs.llm_config import LLMConfig
 
@@ -154,7 +155,7 @@ class ComProScanner:
             save_failed_pdf_report (bool, optional): For `pdfs` source only. If True, save skipped/failed filename-based DOI fallback cases to a text report. Defaults to True.
             failed_pdf_report_path (str, optional): For `pdfs` source only. Custom path for failed PDF filename report. Defaults to None (uses `{folder_path}/failed_pdf_filenames.txt`).
             save_failed_automated_report (bool, optional): For automated publisher sources (elsevier, springer, iop, wiley). If True, save failed/unparseable articles to a report. Defaults to True.
-            failed_automated_report_path (str, optional): Custom path for the automated failure report. Defaults to None (uses `results/failed_automated_articles.txt`).
+            failed_automated_report_path (str, optional): Custom path for the automated failure report. Defaults to None (uses `results/failed_automated_articles.txt`)..
 
         Raises:
             ValueErrorHandler: If property_keywords is not provided.
@@ -899,7 +900,7 @@ class ComProScanner:
         test_data_file: str = None,
         extraction_agent_model_name: str = None,
         weights: dict[str, float] = None,
-        output_file: str = "agentic_evaluation_result.json",
+        output_file: str = DefaultPaths.AGENTIC_EVALUATION_RESULT_FILENAME,
         is_synthesis_evaluation: bool = True,
         llm: Optional[LLM] = None,
         value_error_thresholds=None,

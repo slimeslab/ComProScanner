@@ -152,7 +152,7 @@ class SpringerArticleProcessor:
         )
         self.save_failed_automated_report = save_failed_automated_report
         self.failed_automated_report_path = (
-            failed_automated_report_path or "results/failed_automated_articles.txt"
+            failed_automated_report_path or self.all_paths.FAILED_AUTOMATED_ARTICLES_FILENAME
         )
         self.failed_automated_count = 0
 

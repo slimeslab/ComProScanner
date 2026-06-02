@@ -1,6 +1,6 @@
 ---
 date:
-  created: 2026-05-08
+  created: 2026-06-03
 authors:
   - aritraroy24
 cover_image: https://i.ibb.co/jPJf86Qg/comproscanner-vlm-integration.png

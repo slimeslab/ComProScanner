@@ -20,6 +20,7 @@ from pydantic import BaseModel, ConfigDict
 from crewai.flow.flow import Flow, listen, start, router, or_
 from crewai import LLM
 
+from comproscanner.utils.configs import DefaultPaths
 from comproscanner.utils.error_handler import ValueErrorHandler
 from comproscanner.utils.logger import setup_logger
 from .crews.composition_evaluation_crew.composition_evaluation_crew import (
@@ -41,7 +42,7 @@ class AgentEvaluationState(BaseModel):
     # Input files and paths
     ground_truth_file: str = ""
     test_data_file: str = ""
-    output_file: str = "agentic_evaluation_result.json"
+    output_file: str = DefaultPaths.AGENTIC_EVALUATION_RESULT_FILENAME
 
     # Evaluation parameters
     extraction_agent_model_name: str = "gpt-4o-mini"
@@ -96,7 +97,7 @@ class MaterialsDataAgenticEvaluatorFlow(Flow[AgentEvaluationState]):
         ground_truth_file: str = None,
         test_data_file: str = None,
         extraction_agent_model_name: str = None,
-        output_file: str = "agentic_evaluation_result.json",
+        output_file: str = DefaultPaths.AGENTIC_EVALUATION_RESULT_FILENAME,
         is_synthesis_evaluation: bool = True,
         weights: Dict[str, float] = None,
         llm: Optional[LLM] = None,
