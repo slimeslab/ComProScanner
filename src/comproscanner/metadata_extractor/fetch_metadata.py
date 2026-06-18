@@ -115,8 +115,15 @@ class FetchMetadata:
         Returns:
             str: The constructed URL
         """
-        base = f"{self.base_url}PUBYEAR+%3D+{year}+{query}"
-        url = base + (f"+{special_query}" if special_query else "") + "&count=200"
+        encoded_query = urllib.parse.quote(query.replace(" ", " AND "))
+        encoded_special_query = (
+            urllib.parse.quote(special_query.replace(" ", " AND "))
+            if special_query
+            else ""
+        )
+
+        base = f"{self.base_url}PUBYEAR+%3D+{year}+{encoded_query}"
+        url = base + (f"+{encoded_special_query}" if encoded_special_query else "") + "&count=200"
         url += f"&cursor={cursor}"
         return url
 
