@@ -102,7 +102,7 @@ class FetchMetadata:
         }
         self.is_exceeded = False
 
-    def _construct_url(self, cursor, year, query, special_query):
+        def _construct_url(self, cursor, year, query, special_query):
         """
         Construct the URL for the request with cursor-based pagination
 
@@ -116,12 +116,12 @@ class FetchMetadata:
             str: The constructed URL
         """
         search_query = query.replace("_", " ")
-encoded_query = urllib.parse.quote(search_query.replace(" ", " AND "))
-encoded_special_query = (
-    urllib.parse.quote(special_query.replace("_", " ").replace(" ", " AND "))
-    if special_query
-    else ""
-)
+        encoded_query = urllib.parse.quote(search_query.replace(" ", " AND "))
+        encoded_special_query = (
+            urllib.parse.quote(special_query.replace("_", " ").replace(" ", " AND "))
+            if special_query
+            else ""
+        )
 
         base = f"{self.base_url}PUBYEAR+%3D+{year}+{encoded_query}"
         url = base + (f"+{encoded_special_query}" if encoded_special_query else "") + "&count=200"

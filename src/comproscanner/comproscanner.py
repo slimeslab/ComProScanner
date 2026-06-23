@@ -53,14 +53,14 @@ logger = setup_logger("comproscanner.log")
 
 
 class ComProScanner:
-    def __init__(self, main_property_keyword: str = None):
-    if main_property_keyword is None:
-        raise ValueErrorHandler(
-            "Please provide a main property keyword to proceed."
-        )
+        def __init__(self, main_property_keyword: str = None):
+        if main_property_keyword is None:
+            raise ValueErrorHandler(
+                "Please provide a main property keyword to proceed."
+            )
 
-    self.main_property_keyword = main_property_keyword.replace(" ", "_")
-    self.main_property_search_keyword = self.main_property_keyword.replace("_", " ")
+        self.main_property_keyword = main_property_keyword.replace(" ", "_")
+        self.main_property_search_keyword = self.main_property_keyword.replace("_", " ")
 
     def collect_metadata(
         self,
