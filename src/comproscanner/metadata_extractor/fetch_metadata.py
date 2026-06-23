@@ -103,30 +103,30 @@ class FetchMetadata:
         self.is_exceeded = False
 
         def _construct_url(self, cursor, year, query, special_query):
-        """
-        Construct the URL for the request with cursor-based pagination
+            """
+            Construct the URL for the request with cursor-based pagination
 
-        Args:
-            cursor (str): The cursor value ('*' for first request, or next cursor from previous response)
-            year (int): The year for the request
-            query (str): The query for the request
-            special_query (str): The special query for the request
+            Args:
+                cursor (str): The cursor value ('*' for first request, or next cursor from previous response)
+                year (int): The year for the request
+                query (str): The query for the request
+                special_query (str): The special query for the request
 
-        Returns:
-            str: The constructed URL
-        """
-        search_query = query.replace("_", " ")
-        encoded_query = urllib.parse.quote(search_query.replace(" ", " AND "))
-        encoded_special_query = (
-            urllib.parse.quote(special_query.replace("_", " ").replace(" ", " AND "))
-            if special_query
-            else ""
-        )
+            Returns:
+                str: The constructed URL
+            """
+            search_query = query.replace("_", " ")
+            encoded_query = urllib.parse.quote(search_query.replace(" ", " AND "))
+            encoded_special_query = (
+                urllib.parse.quote(special_query.replace("_", " ").replace(" ", " AND "))
+                if special_query
+                else ""
+            )
 
-        base = f"{self.base_url}PUBYEAR+%3D+{year}+{encoded_query}"
-        url = base + (f"+{encoded_special_query}" if encoded_special_query else "") + "&count=200"
-        url += f"&cursor={cursor}"
-        return url
+            base = f"{self.base_url}PUBYEAR+%3D+{year}+{encoded_query}"
+            url = base + (f"+{encoded_special_query}" if encoded_special_query else "") + "&count=200"
+            url += f"&cursor={cursor}"
+            return url
 
     def _send_request(self, url):
         """
