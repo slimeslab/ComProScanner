@@ -53,7 +53,7 @@ logger = setup_logger("comproscanner.log")
 
 
 class ComProScanner:
-        def __init__(self, main_property_keyword: str = None):
+    def __init__(self, main_property_keyword: str = None):
         if main_property_keyword is None:
             raise ValueErrorHandler(
                 "Please provide a main property keyword to proceed."
