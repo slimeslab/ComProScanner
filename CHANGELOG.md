@@ -6,6 +6,11 @@
 
 - Centralised non-keyword default file paths (`results/failed_automated_articles.txt`, `agentic_evaluation_result.json`, `detailed_evaluation.json`) as class-level constants on `DefaultPaths` so they can be changed in one place.
 
+
+### Fixed
+
+- Handled multi-word property keywords (e.g.,  _thermal conductivity_) for accurate Scopus search, uniform filename handling (`thermal conductivity` resolves to `thermal_conductivity_metadata.csv` or similar) and restoring the original form `thermal conductivity` in the data extraction RAG search query instead of `thermal_conductivity`. This fix is associated with [#5](https://github.com/slimeslab/ComProScanner/pull/5) and contributed by [@WilmerGaspar](https://github.com/WilmerGaspar).
+
 ---
 
 # 2026.05.19
