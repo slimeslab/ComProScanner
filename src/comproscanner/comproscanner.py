@@ -54,11 +54,13 @@ logger = setup_logger("comproscanner.log")
 
 class ComProScanner:
     def __init__(self, main_property_keyword: str = None):
-        self.main_property_keyword = main_property_keyword
-        if self.main_property_keyword is None:
+        if main_property_keyword is None:
             raise ValueErrorHandler(
                 "Please provide a main property keyword to proceed."
             )
+
+        self.main_property_keyword = main_property_keyword.replace(" ", "_")
+        self.main_property_search_keyword = self.main_property_keyword.replace("_", " ")
 
     def collect_metadata(
         self,
@@ -501,7 +503,7 @@ class ComProScanner:
                 f"results/extracted_data/{self.main_property_keyword}/related_figures"
             )
         if materials_data_identifier_query is None:
-            materials_data_identifier_query = f"Is there any material chemical composition and corresponding {self.main_property_keyword} value mentioned in the paper? Give one word answer. Either yes or no."
+            materials_data_identifier_query = f"Is there any material chemical composition and corresponding {self.main_property_search_keyword} value mentioned in the paper? Give one word answer. Either yes or no."
         preparator = MatPropDataPreparator(
             main_property_keyword=self.main_property_keyword,
             main_extraction_keyword=main_extraction_keyword,
