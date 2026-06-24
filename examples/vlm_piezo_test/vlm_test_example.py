@@ -204,7 +204,7 @@ if __name__ == "__main__":
         test_doi_list_file="random_dois_for_vlm_test.txt",
         is_extract_synthesis_data=False,  # For this test, we are only evaluating the composition-property extraction capability of the VLM, so we set this to False to save time and cost.
         model="deepseek/deepseek-chat",
-        vlm_model="google/gemini-3-flash-preview",
+        vlm_model="gemini/gemini-3-flash-preview",
         output_log_folder="vlm_piezo_test/model-logs/logs/google/gemini-3-flash-preview",
         task_output_folder="vlm_piezo_test/model-logs/task_outputs/google/gemini-3-flash-preview",
         materials_data_identifier_query="Is there any ceramic, composite, or crystal material with its chemical composition or doping data, and corresponding d33 piezoelectric coefficient value (in pC/N or pm/V units) mentioned in the text of this paper? Give one word answer - either 'yes' or 'no'. Only answer 'yes' if ALL of the following criteria are met: (1) The material is specifically a ceramic, composite, doped, or crystal, or different environments of materials (exclude all polymers including PVDF, PLLA, and similar), (2) A numerical d33 value with units pC/N or pm/V is explicitly stated, associated with either a specific material composition/environment or a doping concentration variable (e.g. x mol%, at%) — note that in figures/graphs, d33 values plotted against doping concentrations or composition variables also count as relevant data.",

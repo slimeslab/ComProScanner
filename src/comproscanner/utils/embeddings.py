@@ -44,6 +44,10 @@ except ImportError as e:
 class MultiModelEmbeddings(Embeddings):
     """Embeddings class supporting multiple model types optimized for processing pre-chunked articles"""
 
+    # Class-level cache: model_name -> {"tokenizer": ..., "model": ..., "device": ...}
+    # Ensures the HuggingFace model is loaded onto GPU only once regardless of how many instances are created across papers.
+    _hf_model_cache: dict = {}
+
     def __init__(self, rag_config: Any):
         """
         Args:
@@ -79,17 +83,32 @@ class MultiModelEmbeddings(Embeddings):
             return "openai"
 
     def _init_huggingface(self):
-        """Initialize HuggingFace model (works with any transformer model)"""
-        # Strip the prefix "huggingface:" from the model name
+        """Initialize HuggingFace model, reusing a cached instance if already loaded."""
         model_name = self.rag_config.embedding_model
         if model_name.startswith("huggingface:"):
             model_name = model_name[len("huggingface:") :]
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModel.from_pretrained(model_name)
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model.to(self.device)
-        self.model.eval()
+        if model_name not in MultiModelEmbeddings._hf_model_cache:
+            logger.info(
+                f"Loading HuggingFace embedding model '{model_name}' onto device for the first time."
+            )
+            tokenizer = AutoTokenizer.from_pretrained(model_name)
+            model = AutoModel.from_pretrained(model_name)
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            model.to(device)
+            model.eval()
+            MultiModelEmbeddings._hf_model_cache[model_name] = {
+                "tokenizer": tokenizer,
+                "model": model,
+                "device": device,
+            }
+        else:
+            logger.debug(f"Reusing cached HuggingFace embedding model '{model_name}'.")
+
+        cached = MultiModelEmbeddings._hf_model_cache[model_name]
+        self.tokenizer = cached["tokenizer"]
+        self.model = cached["model"]
+        self.device = cached["device"]
 
     def _init_sentence_transformers(self):
         """Initialize SentenceTransformers model"""
@@ -176,9 +195,20 @@ class MultiModelEmbeddings(Embeddings):
         sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, 1)
         sum_mask = torch.sum(input_mask_expanded, 1)
         sum_mask = torch.clamp(sum_mask, min=1e-9)
-        embedding = (sum_embeddings / sum_mask).cpu().numpy()[0]
+        embedding = (sum_embeddings / sum_mask).cpu().numpy()[0].tolist()
 
-        return embedding.tolist()
+        del (
+            inputs,
+            outputs,
+            token_embeddings,
+            input_mask_expanded,
+            sum_embeddings,
+            sum_mask,
+        )
+        if self.device == "cuda":
+            torch.cuda.empty_cache()
+
+        return embedding
 
     def _embed_document_sentence_transformers(self, text: str) -> List[float]:
         """SentenceTransformers document embedding implementation for a single chunk"""
