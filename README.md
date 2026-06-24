@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/aritraroy24/ComProScanner/refs/heads/main/assets/comproscanner_logo.png" alt="ComProScanner Logo" width="500"/>
+  <img src="https://raw.githubusercontent.com/slimeslab/ComProScanner/refs/heads/main/assets/comproscanner_logo.png" alt="ComProScanner Logo" width="500"/>
 </p>
 
-[![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg?logo=python&logoColor=white)](https://www.python.org/downloads/) [![License: MIT](https://custom-icon-badges.demolab.com/badge/license-MIT-brown.svg?logo=law&logoColor=white)](https://opensource.org/licenses/MIT) [![PyPI](https://img.shields.io/pypi/v/comproscanner?logo=pypi&logoColor=white)](https://pypi.org/project/comproscanner/) [![Documentation](https://custom-icon-badges.demolab.com/badge/docs-latest-brightgreen.svg?logo=materialformkdocs&logoColor=white)](https://slimeslab.github.io/ComProScanner/) [![Coverage](https://img.shields.io/codecov/c/github/aritraroy24/ComProScanner?logo=codecov&logoColor=white&label=coverage&color=e62277)](https://codecov.io/gh/aritraroy24/ComProScanner) [![PyPI - Downloads](https://custom-icon-badges.demolab.com/pypi/dm/comproscanner?logo=download&logoColor=white&color=purple)](https://pypistats.org/packages/comproscanner) [![Ask DeepWiki](https://custom-icon-badges.demolab.com/badge/Ask%20DeepWiki-brightgreen.svg?logo=deepwikidevin&logoColor=white&labelColor=grey&color=5ab998)](https://deepwiki.com/slimeslab/ComProScanner) [![Digital Discovery](https://custom-icon-badges.demolab.com/badge/Digital_Discovery-10.1039/D5DD00521C-brightgreen.svg?logo=rsc&logoColor=white&color=c8c300)](https://doi.org/10.1039/D5DD00521C) [![arXiv Preprint](https://custom-icon-badges.demolab.com/badge/arXiv-2606.00065-brightgreen.svg?logo=arxiv&logoColor=white&color=b22929)](https://arxiv.org/abs/2606.00065)
+[![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg?logo=python&logoColor=white)](https://www.python.org/downloads/) [![License: MIT](https://custom-icon-badges.demolab.com/badge/license-MIT-F08705.svg?logo=law&logoColor=white)](https://opensource.org/licenses/MIT) [![PyPI](https://img.shields.io/pypi/v/comproscanner?logo=pypi&color=897BFF&logoColor=white)](https://pypi.org/project/comproscanner/) [![Documentation](https://custom-icon-badges.demolab.com/badge/docs-latest-brightgreen.svg?logo=materialformkdocs&logoColor=white)](https://slimeslab.github.io/ComProScanner/) [![Coverage](https://img.shields.io/codecov/c/github/slimeslab/ComProScanner?logo=codecov&logoColor=white&label=coverage&color=e62277)](https://codecov.io/gh/slimeslab/ComProScanner) [![PyPI - Downloads](https://custom-icon-badges.demolab.com/pypi/dm/comproscanner?logo=download&logoColor=white&color=purple&cacheSeconds=86400)](https://pypistats.org/packages/comproscanner) [![Ask DeepWiki](https://custom-icon-badges.demolab.com/badge/Ask%20DeepWiki-brightgreen.svg?logo=deepwikidevin&logoColor=white&labelColor=grey&color=5ab998)](https://deepwiki.com/slimeslab/ComProScanner) [![Digital Discovery](https://custom-icon-badges.demolab.com/badge/Digital_Discovery-10.1039/D5DD00521C-brightgreen.svg?logo=rsc&logoColor=white&color=c8c300)](https://doi.org/10.1039/D5DD00521C) [![arXiv Preprint](https://custom-icon-badges.demolab.com/badge/arXiv-2606.00065-brightgreen.svg?logo=arxiv&logoColor=white&color=b22929)](https://arxiv.org/abs/2606.00065)
 
 # ComProScanner
 
@@ -14,9 +14,10 @@ ComProScanner is a multi-agent framework designed to extract composition-propert
 
 **Key Features:**
 
+- 🏗️ Data extraction from texts, tables and figures.
 - 📚 Multi-publisher support (Elsevier, Springer, Wiley, IOP, local PDFs)
 - 🤖 Agentic extraction using CrewAI framework
-- 🔍 RAG-powered context retrieval for cost effective automation with accuracy
+- 🔍 RAG-powered context retrieval for cost-effective automation with accuracy
 - 📊 Comprehensive evaluation and visualization tools
 - 🎯 Customizable extraction workflows
 - 🌐 Knowledge graph generation
