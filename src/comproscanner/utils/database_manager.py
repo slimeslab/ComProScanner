@@ -255,6 +255,12 @@ class VectorDatabaseManager:
         self.client.clear_system_cache()
         del vectordb
         gc.collect()
+        try:
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        except ImportError:
+            pass
 
         logger.info(f"Vector database auto-persisted at {db_location}")
 
@@ -274,6 +280,12 @@ class VectorDatabaseManager:
         self.client.clear_system_cache()
         del vectordb
         gc.collect()
+        try:
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        except ImportError:
+            pass
 
         logger.info(f"Retrieved {len(results)} results from {db_name}")
         return results
