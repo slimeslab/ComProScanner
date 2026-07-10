@@ -221,7 +221,7 @@ class RAGTool(BaseTool):
         logger.info(f"\nDOI: {doi}")
         logger.info(f"Query: {query}")
 
-        db_name = doi.replace("/", "_")
+        db_name = doi.replace("/", "_").replace(":", "_")
         logger.info(f"Database name: {db_name}")
         logger.info(f"Top K: {self.rag_config.rag_top_k}")
 

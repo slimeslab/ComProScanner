@@ -252,7 +252,7 @@ class EquationTool(BaseTool):
             list: List of dicts with keys `"caption"` (str) and `"b64"` (str, base64 JPEG).
                   Empty list if the figure directory does not exist or no matching images are found.
         """
-        doi_folder = doi.replace("/", "_")
+        doi_folder = doi.replace("/", "_").replace(":", "_")
         fig_dir = os.path.join(self.related_figures_base_path, doi_folder)
 
         if not os.path.isdir(fig_dir):

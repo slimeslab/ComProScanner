@@ -69,7 +69,7 @@ class GraphExtractorTool(BaseTool):
         Returns:
             str: JSON string with extracted data per figure, or an error message.
         """
-        doi_folder = doi.replace("/", "_")
+        doi_folder = doi.replace("/", "_").replace(":", "_")
         fig_dir = os.path.join(self.related_figures_base_path, doi_folder)
 
         if not os.path.isdir(fig_dir):
