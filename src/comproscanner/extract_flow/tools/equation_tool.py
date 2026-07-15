@@ -163,7 +163,7 @@ _API_KEY_MODEL_PAIRS = [
     ("ANTHROPIC_API_KEY", "anthropic/claude-sonnet-4-6"),
     ("GEMINI_API_KEY", "gemini/gemini-3-flash-preview"),
     ("OPENAI_API_KEY", "openai/gpt-5.4-mini"),
-    ("DEEPSEEK_API_KEY", "deepseek/deepseek-chat"),
+    ("DEEPSEEK_API_KEY", "deepseek/deepseek-v4-flash"),
     ("OPENROUTER_API_KEY", "openrouter/google/gemini-2.0-flash"),
     ("TOGETHER_API_KEY", "together_ai/meta-llama/Llama-3.3-70B-Instruct-Turbo"),
     ("COHERE_API_KEY", "cohere/command-r-plus"),

@@ -243,7 +243,7 @@ Is there any material chemical composition and corresponding {main_property_keyw
     | 1 (default) | `ANTHROPIC_API_KEY` | `anthropic/claude-sonnet-4-6` |
     | 2 | `GEMINI_API_KEY` | `gemini/gemini-3-flash-preview` |
     | 3 | `OPENAI_API_KEY` | `openai/gpt-5.4-mini` |
-    | 4 | `DEEPSEEK_API_KEY` | `deepseek/deepseek-chat` |
+    | 4 | `DEEPSEEK_API_KEY` | `deepseek/deepseek-v4-flash` |
     | 5 | `OPENROUTER_API_KEY` | `openrouter/google/gemini-2.0-flash` |
     | 6 | `TOGETHER_API_KEY` | `together_ai/meta-llama/Llama-3.3-70B-Instruct-Turbo` |
     | 7 | `COHERE_API_KEY` | `cohere/command-r-plus` |

@@ -96,7 +96,7 @@ def process_single_paper(paper_path, paper_id):
 
         agent = Eunomia(
             tools=tools,
-            model="deepseek-chat",
+            model="deepseek-v4-flash",
             get_cost=False,  # Disable cost tracking to avoid warnings
             agent_type=eunomia.AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
         )

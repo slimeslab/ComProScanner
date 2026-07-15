@@ -79,7 +79,7 @@ if __name__ == "__main__":
         # is_only_consider_test_doi_list=True,
         test_doi_list_file="piezo_test_dois_random.txt",
         total_test_data=100,
-        model="deepseek/deepseek-chat",
+        model="deepseek/deepseek-v4-flash",
         output_log_folder="piezo_test/model-logs/logs/deepseek/deepseek-v3-0324",
         task_output_folder="piezo_test/model-logs/task_outputs/deepseek/deepseek-v3-0324",
         materials_data_identifier_query="Is there any ceramic, composite, or crystal material with its specific chemical composition and corresponding d33 piezoelectric coefficient value (in pC/N or pm/V units) explicitly mentioned in the paper? Give one word answer - either 'yes' or 'no'. Only answer 'yes' if ALL of the following criteria are met: (1) The material is specifically a ceramic, composite, doped, or crystal, or different environments of materials (exclude all polymers including PVDF, PLLA, and similar), (2) A numerical d33 value with units pC/N or pm/V is explicitly stated which is associated with that specific material composition or specific environment.",
