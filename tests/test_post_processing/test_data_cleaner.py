@@ -17,7 +17,7 @@ import re
 # Import the modules to test
 from comproscanner.post_processing.data_cleaner import (
     DataCleaner,
-    CleaningStrategy,
+    CleaningStep,
     get_all_elements,
 )
 
@@ -43,19 +43,34 @@ class TestGetAllElements:
             assert element in result
 
 
-class TestCleaningStrategy:
-    """Test cases for the CleaningStrategy enum."""
+class TestCleaningStep:
+    """Test cases for the CleaningStep enum."""
 
-    def test_cleaning_strategy_enum_values(self):
-        """Test that CleaningStrategy enum has correct values."""
-        assert CleaningStrategy.BASIC == "basic"
-        assert CleaningStrategy.FULL == "full"
+    def test_cleaning_step_enum_values(self):
+        """Test that CleaningStep enum has the expected five values."""
+        assert CleaningStep.ABBREVIATION_FILTERING == "abbreviation_filtering"
+        assert CleaningStep.ELEMENT_VALIDATION == "element_validation"
+        assert CleaningStep.TEXT_NORMALIZATION == "text_normalization"
+        assert CleaningStep.MILLER_INDICES == "miller_indices"
+        assert CleaningStep.COEFFICIENT_EXPANSION == "coefficient_expansion"
 
-    def test_cleaning_strategy_membership(self):
-        """Test CleaningStrategy enum membership."""
-        assert "basic" in CleaningStrategy
-        assert "full" in CleaningStrategy
-        assert "invalid" not in CleaningStrategy
+    def test_cleaning_step_all(self):
+        """Test that CleaningStep.all() returns exactly the five expected step names."""
+        assert set(CleaningStep.all()) == {
+            "abbreviation_filtering",
+            "element_validation",
+            "text_normalization",
+            "miller_indices",
+            "coefficient_expansion",
+        }
+
+    def test_cleaning_step_membership(self):
+        """Test CleaningStep enum membership."""
+        assert "element_validation" in CleaningStep
+        assert "miller_indices" in CleaningStep
+        assert "invalid" not in CleaningStep
+        assert "normalization" not in CleaningStep
+        assert "zero_coefficient" not in CleaningStep
 
 
 class TestDataCleanerInitialization:
@@ -212,12 +227,44 @@ class TestDataCleanerPrivateMethods:
         result = data_cleaner._is_elements({})
         assert result is False
 
-    def test_remove_extra_spaces(self, data_cleaner):
-        """Test _remove_extra_spaces method."""
-        dict_list = [{"Na Cl": "value1"}, {"Ti O2": "value2"}, {"Ca CO3": "value3"}]
-        result = data_cleaner._remove_extra_spaces(dict_list)
-        expected = [{"NaCl": "value1"}, {"TiO2": "value2"}, {"CaCO3": "value3"}]
-        assert result == expected
+    def test_normalize_text_title_cases_descriptive_words(self, data_cleaner):
+        """Test _normalize_text title-cases descriptive word tokens and preserves spaces."""
+        dict_list = [
+            {"Bi4Ti3O12 ultrathin with oxygen vacancies": "value1"},
+        ]
+        result = data_cleaner._normalize_text(dict_list)
+        assert result == [{"Bi4Ti3O12 Ultrathin with Oxygen Vacancies": "value1"}]
+
+    def test_normalize_text_leaves_glued_words_untouched(self, data_cleaner):
+        """Test _normalize_text does not insert spaces where none exist in the source."""
+        dict_list = [{"K0.5Na0.5Nb0.9Ta0.1O3-Milling15h": "value1"}]
+        result = data_cleaner._normalize_text(dict_list)
+        assert result == [{"K0.5Na0.5Nb0.9Ta0.1O3-Milling15h": "value1"}]
+
+    def test_normalize_text_preserves_all_caps_abbreviations(self, data_cleaner):
+        """Test _normalize_text leaves all-caps abbreviation tokens (e.g. XRD) unchanged."""
+        dict_list = [{"BaTiO3 XRD pattern": "value1"}]
+        result = data_cleaner._normalize_text(dict_list)
+        assert result == [{"BaTiO3 XRD Pattern": "value1"}]
+
+    def test_normalize_text_digit_tokens_untouched(self, data_cleaner):
+        """Test _normalize_text does not modify tokens containing digits."""
+        dict_list = [{"Ti O2": "value1"}]
+        result = data_cleaner._normalize_text(dict_list)
+        # "Ti" is title-cased (already correct), "O2" contains a digit so is untouched
+        assert result == [{"Ti O2": "value1"}]
+
+    def test_normalize_text_collapses_multiple_internal_spaces(self, data_cleaner):
+        """Test _normalize_text collapses runs of multiple spaces down to one."""
+        dict_list = [{"Bi4Ti3O12   ultrathin  with oxygen vacancies": "value1"}]
+        result = data_cleaner._normalize_text(dict_list)
+        assert result == [{"Bi4Ti3O12 Ultrathin with Oxygen Vacancies": "value1"}]
+
+    def test_normalize_text_strips_leading_and_trailing_whitespace(self, data_cleaner):
+        """Test _normalize_text strips leading/trailing whitespace from composition keys."""
+        dict_list = [{"  Bi4Ti3O12 ultrathin with oxygen vacancies  ": "value1"}]
+        result = data_cleaner._normalize_text(dict_list)
+        assert result == [{"Bi4Ti3O12 Ultrathin with Oxygen Vacancies": "value1"}]
 
     def test_convert_fractions_and_resolve_compositions_fractions(self, data_cleaner):
         """Test _convert_fractions_and_resolve_compositions with fractions."""
@@ -349,10 +396,12 @@ class TestDataCleanerPublicMethods:
         yield temp_file_path
         os.unlink(temp_file_path)
 
-    def test_clean_data_without_element_filtering(self, temp_mixed_json_file):
-        """Test clean_data_without_element_filtering method."""
+    def test_clean_data_without_element_validation(self, temp_mixed_json_file):
+        """Test clean_data_with_relevant_compositions without the element_validation step."""
         cleaner = DataCleaner(temp_mixed_json_file)
-        result = cleaner.clean_data_without_element_filtering()
+        result = cleaner.clean_data_with_relevant_compositions(
+            cleaning_steps=["abbreviation_filtering"]
+        )
 
         # Should keep papers with valid compositions after basic cleaning
         assert isinstance(result, dict)
@@ -365,16 +414,35 @@ class TestDataCleanerPublicMethods:
             for comp_key in comp_values.keys():
                 assert not re.match(r"(?<![a-z0-9])[A-Z]{2,}(?![a-z0-9])", comp_key)
 
-    def test_clean_data_with_relevant_compositions_full_strategy(
+    def test_abbreviation_filtering_optional_keeps_invalid_keys_when_omitted(
         self, temp_mixed_json_file
     ):
-        """Test clean_data_with_relevant_compositions with FULL strategy (element validation)."""
+        """Test that 2+-consecutive-capital-letter keys survive when abbreviation_filtering is omitted."""
         cleaner = DataCleaner(temp_mixed_json_file)
-        result = cleaner.clean_data_with_relevant_compositions(CleaningStrategy.FULL)
+        result = cleaner.clean_data_with_relevant_compositions(cleaning_steps=[])
+
+        all_comp_keys = [
+            comp_key
+            for paper_data in result.values()
+            for comp_key in paper_data["composition_data"][
+                "compositions_property_values"
+            ].keys()
+        ]
+        assert any(
+            re.search(r"(?<![a-z0-9])[A-Z]{2,}(?![a-z0-9])", comp_key)
+            for comp_key in all_comp_keys
+        )
+
+    def test_clean_data_with_relevant_compositions_with_element_validation(
+        self, temp_mixed_json_file
+    ):
+        """Test clean_data_with_relevant_compositions with element_validation (cleaning_steps='all')."""
+        cleaner = DataCleaner(temp_mixed_json_file)
+        result = cleaner.clean_data_with_relevant_compositions(cleaning_steps="all")
 
         assert isinstance(result, dict)
 
-        # With full cleaning, should only keep papers with valid chemical elements
+        # With element validation, should only keep papers with valid chemical elements
         for paper_key, paper_data in result.items():
             comp_values = paper_data["composition_data"]["compositions_property_values"]
             for comp_key in comp_values.keys():
@@ -383,16 +451,22 @@ class TestDataCleanerPublicMethods:
                 # Should only contain valid elements after full cleaning
                 assert cleaner._is_elements(test_dict) is True
 
-    def test_clean_data_with_relevant_compositions_basic_strategy(
+    def test_clean_data_with_relevant_compositions_without_element_validation(
         self, temp_mixed_json_file
     ):
-        """Test clean_data_with_relevant_compositions with BASIC strategy (no element validation)."""
+        """Test clean_data_with_relevant_compositions without element_validation selected."""
         cleaner = DataCleaner(temp_mixed_json_file)
-        result = cleaner.clean_data_with_relevant_compositions(CleaningStrategy.BASIC)
+        result = cleaner.clean_data_with_relevant_compositions(
+            cleaning_steps=[
+                "abbreviation_filtering",
+                "miller_indices",
+                "coefficient_expansion",
+            ]
+        )
 
         assert isinstance(result, dict)
 
-        # With basic cleaning, should keep compositions even with invalid elements
+        # Without element validation, should keep compositions even with invalid elements
         # but still filter out invalid key patterns
         for paper_key, paper_data in result.items():
             comp_values = paper_data["composition_data"]["compositions_property_values"]
@@ -400,18 +474,40 @@ class TestDataCleanerPublicMethods:
                 # Should not contain all-caps invalid patterns
                 assert not re.match(r"(?<![a-z0-9])[A-Z]{2,}(?![a-z0-9])", comp_key)
 
-    def test_clean_data_with_relevant_compositions_default_strategy(
+    def test_clean_data_with_relevant_compositions_default_is_all(
         self, temp_mixed_json_file
     ):
-        """Test clean_data_with_relevant_compositions with default strategy (should be FULL)."""
+        """Test clean_data_with_relevant_compositions default equals cleaning_steps='all'."""
         cleaner = DataCleaner(temp_mixed_json_file)
         result_default = cleaner.clean_data_with_relevant_compositions()
-        result_full = cleaner.clean_data_with_relevant_compositions(
-            CleaningStrategy.FULL
-        )
+        result_all = cleaner.clean_data_with_relevant_compositions(cleaning_steps="all")
 
-        # Default should be same as FULL strategy
-        assert result_default == result_full
+        # Default should be same as "all"
+        assert result_default == result_all
+
+    def test_clean_data_with_relevant_compositions_rejects_unknown_step(
+        self, temp_mixed_json_file
+    ):
+        """Test clean_data_with_relevant_compositions raises ValueError for unknown step names."""
+        cleaner = DataCleaner(temp_mixed_json_file)
+        with pytest.raises(ValueError):
+            cleaner.clean_data_with_relevant_compositions(cleaning_steps=["bogus_step"])
+
+    def test_empty_cleaning_steps_still_runs_mandatory_operations(
+        self, temp_mixed_json_file
+    ):
+        """Test that unicode conversion and arithmetic resolution still run when cleaning_steps=[]."""
+        cleaner = DataCleaner(temp_mixed_json_file)
+        result = cleaner.clean_data_with_relevant_compositions(cleaning_steps=[])
+        # No optional steps selected — invalid-pattern keys survive (abbreviation_filtering skipped)
+        all_comp_keys = [
+            comp_key
+            for paper_data in result.values()
+            for comp_key in paper_data["composition_data"][
+                "compositions_property_values"
+            ].keys()
+        ]
+        assert len(all_comp_keys) > 0
 
     def test_clean_data_with_relevant_compositions_empty_input(self):
         """Test clean_data_with_relevant_compositions with empty JSON input."""
@@ -434,15 +530,41 @@ class TestDataCleanerPublicMethods:
                 "composition_data": {
                     "compositions_property_values": {"BaTiO3": 100, "PbZrO3": 200}
                 },
-                "synthesis_data": {"method": "", "precursors": [], "steps": [], "characterization_techniques": []},
-                "article_metadata": {"doi": "", "title": "", "journal": "", "year": "", "isOpenAccess": False, "authors": [], "keywords": []},
+                "synthesis_data": {
+                    "method": "",
+                    "precursors": [],
+                    "steps": [],
+                    "characterization_techniques": [],
+                },
+                "article_metadata": {
+                    "doi": "",
+                    "title": "",
+                    "journal": "",
+                    "year": "",
+                    "isOpenAccess": False,
+                    "authors": [],
+                    "keywords": [],
+                },
             },
             "10.x/bad": {
                 "composition_data": {
                     "compositions_property_values": {"(Ba0.5Na0.5)(0.9*x)TiO3": 50}
                 },
-                "synthesis_data": {"method": "", "precursors": [], "steps": [], "characterization_techniques": []},
-                "article_metadata": {"doi": "", "title": "", "journal": "", "year": "", "isOpenAccess": False, "authors": [], "keywords": []},
+                "synthesis_data": {
+                    "method": "",
+                    "precursors": [],
+                    "steps": [],
+                    "characterization_techniques": [],
+                },
+                "article_metadata": {
+                    "doi": "",
+                    "title": "",
+                    "journal": "",
+                    "year": "",
+                    "isOpenAccess": False,
+                    "authors": [],
+                    "keywords": [],
+                },
             },
         }
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
@@ -521,9 +643,9 @@ class TestIntegration:
         # Test the complete pipeline
         cleaner = DataCleaner(temp_complex_json_file)
 
-        # Clean with FULL strategy
+        # Clean with all steps enabled
         cleaned_data = cleaner.clean_data_with_relevant_compositions(
-            CleaningStrategy.FULL
+            cleaning_steps="all"
         )
 
         # Verify the integration worked correctly
@@ -532,22 +654,26 @@ class TestIntegration:
         for paper_key, paper_data in cleaned_data.items():
             comp_values = paper_data["composition_data"]["compositions_property_values"]
 
-            # Should have processed fractions, spaces, and parentheses
+            # Should have processed fractions and parentheses, and dropped invalid patterns
             for comp_key in comp_values.keys():
-                # No spaces should remain
-                assert " " not in comp_key
+                # Fractions should be resolved (no bare "/" left)
+                assert "/" not in comp_key
                 # No invalid patterns should remain
                 assert not re.match(r"(?<![a-z0-9])[A-Z]{2,}(?![a-z0-9])", comp_key)
 
     def test_basic_vs_full_cleaning_comparison(self, temp_complex_json_file):
-        """Test comparison between BASIC and FULL cleaning strategies."""
+        """Test comparison between cleaning with and without element_validation."""
         cleaner = DataCleaner(temp_complex_json_file)
 
         basic_result = cleaner.clean_data_with_relevant_compositions(
-            CleaningStrategy.BASIC
+            cleaning_steps=[
+                "abbreviation_filtering",
+                "miller_indices",
+                "coefficient_expansion",
+            ]
         )
         full_result = cleaner.clean_data_with_relevant_compositions(
-            CleaningStrategy.FULL
+            cleaning_steps="all"
         )
 
         # Basic should potentially have more entries (less strict)
@@ -563,6 +689,81 @@ class TestIntegration:
 
         # Full cleaning should be more restrictive (equal or fewer compositions)
         assert full_total_compositions <= basic_total_compositions
+
+    def test_miller_indices_selected_drops_entries_entirely(self):
+        """Regression test: when miller_indices IS selected, compositions carrying a
+        crystal-plane notation must be dropped entirely, not resolved to the bare
+        formula. Stripping the notation and keeping "AlN" would collapse distinct
+        surface-orientation entries for the same material into the same dict key
+        (e.g. "AlN (002)" and "AlN (110)" both -> "AlN"), silently overwriting one
+        value with the other when merged."""
+        data = {
+            "10.x/miller": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        "AlN (002)": 1,
+                        "AlN (110)": 2,
+                        "ZnO (101)": 3,
+                        "BaTiO3": 4,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(cleaning_steps="all")
+            comp_values = result["10.x/miller"]["composition_data"][
+                "compositions_property_values"
+            ]
+            # Only the composition without a Miller index survives
+            assert comp_values == {"BaTiO3": 4}
+            assert set(cleaner.filtered_compositions.get("10.x/miller", [])) == {
+                "AlN (002)",
+                "AlN (110)",
+                "ZnO (101)",
+            }
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_miller_index_shaped_bracket_flagged_unresolved_when_not_selected(self):
+        """Regression test: when miller_indices is NOT selected, a Miller-index-shaped
+        bracket like "(002)" must NOT be silently merged into the preceding element by
+        coefficient_expansion's "remove brackets without coefficients" step (which would
+        otherwise turn AlN (002) into AlN 002/AlN2). Instead it should be left untouched
+        and dropped as unresolved, so a stray bracket is never silently misinterpreted.
+        """
+        data = {
+            "10.x/miller2": {
+                "composition_data": {"compositions_property_values": {"AlN (002)": 1}},
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(
+                cleaning_steps=["coefficient_expansion"]
+            )
+            comp_values = (
+                result.get("10.x/miller2", {})
+                .get("composition_data", {})
+                .get("compositions_property_values", {})
+            )
+            # Must not silently resolve to a wrong formula like "AlN2" or "AlN 002"
+            assert comp_values == {}
+            assert cleaner.unresolved_compositions.get("10.x/miller2") == ["AlN (002)"]
+        finally:
+            os.unlink(temp_file_path)
 
 
 class TestErrorHandling:
@@ -612,7 +813,11 @@ class TestErrorHandling:
             cleaner = DataCleaner(temp_file_path)
             # Should handle division by zero gracefully
             result = cleaner.clean_data_with_relevant_compositions(
-                CleaningStrategy.BASIC
+                cleaning_steps=[
+                    "abbreviation_filtering",
+                    "miller_indices",
+                    "coefficient_expansion",
+                ]
             )
             # The original fraction should be kept if division by zero
             assert isinstance(result, dict)

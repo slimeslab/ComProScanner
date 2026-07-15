@@ -6,7 +6,17 @@
 
 - Centralised non-keyword default file paths (`results/failed_automated_articles.txt`, `agentic_evaluation_result.json`, `detailed_evaluation.json`) as class-level constants on `DefaultPaths` so they can be changed in one place.
 
+
+### Changed
+
+- Replaced the `cleaning_strategy` (`"full"`/`"basic"`) and `apply_advanced_cleaning` parameters on `DataCleaner`, `ComProScanner.clean_data()`, and the top-level `clean_data()` function with a single `cleaning_steps` parameter accepting either `"all"` (default) or a list of individually selectable step names: `abbreviation_filtering`, `element_validation`, `text_normalization`, `miller_indices`, `coefficient_expansion` (exposed via the new `CleaningStep` enum). Unicode subscript conversion and arithmetic/fraction resolution remain always-on, since the other steps depend on their output. `normalization` and `zero_coefficient` are no longer separate steps — both are folded into `coefficient_expansion`, which already performs them internally.
+
+
 ### Fixed
+
+- Replaced the blind space-stripping behaviour (`key.replace(" ", "")`, which mangled descriptive composition text such as `"Bi4Ti3O12 ultrathin with oxygen vacancies"` into `"Bi4Ti3O12ultrathinwithoxygenvacancies"`) with a new optional `text_normalization` step that strips leading/trailing whitespace, collapses runs of multiple spaces down to one, and title-cases descriptive word tokens, while leaving formula segments and element-symbol sequences untouched.
+
+- Fixed Miller-index handling in data cleaning: a bare 3-digit parenthetical crystal-plane notation (e.g. `"AlN (002)"`) was previously fed straight into the mandatory arithmetic/bracket resolver, which misread `(002)` as a bare-number coefficient bracket and merged its digits into the preceding element — silently producing `"AlN2"` instead of recognising it as a Miller index at all. The `miller_indices` cleaning step now detects this notation before arithmetic/bracket resolution runs, and — rather than stripping the notation and keeping the bare formula, which would collapse distinct surface-orientation entries for the same material onto the same dict key (e.g. `"AlN (002)"` and `"AlN (110)"` both becoming `"AlN"` and silently overwriting one property value with the other when merged) — drops the whole composition entry, tracking it in `filtered_compositions` the same way `abbreviation_filtering`/`element_validation` drops are tracked. When `miller_indices` is *not* selected, the same 3-digit-bracket detection now also stops both the arithmetic resolver and `coefficient_expansion` from silently merging the digits into a wrong formula; the composition is instead dropped later as an unresolved composition, the same as any other leftover bracket.
 
 - Handled multi-word property keywords (e.g.,  _thermal conductivity_) for accurate Scopus search, uniform filename handling (`thermal conductivity` resolves to `thermal_conductivity_metadata.csv` or similar) and restoring the original form `thermal conductivity` in the data extraction RAG search query instead of `thermal_conductivity`. This fix is associated with [#5](https://github.com/slimeslab/ComProScanner/pull/5) and contributed by [@WilmerGaspar](https://github.com/WilmerGaspar).
 

@@ -29,7 +29,7 @@ from .extract_flow.main_extraction_flow import DataExtractionFlow
 from .utils.get_paper_data import PaperMetadataExtractor
 from .utils.save_results import SaveResults
 from .post_processing.data_cleaner import (
-    CleaningStrategy,
+    CleaningStep,
     DataCleaner,
 )
 
@@ -721,8 +721,7 @@ class ComProScanner:
         cleaned_json_results_file: str = "cleaned_results.json",
         is_save_composition_property_file: bool = True,
         composition_property_file: str = "composition_property.json",
-        cleaning_strategy: str = "full",
-        apply_advanced_cleaning: bool = True,
+        cleaning_steps: Union[str, List[str]] = "all",
         is_store_unresolved_compositions: bool = False,
         unresolved_compositions_file: str = "unresolved_compositions.json",
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
@@ -735,14 +734,23 @@ class ComProScanner:
             cleaned_json_results_file (str, optional): Path to the cleaned JSON results file with articles having relevant composition-property data. Defaults to "cleaned_results.json".
             is_save_composition_property_file (bool, optional): Whether to save composition-property values to a separate file. Defaults to True.
             composition_property_file (str, optional): Path to the composition-property file containing a dictionary of composition-property data. Defaults to "composition_property.json".
-            cleaning_strategy (str, optional): The cleaning strategy to use. Defaults to "full" (with periodic element validation). "basic" (without periodic element validation) is the other option.
-            apply_advanced_cleaning (bool, optional): Whether to apply advanced composition cleaning transformations (Miller indices removal, coefficient expansion, normalization, zero-coefficient removal). Defaults to True.
+            cleaning_steps (Union[str, List[str]], optional): Either "all" (default, every optional step
+                enabled) or a list of step names selecting exactly which optional steps run:
+                "abbreviation_filtering" (drop keys with 2+ consecutive capital letters),
+                "element_validation" (keep only compositions resolving to valid periodic-table elements),
+                "text_normalization" (normalizes whitespace and title-cases descriptive word tokens),
+                "miller_indices" (drop compositions carrying crystal-plane notations like "(002)" entirely,
+                to avoid collapsing distinct surface-orientation entries onto the same key), and
+                "coefficient_expansion" (expand bracket coefficients; also normalizes trailing zeros and
+                removes zero-coefficient elements internally). Unicode subscript conversion and
+                arithmetic/fraction resolution always run regardless of this parameter, since the other
+                steps depend on their output.
             is_store_unresolved_compositions (bool, optional): Whether to log resolution statistics and save unresolved composition keys to a file. Requires is_save_composition_property_file=True. Defaults to False.
             unresolved_compositions_file (str, optional): Path to the file where unresolved composition keys will be saved. Used only when is_store_unresolved_compositions=True. Defaults to "unresolved_compositions.json".
 
         Returns:
             tuple: A tuple containing:
-                - Dict[str, Any]: Cleaned data based on selected strategy with relevant composition-property data.
+                - Dict[str, Any]: Cleaned data based on selected steps with relevant composition-property data.
                 - Dict[str, Any]: All composition-property values collected from the cleaned data. (Returned only if is_save_composition_property_file is True)
         """
         if json_results_file is None:
@@ -759,13 +767,23 @@ class ComProScanner:
             raise ValueErrorHandler(
                 message=f"JSON results file {json_results_file} does not exist. Cannot proceed with data cleaning."
             )
-        if cleaning_strategy not in [CleaningStrategy.FULL, CleaningStrategy.BASIC]:
-            logger.error(
-                f"Invalid cleaning strategy: {cleaning_strategy}. Please choose either 'full' or 'basic'."
-            )
-            raise ValueErrorHandler(
-                message=f"Invalid cleaning strategy: {cleaning_strategy}. Please choose either 'full' or 'basic'."
-            )
+        if cleaning_steps != "all":
+            if not isinstance(cleaning_steps, list) or not all(
+                isinstance(s, str) for s in cleaning_steps
+            ):
+                logger.error(
+                    "Invalid cleaning_steps: must be 'all' or a list of step name strings."
+                )
+                raise ValueErrorHandler(
+                    message="Invalid cleaning_steps: must be 'all' or a list of step name strings."
+                )
+            unknown_steps = set(cleaning_steps) - set(CleaningStep.all())
+            if unknown_steps:
+                logger.error(f"Invalid cleaning step(s): {sorted(unknown_steps)}.")
+                raise ValueErrorHandler(
+                    message=f"Invalid cleaning step(s): {sorted(unknown_steps)}. "
+                    f"Valid options are {CleaningStep.all()}."
+                )
         data_cleaner = DataCleaner(results_file=json_results_file)
         if is_store_unresolved_compositions and is_save_composition_property_file:
             source_composition_count = sum(
@@ -778,8 +796,7 @@ class ComProScanner:
                 if isinstance(article_data, dict)
             )
         final_data = data_cleaner.clean_data_with_relevant_compositions(
-            strategy=cleaning_strategy,
-            apply_advanced_cleaning=apply_advanced_cleaning,
+            cleaning_steps=cleaning_steps,
         )
         # Save the cleaned data back to the cleaned JSON file
         if is_save_separate_results:

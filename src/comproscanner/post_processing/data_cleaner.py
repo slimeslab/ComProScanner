@@ -9,7 +9,7 @@ Date: 08-04-2025
 
 # Standard library imports
 import json
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union, Set
 import re
 from enum import Enum
 import copy
@@ -24,11 +24,24 @@ def get_all_elements() -> List[str]:
     return [Element.from_Z(i).symbol for i in range(1, 119)]
 
 
-class CleaningStrategy(str, Enum):
-    """Cleaning strategies for data cleaning."""
+class CleaningStep(str, Enum):
+    """Individually selectable optional data-cleaning steps.
 
-    BASIC = "basic"  # Without element validation
-    FULL = "full"  # With element validation
+    Unicode subscript conversion and arithmetic/fraction resolution are not
+    part of this enum — they always run, since coefficient_expansion,
+    miller_indices, and element_validation all assume their output.
+    """
+
+    ABBREVIATION_FILTERING = "abbreviation_filtering"
+    ELEMENT_VALIDATION = "element_validation"
+    TEXT_NORMALIZATION = "text_normalization"
+    MILLER_INDICES = "miller_indices"
+    COEFFICIENT_EXPANSION = "coefficient_expansion"
+
+    @classmethod
+    def all(cls) -> List[str]:
+        """Return every valid step name."""
+        return [step.value for step in cls]
 
 
 class DataCleaner:
@@ -70,6 +83,29 @@ class DataCleaner:
                 valid.append(d)
         return valid
 
+    def _can_parse_as_elements(self, s: str) -> bool:
+        """
+        Check if a purely-alphabetic string can be completely parsed as a sequence
+        of valid element symbols. Uses greedy matching, preferring 2-letter
+        elements over 1-letter (e.g. "Pb", "Sr" before falling back to "P", "O").
+        """
+        if not s:
+            return True
+
+        if len(s) >= 2:
+            two_letter = s[:2]
+            if two_letter in self.all_elements:
+                if self._can_parse_as_elements(s[2:]):
+                    return True
+
+        if len(s) >= 1:
+            one_letter = s[:1]
+            if one_letter in self.all_elements:
+                if self._can_parse_as_elements(s[1:]):
+                    return True
+
+        return False
+
     def _is_elements(self, comp_pro_pair: Dict[str, Any]) -> bool:
         """Check whether the composition key in a pair can be fully parsed as a sequence of valid element symbols.
 
@@ -79,6 +115,7 @@ class DataCleaner:
         Returns:
             bool: True if the key resolves to a valid chemical composition, False otherwise.
         """
+
         def _convert_subscript_unicode(string: str) -> str:
             """Convert Unicode subscript digits to regular digits."""
             subscript_unicode = {
@@ -108,33 +145,6 @@ class DataCleaner:
             # Then remove all non-alphabetic characters
             return re.sub(r"[^a-zA-Z]+", "", string)
 
-        def _can_parse_as_elements(s: str, elements: List[str]) -> bool:
-            """
-            Check if string can be completely parsed as a sequence of valid element symbols.
-            Uses greedy matching, preferring 2-letter elements over 1-letter.
-            """
-            if not s:
-                return True
-
-            # Try to match 2-letter element first (e.g., "Pb", "Sr")
-            if len(s) >= 2:
-                two_letter = s[:2]
-                if two_letter in elements:
-                    # Recursively check the rest
-                    if _can_parse_as_elements(s[2:], elements):
-                        return True
-
-            # Try to match 1-letter element (e.g., "P", "O")
-            if len(s) >= 1:
-                one_letter = s[:1]
-                if one_letter in elements:
-                    # Recursively check the rest
-                    if _can_parse_as_elements(s[1:], elements):
-                        return True
-
-            # Cannot parse this string
-            return False
-
         try:
             key = next(iter(comp_pro_pair))  # Get the key
             key = _remove_special_chars(str(key))
@@ -144,56 +154,116 @@ class DataCleaner:
                 return False
 
             # CRITICAL FIX: Verify that the entire string can be parsed as valid elements
-            return _can_parse_as_elements(key, self.all_elements)
+            return self._can_parse_as_elements(key)
 
         except Exception:
             return False
 
-    def _remove_extra_spaces(self, dict_list):
-        """Remove all spaces from composition keys in a list of {composition: value} dicts.
+    _TITLE_CASE_STOPWORDS = {"with", "of", "at", "for", "the", "and"}
+
+    def _normalize_text(self, dict_list):
+        """Normalize whitespace and title-case descriptive word tokens in composition keys.
+
+        Strips leading/trailing whitespace and collapses runs of whitespace
+        (multiple spaces, tabs) down to a single space, then title-cases
+        tokens that are purely alphabetic, not already an all-caps
+        abbreviation (e.g. "XRD" stays "XRD"), and do NOT fully parse as a
+        sequence of element symbols (so formula-only tokens like "NaCl" or
+        "Ti" are left exactly as extracted). Tokens containing digits (real
+        formula segments like "Bi4Ti3O12") are left untouched. Does not
+        insert a space where none exists in the source string (e.g. words
+        glued directly to numbers, like "Milling15h", stay glued).
 
         Args:
             dict_list (list): List of single-entry dicts mapping composition strings to values.
 
         Returns:
-            list: Same structure with spaces stripped from every key.
+            list: Same structure with whitespace normalized and descriptive
+                word tokens title-cased.
         """
-        # remove any spaces in the key
+
+        def format_key(key: str) -> str:
+            tokens = key.strip().split()
+            formatted = []
+            for i, tok in enumerate(tokens):
+                if (
+                    tok.isalpha()
+                    and not tok.isupper()
+                    and not self._can_parse_as_elements(tok)
+                ):
+                    lower = tok.lower()
+                    if i > 0 and lower in self._TITLE_CASE_STOPWORDS:
+                        formatted.append(lower)
+                    else:
+                        formatted.append(tok.capitalize())
+                else:
+                    formatted.append(tok)
+            return " ".join(formatted)
+
         return [
-            {key.replace(" ", ""): value for key, value in d.items()} for d in dict_list
+            {format_key(str(key)): value for key, value in d.items()} for d in dict_list
         ]
 
-    def _clean_comp_prop_data_with_element_check(
-        self, comp_prop_data: Dict[str, Any], doi: str = ""
-    ) -> Dict[str, Any]:
-        """Clean composition-property data with element validation from periodic table."""
-        comp_prop_data = self._get_comp_prop_pairs(comp_prop_data)
-        comp_prop_data = self._filter_invalid_keys(comp_prop_data, doi)
-        valid_comp_prop_pairs = []
-        for single_data in comp_prop_data:
-            if self._is_elements(single_data):
-                valid_comp_prop_pairs.append(single_data)
-            else:
-                if doi:
-                    self.filtered_compositions.setdefault(doi, []).extend(single_data.keys())
-        valid_comp_prop_pairs = self._remove_extra_spaces(valid_comp_prop_pairs)
-        valid_comp_prop_pairs = self._convert_fractions_and_resolve_compositions(
-            valid_comp_prop_pairs
-        )
-        return valid_comp_prop_pairs
+    def _clean_comp_prop_pairs(
+        self,
+        comp_prop_data: Dict[str, Any],
+        steps: Set[str],
+        doi: str = "",
+    ) -> List[Dict[str, Any]]:
+        """Clean composition-property pairs according to the selected optional steps.
 
-    def _clean_comp_prop_data_without_element_check(
-        self, comp_prop_data: Dict[str, Any], doi: str = ""
-    ) -> Dict[str, Any]:
-        """Clean composition-property data without element validation."""
-        comp_prop_data = self._get_comp_prop_pairs(comp_prop_data)
-        comp_prop_data = self._filter_invalid_keys(comp_prop_data, doi)
-        valid_comp_prop_pairs = comp_prop_data
-        valid_comp_prop_pairs = self._remove_extra_spaces(valid_comp_prop_pairs)
-        valid_comp_prop_pairs = self._convert_fractions_and_resolve_compositions(
-            valid_comp_prop_pairs
+        Args:
+            comp_prop_data (Dict[str, Any]): Raw composition -> property-value mapping.
+            steps (Set[str]): Selected optional CleaningStep values.
+            doi (str, optional): DOI used to track filtered compositions.
+
+        Returns:
+            List[Dict[str, Any]]: List of single-entry {composition: value} dicts after
+                cleaning. Unicode conversion and arithmetic resolution always run,
+                regardless of which optional steps are selected.
+        """
+        comp_prop_pairs = self._get_comp_prop_pairs(comp_prop_data)
+
+        if CleaningStep.ABBREVIATION_FILTERING.value in steps:
+            comp_prop_pairs = self._filter_invalid_keys(comp_prop_pairs, doi)
+
+        if CleaningStep.ELEMENT_VALIDATION.value in steps:
+            valid_pairs = []
+            for pair in comp_prop_pairs:
+                if self._is_elements(pair):
+                    valid_pairs.append(pair)
+                elif doi:
+                    self.filtered_compositions.setdefault(doi, []).extend(pair.keys())
+            comp_prop_pairs = valid_pairs
+
+        if CleaningStep.TEXT_NORMALIZATION.value in steps:
+            comp_prop_pairs = self._normalize_text(comp_prop_pairs)
+
+        if CleaningStep.MILLER_INDICES.value in steps:
+            # Drop (not transform) compositions carrying a crystal-plane notation.
+            # Stripping "(002)"/"(110)" and keeping the bare formula would collapse
+            # distinct surface-orientation entries for the same material down to
+            # the same dict key — e.g. "AlN (002)" and "AlN (110)" would both
+            # become "AlN", silently overwriting one another when merged. Must
+            # run before arithmetic/bracket resolution below: the mandatory
+            # bracket resolver would otherwise treat the bare, purely-numeric
+            # parenthetical as a coefficient to fold into the formula.
+            kept_pairs = []
+            for d in comp_prop_pairs:
+                key = next(iter(d))
+                if self._remove_miller_indices(key) != key:
+                    if doi:
+                        self.filtered_compositions.setdefault(doi, []).append(key)
+                else:
+                    kept_pairs.append(d)
+            comp_prop_pairs = kept_pairs
+
+        # Mandatory, always runs regardless of `steps` — later steps depend on this output.
+        comp_prop_pairs = self._convert_fractions_and_resolve_compositions(
+            comp_prop_pairs
         )
-        return valid_comp_prop_pairs
+
+        return comp_prop_pairs
 
     def _convert_fractions_and_resolve_compositions(self, dict_list):
         """
@@ -257,6 +327,15 @@ class DataCleaner:
                             # e.g. Gd(0) → Gd0, (0.00) blocking (0.972-(0.00)) → unblocks outer.
                             # Skip if preceded by * so _multiply_pure_number_coefficients can handle it.
                             if match.start() > 0 and formula[match.start() - 1] == "*":
+                                continue
+                            # Skip bare 3-digit integers (no decimal point) — these are
+                            # Miller-index-shaped, e.g. "(002)". If the miller_indices
+                            # step is selected it already removed these earlier in the
+                            # pipeline; if not, silently merging the digits into the
+                            # preceding element (AlN (002) -> AlN2) would be wrong
+                            # regardless, so leave the bracket untouched here — it then
+                            # gets caught as "unresolved" downstream.
+                            if re.match(r"^[0-9]{3}$", expression):
                                 continue
                             formula = (
                                 formula[: match.start()]
@@ -413,7 +492,9 @@ class DataCleaner:
                     return f"{element}{int(result_coeff)}"
                 else:
                     formatted = f"{result_coeff:.8f}".rstrip("0").rstrip(".")
-                    return f"{element}{formatted}" if formatted not in ("0", "0.") else ""
+                    return (
+                        f"{element}{formatted}" if formatted not in ("0", "0.") else ""
+                    )
 
             return re.sub(element_mult_pattern, _replace_element_mult, formula)
 
@@ -558,7 +639,9 @@ class DataCleaner:
                 processed_key = _convert_subscript_unicode_to_digits(str(key))
 
                 # Step 1: Convert simple fractions to decimals (handles both integer and decimal numerators/denominators)
-                processed_key = re.sub(r"(\d+(?:\.\d+)?)/(\d+(?:\.\d+)?)", _replace_fraction, processed_key)
+                processed_key = re.sub(
+                    r"(\d+(?:\.\d+)?)/(\d+(?:\.\d+)?)", _replace_fraction, processed_key
+                )
 
                 # Step 2: Resolve compositions
                 processed_key = _resolve_composition(processed_key)
@@ -813,10 +896,14 @@ class DataCleaner:
                     if coefficient == 0:
                         formula = formula[: match.start()] + formula[close_pos + 1 :]
                     else:
-                        expanded = multiply_element_coefficients(composition, coefficient)
+                        expanded = multiply_element_coefficients(
+                            composition, coefficient
+                        )
                         # If expansion results in empty string, remove the brackets entirely
                         if not expanded or expanded.strip() == "":
-                            formula = formula[: match.start()] + formula[close_pos + 1 :]
+                            formula = (
+                                formula[: match.start()] + formula[close_pos + 1 :]
+                            )
                         else:
                             formula = (
                                 formula[: match.start()]
@@ -951,7 +1038,9 @@ class DataCleaner:
                         inner_coefficient = (
                             float(coefficient_str) if coefficient_str else 1.0
                         )
-                        new_coefficient = round(inner_coefficient * outer_coefficient, 5)
+                        new_coefficient = round(
+                            inner_coefficient * outer_coefficient, 5
+                        )
 
                         # Skip elements with coefficient 0
                         if new_coefficient == 0:
@@ -962,9 +1051,9 @@ class DataCleaner:
                         elif new_coefficient == int(new_coefficient):
                             expanded += f"{element}{int(new_coefficient)}"
                         else:
-                            formatted_coeff = f"{new_coefficient:.4f}".rstrip("0").rstrip(
-                                "."
-                            )
+                            formatted_coeff = f"{new_coefficient:.4f}".rstrip(
+                                "0"
+                            ).rstrip(".")
                             expanded += f"{element}{formatted_coeff}"
 
                     formula = (
@@ -977,9 +1066,17 @@ class DataCleaner:
 
                 # Step 2: Remove brackets without coefficients
                 # Make sure we don't match if there's a * followed by a number
-                no_coeff_match = re.search(
+                # Skip bare 3-digit integers (Miller-index-shaped, e.g. "(002)")
+                # — those must be handled by the miller_indices step, not
+                # silently stripped here.
+                no_coeff_match = None
+                for candidate in re.finditer(
                     r"[\[\(]([A-Za-z0-9.]+)[\]\)](?![\*\d.])", formula
-                )
+                ):
+                    if re.match(r"^[0-9]{3}$", candidate.group(1)):
+                        continue
+                    no_coeff_match = candidate
+                    break
                 if no_coeff_match:
                     inner_content = no_coeff_match.group(1)
                     formula = (
@@ -1008,36 +1105,38 @@ class DataCleaner:
         return formula, total_expansion
 
     def _apply_advanced_composition_cleaning(
-        self, comp_prop_dict: Dict[str, Any]
+        self, comp_prop_dict: Dict[str, Any], steps: Set[str]
     ) -> Dict[str, Any]:
         """
-        Apply advanced composition cleaning including Miller indices removal,
-        coefficient expansion, normalization, and zero-coefficient removal.
+        Apply coefficient expansion, gated by `steps`.
 
-        Uses local cleaning methods to process compositions.
+        Miller indices removal is handled earlier in `_clean_comp_prop_pairs`,
+        before the mandatory arithmetic/bracket resolution — see the comment
+        there for why the ordering matters.
+
+        Coefficient expansion internally normalizes trailing zeros and removes
+        zero-coefficient elements as part of expanding leading/trailing/nested
+        bracket coefficients — there are no separate steps for those.
         """
         cleaned_dict = {}
         for composition, property_value in comp_prop_dict.items():
-            # Step 1: Remove Miller indices (crystal plane notations)
-            cleaned_comp = self._remove_miller_indices(composition)
+            cleaned_comp = composition
 
-            # Step 2: Expand leading and trailing coefficients
-            cleaned_comp = self._expand_leading_and_trailing_coefficients(cleaned_comp)
-
-            # Step 3: Expand parenthetical coefficients
-            cleaned_comp, _ = self._expand_parenthetical_coefficients(cleaned_comp, 0)
-
-            # Step 4: Normalize coefficients (remove trailing zeros)
-            cleaned_comp = self._normalize_coefficients(cleaned_comp)
-
-            # Step 5: Remove elements with zero coefficients
-            cleaned_comp = self._remove_zero_coefficient_elements(cleaned_comp)
+            if CleaningStep.COEFFICIENT_EXPANSION.value in steps:
+                cleaned_comp = self._expand_leading_and_trailing_coefficients(
+                    cleaned_comp
+                )
+                cleaned_comp, _ = self._expand_parenthetical_coefficients(
+                    cleaned_comp, 0
+                )
 
             cleaned_dict[cleaned_comp] = property_value
 
         return cleaned_dict
 
-    def _filter_unresolved_compositions(self, comp_prop_dict: Dict[str, Any], doi: str = "") -> Dict[str, Any]:
+    def _filter_unresolved_compositions(
+        self, comp_prop_dict: Dict[str, Any], doi: str = ""
+    ) -> Dict[str, Any]:
         """Remove individual compositions that still contain unresolved parentheses, brackets, or multiplication operators."""
         resolved = {}
         for comp, val in comp_prop_dict.items():
@@ -1119,103 +1218,103 @@ class DataCleaner:
 
         return result
 
-    def clean_data_based_on_elements(self, apply_advanced_cleaning: bool = True) -> Dict[str, Any]:
-        """
-        Run complete composition analysis with element validation.
+    def _resolve_cleaning_steps(
+        self, cleaning_steps: Union[str, List[str]]
+    ) -> Set[str]:
+        """Validate and resolve the public `cleaning_steps` argument into a concrete set.
 
         Args:
-            apply_advanced_cleaning: If True (default), applies advanced composition cleaning
-                                    (Miller indices removal, coefficient expansion, normalization).
-                                    If False, returns basic cleaned compositions only.
-        """
-        result = {}
-        for key, value in self.all_data.items():
-            comp_prop_data = self._get_comp_prop_data(value)
-            cleaned_data = self._clean_comp_prop_data_with_element_check(comp_prop_data, doi=key)
-            # Only include entries with valid compositions
-            if cleaned_data:
-                result[key] = value.copy()
-                comp_prop_dict = self._return_in_dict(cleaned_data)
-                # Apply advanced composition cleaning if requested
-                if apply_advanced_cleaning:
-                    comp_prop_dict = self._apply_advanced_composition_cleaning(comp_prop_dict)
-                # Remove compositions that still have unresolved brackets or math ops
-                comp_prop_dict = self._filter_unresolved_compositions(comp_prop_dict, doi=key)
-                result[key]["composition_data"]["compositions_property_values"] = comp_prop_dict
-        return result
+            cleaning_steps: Either the string "all" or a list of CleaningStep values.
 
-    def clean_data_without_element_filtering(self, apply_advanced_cleaning: bool = True) -> Dict[str, Any]:
-        """
-        Run composition analysis without element validation.
+        Returns:
+            Set[str]: The resolved set of selected optional step names.
 
-        Args:
-            apply_advanced_cleaning: If True (default), applies advanced composition cleaning
-                                    (Miller indices removal, coefficient expansion, normalization).
-                                    If False, returns basic cleaned compositions only.
+        Raises:
+            ValueError: If `cleaning_steps` is a non-"all" string, or contains
+                unknown step names.
         """
-        result = {}
-        for key, value in self.all_data.items():
-            comp_prop_data = self._get_comp_prop_data(value)
-            cleaned_data = self._clean_comp_prop_data_without_element_check(
-                comp_prop_data, doi=key
+        valid_steps = set(CleaningStep.all())
+        if cleaning_steps == "all":
+            return valid_steps
+        if isinstance(cleaning_steps, str):
+            raise ValueError(
+                "Invalid cleaning_steps value. Must be 'all' or a list of step names: "
+                f"{CleaningStep.all()}."
             )
-            # Include all entries that passed other cleaning steps
+        unknown = set(cleaning_steps) - valid_steps
+        if unknown:
+            raise ValueError(
+                f"Invalid cleaning step(s): {sorted(unknown)}. Valid options: {CleaningStep.all()}."
+            )
+        return set(cleaning_steps)
+
+    def clean_data_with_selected_steps(self, steps: Set[str]) -> Dict[str, Any]:
+        """
+        Run composition cleaning using exactly the given set of optional steps.
+
+        Unicode conversion and arithmetic/fraction resolution always run
+        regardless of `steps`, since later steps depend on their output.
+
+        Args:
+            steps: Resolved set of CleaningStep values to apply.
+        """
+        result = {}
+        for key, value in self.all_data.items():
+            comp_prop_data = self._get_comp_prop_data(value)
+            cleaned_data = self._clean_comp_prop_pairs(comp_prop_data, steps, doi=key)
             if cleaned_data:
                 result[key] = value.copy()
                 comp_prop_dict = self._return_in_dict(cleaned_data)
-                # Apply advanced composition cleaning if requested
-                if apply_advanced_cleaning:
-                    comp_prop_dict = self._apply_advanced_composition_cleaning(comp_prop_dict)
+                if CleaningStep.COEFFICIENT_EXPANSION.value in steps:
+                    comp_prop_dict = self._apply_advanced_composition_cleaning(
+                        comp_prop_dict, steps
+                    )
                 # Remove compositions that still have unresolved brackets or math ops
-                comp_prop_dict = self._filter_unresolved_compositions(comp_prop_dict, doi=key)
-                result[key]["composition_data"]["compositions_property_values"] = comp_prop_dict
+                comp_prop_dict = self._filter_unresolved_compositions(
+                    comp_prop_dict, doi=key
+                )
+                result[key]["composition_data"][
+                    "compositions_property_values"
+                ] = comp_prop_dict
         return result
 
     def clean_data_with_relevant_compositions(
-        self, strategy: CleaningStrategy = CleaningStrategy.FULL,
-        apply_advanced_cleaning: bool = True
+        self,
+        cleaning_steps: Union[str, List[str]] = "all",
     ) -> Dict[str, Any]:
         """
-        Clean data using the specified strategy.
+        Clean data using the given set of optional cleaning steps.
 
         Args:
-            strategy: CleaningStrategy enum value determining the cleaning approach
-                - BASIC: Basic cleaning without element validation
-                - FULL: Complete cleaning with element validation (default)
-            apply_advanced_cleaning: If True (default), applies advanced composition cleaning
-                                    (Miller indices removal, coefficient expansion, normalization).
-                                    If False, returns basic cleaned compositions only.
+            cleaning_steps: Either "all" (default, every optional step enabled) or a
+                list of step names selecting exactly which optional steps run:
+                abbreviation_filtering, element_validation, text_normalization,
+                miller_indices, coefficient_expansion. Unicode conversion and
+                arithmetic/fraction resolution always run regardless of this
+                parameter.
 
         Returns:
-            Dict[str, Any]: Cleaned data based on selected strategy
+            Dict[str, Any]: Cleaned data based on selected steps.
         """
+        steps = self._resolve_cleaning_steps(cleaning_steps)
         self.all_data = self.get_useful_data()
-        if strategy == CleaningStrategy.BASIC:
-            # Clean without element validation
-            return self.clean_data_without_element_filtering(apply_advanced_cleaning=apply_advanced_cleaning)
-        else:
-            # Full cleaning with element validation (default)
-            return self.clean_data_based_on_elements(apply_advanced_cleaning=apply_advanced_cleaning)
+        return self.clean_data_with_selected_steps(steps)
 
     def get_all_composition_property_pairs(
         self,
-        strategy: CleaningStrategy = CleaningStrategy.FULL,
+        cleaning_steps: Union[str, List[str]] = "all",
         is_return_doi: bool = False,
-        apply_advanced_cleaning: bool = True,
     ) -> Dict[str, Any]:
         """
-        Get all composition-property pairs from cleaned data after applying cleaning strategy
-        and resolving composition calculations.
+        Get all composition-property pairs from cleaned data after applying the
+        selected cleaning steps and resolving composition calculations.
 
         Args:
-            strategy: CleaningStrategy enum value determining the cleaning approach
-                - BASIC: Basic cleaning without element validation
-                - FULL: Complete cleaning with element validation (default)
+            cleaning_steps: Either "all" (default, every optional step enabled) or a
+                list of step names selecting exactly which optional steps run.
+                See `clean_data_with_relevant_compositions` for the full list.
             is_return_doi: If True, returns nested dictionary with DOI as keys.
                 If False (default), returns flat composition-property dictionary.
-            apply_advanced_cleaning: If True (default), applies advanced composition cleaning
-                                    (Miller indices removal, coefficient expansion, normalization).
-                                    If False, returns basic cleaned compositions only.
 
         Returns:
             Dict[str, Any]: If is_return_doi is False (default):
@@ -1230,10 +1329,9 @@ class DataCleaner:
 
                 Null values are filtered out in both cases.
         """
-        # Clean the data using the specified strategy
+        # Clean the data using the specified steps
         cleaned_data = self.clean_data_with_relevant_compositions(
-            strategy=strategy,
-            apply_advanced_cleaning=apply_advanced_cleaning
+            cleaning_steps=cleaning_steps,
         )
 
         if is_return_doi:
