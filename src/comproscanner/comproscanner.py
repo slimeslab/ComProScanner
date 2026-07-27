@@ -157,7 +157,7 @@ class ComProScanner:
             save_failed_pdf_report (bool, optional): For `pdfs` source only. If True, save skipped/failed filename-based DOI fallback cases to a text report. Defaults to True.
             failed_pdf_report_path (str, optional): For `pdfs` source only. Custom path for failed PDF filename report. Defaults to None (uses `{folder_path}/failed_pdf_filenames.txt`).
             save_failed_automated_report (bool, optional): For automated publisher sources (elsevier, springer, iop, wiley). If True, save failed/unparseable articles to a report. Defaults to True.
-            failed_automated_report_path (str, optional): Custom path for the automated failure report. Defaults to None (uses `results/failed_automated_articles.txt`)..
+            failed_automated_report_path (str, optional): Custom path for the automated failure report. Defaults to None (uses `results/article_processor_failed_articles.txt`)..
 
         Raises:
             ValueErrorHandler: If property_keywords is not provided.
@@ -737,14 +737,24 @@ class ComProScanner:
             cleaning_steps (Union[str, List[str]], optional): Either "all" (default, every optional step
                 enabled) or a list of step names selecting exactly which optional steps run:
                 "abbreviation_filtering" (drop keys with 2+ consecutive capital letters),
-                "element_validation" (keep only compositions resolving to valid periodic-table elements),
+                "element_validation_strict" (keep only compositions resolving to valid periodic-table
+                elements),
+                "element_validation_lenient" (weaker companion of element_validation_strict: keeps a
+                composition if it contains at least one embedded formula fragment, e.g. "BaTiO3" inside
+                "Cellulose nanofibers/BaTiO3@TiO2/...", instead of requiring the whole key to be pure
+                elements),
                 "text_normalization" (normalizes whitespace and title-cases descriptive word tokens),
                 "miller_indices" (drop compositions carrying crystal-plane notations like "(002)" entirely,
-                to avoid collapsing distinct surface-orientation entries onto the same key), and
-                "coefficient_expansion" (expand bracket coefficients; also normalizes trailing zeros and
-                removes zero-coefficient elements internally). Unicode subscript conversion and
-                arithmetic/fraction resolution always run regardless of this parameter, since the other
-                steps depend on their output.
+                to avoid collapsing distinct surface-orientation entries onto the same key),
+                "coefficient_expansion_strict" (expand bracket coefficients; also normalizes trailing
+                zeros and removes zero-coefficient elements internally), and
+                "coefficient_expansion_lenient" (weaker companion of coefficient_expansion_strict: also
+                expands bracket coefficients, but spares compositions with balanced brackets containing
+                genuine text/annotations, e.g. "...-(as-sintered)", from being dropped as unresolved).
+                element_validation_lenient/coefficient_expansion_lenient have no additional effect when
+                their strict counterpart is also selected — the strict step's result wins. Unicode
+                subscript conversion and arithmetic/fraction resolution always run regardless of this
+                parameter, since the other steps depend on their output.
             is_store_unresolved_compositions (bool, optional): Whether to log resolution statistics and save unresolved composition keys to a file. Requires is_save_composition_property_file=True. Defaults to False.
             unresolved_compositions_file (str, optional): Path to the file where unresolved composition keys will be saved. Used only when is_store_unresolved_compositions=True. Defaults to "unresolved_compositions.json".
 

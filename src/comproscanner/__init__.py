@@ -163,9 +163,12 @@ if not _is_testing:
             is_save_composition_property_file (bool, optional): Whether to save composition-property values to a separate file. Defaults to True.
             composition_property_file (str, optional): Path to the composition-property file containing a dictionary of composition-property data. Defaults to "composition_property.json".
             cleaning_steps (Union[str, List[str]], optional): Either "all" (default, every optional step
-                enabled) or a list of step names: "abbreviation_filtering", "element_validation",
-                "text_normalization", "miller_indices", "coefficient_expansion". Unicode subscript
-                conversion and arithmetic/fraction resolution always run regardless of this parameter.
+                enabled) or a list of step names: "abbreviation_filtering", "element_validation_strict",
+                "element_validation_lenient", "text_normalization", "miller_indices",
+                "coefficient_expansion_strict", "coefficient_expansion_lenient". The "_lenient" steps are
+                weaker companions of their "_strict" counterparts and have no additional effect when both
+                are selected together. Unicode subscript conversion and arithmetic/fraction resolution
+                always run regardless of this parameter.
         """
         scanner = ComProScanner(main_property_keyword=main_property_keyword)
         return scanner.clean_data(

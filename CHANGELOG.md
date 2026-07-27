@@ -4,19 +4,29 @@
 
 - Added `is_track_pdfs` and `track_pdfs_report_path` to `process_articles()` for local PDF workflows. When enabled (default), each processed PDF is recorded as a `filename<TAB>doi` entry in `logs/{keyword}_pdf_processed_dois.txt`, allowing re-runs to skip already-processed PDFs before any conversion or API calls. Falls back to scanning the output CSV when the tracking file does not yet exist.
 
-- Centralised non-keyword default file paths (`results/failed_automated_articles.txt`, `agentic_evaluation_result.json`, `detailed_evaluation.json`) as class-level constants on `DefaultPaths` so they can be changed in one place.
+- Centralised non-keyword default file paths (`results/article_processor_failed_articles.txt`, `agentic_evaluation_result.json`, `detailed_evaluation.json`) as class-level constants on `DefaultPaths` so they can be changed in one place.
 
 
 ### Changed
 
-- Replaced the `cleaning_strategy` (`"full"`/`"basic"`) and `apply_advanced_cleaning` parameters on `DataCleaner`, `ComProScanner.clean_data()`, and the top-level `clean_data()` function with a single `cleaning_steps` parameter accepting either `"all"` (default) or a list of individually selectable step names: `abbreviation_filtering`, `element_validation`, `text_normalization`, `miller_indices`, `coefficient_expansion` (exposed via the new `CleaningStep` enum). Unicode subscript conversion and arithmetic/fraction resolution remain always-on, since the other steps depend on their output. `normalization` and `zero_coefficient` are no longer separate steps — both are folded into `coefficient_expansion`, which already performs them internally.
+- Replaced the `cleaning_strategy` (`"full"`/`"basic"`) and `apply_advanced_cleaning` parameters on `DataCleaner`, `ComProScanner.clean_data()`, and the top-level `clean_data()` function with a single `cleaning_steps` parameter accepting either `"all"` (default) or a list of individually selectable step names: `abbreviation_filtering`, `element_validation_strict`/`element_validation_lenient`, `text_normalization`, `miller_indices`, `coefficient_expansion_strict`/`coefficient_expansion_lenient` (exposed via the new `CleaningStep` enum). The `_lenient` variants are weaker companions of their `_strict` counterparts and have no additional effect when both are selected together. 
 
 
 ### Fixed
 
 - Replaced the blind space-stripping behaviour (`key.replace(" ", "")`, which mangled descriptive composition text such as `"Bi4Ti3O12 ultrathin with oxygen vacancies"` into `"Bi4Ti3O12ultrathinwithoxygenvacancies"`) with a new optional `text_normalization` step that strips leading/trailing whitespace, collapses runs of multiple spaces down to one, and title-cases descriptive word tokens, while leaving formula segments and element-symbol sequences untouched.
 
-- Fixed Miller-index handling in data cleaning: a bare 3-digit parenthetical crystal-plane notation (e.g. `"AlN (002)"`) was previously fed straight into the mandatory arithmetic/bracket resolver, which misread `(002)` as a bare-number coefficient bracket and merged its digits into the preceding element — silently producing `"AlN2"` instead of recognising it as a Miller index at all. The `miller_indices` cleaning step now detects this notation before arithmetic/bracket resolution runs, and — rather than stripping the notation and keeping the bare formula, which would collapse distinct surface-orientation entries for the same material onto the same dict key (e.g. `"AlN (002)"` and `"AlN (110)"` both becoming `"AlN"` and silently overwriting one property value with the other when merged) — drops the whole composition entry, tracking it in `filtered_compositions` the same way `abbreviation_filtering`/`element_validation` drops are tracked. When `miller_indices` is *not* selected, the same 3-digit-bracket detection now also stops both the arithmetic resolver and `coefficient_expansion` from silently merging the digits into a wrong formula; the composition is instead dropped later as an unresolved composition, the same as any other leftover bracket.
+- Fixed Miller-index notation (e.g. `"AlN (002)"`) being misread by the mandatory arithmetic resolver as a coefficient bracket. `miller_indices` now detects and drops such compositions instead of silently merging digits into the formula or colliding distinct surface-orientation entries onto the same key; when `miller_indices` isn't selected, these compositions are left as unresolved rather than corrupted.
+
+- Fixed unresolved-composition filtering dropping compositions when no `coefficient_expansion_strict`/`_lenient` step was selected; the filter now only runs when coefficient expansion is actually requested.
+
+- Fixed weight/mole/atomic-percent dopant annotations (e.g. `"7 wt% NiO"`, `"1.25 wt% (0.78PbO-0.22CuO)"`) having their number misread as a stoichiometric coefficient and distributed into the annotated compound. Such annotations, including ones with a bracketed target, are now protected with an inert placeholder before coefficient expansion runs and restored verbatim afterward.
+
+- Fixed coefficient expansion scaling descriptive-word fragments that coincidentally resemble element symbols — e.g. `"Bo"` in `"Bottom"`, `"Re"` in `"Reoxidized"` (`"Re10oxidized"`), or a unit abbreviation like `"h"` (hours) capitalized by `text_normalization` into `"H"` (Hydrogen) — as if they were real stoichiometry. `text_normalization` also no longer capitalizes a token when doing so would manufacture a disguised element in the first place.
+
+- Fixed a nested multi-term coefficient expression (e.g. `"0.75*(0.89(Bi0.5Na0.5)TiO3-0.11BaTiO3) + 0.25*(...)"`) being shredded into mismatched brackets with un-distributed coefficients instead of correctly distributing the outer coefficient across each inner term, including through arbitrary nesting depth and sign flips when a whole bracket is subtracted. Comma-separated site-occupancy notation (e.g. `"(K,Na,Li)(Nb,Ta)O3"`) remains unsupported by design but is no longer actively corrupted either.
+
+- Replaced the several ad-hoc "is this really an element" checks above with one shared boundary-detection function, `_formula_prefix_end`, that determines how much of a string is genuinely valid formula content. This also fixed a further case the old checks missed — a trailing annotation with its own real element letter right after a number (e.g. `"C"` for Celsius in `"...PbTiO3 (calcined at 660°C)"`) — and ensures any future case of this shape is handled by the same rule rather than needing another bespoke patch.
 
 - Handled multi-word property keywords (e.g.,  _thermal conductivity_) for accurate Scopus search, uniform filename handling (`thermal conductivity` resolves to `thermal_conductivity_metadata.csv` or similar) and restoring the original form `thermal conductivity` in the data extraction RAG search query instead of `thermal_conductivity`. This fix is associated with [#5](https://github.com/slimeslab/ComProScanner/pull/5) and contributed by [@WilmerGaspar](https://github.com/WilmerGaspar).
 
@@ -55,7 +65,7 @@
 
 - Added `save_failed_pdf_report` and `failed_pdf_report_path` to `process_articles()`, with filename-derived DOI validation and failed-PDF reporting for local PDF workflows.
 
-- Added `save_failed_automated_report` and `failed_automated_report_path` to `process_articles()` for automated publisher sources (Elsevier, Springer Nature, IOP, Wiley), mirroring the existing PDF failure report. Failed articles are written as tab-separated `doi`, `publisher`, `reason` entries to `results/failed_automated_articles.txt` by default.
+- Added `save_failed_automated_report` and `failed_automated_report_path` to `process_articles()` for automated publisher sources (Elsevier, Springer Nature, IOP, Wiley), mirroring the existing PDF failure report. Failed articles are written as tab-separated `doi`, `publisher`, `reason` entries to `results/article_processor_failed_articles.txt` by default.
 
 - Added image-aware fallback in `DataExtractionFlow.identify_materials_data_presence()`:
 

@@ -47,26 +47,34 @@ class TestCleaningStep:
     """Test cases for the CleaningStep enum."""
 
     def test_cleaning_step_enum_values(self):
-        """Test that CleaningStep enum has the expected five values."""
+        """Test that CleaningStep enum has the expected seven values."""
         assert CleaningStep.ABBREVIATION_FILTERING == "abbreviation_filtering"
-        assert CleaningStep.ELEMENT_VALIDATION == "element_validation"
+        assert CleaningStep.ELEMENT_VALIDATION_STRICT == "element_validation_strict"
+        assert CleaningStep.ELEMENT_VALIDATION_LENIENT == "element_validation_lenient"
         assert CleaningStep.TEXT_NORMALIZATION == "text_normalization"
         assert CleaningStep.MILLER_INDICES == "miller_indices"
-        assert CleaningStep.COEFFICIENT_EXPANSION == "coefficient_expansion"
+        assert CleaningStep.COEFFICIENT_EXPANSION_STRICT == "coefficient_expansion_strict"
+        assert (
+            CleaningStep.COEFFICIENT_EXPANSION_LENIENT == "coefficient_expansion_lenient"
+        )
 
     def test_cleaning_step_all(self):
-        """Test that CleaningStep.all() returns exactly the five expected step names."""
+        """Test that CleaningStep.all() returns exactly the seven expected step names."""
         assert set(CleaningStep.all()) == {
             "abbreviation_filtering",
-            "element_validation",
+            "element_validation_strict",
+            "element_validation_lenient",
             "text_normalization",
             "miller_indices",
-            "coefficient_expansion",
+            "coefficient_expansion_strict",
+            "coefficient_expansion_lenient",
         }
 
     def test_cleaning_step_membership(self):
         """Test CleaningStep enum membership."""
-        assert "element_validation" in CleaningStep
+        assert "element_validation_strict" in CleaningStep
+        assert "element_validation_lenient" in CleaningStep
+        assert "coefficient_expansion_lenient" in CleaningStep
         assert "miller_indices" in CleaningStep
         assert "invalid" not in CleaningStep
         assert "normalization" not in CleaningStep
@@ -227,6 +235,41 @@ class TestDataCleanerPrivateMethods:
         result = data_cleaner._is_elements({})
         assert result is False
 
+    def test_contains_element_token_finds_embedded_formula(self, data_cleaner):
+        """Test _contains_element_token detects a formula fragment embedded in text."""
+        pair = {
+            "Cellulose nanofibers/BaTiO3@TiO2/Polyvinylidene fluoride-(%)": "value"
+        }
+        assert data_cleaner._contains_element_token(pair) is True
+
+    def test_contains_element_token_pure_formula(self, data_cleaner):
+        """Test _contains_element_token detects a composition that is already pure elements."""
+        assert data_cleaner._contains_element_token({"BaTiO3": "value"}) is True
+
+    def test_contains_element_token_no_element_anywhere(self, data_cleaner):
+        """Test _contains_element_token returns False when no letter-run parses as elements."""
+        assert data_cleaner._contains_element_token({"RandomTextNoElement": "value"}) is False
+
+    def test_contains_element_token_empty_dict(self, data_cleaner):
+        """Test _contains_element_token with an empty dict."""
+        assert data_cleaner._contains_element_token({}) is False
+
+    def test_has_balanced_annotated_brackets_true_for_text_in_parens(self, data_cleaner):
+        """Test _has_balanced_annotated_brackets True for balanced brackets with text."""
+        assert data_cleaner._has_balanced_annotated_brackets("Bi0.5Ag0.5ZrO3-(as-sintered)") is True
+
+    def test_has_balanced_annotated_brackets_false_for_stray_asterisk(self, data_cleaner):
+        """Test _has_balanced_annotated_brackets False when a stray '*' remains."""
+        assert data_cleaner._has_balanced_annotated_brackets("0.03*(Bi0.5Ag0.5)ZrO3") is False
+
+    def test_has_balanced_annotated_brackets_false_for_unbalanced_brackets(self, data_cleaner):
+        """Test _has_balanced_annotated_brackets False when brackets are unmatched."""
+        assert data_cleaner._has_balanced_annotated_brackets("BaTiO3-(unbalanced") is False
+
+    def test_has_balanced_annotated_brackets_false_for_pure_arithmetic_content(self, data_cleaner):
+        """Test _has_balanced_annotated_brackets False when bracket content is purely numeric/arithmetic."""
+        assert data_cleaner._has_balanced_annotated_brackets("BaTiO3(0.04-0.03)") is False
+
     def test_normalize_text_title_cases_descriptive_words(self, data_cleaner):
         """Test _normalize_text title-cases descriptive word tokens and preserves spaces."""
         dict_list = [
@@ -265,6 +308,18 @@ class TestDataCleanerPrivateMethods:
         dict_list = [{"  Bi4Ti3O12 ultrathin with oxygen vacancies  ": "value1"}]
         result = data_cleaner._normalize_text(dict_list)
         assert result == [{"Bi4Ti3O12 Ultrathin with Oxygen Vacancies": "value1"}]
+
+    def test_normalize_text_does_not_capitalize_element_lookalike_units(
+        self, data_cleaner
+    ):
+        """Regression test: capitalizing a short unit-abbreviation token like
+        "h" (hours) would create "H" — a genuine periodic-table element
+        (Hydrogen) — which a later coefficient-expansion pass could then
+        scale as if it were real stoichiometry. Such tokens must be left in
+        their original (lowercase) form instead of being title-cased."""
+        dict_list = [{"BaTiO3 sintered for 20 h": "value1"}]
+        result = data_cleaner._normalize_text(dict_list)
+        assert result == [{"BaTiO3 Sintered for 20 h": "value1"}]
 
     def test_convert_fractions_and_resolve_compositions_fractions(self, data_cleaner):
         """Test _convert_fractions_and_resolve_compositions with fractions."""
@@ -341,6 +396,95 @@ class TestDataCleanerPrivateMethods:
         assert "Ta" in second_key
         assert "Nb" in second_key
 
+    def test_distribute_multiterm_brackets_user_example(self, data_cleaner):
+        """Regression test: an outer coefficient multiplying a multi-term
+        bracket (terms separated by +/- inside, each with its own inner
+        coefficient) must be distributed correctly instead of shredding the
+        bracket structure. 0.89 must multiply with (Bi0.5Na0.5)TiO3, 0.11
+        with BaTiO3, both further scaled by the outer 0.75, and similarly
+        for the second half."""
+        formula = (
+            "0.75*(0.89(Bi0.5Na0.5)TiO3-0.11BaTiO3) + "
+            "0.25*(0.87(Bi0.5Na0.5)TiO3-0.11BaTiO3-0.02(Sm0.5K0.5)TiO3)"
+        )
+        result = data_cleaner._distribute_multiterm_brackets(formula)
+        assert result == (
+            "0.6675(Bi0.5Na0.5)TiO3-0.0825BaTiO3 + "
+            "0.2175(Bi0.5Na0.5)TiO3-0.0275BaTiO3-0.005(Sm0.5K0.5)TiO3"
+        )
+
+    def test_distribute_multiterm_brackets_two_level_nesting(self, data_cleaner):
+        """A doubly-nested multi-term bracket must resolve across multiple
+        passes without explicit recursion."""
+        result = data_cleaner._distribute_multiterm_brackets(
+            "0.5*(0.5*(0.5A-0.5B)-0.5C)"
+        )
+        assert result == "0.125A-0.125B-0.25C"
+
+    def test_distribute_multiterm_brackets_negated_top_level_term(
+        self, data_cleaner
+    ):
+        """A multi-term bracket subtracted at the top level must have its
+        internal signs flipped correctly (distributing the negation), not
+        just have the outer coefficient applied blindly."""
+        result = data_cleaner._distribute_multiterm_brackets("1-0.5*(0.3A-0.2B)")
+        assert result == "1-0.15A+0.1B"
+
+    def test_distribute_multiterm_brackets_leaves_single_term_bracket_untouched(
+        self, data_cleaner
+    ):
+        """A bracket with no top-level +/- inside it (single term) is left
+        for the existing coefficient_expansion pipeline to handle."""
+        formula = "0.03*(Bi0.5Ag0.5)ZrO3"
+        assert data_cleaner._distribute_multiterm_brackets(formula) == formula
+
+    def test_distribute_multiterm_brackets_defers_pure_numeric_arithmetic(
+        self, data_cleaner
+    ):
+        """A bracket containing only numbers/operators (e.g. "0.5*(0.2+0.3)")
+        must be left for the existing arithmetic-evaluation machinery, not
+        shredded into dangling additive numeric terms."""
+        formula = "0.5*(0.2+0.3)"
+        assert data_cleaner._distribute_multiterm_brackets(formula) == formula
+
+    def test_formula_prefix_end_stops_at_trailing_annotation(self, data_cleaner):
+        """A real formula followed by a space-separated descriptive
+        annotation must have its boundary end right after the formula,
+        even when the annotation contains a real single-letter element
+        symbol (e.g. "C" for Celsius) that must never be scaled."""
+        text = "PbTiO3 (calcined at 660C)"
+        assert data_cleaner._formula_prefix_end(text) == len("PbTiO3")
+
+    def test_formula_prefix_end_rejects_word_prefixed_by_real_element(
+        self, data_cleaner
+    ):
+        """An apparent element match that's actually the start of a longer
+        descriptive word (e.g. "Re" in "Reoxidized") must not be included
+        in the valid prefix at all."""
+        assert data_cleaner._formula_prefix_end("Reoxidized") == 0
+
+    def test_formula_prefix_end_rejects_fake_element(self, data_cleaner):
+        """A capitalized 1-2 letter run that isn't a real periodic-table
+        symbol (e.g. "Bo" in "Bottom") must not be included in the prefix."""
+        assert data_cleaner._formula_prefix_end("Bottom") == 0
+
+    def test_formula_prefix_end_exempts_percent_placeholder(self, data_cleaner):
+        """A genuine element immediately followed by the internal
+        percent-annotation placeholder (itself lowercase) must still be
+        included in the valid prefix, since the placeholder is not real
+        corrupting text."""
+        text = "Li0.5Bi0.5TiO3zzzpctannot0zzz"
+        assert data_cleaner._formula_prefix_end(text) == len("Li0.5Bi0.5TiO3")
+
+    def test_formula_prefix_end_recurses_into_valid_bracket(self, data_cleaner):
+        """A legitimate nested formula bracket (e.g. site-occupancy
+        notation) must be treated as part of the formula, not a break
+        point, as long as its own content is fully valid."""
+        text = "K0.48Na0.52NbO2.7SnO2"
+        assert data_cleaner._formula_prefix_end(text) == len(text)
+        text2 = "(Bi0.5Na0.5)TiO3"
+        assert data_cleaner._formula_prefix_end(text2) == len(text2)
+
     def test_return_in_dict(self, data_cleaner):
         """Test _return_in_dict method."""
         dict_list = [{"key1": "value1"}, {"key2": "value2"}, {"key3": "value3"}]
@@ -396,8 +540,8 @@ class TestDataCleanerPublicMethods:
         yield temp_file_path
         os.unlink(temp_file_path)
 
-    def test_clean_data_without_element_validation(self, temp_mixed_json_file):
-        """Test clean_data_with_relevant_compositions without the element_validation step."""
+    def test_clean_data_without_element_validation_strict(self, temp_mixed_json_file):
+        """Test clean_data_with_relevant_compositions without the element_validation_strict step."""
         cleaner = DataCleaner(temp_mixed_json_file)
         result = cleaner.clean_data_with_relevant_compositions(
             cleaning_steps=["abbreviation_filtering"]
@@ -433,10 +577,10 @@ class TestDataCleanerPublicMethods:
             for comp_key in all_comp_keys
         )
 
-    def test_clean_data_with_relevant_compositions_with_element_validation(
+    def test_clean_data_with_relevant_compositions_with_element_validation_strict(
         self, temp_mixed_json_file
     ):
-        """Test clean_data_with_relevant_compositions with element_validation (cleaning_steps='all')."""
+        """Test clean_data_with_relevant_compositions with element_validation_strict (cleaning_steps='all')."""
         cleaner = DataCleaner(temp_mixed_json_file)
         result = cleaner.clean_data_with_relevant_compositions(cleaning_steps="all")
 
@@ -451,16 +595,16 @@ class TestDataCleanerPublicMethods:
                 # Should only contain valid elements after full cleaning
                 assert cleaner._is_elements(test_dict) is True
 
-    def test_clean_data_with_relevant_compositions_without_element_validation(
+    def test_clean_data_with_relevant_compositions_without_element_validation_strict(
         self, temp_mixed_json_file
     ):
-        """Test clean_data_with_relevant_compositions without element_validation selected."""
+        """Test clean_data_with_relevant_compositions without element_validation_strict selected."""
         cleaner = DataCleaner(temp_mixed_json_file)
         result = cleaner.clean_data_with_relevant_compositions(
             cleaning_steps=[
                 "abbreviation_filtering",
                 "miller_indices",
-                "coefficient_expansion",
+                "coefficient_expansion_strict",
             ]
         )
 
@@ -662,14 +806,14 @@ class TestIntegration:
                 assert not re.match(r"(?<![a-z0-9])[A-Z]{2,}(?![a-z0-9])", comp_key)
 
     def test_basic_vs_full_cleaning_comparison(self, temp_complex_json_file):
-        """Test comparison between cleaning with and without element_validation."""
+        """Test comparison between cleaning with and without element_validation_strict."""
         cleaner = DataCleaner(temp_complex_json_file)
 
         basic_result = cleaner.clean_data_with_relevant_compositions(
             cleaning_steps=[
                 "abbreviation_filtering",
                 "miller_indices",
-                "coefficient_expansion",
+                "coefficient_expansion_strict",
             ]
         )
         full_result = cleaner.clean_data_with_relevant_compositions(
@@ -723,18 +867,18 @@ class TestIntegration:
             ]
             # Only the composition without a Miller index survives
             assert comp_values == {"BaTiO3": 4}
-            assert set(cleaner.filtered_compositions.get("10.x/miller", [])) == {
-                "AlN (002)",
-                "AlN (110)",
-                "ZnO (101)",
+            filtered_keys = {
+                entry["composition"]
+                for entry in cleaner.filtered_compositions.get("10.x/miller", [])
             }
+            assert filtered_keys == {"AlN (002)", "AlN (110)", "ZnO (101)"}
         finally:
             os.unlink(temp_file_path)
 
     def test_miller_index_shaped_bracket_flagged_unresolved_when_not_selected(self):
         """Regression test: when miller_indices is NOT selected, a Miller-index-shaped
         bracket like "(002)" must NOT be silently merged into the preceding element by
-        coefficient_expansion's "remove brackets without coefficients" step (which would
+        coefficient_expansion_strict's "remove brackets without coefficients" step (which would
         otherwise turn AlN (002) into AlN 002/AlN2). Instead it should be left untouched
         and dropped as unresolved, so a stray bracket is never silently misinterpreted.
         """
@@ -752,7 +896,7 @@ class TestIntegration:
         try:
             cleaner = DataCleaner(temp_file_path)
             result = cleaner.clean_data_with_relevant_compositions(
-                cleaning_steps=["coefficient_expansion"]
+                cleaning_steps=["coefficient_expansion_strict"]
             )
             comp_values = (
                 result.get("10.x/miller2", {})
@@ -761,7 +905,524 @@ class TestIntegration:
             )
             # Must not silently resolve to a wrong formula like "AlN2" or "AlN 002"
             assert comp_values == {}
-            assert cleaner.unresolved_compositions.get("10.x/miller2") == ["AlN (002)"]
+            assert cleaner.unresolved_compositions.get("10.x/miller2") == [
+                {"composition": "AlN (002)", "reason": "unresolved_brackets_or_operators"}
+            ]
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_coefficient_expansion_lenient_keeps_annotated_brackets(self):
+        """coefficient_expansion_lenient should expand coefficients like coefficient_expansion_strict,
+        but keep compositions with balanced brackets containing genuine text instead of
+        dropping them as unresolved."""
+        data = {
+            "10.x/lenient": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        "(Bi0.5Ag0.5)ZrO3-(as-sintered)": 1,
+                        "0.7(K0.48Na0.52NbO3)": 2,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(
+                cleaning_steps=["coefficient_expansion_lenient"]
+            )
+            comp_values = result["10.x/lenient"]["composition_data"][
+                "compositions_property_values"
+            ]
+            assert comp_values == {
+                "Bi0.5Ag0.5ZrO3-(as-sintered)": 1,
+                "K0.336Na0.364Nb0.7O2.1": 2,
+            }
+            assert cleaner.unresolved_compositions == {}
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_coefficient_expansion_does_not_mangle_non_element_words(self):
+        """Regression test: a descriptive word/annotation trailing a formula
+        term (e.g. "(001) bottom", left attached because miller_indices
+        wasn't selected) must not have fragments of it misread as element
+        symbols and scaled — e.g. "Bottom" must not become "Bo0.31ttom" just
+        because "Bo" happens to match the [A-Z][a-z]? pattern; "Bo" isn't a
+        real periodic-table symbol. Since miller_indices isn't selected here,
+        the leftover Miller-index-shaped bracket "(001)" still makes the
+        composition land in unresolved_compositions (established, documented
+        behavior) — but its recorded text must show the formula correctly
+        scaled and the annotation completely untouched, not corrupted."""
+        data = {
+            "10.x/nonelement": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        "0.25Pb(In1/2Nb1/2)O3-0.44Pb(Mg1/3Nb2/3)O3-0.31PbTiO3 (001) bottom": 1,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(
+                cleaning_steps=["text_normalization", "coefficient_expansion_lenient"]
+            )
+            comp_values = result["10.x/nonelement"]["composition_data"][
+                "compositions_property_values"
+            ]
+            assert comp_values == {}
+            (unresolved_entry,) = cleaner.unresolved_compositions["10.x/nonelement"]
+            resolved_key = unresolved_entry["composition"]
+            assert "Bo0.31ttom" not in resolved_key
+            assert "Bottom" in resolved_key
+            assert "Pb0.31Ti0.31O0.93" in resolved_key
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_coefficient_expansion_does_not_mangle_real_element_prefixed_word(self):
+        """Regression test: unlike "Bo" in "Bottom" ("Bo" isn't a real element so the
+        all_elements check alone rejects it), "Re" in "Reoxidized" IS a real periodic-table
+        symbol (Rhenium), so it must instead be rejected by the "not immediately followed by
+        more lowercase letters" check. Without that check, "reoxidized" (title-cased to
+        "Reoxidized" by text_normalization) sitting near a coefficient like "10^-10" would be
+        corrupted into "Re10oxidized" instead of staying intact."""
+        data = {
+            "10.x/reoxidized": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        "0.1(K0.5Na0.5)NbO3 reoxidized at 850C": 1,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(
+                cleaning_steps=["text_normalization", "coefficient_expansion_lenient"]
+            )
+            comp_values = result["10.x/reoxidized"]["composition_data"][
+                "compositions_property_values"
+            ]
+            (resolved_key,) = comp_values.keys()
+            assert "Re10oxidized" not in resolved_key
+            assert "Reoxidized" in resolved_key
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_percent_annotation_preceded_by_real_element_still_scales(self):
+        """Regression test: the placeholder used to protect percent-dopant annotations
+        (e.g. "0.1%MgO") from being misread as coefficients is itself lowercase-letters-only
+        ("zzzpctannotNzzz"), which could false-trigger the "reject match followed by more
+        lowercase letters" anti-corruption heuristic (added for the "Reoxidized" bug) on a
+        genuine element sitting immediately before the placeholder. A real element like the
+        "O3" in "...TiO3:0.1%MgO" must still be scaled by its outer coefficient."""
+        data = {
+            "10.x/pctelement": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        "0.1Li0.5Bi0.5TiO3:0.1%MgO": 1,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(cleaning_steps="all")
+            comp_values = result["10.x/pctelement"]["composition_data"][
+                "compositions_property_values"
+            ]
+            assert comp_values == {
+                "Li0.05Bi0.05Ti0.1O0.3:0.1%MgO": 1,
+            }
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_percent_annotation_with_bracketed_target_not_distributed(self):
+        """Regression test: a weight-percent dopant annotation whose target is
+        a bracketed multi-term expression (e.g. "1.25 wt% (0.78PbO-0.22CuO)")
+        must be protected in full, not just the leading number — otherwise the
+        1.25 is treated as a genuine stoichiometric coefficient and
+        distributed across the bracket by coefficient expansion."""
+        composition = (
+            "0.645Pb(Zr0.59Ti0.41)O3-0.355Pb(Ni1/3Nb2/3)O3 + "
+            "1.25 wt% (0.78PbO-0.22CuO) sintered at 1000C"
+        )
+        data = {
+            "10.x/wtbracket": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        composition: 1,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(
+                cleaning_steps=["text_normalization", "coefficient_expansion_lenient"]
+            )
+            comp_values = result["10.x/wtbracket"]["composition_data"][
+                "compositions_property_values"
+            ]
+            assert comp_values == {
+                "Pb0.645Zr0.38055Ti0.26445O1.935-Pb0.355Ni0.11715Nb0.23785O1.065"
+                "+1.25 wt% (0.78PbO-0.22CuO) Sintered at 1000C": 1,
+            }
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_unit_abbreviation_not_scaled_as_element(self):
+        """Regression test: a duration unit like "20 h" must not be
+        title-cased to "20 H" and then have the disguised element "H"
+        (Hydrogen) scaled by a nearby coefficient."""
+        composition = "0.5Ba(Zr0.2Ti0.8)O3-0.5(Ba0.7Ca0.3)TiO3 sintered for 20 h"
+        data = {
+            "10.x/hourunit": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        composition: 1,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(
+                cleaning_steps=["text_normalization", "coefficient_expansion_lenient"]
+            )
+            comp_values = result["10.x/hourunit"]["composition_data"][
+                "compositions_property_values"
+            ]
+            (resolved_key,) = comp_values.keys()
+            assert "20 H" not in resolved_key
+            assert "20 h" in resolved_key
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_annotation_with_real_element_symbol_not_scaled(self):
+        """Regression test: a trailing descriptive annotation containing a
+        real single-letter element symbol immediately after a number (e.g.
+        "C" for Celsius in "660C") must never be scaled by a coefficient
+        meant for the preceding formula — "0.64PbTiO3 (calcined at 660C)"
+        must not become "[Pb0.64Ti0.64O1.92 (calcined at 660C0.64)]"."""
+        composition = "0.36BiScO3-0.64PbTiO3 (calcined at 660C)"
+        data = {
+            "10.x/calcined": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        composition: 1,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(
+                cleaning_steps=["text_normalization", "coefficient_expansion_lenient"]
+            )
+            comp_values = result["10.x/calcined"]["composition_data"][
+                "compositions_property_values"
+            ]
+            assert comp_values == {
+                "Bi0.36Sc0.36O1.08-Pb0.64Ti0.64O1.92 (calcined at 660C)": 1,
+            }
+            assert cleaner.unresolved_compositions == {}
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_nested_multiterm_coefficient_distribution(self):
+        """Regression test: an outer coefficient multiplying a multi-term
+        bracket (e.g. "0.75*(0.89(Bi0.5Na0.5)TiO3-0.11BaTiO3)") must be fully
+        distributed and expanded to elements, not corrupted into mismatched
+        brackets with un-distributed coefficients sitting in front of them."""
+        composition = (
+            "0.75*(0.89(Bi0.5Na0.5)TiO3-0.11BaTiO3) + "
+            "0.25*(0.87(Bi0.5Na0.5)TiO3-0.11BaTiO3-0.02(Sm0.5K0.5)TiO3)"
+        )
+        data = {
+            "10.x/nested": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        composition: 1,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(cleaning_steps="all")
+            comp_values = result["10.x/nested"]["composition_data"][
+                "compositions_property_values"
+            ]
+            assert comp_values == {
+                "Bi0.33375Na0.33375Ti0.6675O2.0025-Ba0.0825Ti0.0825O0.2475"
+                "+Bi0.10875Na0.10875Ti0.2175O0.6525-Ba0.0275Ti0.0275O0.0825"
+                "-Sm0.0025K0.0025Ti0.005O0.015": 1,
+            }
+            assert cleaner.unresolved_compositions == {}
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_comma_separated_site_notation_not_corrupted(self):
+        """Comma-separated site-occupancy notation (e.g. "(K,Na,Li)(Nb,Ta)O3")
+        is not specially parsed and may legitimately end up unresolved, but it
+        must never be actively corrupted into mismatched/stray brackets."""
+        composition = (
+            "(K,Na,Li)(Nb,Ta)O3 (sintered at 1000C, pO2=10^-10 atm, "
+            "reoxidized at 850C)"
+        )
+        data = {
+            "10.x/comma": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        composition: 1,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(
+                cleaning_steps=["text_normalization", "coefficient_expansion_lenient"]
+            )
+            comp_values = result["10.x/comma"]["composition_data"][
+                "compositions_property_values"
+            ]
+            for resolved_key in list(comp_values.keys()) + [
+                entry["composition"]
+                for entries in cleaner.unresolved_compositions.values()
+                for entry in entries
+            ]:
+                assert resolved_key.count("(") == resolved_key.count(")")
+                assert resolved_key.count("[") == resolved_key.count("]")
+                assert "[" not in resolved_key
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_coefficient_expansion_and_lenient_together_reverts_to_strict(self):
+        """Selecting coefficient_expansion_strict alongside coefficient_expansion_lenient should
+        revert to strict behavior: annotated brackets are dropped as unresolved, same as
+        coefficient_expansion_strict alone."""
+        data = {
+            "10.x/strict": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        "(Bi0.5Ag0.5)ZrO3-(as-sintered)": 1,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(
+                cleaning_steps=["coefficient_expansion_strict", "coefficient_expansion_lenient"]
+            )
+            comp_values = result["10.x/strict"]["composition_data"][
+                "compositions_property_values"
+            ]
+            assert comp_values == {}
+            assert cleaner.unresolved_compositions.get("10.x/strict") == [
+                {
+                    "composition": "Bi0.5Ag0.5ZrO3-(as-sintered)",
+                    "reason": "unresolved_brackets_or_operators",
+                }
+            ]
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_element_validation_lenient_keeps_text_with_embedded_formula(self):
+        """element_validation_lenient should keep compositions containing at least one
+        embedded formula fragment, and drop compositions with no element anywhere."""
+        data = {
+            "10.x/elem_lenient": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        "Cellulose nanofibers/BaTiO3@TiO2/Polyvinylidene fluoride-(%)": 1,
+                        "RandomTextNoElement": 2,
+                        "BaTiO3": 3,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(
+                cleaning_steps=["element_validation_lenient", "coefficient_expansion_lenient"]
+            )
+            comp_values = result["10.x/elem_lenient"]["composition_data"][
+                "compositions_property_values"
+            ]
+            assert comp_values == {
+                "Cellulose nanofibers/BaTiO3@TiO2/Polyvinylidene fluoride-(%)": 1,
+                "BaTiO3": 3,
+            }
+            filtered_keys = {
+                entry["composition"]
+                for entry in cleaner.filtered_compositions.get("10.x/elem_lenient", [])
+            }
+            assert filtered_keys == {"RandomTextNoElement"}
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_element_validation_and_lenient_together_reverts_to_strict(self):
+        """Selecting element_validation_strict alongside element_validation_lenient should revert
+        to strict behavior: text+formula mixtures are dropped, only pure-element
+        compositions survive."""
+        data = {
+            "10.x/elem_strict": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        "Cellulose nanofibers/BaTiO3@TiO2/Polyvinylidene fluoride-(%)": 1,
+                        "BaTiO3": 2,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(
+                cleaning_steps=["element_validation_strict", "element_validation_lenient"]
+            )
+            comp_values = result["10.x/elem_strict"]["composition_data"][
+                "compositions_property_values"
+            ]
+            assert comp_values == {"BaTiO3": 2}
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_no_coefficient_expansion_selected_passes_composition_through_unfiltered(self):
+        """Regression test: when neither coefficient_expansion_strict nor
+        coefficient_expansion_lenient is selected, a composition should never be
+        dropped as "unresolved" just because the mandatory arithmetic step added
+        brackets it didn't ask to have expanded. It should pass through as-is."""
+        data = {
+            "10.x/no_expansion": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        "0.7K0.48Na0.52NbO3": 1,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(cleaning_steps=[])
+            comp_values = result["10.x/no_expansion"]["composition_data"][
+                "compositions_property_values"
+            ]
+            # Not dropped, and not expanded either — passes through with the
+            # mandatory bracket standardization only.
+            assert comp_values == {"0.7(K0.48Na0.52NbO3)": 1}
+            assert cleaner.unresolved_compositions == {}
+        finally:
+            os.unlink(temp_file_path)
+
+    def test_percent_dopant_annotation_not_treated_as_coefficient(self):
+        """Regression test: a weight/mole-percent dopant annotation like "7 wt% NiO"
+        or "0.1%MgO" must not have its number distributed as a stoichiometric
+        coefficient across the following formula (e.g. NiO -> Ni7O7)."""
+        data = {
+            "10.x/percent": {
+                "composition_data": {
+                    "compositions_property_values": {
+                        "PVDF + 7 wt% NiO + 0.1 wt% ZnO": 1,
+                        "0.845Na0.5Bi0.5TiO3-0.055BaTiO3-0.1Li0.5Bi0.5TiO3:0.1%MgO": 2,
+                    }
+                },
+                "synthesis_data": {},
+                "article_metadata": {},
+            }
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(data, f)
+            temp_file_path = f.name
+
+        try:
+            cleaner = DataCleaner(temp_file_path)
+            result = cleaner.clean_data_with_relevant_compositions(cleaning_steps="all")
+            comp_values = result["10.x/percent"]["composition_data"][
+                "compositions_property_values"
+            ]
+            assert comp_values == {
+                "Na0.4225Bi0.4225Ti0.845O2.535-Ba0.055Ti0.055O0.165-Li0.05Bi0.05Ti0.1O0.3:0.1%MgO": 2,
+            }
         finally:
             os.unlink(temp_file_path)
 
@@ -816,7 +1477,7 @@ class TestErrorHandling:
                 cleaning_steps=[
                     "abbreviation_filtering",
                     "miller_indices",
-                    "coefficient_expansion",
+                    "coefficient_expansion_strict",
                 ]
             )
             # The original fraction should be kept if division by zero
