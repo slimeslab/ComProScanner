@@ -17,7 +17,7 @@ load_dotenv()
 # Specify the URL
 # url = f"http://api.springernature.com/openaccess/jats?q=doi:10.1007/s42114-024-00879-6&api_key={os.getenv('SPRINGER_OPENACCESS_API_KEY')}"  # Used for only open access articles
 
-url = f"https://spdi.public.springernature.app/xmldata/jats?q=doi:10.1007/s42114-024-00879-6&api_key={os.getenv('SPRINGER_TDM_API_KEY')}"
+url = f"https://api.springernature.com/xmldata/jats?q=doi:10.1007/s42114-024-00879-6&api_key={os.getenv('SPRINGER_TDM_API_KEY')}"
 
 try:
     print(url)

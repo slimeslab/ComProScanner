@@ -26,6 +26,8 @@
 
 - Fixed a nested multi-term coefficient expression (e.g. `"0.75*(0.89(Bi0.5Na0.5)TiO3-0.11BaTiO3) + 0.25*(...)"`) being shredded into mismatched brackets with un-distributed coefficients instead of correctly distributing the outer coefficient across each inner term, including through arbitrary nesting depth and sign flips when a whole bracket is subtracted. Comma-separated site-occupancy notation (e.g. `"(K,Na,Li)(Nb,Ta)O3"`) remains unsupported by design but is no longer actively corrupted either.
 
+- Fixed `SPRINGER_TDM_BASE_URL` pointing at `spdi.public.springernature.app`, which Springer Nature is retiring; requests now go to the new `api.springernature.com/xmldata/jats` endpoint ahead of the old host's retirement on 7th August 2026.
+
 - Replaced the several ad-hoc "is this really an element" checks above with one shared boundary-detection function, `_formula_prefix_end`, that determines how much of a string is genuinely valid formula content. This also fixed a further case the old checks missed — a trailing annotation with its own real element letter right after a number (e.g. `"C"` for Celsius in `"...PbTiO3 (calcined at 660°C)"`) — and ensures any future case of this shape is handled by the same rule rather than needing another bespoke patch.
 
 - Handled multi-word property keywords (e.g.,  _thermal conductivity_) for accurate Scopus search, uniform filename handling (`thermal conductivity` resolves to `thermal_conductivity_metadata.csv` or similar) and restoring the original form `thermal conductivity` in the data extraction RAG search query instead of `thermal_conductivity`. This fix is associated with [#5](https://github.com/slimeslab/ComProScanner/pull/5) and contributed by [@WilmerGaspar](https://github.com/WilmerGaspar).
