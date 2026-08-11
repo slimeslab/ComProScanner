@@ -4,6 +4,9 @@ import types
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
+import pytest
+
+from comproscanner.utils.error_handler import ValueErrorHandler
 
 # Avoid importing heavy vector DB runtime deps during test module import.
 if "langchain_chroma" not in sys.modules:
@@ -155,14 +158,25 @@ def test_clean_data_public_api_forwards_to_cleaner(tmp_path):
             json_results_file=str(input_file),
             is_save_separate_results=False,
             is_save_composition_property_file=False,
-            cleaning_strategy="full",
+            cleaning_steps="all",
         )
 
     assert result == {"10.x/test": {}}
     cleaner.clean_data_with_relevant_compositions.assert_called_once_with(
-        strategy="full",
-        apply_advanced_cleaning=True,
+        cleaning_steps="all",
     )
+
+
+def test_clean_data_rejects_unknown_cleaning_step(tmp_path):
+    scanner = ComProScanner(main_property_keyword="piezoelectric")
+    input_file = tmp_path / "input.json"
+    input_file.write_text("{}", encoding="utf-8")
+
+    with pytest.raises(ValueErrorHandler):
+        scanner.clean_data(
+            json_results_file=str(input_file),
+            cleaning_steps=["bogus_step"],
+        )
 
 
 def test_clean_data_stores_unresolved_compositions(tmp_path):
@@ -185,7 +199,7 @@ def test_clean_data_stores_unresolved_compositions(tmp_path):
             is_save_separate_results=False,
             is_save_composition_property_file=True,
             composition_property_file=str(tmp_path / "comp_prop.json"),
-            cleaning_strategy="full",
+            cleaning_steps="all",
             is_store_unresolved_compositions=True,
             unresolved_compositions_file=str(unresolved_file),
         )

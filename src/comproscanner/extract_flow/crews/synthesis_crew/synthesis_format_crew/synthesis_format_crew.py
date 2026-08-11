@@ -72,7 +72,7 @@ class SynthesisFormatCrew:
 
         if self.output_log_folder:
             final_output_log_folder = (
-                f"{output_log_folder}/{self.doi.replace('/', '_')}"
+                f"{output_log_folder}/{self.doi.replace('/', '_').replace(':', '_')}"
             )
             if not os.path.exists(final_output_log_folder):
                 os.makedirs(final_output_log_folder)
@@ -86,7 +86,7 @@ class SynthesisFormatCrew:
                 )
         if self.task_output_folder:
             final_task_output_folder = (
-                f"{task_output_folder}/{self.doi.replace('/', '_')}"
+                f"{task_output_folder}/{self.doi.replace('/', '_').replace(':', '_')}"
             )
             if not os.path.exists(final_task_output_folder):
                 os.makedirs(final_task_output_folder)

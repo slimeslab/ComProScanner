@@ -203,7 +203,7 @@ if __name__ == "__main__":
         is_only_consider_test_doi_list=True,
         test_doi_list_file="random_dois_for_vlm_test.txt",
         is_extract_synthesis_data=False,  # For this test, we are only evaluating the composition-property extraction capability of the VLM, so we set this to False to save time and cost.
-        model="deepseek/deepseek-chat",
+        model="deepseek/deepseek-v4-flash",
         vlm_model="gemini/gemini-3-flash-preview",
         output_log_folder="vlm_piezo_test/model-logs/logs/google/gemini-3-flash-preview",
         task_output_folder="vlm_piezo_test/model-logs/task_outputs/google/gemini-3-flash-preview",

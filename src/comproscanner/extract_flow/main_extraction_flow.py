@@ -570,7 +570,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
         Returns True if any figure contains relevant data, False otherwise.
         """
         doi = self.state.doi
-        doi_folder = doi.replace("/", "_")
+        doi_folder = doi.replace("/", "_").replace(":", "_")
         fig_dir = os.path.join(self.state.related_figures_base_path, doi_folder)
 
         if not os.path.isdir(fig_dir):

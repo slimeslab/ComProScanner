@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 # === DeepSeek Configuration ===
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
-model_name = "deepseek-chat"
+model_name = "deepseek-v4-flash"
 
 
 # === State Definition ===

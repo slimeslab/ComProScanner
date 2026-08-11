@@ -18,4 +18,4 @@ class BaseUrls:
     SPRINGER_OPENACCESS_BASE_URL = (
         "https://api.springernature.com/openaccess/jats?q=doi:"
     )
-    SPRINGER_TDM_BASE_URL = "https://spdi.public.springernature.app/xmldata/jats?q=doi:"
+    SPRINGER_TDM_BASE_URL = "https://api.springernature.com/xmldata/jats?q=doi:"

@@ -123,7 +123,7 @@ scanner.extract_composition_property_data(
 scanner.extract_composition_property_data(
     main_extraction_keyword="d33",
     rag_db_path="embeddings/piezo",
-    rag_chat_model="deepseek/deepseek-chat",
+    rag_chat_model="deepseek/deepseek-v4-flash",
     rag_max_tokens=1024,
     rag_top_k=4,
 )

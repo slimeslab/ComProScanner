@@ -1,15 +1,40 @@
-# Unreleased
+# 2026.08.11
 
 ### Added
 
 - Added `is_track_pdfs` and `track_pdfs_report_path` to `process_articles()` for local PDF workflows. When enabled (default), each processed PDF is recorded as a `filename<TAB>doi` entry in `logs/{keyword}_pdf_processed_dois.txt`, allowing re-runs to skip already-processed PDFs before any conversion or API calls. Falls back to scanning the output CSV when the tracking file does not yet exist.
 
-- Centralised non-keyword default file paths (`results/failed_automated_articles.txt`, `agentic_evaluation_result.json`, `detailed_evaluation.json`) as class-level constants on `DefaultPaths` so they can be changed in one place.
+- Centralised non-keyword default file paths (`results/article_processor_failed_articles.txt`, `agentic_evaluation_result.json`, `detailed_evaluation.json`) as class-level constants on `DefaultPaths` so they can be changed in one place.
+
+
+### Changed
+
+- Replaced the `cleaning_strategy` (`"full"`/`"basic"`) and `apply_advanced_cleaning` parameters on `DataCleaner`, `ComProScanner.clean_data()`, and the top-level `clean_data()` function with a single `cleaning_steps` parameter accepting either `"all"` (default) or a list of individually selectable step names: `abbreviation_filtering`, `element_validation_strict`/`element_validation_lenient`, `text_normalization`, `miller_indices`, `coefficient_expansion_strict`/`coefficient_expansion_lenient` (exposed via the new `CleaningStep` enum). The `_lenient` variants are weaker companions of their `_strict` counterparts and have no additional effect when both are selected together. 
 
 
 ### Fixed
 
+- Replaced the blind space-stripping behaviour (`key.replace(" ", "")`, which mangled descriptive composition text such as `"Bi4Ti3O12 ultrathin with oxygen vacancies"` into `"Bi4Ti3O12ultrathinwithoxygenvacancies"`) with a new optional `text_normalization` step that strips leading/trailing whitespace, collapses runs of multiple spaces down to one, and title-cases descriptive word tokens, while leaving formula segments and element-symbol sequences untouched.
+
+- Fixed Miller-index notation (e.g. `"AlN (002)"`) being misread by the mandatory arithmetic resolver as a coefficient bracket. `miller_indices` now detects and drops such compositions instead of silently merging digits into the formula or colliding distinct surface-orientation entries onto the same key; when `miller_indices` isn't selected, these compositions are left as unresolved rather than corrupted.
+
+- Fixed unresolved-composition filtering dropping compositions when no `coefficient_expansion_strict`/`_lenient` step was selected; the filter now only runs when coefficient expansion is actually requested.
+
+- Fixed weight/mole/atomic-percent dopant annotations (e.g. `"7 wt% NiO"`, `"1.25 wt% (0.78PbO-0.22CuO)"`) having their number misread as a stoichiometric coefficient and distributed into the annotated compound. Such annotations, including ones with a bracketed target, are now protected with an inert placeholder before coefficient expansion runs and restored verbatim afterward.
+
+- Fixed coefficient expansion scaling descriptive-word fragments that coincidentally resemble element symbols — e.g. `"Bo"` in `"Bottom"`, `"Re"` in `"Reoxidized"` (`"Re10oxidized"`), or a unit abbreviation like `"h"` (hours) capitalized by `text_normalization` into `"H"` (Hydrogen) — as if they were real stoichiometry. `text_normalization` also no longer capitalizes a token when doing so would manufacture a disguised element in the first place.
+
+- Fixed a nested multi-term coefficient expression (e.g. `"0.75*(0.89(Bi0.5Na0.5)TiO3-0.11BaTiO3) + 0.25*(...)"`) being shredded into mismatched brackets with un-distributed coefficients instead of correctly distributing the outer coefficient across each inner term, including through arbitrary nesting depth and sign flips when a whole bracket is subtracted. Comma-separated site-occupancy notation (e.g. `"(K,Na,Li)(Nb,Ta)O3"`) remains unsupported by design but is no longer actively corrupted either.
+
+- Fixed `SPRINGER_TDM_BASE_URL` pointing at `spdi.public.springernature.app`, which Springer Nature is retiring; requests now go to the new `api.springernature.com/xmldata/jats` endpoint ahead of the old host's retirement on 7th August 2026.
+
+- Changed the default DeepSeek model from `deepseek/deepseek-chat` to `deepseek/deepseek-v4-flash` across the RAG chat model docs, the `DEEPSEEK_API_KEY`-based fallback in `EquationTool`, and example scripts, ahead of `deepseek-chat`'s deprecation on 24th July 2026.
+
+- Replaced the several ad-hoc "is this really an element" checks above with one shared boundary-detection function, `_formula_prefix_end`, that determines how much of a string is genuinely valid formula content. This also fixed a further case the old checks missed — a trailing annotation with its own real element letter right after a number (e.g. `"C"` for Celsius in `"...PbTiO3 (calcined at 660°C)"`) — and ensures any future case of this shape is handled by the same rule rather than needing another bespoke patch.
+
 - Handled multi-word property keywords (e.g.,  _thermal conductivity_) for accurate Scopus search, uniform filename handling (`thermal conductivity` resolves to `thermal_conductivity_metadata.csv` or similar) and restoring the original form `thermal conductivity` in the data extraction RAG search query instead of `thermal_conductivity`. This fix is associated with [#5](https://github.com/slimeslab/ComProScanner/pull/5) and contributed by [@WilmerGaspar](https://github.com/WilmerGaspar).
+
+- Fixed DOI-to-folder-name conversion across `extract_flow` (`RAGTool`, `GraphExtractorTool`, `EquationTool`, `DataExtractionFlow`, and all crew log/output folder paths) to also replace `:` with `_` (not just `/`), so DOIs like `10.1023/A:1015522900295` no longer raise `WinError 267: The directory name is invalid` on Windows and correctly resolve to their saved figure/vector-DB/log directories.
 
 - Previously, a new `MultiModelEmbeddings` instance (and thus a fresh copy of the PhysBERT model) was loaded onto the GPU for every paper processed, because `RAGTool → VectorDatabaseManager → MultiModelEmbeddings` were all re-instantiated per paper. After certain number of papers this exhausted VRAM with `cudaErrorMemoryAllocation` (Refer to issue [#6](https://github.com/slimeslab/ComProScanner/issues/6)). This fix introduces a class-level `_hf_model_cache` dict on MultiModelEmbeddings so the tokenizer and model are loaded onto the GPU exactly once and shared as references across all subsequent instances. Also explicitly delete intermediate CUDA tensors and call `torch.cuda.empty_cache()` after each embedding call to prevent activation memory from accumulating within a paper's processing. Added the same cache flush in `VectorDatabaseManager.create_database` and `query_database` after `gc.collect()`. This fix is associated with PR [#7](https://github.com/slimeslab/ComProScanner/pull/7).
 
@@ -44,7 +69,7 @@
 
 - Added `save_failed_pdf_report` and `failed_pdf_report_path` to `process_articles()`, with filename-derived DOI validation and failed-PDF reporting for local PDF workflows.
 
-- Added `save_failed_automated_report` and `failed_automated_report_path` to `process_articles()` for automated publisher sources (Elsevier, Springer Nature, IOP, Wiley), mirroring the existing PDF failure report. Failed articles are written as tab-separated `doi`, `publisher`, `reason` entries to `results/failed_automated_articles.txt` by default.
+- Added `save_failed_automated_report` and `failed_automated_report_path` to `process_articles()` for automated publisher sources (Elsevier, Springer Nature, IOP, Wiley), mirroring the existing PDF failure report. Failed articles are written as tab-separated `doi`, `publisher`, `reason` entries to `results/article_processor_failed_articles.txt` by default.
 
 - Added image-aware fallback in `DataExtractionFlow.identify_materials_data_presence()`:
 
