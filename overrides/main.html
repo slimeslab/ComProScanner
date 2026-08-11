@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block site_meta %}
+  {{ super() }}
+
+  <meta property="og:site_name" content="{{ config.site_name }}">
+
+  {% if page.meta and page.meta.cover_image %}
+    <meta property="og:type" content="article">
+  {% else %}
+    <meta property="og:type" content="website">
+  {% endif %}
+
+  {% if page.meta and page.meta.title %}
+    <meta property="og:title" content="{{ page.meta.title }} – {{ config.site_name }}">
+    <meta name="twitter:title" content="{{ page.meta.title }} – {{ config.site_name }}">
+  {% elif page.title and not page.is_homepage %}
+    <meta property="og:title" content="{{ page.title | striptags }} – {{ config.site_name }}">
+    <meta name="twitter:title" content="{{ page.title | striptags }} – {{ config.site_name }}">
+  {% else %}
+    <meta property="og:title" content="{{ config.site_name }}">
+    <meta name="twitter:title" content="{{ config.site_name }}">
+  {% endif %}
+
+  {% if page.meta and page.meta.description %}
+    <meta property="og:description" content="{{ page.meta.description }}">
+    <meta name="twitter:description" content="{{ page.meta.description }}">
+  {% elif config.site_description %}
+    <meta property="og:description" content="{{ config.site_description }}">
+    <meta name="twitter:description" content="{{ config.site_description }}">
+  {% endif %}
+
+  {% if page.canonical_url %}
+    <meta property="og:url" content="{{ page.canonical_url }}">
+  {% endif %}
+
+  {% if page.meta and page.meta.cover_image %}
+    <meta property="og:image" content="{{ page.meta.cover_image }}">
+    <meta name="twitter:image" content="{{ page.meta.cover_image }}">
+    <meta name="twitter:card" content="summary_large_image">
+  {% else %}
+    <meta name="twitter:card" content="summary">
+  {% endif %}
+{% endblock %}
