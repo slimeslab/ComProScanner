@@ -28,6 +28,8 @@
 
 - Fixed `SPRINGER_TDM_BASE_URL` pointing at `spdi.public.springernature.app`, which Springer Nature is retiring; requests now go to the new `api.springernature.com/xmldata/jats` endpoint ahead of the old host's retirement on 7th August 2026.
 
+- Changed the default DeepSeek model from `deepseek/deepseek-chat` to `deepseek/deepseek-v4-flash` across the RAG chat model docs, the `DEEPSEEK_API_KEY`-based fallback in `EquationTool`, and example scripts, ahead of `deepseek-chat`'s deprecation on 24th July 2026.
+
 - Replaced the several ad-hoc "is this really an element" checks above with one shared boundary-detection function, `_formula_prefix_end`, that determines how much of a string is genuinely valid formula content. This also fixed a further case the old checks missed — a trailing annotation with its own real element letter right after a number (e.g. `"C"` for Celsius in `"...PbTiO3 (calcined at 660°C)"`) — and ensures any future case of this shape is handled by the same rule rather than needing another bespoke patch.
 
 - Handled multi-word property keywords (e.g.,  _thermal conductivity_) for accurate Scopus search, uniform filename handling (`thermal conductivity` resolves to `thermal_conductivity_metadata.csv` or similar) and restoring the original form `thermal conductivity` in the data extraction RAG search query instead of `thermal_conductivity`. This fix is associated with [#5](https://github.com/slimeslab/ComProScanner/pull/5) and contributed by [@WilmerGaspar](https://github.com/WilmerGaspar).
