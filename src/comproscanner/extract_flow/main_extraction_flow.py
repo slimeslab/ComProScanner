@@ -26,7 +26,13 @@ from crewai.flow.flow import Flow, listen, start, router
 from ..utils.error_handler import ValueErrorHandler
 from ..utils.logger import setup_logger
 from ..utils.configs.rag_config import RAGConfig
-from ..utils.configs.schema_config import DEFAULT_SCHEMA_CONFIG, load_schema_config
+from ..utils.configs.instructions_config import InstructionsConfig, load_instructions_config
+from ..utils.configs.schema_config import (
+    DEFAULT_SCHEMA_CONFIG,
+    ExtractionSchemaConfig,
+    load_schema_config,
+)
+from ..utils.configs.tools_config import ToolsConfig, load_tools_config, render_prompt
 from ..utils.schema_tools import render_example_json
 from .crews.materials_data_identifier_crew.materials_data_identifier_crew import (
     MaterialsDataIdentifierCrew,
@@ -65,7 +71,7 @@ class MaterialsState(BaseModel):
         is_extract_synthesis_data (bool): Whether synthesis data extraction is enabled.
         vlm_model (str): Vision LLM model name for the graph extractor tool.
         related_figures_base_path (str): Base directory for saved article figures.
-        formula_instruction (str, optional): Custom system prompt for the equation tool.
+        tools_config (ToolsConfig, optional): Enabled tools and their prompts.
         equation_model (str, optional): Explicit model override for the equation tool.
         llm (LLM, optional): CrewAI LLM instance shared across all crews.
         rag_config (RAGConfig, optional): RAG configuration for the RAG tool.
@@ -83,6 +89,7 @@ class MaterialsState(BaseModel):
         synthesis_extraction_task_note (str): Extra instructions for the synthesis extraction task.
         synthesis_formatting_agent_note (str): Extra instructions for the synthesis format agent.
         synthesis_formatting_task_note (str): Extra instructions for the synthesis format task.
+        formula_notation_rules (str): Formula notation rules for the composition extraction task.
     """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -99,7 +106,7 @@ class MaterialsState(BaseModel):
     is_extract_synthesis_data: bool = True
     vlm_model: str = "gemini/gemini-3-flash-preview"
     related_figures_base_path: str = "results/related_figures"
-    formula_instruction: Optional[str] = None
+    tools_config: Optional[ToolsConfig] = None
     equation_model: Optional[str] = None
     llm: Optional[LLM] = None
     rag_config: Optional[RAGConfig] = None
@@ -117,8 +124,7 @@ class MaterialsState(BaseModel):
     synthesis_extraction_task_note: str = ""
     synthesis_formatting_agent_note: str = ""
     synthesis_formatting_task_note: str = ""
-    allowed_synthesis_methods: str = ""
-    allowed_characterization_techniques: str = ""
+    formula_notation_rules: str = ""
 
 
 class DataExtractionFlow(Flow[MaterialsState]):
@@ -134,25 +140,15 @@ class DataExtractionFlow(Flow[MaterialsState]):
         is_extract_synthesis_data (bool, optional): Flag to extract synthesis data. Defaults to True.
         vlm_model (str, optional): Vision LLM model for graph extraction. Defaults to "gemini/gemini-3-flash-preview".
         related_figures_base_path (str, optional): Base path for saved figures. Defaults to "results/related_figures".
-        formula_instruction (str, optional): Custom formula instruction passed to the equation tool. Defaults to None.
         equation_model (str, optional): Explicit litellm model name for EquationTool. Defaults to None.
         rag_config (RAGConfig, optional): RAG configuration. Defaults to None.
         output_log_folder (str, optional): Base folder path to save logs. Logs will be saved in {output_log_folder}/{doi}/ subdirectory. Logs will be in JSON format if is_log_json is True, otherwise plain text. Defaults to None (no logging).
         task_output_folder (str, optional): Base folder path to save task outputs. Task outputs will be saved as .txt files in {task_output_folder}/{doi}/ subdirectory. Defaults to None (no task output saving).
         is_log_json (bool, optional): Flag to save logs in JSON format. Defaults to False.
         verbose (bool, optional): Flag to enable verbose logging. Defaults to True.
-        expected_composition_property_example (str, optional): Expected example of composition and property data. Defaults to "" (rendered from the schema).
-        expected_variable_composition_property_example (str, optional): Expected example of variable composition and property data. Defaults to "" (rendered from the schema).
-        composition_property_extraction_agent_notes (list, optional): Notes for composition extraction agent. Defaults to [].
-        composition_property_extraction_task_notes (list, optional): Notes for composition extraction task. Defaults to [].
-        composition_property_formatting_agent_notes (list, optional): Notes for composition formatting agent. Defaults to [].
-        composition_property_formatting_task_notes (list, optional): Notes for composition formatting task. Defaults to [].
-        synthesis_extraction_agent_notes (list, optional): Notes for synthesis extraction agent. Defaults to [].
-        synthesis_extraction_task_notes (list, optional): Notes for synthesis extraction task. Defaults to [].
-        synthesis_formatting_agent_notes (list, optional): Notes for synthesis formatting agent. Defaults to [].
-        synthesis_formatting_task_notes (list, optional): Notes for synthesis formatting task. Defaults to [].
-        allowed_synthesis_methods (list, optional): Allowed synthesis methods for knowledge-graph nodes. Defaults to [].
-        allowed_characterization_techniques (list, optional): Allowed characterization techniques for knowledge-graph nodes. Defaults to [].
+        instructions_config (InstructionsConfig, optional): Notes, formula notation rules and examples, with deprecated arguments already folded in. Defaults to None (bundled defaults).
+        tools_config (ToolsConfig, optional): Enabled tools and their prompts. Defaults to None (bundled defaults).
+        schema_config (ExtractionSchemaConfig, optional): Loaded extraction schema; takes precedence over schema_config_path. Defaults to None.
         schema_config_path (str | Path, optional): Path to an extraction schema YAML file. Defaults to None (bundled default schema).
 
     Returns:
@@ -175,29 +171,22 @@ class DataExtractionFlow(Flow[MaterialsState]):
         is_extract_synthesis_data: bool = True,
         vlm_model: str = "gemini/gemini-3-flash-preview",
         related_figures_base_path: str = "results/related_figures",
-        formula_instruction: Optional[str] = None,
         equation_model: Optional[str] = None,
         rag_config: Optional[RAGConfig] = None,
         output_log_folder: Optional[str] = None,
         task_output_folder: Optional[str] = None,
         is_log_json: Optional[bool] = False,
         verbose: bool = True,
-        expected_composition_property_example: str = "",
-        expected_variable_composition_property_example: str = "",
-        composition_property_extraction_agent_notes: list = [],
-        composition_property_extraction_task_notes: list = [],
-        composition_property_formatting_agent_notes: list = [],
-        composition_property_formatting_task_notes: list = [],
-        synthesis_extraction_agent_notes: list = [],
-        synthesis_extraction_task_notes: list = [],
-        synthesis_formatting_agent_notes: list = [],
-        synthesis_formatting_task_notes: list = [],
-        allowed_synthesis_methods: list = [],
-        allowed_characterization_techniques: list = [],
+        instructions_config: Optional[InstructionsConfig] = None,
+        tools_config: Optional[ToolsConfig] = None,
+        schema_config: Optional[ExtractionSchemaConfig] = None,
         schema_config_path: Optional[Union[str, Path]] = None,
     ):
         super().__init__()
-        self.schema_config = load_schema_config(schema_config_path)
+        self.schema_config = (
+            schema_config if schema_config is not None else load_schema_config(schema_config_path)
+        )
+        instructions = instructions_config or load_instructions_config()
         # Pass schema to crews only when custom (crews default to the bundled one)
         self._crew_schema_kwargs = (
             {}
@@ -216,19 +205,13 @@ class DataExtractionFlow(Flow[MaterialsState]):
         self.state.is_extract_synthesis_data = is_extract_synthesis_data
         self.state.vlm_model = vlm_model
         self.state.related_figures_base_path = related_figures_base_path
-        self.state.formula_instruction = formula_instruction
+        self.state.tools_config = tools_config or load_tools_config()
         self.state.equation_model = equation_model
         self.state.rag_config = rag_config
         self.state.output_log_folder = output_log_folder
         self.state.task_output_folder = task_output_folder
         self.state.is_log_json = is_log_json
         self.state.verbose = verbose
-        self.state.expected_composition_property_example = (
-            expected_composition_property_example
-        )
-        self.state.expected_variable_composition_property_example = (
-            expected_variable_composition_property_example
-        )
         main_extraction_keyword = main_extraction_keyword.replace(" ", "_")
         self.state.main_extraction_keyword = main_extraction_keyword
         self.state.materials_data_identifier_query = materials_data_identifier_query
@@ -245,14 +228,13 @@ class DataExtractionFlow(Flow[MaterialsState]):
         default_expected_variable_composition_property_example = render_example_json(
             final_composition_fields, variant="variable"
         )
-        if not expected_composition_property_example:
-            self.state.expected_composition_property_example = (
-                default_expected_composition_property_example
-            )
-        if not expected_variable_composition_property_example:
-            self.state.expected_variable_composition_property_example = (
-                default_expected_variable_composition_property_example
-            )
+        self.state.expected_composition_property_example = (
+            instructions.examples.composition or default_expected_composition_property_example
+        )
+        self.state.expected_variable_composition_property_example = (
+            instructions.examples.variable_composition
+            or default_expected_variable_composition_property_example
+        )
 
         def _update_notes(note: list, default_note: list = None):
             """Combine default and custom notes into a single bulleted block for the prompt.
@@ -289,57 +271,41 @@ class DataExtractionFlow(Flow[MaterialsState]):
 
             return dedent(f"""**Notes**:\n{all_notes}""")
 
-        def _update_methods_techniques(item_list: list):
-            """Render a list of allowed methods or techniques as bullet points.
-
-            Args:
-                item_list (list, required): Items to render.
-
-            Returns:
-                str: the items as a bulleted list, one per line.
-            """
-            return dedent("""{}""".format("\n".join(f"- {n}" for n in item_list)))
-
         # optional notes to pass to the agents and tasks
         composition_property_extraction_default_notes = [
             "The unit, given here, along with other data, is just an example. It can change depending on the property."
         ]
 
         self.state.composition_property_extraction_agent_note = _update_notes(
-            composition_property_extraction_agent_notes,
+            instructions.composition_extraction.agent_notes,
             composition_property_extraction_default_notes,
         )
         self.state.composition_property_extraction_task_note = _update_notes(
-            composition_property_extraction_task_notes
+            instructions.composition_extraction.task_notes
         )
         self.state.composition_property_formatting_agent_note = _update_notes(
-            composition_property_formatting_agent_notes
+            instructions.composition_formatting.agent_notes
         )
         self.state.composition_property_formatting_task_note = _update_notes(
-            composition_property_formatting_task_notes,
+            instructions.composition_formatting.task_notes,
             composition_property_extraction_default_notes,
         )
 
         self.state.synthesis_extraction_agent_note = _update_notes(
-            synthesis_extraction_agent_notes
+            instructions.synthesis_extraction.agent_notes
         )
         # Field-specific guidance comes from the schema descriptions
         self.state.synthesis_extraction_task_note = _update_notes(
-            synthesis_extraction_task_notes
+            instructions.synthesis_extraction.task_notes
         )
         self.state.synthesis_formatting_agent_note = _update_notes(
-            synthesis_formatting_agent_notes
+            instructions.synthesis_formatting.agent_notes
         )
         self.state.synthesis_formatting_task_note = _update_notes(
-            synthesis_formatting_task_notes
+            instructions.synthesis_formatting.task_notes
         )
-
-        # allowed synthesis methods and characterization techniques
-        self.state.allowed_synthesis_methods = _update_methods_techniques(
-            allowed_synthesis_methods
-        )
-        self.state.allowed_characterization_techniques = _update_methods_techniques(
-            allowed_characterization_techniques
+        self.state.formula_notation_rules = "\n".join(
+            f"- {rule}" for rule in instructions.composition_extraction.formula_notation_rules
         )
 
     def _default_synthesis_data(self) -> Dict:
@@ -588,8 +554,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
     def _check_figures_for_data(self) -> bool:
         """Check saved figures for the DOI using VLM to identify if relevant property data is present.
 
-        In graphs, relevant data may appear as doping concentrations (x values, mol%, at%) on one axis
-        with property values on the other, rather than full chemical compositions.
+        The prompt is graph_extractor.relevance_instruction from the tools config.
 
         Returns:
             bool: True if any figure contains relevant data, False otherwise.
@@ -638,15 +603,10 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 logger.warning(f"Could not read image {img_path}: {e}")
                 continue
 
-            prompt = (
-                f"You are a materials science expert.\n"
-                f'Figure caption: "{caption_text}"\n\n'
-                f"Examine this scientific figure. Does it contain {keyword} property data "
-                f"for ceramic, composite, doped, or crystal materials (excluding polymers like PVDF)?\n"
-                f"Note: In graphs, relevant data may appear as doping concentrations (e.g. x values, "
-                f"mol%, at%) on one axis with {keyword} values on the other axis — this counts as "
-                f"relevant data even without full chemical formulas.\n"
-                f"Answer with a single word only: 'yes' or 'no'."
+            prompt = render_prompt(
+                self.state.tools_config.graph_extractor.relevance_instruction,
+                keyword=keyword,
+                caption=caption_text,
             )
 
             try:
@@ -695,6 +655,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 doi=self.state.doi,
                 llm=self.state.llm,
                 rag_config=self.state.rag_config,
+                tools_config=self.state.tools_config,
                 output_log_folder=self.state.output_log_folder,
                 task_output_folder=self.state.task_output_folder,
                 is_log_json=self.state.is_log_json,
@@ -704,6 +665,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
             rag_crew = MaterialsDataIdentifierCrew(
                 doi=self.state.doi,
                 rag_config=self.state.rag_config,
+                tools_config=self.state.tools_config,
                 output_log_folder=self.state.output_log_folder,
                 task_output_folder=self.state.task_output_folder,
                 is_log_json=self.state.is_log_json,
@@ -749,7 +711,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
             answer = "no"
 
         # If text RAG returned no, also check saved figures with VLM
-        if answer == "no":
+        if answer == "no" and self.state.tools_config.graph_extractor.enabled:
             logger.info(
                 f"Text RAG check returned 'no' for {self.state.doi}, checking figures with VLM..."
             )
@@ -795,7 +757,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 vlm_model=self.state.vlm_model,
                 related_figures_base_path=self.state.related_figures_base_path,
                 main_extraction_keyword=self.state.main_extraction_keyword,
-                formula_instruction=self.state.formula_instruction,
+                tools_config=self.state.tools_config,
                 equation_model=self.state.equation_model,
                 **self._crew_schema_kwargs,
             ).crew()
@@ -809,7 +771,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 vlm_model=self.state.vlm_model,
                 related_figures_base_path=self.state.related_figures_base_path,
                 main_extraction_keyword=self.state.main_extraction_keyword,
-                formula_instruction=self.state.formula_instruction,
+                tools_config=self.state.tools_config,
                 equation_model=self.state.equation_model,
                 **self._crew_schema_kwargs,
             ).crew()
@@ -823,6 +785,7 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 "composition_property_extraction_task_note": self.state.composition_property_extraction_task_note,
                 "expected_composition_property_example": self.state.expected_composition_property_example,
                 "expected_variable_composition_property_example": self.state.expected_variable_composition_property_example,
+                "formula_notation_rules": self.state.formula_notation_rules,
             }
         )
 
@@ -978,8 +941,6 @@ class DataExtractionFlow(Flow[MaterialsState]):
                 "extracted_synthesis_data": self.state.synthesis_extracted_data,
                 "synthesis_formatting_agent_note": self.state.synthesis_formatting_agent_note,
                 "synthesis_formatting_task_note": self.state.synthesis_formatting_task_note,
-                "allowed_synthesis_methods": self.state.allowed_synthesis_methods,
-                "allowed_characterization_techniques": self.state.allowed_characterization_techniques,
             }
         )
 

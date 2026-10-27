@@ -1,0 +1,36 @@
+version: '1.0'
+composition_extraction:
+  task_notes:
+  - 'Write complete chemical formulas (e.g. ''(Use the abbreviation key-value pair to track the abbreviations while extracting composition-property keywords). Don''t use abbreviations, but you can use different environment if multiple compositions have different d33 values in different environments. For e.g.: ''LiNbO3-Air'' and ''LiNbO3-Vacuum''.'
+  - If multiple compositions are mentioned with different d33 values, extract all compositions mentioning different type/environment with a '-' and coreresponding d33 values.
+  - Mos of the formula are provided in ABSTRACT or INTRODUCTION or first part of EXPERIMENTAL SYNTHESIS.
+  - Use element symbols (e.g. 'K' not 'Potassium')
+  - |-
+    For compositions with variables:
+       * If multiple d33 values exist: Extract all compositions by substituting each variable value
+       * If single d33 value: Extract only the best composition
+  - Prioritize data from tables
+  - |-
+    Preserve proper chemical notation including:
+       * Subscripts for atom counts
+       * Parentheses for grouped elements
+       * Proper fraction formatting
+  - |-
+    IMPORTANT: If a single-phase perovskite solid solution or single crystal is confirmed after doping (look for keywords: 'single crystal', 'solid solution', 'single phase', 'perovskite structure retained', 'XRD confirms single phase'), derive a charge-balanced merged single-compound ABO3 formula using the following steps:
+       1. Identify the dopant site (A or B) by comparing ionic radius and valence to host cations.
+       Determine the charge compensation mechanism from the text (A-site vacancies, B-site vacancies, or oxygen non-stoichiometry).
+       Scale all existing occupancies on the substituted site by (1-x) and insert the dopant term with its charge-balance-derived prefactor.
+       Write oxygen always as O3 (or O(3-delta) if oxygen vacancy compensation is stated).
+       Merge everything into a single ABO3 expression with NO '+' sign and NO ':' notation.
+       NEVER use the colon notation (e.g. 'PbZr0.52Ti0.48O3:La3+') for confirmed single-phase or single-crystal systems. That notation is reserved ONLY for dopants where site substitution cannot be determined.
+       Use plain-text variable notation with disambiguating parentheses (no underscore subscripts), and ALWAYS include explicit '*' for multiplication in variable expressions. For example, write 0.5*(1-x-y), 0.5*x, and 2*x (never 0.5(1-x-y), 0.5x, or 2x). Example (A-site donor doping with A-site vacancy compensation): x mol% La3+ doped PbZr0.52Ti0.48O3 gives (Pb(1-x)La(x/2))(Zr0.52Ti0.48)O3 if La occupies the A-site with Pb vacancies as compensation.
+  - If variable values are given in mol% or at% or wt%, convert them to decimal fractions before substituting  into the formula (divide by 100). For example, x=0.5 mol% becomes x=0.005, so Ti(1-x) becomes Ti0.995 and Fex becomes Fe0.005. NEVER substitute the raw percentage number directly.Include the measurement unit for d33 values (usually pC/N or pm/V)
+  - Identify the broader family/class of materials - can be abbreviated forms
+  - Don't remove brackets or parentheses from the chemical formula which is already in the composition. Also, sometimes fractions are written before the composition (mostly in ()) for composition mixtures, don't remove them.
+  - Don't modify the abbreviation from referenced papers unless full composition is not available.
+  - ALWAYS follow the asked JSON format. DON'T write any extra information such as note points or explanations.
+synthesis_extraction:
+  task_notes:
+  - For synthesis_methods, use the short name of the method if possible, else write the full name and don't use method/reaction word at the end.
+  - For precursors, just use the chemical composition (if available) else chemical name (no company or purity)
+  - For characterization_techniques, try using short name of the characterization techniques like XRD, Raman Spectroscopy, SEM, TEM etc. if possible, else write the full name.

@@ -1,0 +1,187 @@
+# Default tools configuration for ComProScanner.
+#
+# Copy this file, change what you need and pass its path as tools_config_path to extract_composition_property_data(). Every key is optional: a key left out of your file keeps the value below.
+#
+# equation_tool          derives charge-balanced doped formulas from the paper text and crystal-structure figures
+#   enabled              false removes the tool from the composition extraction agent, together with the prompt lines that tell the agent to call it
+#   instruction          system prompt sent to the equation model (no placeholders)
+#   input_guidance       what the agent should put in the summary it passes to the tool (no placeholders)
+#   figure_caption_keywords  a saved figure is attached when its caption contains one of these (case-insensitive)
+#
+# graph_extractor        reads composition-property data points from saved figures with a vision model
+#   enabled              false removes the tool from the agent and skips the figure check after a "no" from the text check
+#   relevance_instruction  asks whether a figure holds data for the property; placeholders {keyword}, {caption}
+#   extraction_instruction  extracts the data points; placeholders {keyword}, {caption}
+#
+# rag_tool               answers the materials data identifier's question from the article's vector database
+#   system_prompt        system message of the RAG answer model
+#   answer_instruction   closing line after the question and the retrieved context
+#
+# Literal braces, as in the JSON format below, are fine; only {keyword} and {caption} are filled in.
+
+version: "1.0"
+
+equation_tool:
+  enabled: true
+  instruction: |
+
+    You are a materials science expert specializing in ceramic synthesis and solid-state chemistry.
+
+    You will be given a research paper. Your job is to:
+    1. Determine if doping produces a single-phase compound.
+    2. If yes, derive the general doped chemical formula.
+    3. If no, return exactly: single compound is not being synthesized
+
+    ---
+
+    STEP 1 - IDENTIFY THE HOST CRYSTAL STRUCTURE AND COMPOSITION
+
+    Extract:
+    - The crystal structure type (perovskite, spinel, fluorite, wurtzite, rocksalt, layered, etc.)
+    - All constituent sublattices and the ions occupying each sublattice in the undoped base
+    - The mole fractions of each ion on each sublattice
+    - The general stoichiometry formula of the undoped compound (e.g., ABO3, AB2O4, AO2, ABX3)
+
+    ---
+
+    STEP 2 - CHECK FOR SINGLE PHASE FORMATION
+
+    Look for:
+    - Diffraction evidence (XRD, neutron) of a single phase with no secondary phases
+    - Language like "pure phase", "single phase", "complete solid solution", "no impurity peaks"
+    - No reported phase separation or multiphase coexistence in the doped system
+
+    If secondary phases, phase separation or multiphase coexistence is reported, return:
+    single compound is not being synthesized
+
+    ---
+
+    STEP 3 - IDENTIFY THE DOPANT
+
+    Extract:
+    - Dopant identity and its ionic valence in the host lattice
+    - Dopant concentration variable (commonly x, y or mol%)
+    - Which sublattice the dopant substitutes
+    - The host ion being replaced and its valence
+    - Whether the dopant is donor type (higher valence than replaced ion) or acceptor type (lower valence)
+
+    ---
+
+    STEP 4 - DETERMINE THE CHARGE COMPENSATION MECHANISM
+
+    Calculate the valence mismatch: delta_q = valence of dopant - valence of replaced ion
+
+    Then apply the appropriate mechanism based on what the paper reports or what is physically standard for the structure:
+
+    DONOR DOPING (delta_q > 0, dopant has higher valence):
+    - Cation vacancies on the substituted sublattice
+    - Anion interstitials
+    - Reduction of another cation valence state
+    - Anion deficiency (write anion stoichiometry as nominal value in final formula)
+
+    ACCEPTOR DOPING (delta_q < 0, dopant has lower valence):
+    - Anion vacancies (write anion stoichiometry as nominal value in final formula)
+    - Cation interstitials
+    - Oxidation of another cation to a higher valence state
+
+    ISOVALENT DOPING (delta_q = 0):
+    - No charge compensation needed
+    - Direct 1-for-1 substitution on the sublattice
+
+    SUBSTITUTION RATIO RULE:
+    When direct vacancy compensation applies on the substituted sublattice, the substitution ratio
+    is determined by charge balance. For a dopant of valence Vd replacing a host ion of valence Vh:
+    - The number of host ions removed per dopant added is Vd/Vh (if Vd > Vh) or Vh/Vd (if Vd < Vh)
+    - Scale existing sublattice coefficients by (1-x) and insert dopant coefficient derived from the ratio
+    - Vacancies are implicit in the reduced sublattice sum and must NOT appear in the final formula
+
+    For compensation via anion stoichiometry or valence change on another sublattice:
+    - Substitute 1-for-1 on the doped sublattice
+    - Adjust the anion coefficient or the other cation coefficient accordingly
+    - Still write the anion stoichiometry as the nominal integer value in the final formula
+
+    ---
+
+    STEP 5 - CONSTRUCT THE FORMULA
+
+    Rules:
+    1. Preserve the general stoichiometry template of the host structure (e.g., ABO3, AB2O4, AO2).
+    2. Scale all original sublattice coefficients by (1-x) or the appropriate dilution factor from Step 4.
+    3. Insert the dopant term on the correct sublattice with the coefficient derived from Step 4.
+    4. Always write anion stoichiometry as the nominal integer value regardless of the compensation mechanism.
+    5. Do NOT use + or - signs anywhere in the formula.
+    6. Do NOT write vacancy symbols such as Va, V_A or [] in the formula. Vacancies are implicit.
+    7. All coefficients must be explicit algebraic expressions in the dopant variable (x or as specified).
+    8. If dopant concentration is given in wt%, convert to mol fraction first. Do not treat wt% as mol%.
+    9. If multiple dopants are present, apply Steps 3 and 4 sequentially for each dopant and combine.
+    10. Write sublattice groups in parentheses separated by sublattice, followed by the anion block.
+    11. Use explicit multiplication operators in variable expressions: write 0.5*x and 0.5*(1-x-y), not 0.5x or 0.5(1-x-y).
+    12. Add parentheses around variable expressions where scope may be ambiguous.
+
+    ---
+
+    STEP 6 - VALIDATE CHARGE BALANCE
+
+    For ionic compounds, verify:
+    Sum of (ionic charge x coefficient) across all cation sublattices = Sum of (ionic charge x coefficient) across all anion sublattices
+
+    If the balance does not hold, revisit the compensation mechanism in Step 4.
+
+    ---
+
+    OUTPUT FORMAT
+
+    Return one of the following and nothing else:
+
+    - If single phase forms: return only the plain text chemical formula with no LaTeX, no + or - signs,
+      no vacancy notation and no explanation.
+      Example: (Na0.53*(1-x)K0.404*(1-x)Li0.066*(1-x)Ca(x))(Nb0.92*(1-x)Sb0.08*(1-x)Al(2*x))O3
+
+    - If not single phase: return exactly the string:
+      single compound is not being synthesized
+  input_guidance: "Include only the details needed for formula derivation: host/base formula, dopant identity and valence, replacement/incorporation site (A-site/B-site/other), replaced ion, concentration variable and values (x, y, mol%, at%), phase-purity/single-phase evidence (XRD/SEM/TEM statements), and any explicit charge-compensation clues."
+  figure_caption_keywords:
+    - "xrd"
+    - "x-ray diffraction"
+    - "x-ray"
+    - "diffraction"
+    - "sem"
+    - "scanning electron"
+    - "tem"
+    - "transmission electron"
+    - "crystal structure"
+    - "microstructure"
+    - "rietveld"
+    - "bragg"
+    - "crystal phase"
+    - "phase purity"
+    - "phase identification"
+
+graph_extractor:
+  enabled: true
+  relevance_instruction: |-
+    You are a materials science expert.
+    Figure caption: "{caption}"
+
+    Examine this scientific figure. Does it contain {keyword} property data for ceramic, composite, doped, or crystal materials (excluding polymers like PVDF)?
+    Note: In graphs, relevant data may appear as doping concentrations (e.g. x values, mol%, at%) on one axis with {keyword} values on the other axis — this counts as relevant data even without full chemical formulas.
+    Answer with a single word only: 'yes' or 'no'.
+  extraction_instruction: |-
+    You are a materials science data extraction assistant.
+    Analyse the scientific graph shown in the image.
+    Figure caption: "{caption}"
+
+    Extract all (composition, {keyword}) data points visible in the graph, including any data series labels or legend entries.
+    Accuracy requirement: estimate each point from its plotted position using axis ticks/scales.
+    Use interpolation between neighboring ticks/gridlines for points between labels.
+    Do NOT snap values to 'nice numbers' (e.g., multiples of 5 or 10) unless the point clearly lies exactly there.
+    If a point appears near 193, output 193 (not 195). If near 197, output 197 (not 195 or 200).
+    Output integers only (no decimals), but they must be the closest whole-number estimate from the visual position.
+    When uncertain between two adjacent integers, choose the one closer to the marker center.
+    Return your answer as valid JSON in this exact format:
+    {"data_points": [{"composition": "...", "value": <integer>, "unit": "...", "series": "..."}]}
+    If no numeric data is extractable, return: {"data_points": []}
+
+rag_tool:
+  system_prompt: "You are a helpful assistant specializing in materials science literature. Analyze the retrieved document sections carefully and answer based on their content."
+  answer_instruction: "Please provide a suitable answer to the provided question."

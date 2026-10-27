@@ -193,14 +193,14 @@ class TestPromptRendering:
         # Formatting rules only in format stage
         assert "Formatting rule" not in text
 
-    def test_format_description_shows_rules_and_allowed_values_placeholder(self):
+    def test_format_description_shows_rules_without_empty_allowed_values(self):
         text = render_fields_description(
             DEFAULT_SCHEMA_CONFIG.fields("synthesis", final_only=True), stage="format"
         )
         assert "Formatting rule: Keep the steps unmodified." in text
-        # Left as CrewAI placeholders
-        assert "{allowed_synthesis_methods}" in text
-        assert "{allowed_characterization_techniques}" in text
+        # The default schema lists no allowed values and no runtime placeholders
+        assert "Allowed values" not in text
+        assert "{allowed_" not in text
 
     def test_nested_fields_are_indented(self):
         schema = ExtractionSchemaConfig.from_dict(
@@ -231,7 +231,7 @@ class TestPromptRendering:
         text = render_fields_description(schema.fields("composition"))
         assert "\n    - d33_data (object, required)" in text
         assert "\n        - value (float|None, required)" in text
-        assert "Allowed values: air, oxygen" in render_fields_description(
+        assert "Allowed values:\n- air\n- oxygen" in render_fields_description(
             schema.fields("synthesis"), stage="format"
         )
         example = build_example(schema.fields("composition", final_only=True))

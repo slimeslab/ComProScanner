@@ -8,11 +8,15 @@ GitHub: aritraroy24
 """
 
 import os
-from typing import Optional
+from pathlib import Path
+from typing import Dict, Optional
+
+import yaml
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from .....utils.configs.llm_config import LLMConfig
 from .....utils.configs.schema_config import ExtractionSchemaConfig, load_schema_config
+from .....utils.configs.tools_config import ToolsConfig, load_tools_config
 from .....utils.schema_tools import (
     build_output_model,
     fill_schema_placeholders,
@@ -20,6 +24,28 @@ from .....utils.schema_tools import (
 )
 from ....tools.graph_extractor_tool import GraphExtractorTool
 from ....tools.equation_tool import EquationTool
+
+with open(Path(__file__).parent / "config" / "tool_guidance.yaml", "r", encoding="utf-8") as _f:
+    TOOL_GUIDANCE = yaml.safe_load(_f)
+
+
+def tool_guidance_values(tools_config: ToolsConfig) -> Dict[str, str]:
+    """Prompt lines for each enabled tool, keyed by their agents.yaml/tasks.yaml placeholder.
+
+    Args:
+        tools_config (ToolsConfig, required): Tools configuration with the enabled switches and the equation tool input guidance.
+
+    Returns:
+        dict: the four guidance placeholders, empty for a disabled tool.
+    """
+    settings = {"equation_tool": tools_config.equation_tool, "graph_extractor": tools_config.graph_extractor}
+    values = {}
+    for tool, tool_settings in settings.items():
+        for target in ("agent", "task"):
+            text = TOOL_GUIDANCE[tool][target] if tool_settings.enabled else ""
+            text = text.replace("{equation_tool_input_guidance}", tools_config.equation_tool.input_guidance)
+            values[f"{tool}_{target}_guidance"] = text
+    return values
 
 
 @CrewBase
@@ -40,9 +66,9 @@ class CompositionExtractionCrew:
         vlm_model: str = "gemini/gemini-3-flash-preview",
         related_figures_base_path: str = "results/related_figures",
         main_extraction_keyword: str = "",
-        formula_instruction: str = None,
         equation_model: str = None,
         schema_config: Optional[ExtractionSchemaConfig] = None,
+        tools_config: Optional[ToolsConfig] = None,
     ):
         """Initialize the composition extraction crew for a given article.
 
@@ -56,9 +82,9 @@ class CompositionExtractionCrew:
             vlm_model (str, optional): Vision LLM model for graph extraction. Defaults to "gemini/gemini-3-flash-preview".
             related_figures_base_path (str, optional): Base path for saved figures. Defaults to "results/related_figures".
             main_extraction_keyword (str, optional): Property keyword used to label axes in the VLM extraction prompt. Defaults to "".
-            formula_instruction (str, optional): Custom formula instruction passed to EquationTool. Defaults to None.
             equation_model (str, optional): Explicit litellm model name for EquationTool. Defaults to None (auto-select).
             schema_config (ExtractionSchemaConfig, optional): Extraction schema. Defaults to the bundled default schema.
+            tools_config (ToolsConfig, optional): Tools configuration: enabled tools and their prompts. Defaults to None (bundled defaults).
 
         Raises:
             ValueError: If doi is not provided.
@@ -75,8 +101,8 @@ class CompositionExtractionCrew:
         self.vlm_model = vlm_model
         self.related_figures_base_path = related_figures_base_path
         self.main_extraction_keyword = main_extraction_keyword
-        self.formula_instruction = formula_instruction
         self.equation_model = equation_model
+        self.tools_config = tools_config or load_tools_config()
         self.schema_config = schema_config or load_schema_config()
         fields = self.schema_config.fields("composition")
         self.output_model = build_output_model(
@@ -87,7 +113,10 @@ class CompositionExtractionCrew:
             model_doc="Extracted Composition Property",
             inner_model_doc="Detailed Composition Property",
         )
-        self.schema_prompt_values = schema_prompt_values(fields, stage="extraction")
+        self.prompt_values = {
+            **schema_prompt_values(fields, stage="extraction"),
+            **tool_guidance_values(self.tools_config),
+        }
 
         # Initialize output file paths as None
         self.output_log_file = None
@@ -119,29 +148,36 @@ class CompositionExtractionCrew:
     # Agents
     @agent
     def composition_property_extractor(self) -> Agent:
-        """Build the composition extraction agent with its equation and graph tools.
+        """Build the composition extraction agent with the tools enabled in the tools config.
 
         Returns:
-            Agent: configured agent equipped with EquationTool and GraphExtractorTool.
+            Agent: configured agent equipped with EquationTool and GraphExtractorTool unless disabled.
         """
-        equation_tool_kwargs = {
-            "related_figures_base_path": self.related_figures_base_path,
-        }
-        if self.formula_instruction is not None:
-            equation_tool_kwargs["formula_instruction"] = self.formula_instruction
-        if self.equation_model is not None:
-            equation_tool_kwargs["equation_model"] = self.equation_model
-        equation_tool = EquationTool(**equation_tool_kwargs)
-        graph_tool = GraphExtractorTool(
-            vlm_model=self.vlm_model,
-            related_figures_base_path=self.related_figures_base_path,
-            vlm_property_name=self.main_extraction_keyword,
-        )
+        tools = []
+        equation_settings = self.tools_config.equation_tool
+        if equation_settings.enabled:
+            equation_tool_kwargs = {
+                "related_figures_base_path": self.related_figures_base_path,
+                "formula_instruction": equation_settings.instruction,
+                "figure_caption_keywords": equation_settings.figure_caption_keywords,
+            }
+            if self.equation_model is not None:
+                equation_tool_kwargs["equation_model"] = self.equation_model
+            tools.append(EquationTool(**equation_tool_kwargs))
+        if self.tools_config.graph_extractor.enabled:
+            tools.append(
+                GraphExtractorTool(
+                    vlm_model=self.vlm_model,
+                    related_figures_base_path=self.related_figures_base_path,
+                    vlm_property_name=self.main_extraction_keyword,
+                    extraction_instruction=self.tools_config.graph_extractor.extraction_instruction,
+                )
+            )
         return Agent(
             config=fill_schema_placeholders(
-                self.agents_config["composition_property_extractor"], self.schema_prompt_values
+                self.agents_config["composition_property_extractor"], self.prompt_values
             ),
-            tools=[equation_tool, graph_tool],
+            tools=tools,
             llm=self.llm,
             verbose=self.verbose,
         )
@@ -157,7 +193,7 @@ class CompositionExtractionCrew:
         if self.task_output_file:
             return Task(
                 config=fill_schema_placeholders(
-                    self.tasks_config["extract_composition_property"], self.schema_prompt_values
+                    self.tasks_config["extract_composition_property"], self.prompt_values
                 ),
                 output_pydantic=self.output_model,
                 output_file=self.task_output_file,
@@ -165,7 +201,7 @@ class CompositionExtractionCrew:
         else:
             return Task(
                 config=fill_schema_placeholders(
-                    self.tasks_config["extract_composition_property"], self.schema_prompt_values
+                    self.tasks_config["extract_composition_property"], self.prompt_values
                 ),
                 output_pydantic=self.output_model,
             )

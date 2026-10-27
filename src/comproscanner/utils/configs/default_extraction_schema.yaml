@@ -7,8 +7,8 @@
 #   description          guidance shown to the LLM; {main_extraction_keyword} is substituted
 #   required             rendered as required/optional in the prompt
 #   default              value used when the field is absent (derived from the type if omitted)
-#   allowed_values       inline list the formatter maps values onto
-#   allowed_values_ref   name of a runtime-supplied allowed-values list
+#   allowed_values       list the formatter maps values onto, e.g. allowed synthesis methods
+#   allowed_values_ref   deprecated: names a list passed at runtime (allowed_synthesis_methods or allowed_characterization_techniques); use allowed_values
 #   value_fields         sub-fields, for type "object" or "dict[str, object]"
 #   extraction_only      kept by the extraction crew only; the format crew consumes and drops it
 #   format_note          field-specific rule for the format crew
@@ -121,7 +121,6 @@ synthesis_fields:
     description: The experimental synthesis method used to prepare the materials, e.g. solid-state reaction or sol-gel.
     required: true
     weight: 0.2
-    allowed_values_ref: allowed_synthesis_methods
     format_note: If allowed values are listed, change the method to the matching allowed value; otherwise keep it as it is.
     example: solid-state reaction
     graph_role: node_cluster
@@ -174,7 +173,6 @@ synthesis_fields:
     required: true
     weight: 0.3
     plot_kind: categorical_distribution
-    allowed_values_ref: allowed_characterization_techniques
     format_note: If allowed values are listed, change each technique to the matching allowed value; otherwise keep them as they are.
     example: ["XRD", "SEM", "Raman Spectroscopy"]
     graph_role: node_cluster

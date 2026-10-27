@@ -8,7 +8,7 @@ GitHub: aritraroy24
 """
 
 # Standard library imports
-from typing import Type
+from typing import Optional, Type
 import importlib.util
 
 # Third-party imports
@@ -21,6 +21,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 # Local imports
 from ...utils.configs.rag_config import RAGConfig
+from ...utils.configs.tools_config import DEFAULT_TOOLS_CONFIG
 from ...utils.database_manager import VectorDatabaseManager
 from ...utils.logger import setup_logger
 from ...utils.error_handler import ImportErrorHandler, ValueErrorHandler
@@ -49,16 +50,29 @@ class RAGTool(BaseTool):
     )
     args_schema: Type[BaseModel] = RAGToolInput
     rag_config: RAGConfig = Field(default_factory=RAGConfig)
+    system_prompt: str = DEFAULT_TOOLS_CONFIG.rag_tool.system_prompt
+    answer_instruction: str = DEFAULT_TOOLS_CONFIG.rag_tool.answer_instruction
     model_config = {"arbitrary_types_allowed": True}
 
-    def __init__(self, rag_config: None):
+    def __init__(
+        self,
+        rag_config: Optional[RAGConfig] = None,
+        system_prompt: Optional[str] = None,
+        answer_instruction: Optional[str] = None,
+    ):
         """Initialize the RAG tool and its vector database manager.
 
         Args:
             rag_config (RAGConfig, optional): RAG configuration. Defaults to None, which builds a default RAGConfig.
+            system_prompt (str, optional): System message of the answer model. Defaults to None (tools config default).
+            answer_instruction (str, optional): Closing line after the question and context. Defaults to None (tools config default).
         """
         load_dotenv()
         super().__init__()
+        if system_prompt is not None:
+            self.system_prompt = system_prompt
+        if answer_instruction is not None:
+            self.answer_instruction = answer_instruction
         if rag_config is None:
             self.rag_config = RAGConfig()
         else:
@@ -203,13 +217,11 @@ class RAGTool(BaseTool):
         combined_input = (
             f"Question: {query}\n\n"
             f"""Context:\n{self._format_documents(docs)}\n\n
-            Please provide a suitable answer to the provided question."""
+            {self.answer_instruction}"""
         )
 
         messages = [
-            SystemMessage(
-                content="You are a helpful assistant specializing in materials science literature. Analyze the retrieved document sections carefully and answer based on their content."
-            ),
+            SystemMessage(content=self.system_prompt),
             HumanMessage(content=combined_input),
         ]
         llm = self._get_llm()

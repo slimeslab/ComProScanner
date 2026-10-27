@@ -18,6 +18,7 @@ from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 
 # Local imports
+from ...utils.configs.tools_config import DEFAULT_TOOLS_CONFIG, render_prompt
 from ...utils.logger import setup_logger
 
 # configure logger
@@ -43,6 +44,7 @@ class GraphExtractorTool(BaseTool):
 
     Figures are expected at: {related_figures_base_path}/{doi_}/{caption_id}.jpg
     Captions are read from: {related_figures_base_path}/{doi_}/info.json
+    The prompt is extraction_instruction from the tools config, with {keyword} and {caption} filled in.
     """
 
     name: str = "Graph Data Extractor"
@@ -57,6 +59,7 @@ class GraphExtractorTool(BaseTool):
     vlm_model: str = "gemini/gemini-3-flash-preview"
     related_figures_base_path: str = "results/related_figures"
     vlm_property_name: str = "the target property"
+    extraction_instruction: str = DEFAULT_TOOLS_CONFIG.graph_extractor.extraction_instruction
 
     def _run(self, doi: str) -> str:
         """Scan saved figures for the given DOI, call the vision LLM for each image, and aggregate the results.
@@ -116,23 +119,8 @@ class GraphExtractorTool(BaseTool):
                 results[caption_id] = {"error": f"Could not read image: {e}"}
                 continue
 
-            prompt = (
-                f"You are a materials science data extraction assistant.\n"
-                f"Analyse the scientific graph shown in the image.\n"
-                f'Figure caption: "{caption_text}"\n\n'
-                f"Extract all (composition, {property_name}) data points visible "
-                f"in the graph, including any data series labels or legend entries.\n"
-                f"Accuracy requirement: estimate each point from its plotted position using axis ticks/scales.\n"
-                f"Use interpolation between neighboring ticks/gridlines for points between labels.\n"
-                f"Do NOT snap values to 'nice numbers' (e.g., multiples of 5 or 10) unless the point clearly lies exactly there.\n"
-                f"If a point appears near 193, output 193 (not 195). If near 197, output 197 (not 195 or 200).\n"
-                f"Output integers only (no decimals), but they must be the closest whole-number estimate from the visual position.\n"
-                f"When uncertain between two adjacent integers, choose the one closer to the marker center.\n"
-                f"Return your answer as valid JSON in this exact format:\n"
-                f'{{"data_points": [{{"composition": "...", "value": <integer>, '
-                f'"unit": "...", "series": "..."}}]}}\n'
-                f"If no numeric data is extractable, return: "
-                f'{{"data_points": []}}'
+            prompt = render_prompt(
+                self.extraction_instruction, keyword=property_name, caption=caption_text
             )
 
             try:

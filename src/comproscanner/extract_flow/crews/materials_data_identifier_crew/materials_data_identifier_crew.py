@@ -15,6 +15,7 @@ from crewai.project import CrewBase, agent, crew, task
 from ...tools.rag_tool import RAGTool
 from ....utils.configs.llm_config import LLMConfig
 from ....utils.configs.rag_config import RAGConfig
+from ....utils.configs.tools_config import ToolsConfig, load_tools_config
 
 
 class YesNoResponse(BaseModel):
@@ -57,6 +58,7 @@ class MaterialsDataIdentifierCrew:
         task_output_folder: Optional[str] = None,
         is_log_json: bool = False,
         verbose: Optional[bool] = True,
+        tools_config: Optional[ToolsConfig] = None,
     ):
         """Initialize the materials data identifier crew for a given article.
 
@@ -68,6 +70,7 @@ class MaterialsDataIdentifierCrew:
             task_output_folder (str, optional): Base folder for saving task outputs under {folder}/{doi} as .txt files. Defaults to None.
             is_log_json (bool, optional): Whether to save logs in JSON format. Defaults to False.
             verbose (bool, optional): Verbosity flag passed to the agent and crew. Defaults to True.
+            tools_config (ToolsConfig, optional): Tools configuration holding the RAG prompts. Defaults to None (bundled defaults).
 
         Raises:
             ValueError: If doi is not provided.
@@ -82,6 +85,7 @@ class MaterialsDataIdentifierCrew:
         self.task_output_folder = task_output_folder
         self.is_log_json = is_log_json
         self.verbose = verbose
+        self.tools_config = tools_config or load_tools_config()
 
         # Initialize output file paths as None
         self.output_log_file = None
@@ -119,7 +123,11 @@ class MaterialsDataIdentifierCrew:
         Returns:
             Agent: configured agent equipped with RAGTool.
         """
-        rag_tool = RAGTool(rag_config=self.rag_config)
+        rag_tool = RAGTool(
+            rag_config=self.rag_config,
+            system_prompt=self.tools_config.rag_tool.system_prompt,
+            answer_instruction=self.tools_config.rag_tool.answer_instruction,
+        )
         return Agent(
             config=self.agents_config["materials_data_identifier"],
             tools=[rag_tool],

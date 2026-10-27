@@ -119,6 +119,54 @@ def test_extract_composition_property_data_public_api_smoke_with_no_papers(tmp_p
     mock_cleaner_cls.return_value.get_useful_data.assert_called_once_with()
 
 
+def test_extract_composition_property_data_resolves_deprecated_args(tmp_path):
+    scanner = ComProScanner(main_property_keyword="piezoelectric")
+    tools_path = tmp_path / "tools.yaml"
+    tools_path.write_text("graph_extractor:\n  enabled: false\n", encoding="utf-8")
+
+    mock_preparator = MagicMock()
+    mock_preparator.get_unprocessed_data.return_value = [
+        {"doi": "10.1/a", "comp_prop_text": "BaTiO3 d33 = 100 pC/N", "synthesis_text": "sol-gel"}
+    ]
+
+    with (
+        patch("comproscanner.comproscanner.MatPropDataPreparator", return_value=mock_preparator),
+        patch("comproscanner.comproscanner.LLMConfig"),
+        patch("comproscanner.comproscanner.DataCleaner"),
+        patch("comproscanner.comproscanner.PaperMetadataExtractor"),
+        patch("comproscanner.comproscanner.DataExtractionFlow") as mock_flow_cls,
+        pytest.warns(DeprecationWarning) as caught,
+    ):
+        mock_flow_cls.return_value.kickoff.return_value = {
+            "composition_data": {},
+            "synthesis_data": {},
+        }
+        scanner.extract_composition_property_data(
+            main_extraction_keyword="d33",
+            json_results_file=str(tmp_path / "results.json"),
+            checked_doi_list_file=str(tmp_path / "checked.txt"),
+            formula_instruction="Custom formula instruction.",
+            tools_config_path=tools_path,
+            composition_property_extraction_task_notes=["Prioritize tables."],
+            allowed_synthesis_methods=["Sol-gel"],
+        )
+
+    kwargs = mock_flow_cls.call_args.kwargs
+    assert kwargs["instructions_config"].composition_extraction.task_notes == ["Prioritize tables."]
+    assert kwargs["tools_config"].equation_tool.instruction == "Custom formula instruction."
+    assert kwargs["tools_config"].graph_extractor.enabled is False
+    method = next(f for f in kwargs["schema_config"].synthesis_fields if f.name == "method")
+    assert method.allowed_values == ["Sol-gel"]
+    for removed in ("composition_property_extraction_task_notes", "allowed_synthesis_methods", "formula_instruction"):
+        assert removed not in kwargs
+    messages = " ".join(str(w.message) for w in caught)
+    assert "composition_property_extraction_task_notes" in messages
+    assert "formula_instruction" in messages
+    assert "allowed_synthesis_methods" in messages
+    # Each warning points at this test, not at library code
+    assert all(w.filename == __file__ for w in caught)
+
+
 def test_process_articles_forwards_pdf_failed_report_args():
     scanner = ComProScanner(main_property_keyword="piezoelectric")
     mock_pdfs_cls = MagicMock()

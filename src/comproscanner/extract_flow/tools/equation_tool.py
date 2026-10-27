@@ -11,152 +11,20 @@ GitHub: aritraroy24
 import base64
 import json
 import os
-from typing import Optional, Type
+from typing import List, Optional, Type
 
 # Third-party imports
 from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 
 # Local imports
+from ...utils.configs.tools_config import DEFAULT_TOOLS_CONFIG
 from ...utils.logger import setup_logger
 
 logger = setup_logger("comproscanner.log", module_name="equation_tool")
 
-FORMULA_INSTRUCTION = """
-You are a materials science expert specializing in ceramic synthesis and solid-state chemistry.
-
-You will be given a research paper. Your job is to:
-1. Determine if doping produces a single-phase compound.
-2. If yes, derive the general doped chemical formula.
-3. If no, return exactly: single compound is not being synthesized
-
----
-
-STEP 1 - IDENTIFY THE HOST CRYSTAL STRUCTURE AND COMPOSITION
-
-Extract:
-- The crystal structure type (perovskite, spinel, fluorite, wurtzite, rocksalt, layered, etc.)
-- All constituent sublattices and the ions occupying each sublattice in the undoped base
-- The mole fractions of each ion on each sublattice
-- The general stoichiometry formula of the undoped compound (e.g., ABO3, AB2O4, AO2, ABX3)
-
----
-
-STEP 2 - CHECK FOR SINGLE PHASE FORMATION
-
-Look for:
-- Diffraction evidence (XRD, neutron) of a single phase with no secondary phases
-- Language like "pure phase", "single phase", "complete solid solution", "no impurity peaks"
-- No reported phase separation or multiphase coexistence in the doped system
-
-If secondary phases, phase separation or multiphase coexistence is reported, return:
-single compound is not being synthesized
-
----
-
-STEP 3 - IDENTIFY THE DOPANT
-
-Extract:
-- Dopant identity and its ionic valence in the host lattice
-- Dopant concentration variable (commonly x, y or mol%)
-- Which sublattice the dopant substitutes
-- The host ion being replaced and its valence
-- Whether the dopant is donor type (higher valence than replaced ion) or acceptor type (lower valence)
-
----
-
-STEP 4 - DETERMINE THE CHARGE COMPENSATION MECHANISM
-
-Calculate the valence mismatch: delta_q = valence of dopant - valence of replaced ion
-
-Then apply the appropriate mechanism based on what the paper reports or what is physically standard for the structure:
-
-DONOR DOPING (delta_q > 0, dopant has higher valence):
-- Cation vacancies on the substituted sublattice
-- Anion interstitials
-- Reduction of another cation valence state
-- Anion deficiency (write anion stoichiometry as nominal value in final formula)
-
-ACCEPTOR DOPING (delta_q < 0, dopant has lower valence):
-- Anion vacancies (write anion stoichiometry as nominal value in final formula)
-- Cation interstitials
-- Oxidation of another cation to a higher valence state
-
-ISOVALENT DOPING (delta_q = 0):
-- No charge compensation needed
-- Direct 1-for-1 substitution on the sublattice
-
-SUBSTITUTION RATIO RULE:
-When direct vacancy compensation applies on the substituted sublattice, the substitution ratio
-is determined by charge balance. For a dopant of valence Vd replacing a host ion of valence Vh:
-- The number of host ions removed per dopant added is Vd/Vh (if Vd > Vh) or Vh/Vd (if Vd < Vh)
-- Scale existing sublattice coefficients by (1-x) and insert dopant coefficient derived from the ratio
-- Vacancies are implicit in the reduced sublattice sum and must NOT appear in the final formula
-
-For compensation via anion stoichiometry or valence change on another sublattice:
-- Substitute 1-for-1 on the doped sublattice
-- Adjust the anion coefficient or the other cation coefficient accordingly
-- Still write the anion stoichiometry as the nominal integer value in the final formula
-
----
-
-STEP 5 - CONSTRUCT THE FORMULA
-
-Rules:
-1. Preserve the general stoichiometry template of the host structure (e.g., ABO3, AB2O4, AO2).
-2. Scale all original sublattice coefficients by (1-x) or the appropriate dilution factor from Step 4.
-3. Insert the dopant term on the correct sublattice with the coefficient derived from Step 4.
-4. Always write anion stoichiometry as the nominal integer value regardless of the compensation mechanism.
-5. Do NOT use + or - signs anywhere in the formula.
-6. Do NOT write vacancy symbols such as Va, V_A or [] in the formula. Vacancies are implicit.
-7. All coefficients must be explicit algebraic expressions in the dopant variable (x or as specified).
-8. If dopant concentration is given in wt%, convert to mol fraction first. Do not treat wt% as mol%.
-9. If multiple dopants are present, apply Steps 3 and 4 sequentially for each dopant and combine.
-10. Write sublattice groups in parentheses separated by sublattice, followed by the anion block.
-11. Use explicit multiplication operators in variable expressions: write 0.5*x and 0.5*(1-x-y), not 0.5x or 0.5(1-x-y).
-12. Add parentheses around variable expressions where scope may be ambiguous.
-
----
-
-STEP 6 - VALIDATE CHARGE BALANCE
-
-For ionic compounds, verify:
-Sum of (ionic charge x coefficient) across all cation sublattices = Sum of (ionic charge x coefficient) across all anion sublattices
-
-If the balance does not hold, revisit the compensation mechanism in Step 4.
-
----
-
-OUTPUT FORMAT
-
-Return one of the following and nothing else:
-
-- If single phase forms: return only the plain text chemical formula with no LaTeX, no + or - signs,
-  no vacancy notation and no explanation.
-  Example: (Na0.53*(1-x)K0.404*(1-x)Li0.066*(1-x)Ca(x))(Nb0.92*(1-x)Sb0.08*(1-x)Al(2*x))O3
-
-- If not single phase: return exactly the string:
-  single compound is not being synthesized
-"""
-
-# Caption keywords that indicate crystal structure characterisation figures
-_CRYSTAL_STRUCTURE_KEYWORDS = {
-    "xrd",
-    "x-ray diffraction",
-    "x-ray",
-    "diffraction",
-    "sem",
-    "scanning electron",
-    "tem",
-    "transmission electron",
-    "crystal structure",
-    "microstructure",
-    "rietveld",
-    "bragg",
-    "crystal phase",
-    "phase purity",
-    "phase identification",
-}
+# Built-in instruction, kept as a module constant for callers that import it
+FORMULA_INSTRUCTION = DEFAULT_TOOLS_CONFIG.equation_tool.instruction
 
 # Priority-ordered (env_var, litellm_model) pairs for fallback LLM selection
 _API_KEY_MODEL_PAIRS = [
@@ -192,14 +60,9 @@ class EquationToolInput(BaseModel):
 
 class EquationTool(BaseTool):
     """
-    LLM-powered tool that analyses paper text (and any saved crystal structure
-    images — XRD, SEM, TEM) to determine whether doping produces a single-phase
-    perovskite compound and, if so, to derive the general doped chemical formula.
+    LLM-powered tool that analyses paper text (and saved figures whose captions match figure_caption_keywords, such as XRD, SEM or TEM) to determine whether doping produces a single-phase compound and, if so, to derive the general doped chemical formula.
 
-    The tool selects its LLM automatically based on which API key is present in
-    the environment: ANTHROPIC_API_KEY (claude-sonnet-4-6, default) →
-    GEMINI_API_KEY → OPENAI_API_KEY → DEEPSEEK_API_KEY → OPENROUTER_API_KEY →
-    TOGETHER_API_KEY → COHERE_API_KEY → FIREWORKS_API_KEY.
+    The instruction and caption keywords come from the tools config. The tool selects its LLM automatically based on which API key is present in the environment: ANTHROPIC_API_KEY (claude-sonnet-4-6, default), then GEMINI_API_KEY, OPENAI_API_KEY, DEEPSEEK_API_KEY, OPENROUTER_API_KEY, TOGETHER_API_KEY, COHERE_API_KEY, FIREWORKS_API_KEY.
     """
 
     name: str = "Equation Tool"
@@ -214,6 +77,7 @@ class EquationTool(BaseTool):
     args_schema: Type[BaseModel] = EquationToolInput
 
     formula_instruction: str = Field(default=FORMULA_INSTRUCTION)
+    figure_caption_keywords: List[str] = list(DEFAULT_TOOLS_CONFIG.equation_tool.figure_caption_keywords)
     equation_model: Optional[str] = None
     related_figures_base_path: str = "results/related_figures"
 
@@ -273,7 +137,7 @@ class EquationTool(BaseTool):
                 continue
             caption_id = os.path.splitext(img_filename)[0]
             caption_lower = captions.get(caption_id, "").lower()
-            if not any(kw in caption_lower for kw in _CRYSTAL_STRUCTURE_KEYWORDS):
+            if not any(kw.lower() in caption_lower for kw in self.figure_caption_keywords):
                 continue
             try:
                 with open(os.path.join(fig_dir, img_filename), "rb") as f:

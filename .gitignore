@@ -184,3 +184,5 @@ examples/vlm_piezo_test/db/10.*
 examples/vlm_piezo_test/db/chroma.sqlite3
 
 applications
+tasks/
+DYNAMIC_SCHEMA_PLAN.md

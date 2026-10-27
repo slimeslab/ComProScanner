@@ -95,13 +95,8 @@ def render_fields_description(
             if schema_field.format_note:
                 lines.append(f"{pad}  Formatting rule: {schema_field.format_note}")
             if schema_field.allowed_values:
-                lines.append(
-                    f"{pad}  Allowed values: {', '.join(schema_field.allowed_values)}"
-                )
-            elif schema_field.allowed_values_ref:
-                lines.append(
-                    f"{pad}  Allowed values:\n{{{schema_field.allowed_values_ref}}}"
-                )
+                bullets = "\n".join(f"- {value}" for value in schema_field.allowed_values)
+                lines.append(f"{pad}  Allowed values:\n{bullets}")
         if schema_field.value_fields:
             if schema_field.is_object_dict:
                 lines.append(f"{pad}  Each value is an object with these fields:")

@@ -11,6 +11,7 @@ GitHub: aritraroy24
 import time
 import json
 import os
+import warnings
 from pathlib import Path
 from typing import Optional, Tuple, List, Dict, Union, Any
 
@@ -48,7 +49,17 @@ from .utils.logger import setup_logger
 from .utils.configs.paths_config import DefaultPaths
 from .utils.configs.rag_config import RAGConfig
 from .utils.configs.llm_config import LLMConfig
-from .utils.configs.schema_config import load_schema_config
+from .utils.configs.schema_config import (
+    LEGACY_ALLOWED_VALUES_FIELDS,
+    apply_legacy_allowed_values,
+    load_schema_config,
+)
+from .utils.configs.instructions_config import (
+    LEGACY_INSTRUCTION_ARGS,
+    apply_legacy_instruction_args,
+    load_instructions_config,
+)
+from .utils.configs.tools_config import apply_legacy_tools_args, load_tools_config
 
 # configure logger
 logger = setup_logger("comproscanner.log")
@@ -421,6 +432,8 @@ class ComProScanner:
         related_figures_base_path: Optional[str] = None,
         formula_instruction: Optional[str] = None,
         equation_model: Optional[str] = None,
+        instructions_config_path: Optional[Union[str, Path]] = None,
+        tools_config_path: Optional[Union[str, Path]] = None,
         **flow_optional_args,
     ):
         """Extract the composition-property data and synthesis data if the property is present in the article.
@@ -463,12 +476,13 @@ class ComProScanner:
             vlm_model (str, optional): Vision LLM model for graph data extraction from saved figures. Defaults to "gemini/gemini-3-flash-preview".
             related_figures_base_path (str, optional): Base path where saved figures are stored. Defaults to
                 "results/extracted_data/{main_property_keyword}/related_figures".
-            formula_instruction (str, optional): Custom instruction for the EquationTool used to derive
-                doped chemical formulas. When None the tool's built-in perovskite instruction is used.
+            formula_instruction (str, optional): Deprecated; set equation_tool.instruction in the tools config instead. Custom instruction for the EquationTool used to derive doped chemical formulas. Defaults to None (the tools config value).
             equation_model (str, optional): Explicit litellm model name for EquationTool (for example,
                 "openai/gpt-4o-mini", "gemini/gemini-3-flash-preview"). When None, EquationTool auto-selects
                 based on available API keys.
-            **flow_optional_args (Any): Optional keyword arguments for the MaterialsFlow class.
+            instructions_config_path (str | Path, optional): Path to an instructions YAML file with agent/task notes, formula notation rules and examples. Defaults to None (bundled defaults).
+            tools_config_path (str | Path, optional): Path to a tools YAML file with enabled tools and their prompts. Defaults to None (bundled defaults).
+            **flow_optional_args (Any): Optional keyword arguments for the extraction flow. The notes, examples and allowed-values keys are deprecated in favour of the instructions config and the schema's allowed_values, and still work with a warning.
 
         Raises:
             ValueErrorHandler: If main_extraction_keyword is not provided.
@@ -485,6 +499,30 @@ class ComProScanner:
             raise ValueErrorHandler(
                 message="Test data file name is required for test data preparation."
             )
+        # Resolve config files and deprecated arguments once, before any article is processed
+        legacy_instructions = {
+            key: flow_optional_args.pop(key)
+            for key in list(flow_optional_args)
+            if key in LEGACY_INSTRUCTION_ARGS
+        }
+        legacy_allowed_values = {
+            key: flow_optional_args.pop(key)
+            for key in list(flow_optional_args)
+            if key in LEGACY_ALLOWED_VALUES_FIELDS
+        }
+        instructions_config, instruction_messages = apply_legacy_instruction_args(
+            load_instructions_config(instructions_config_path), legacy_instructions
+        )
+        tools_config, tool_messages = apply_legacy_tools_args(
+            load_tools_config(tools_config_path), formula_instruction
+        )
+        schema_config, schema_messages = apply_legacy_allowed_values(
+            self.schema_config, legacy_allowed_values
+        )
+        for message in instruction_messages + tool_messages + schema_messages:
+            logger.warning(message)
+            warnings.warn(message, DeprecationWarning, stacklevel=2)
+
         self.is_test_data_preparation = is_test_data_preparation
         if is_test_data_preparation:
             self.test_doi_list_file = test_doi_list_file
@@ -608,14 +646,15 @@ class ComProScanner:
                         is_extract_synthesis_data=is_extract_synthesis_data,
                         vlm_model=vlm_model,
                         related_figures_base_path=related_figures_base_path,
-                        formula_instruction=formula_instruction,
                         equation_model=equation_model,
                         rag_config=rag_config,
                         output_log_folder=output_log_folder,
                         task_output_folder=task_output_folder,
                         is_log_json=is_log_json,
                         verbose=verbose,
-                        schema_config_path=self.schema_config_path,
+                        schema_config=schema_config,
+                        instructions_config=instructions_config,
+                        tools_config=tools_config,
                         **flow_optional_args,
                     )
                     result_dict = flow.kickoff()

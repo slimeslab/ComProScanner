@@ -9,11 +9,16 @@ GitHub: aritraroy24
 
 import copy
 import re
+import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import yaml
+
+from ..logger import setup_logger
+
+logger = setup_logger("comproscanner.log", module_name="schema_config")
 
 DEFAULT_SCHEMA_PATH = Path(__file__).parent / "default_extraction_schema.yaml"
 SUPPORTED_SCHEMA_VERSIONS = {"1.0"}
@@ -403,6 +408,13 @@ def _validate_prompt_text(fields: List[SchemaField], domain: str) -> None:
                 f"{domain} field '{schema_field.name}' has allowed_values_ref '{ref}'; "
                 f"only synthesis fields may use {sorted(ALLOWED_VALUES_REFS)} (use allowed_values for an inline list)"
             )
+        if ref is not None:
+            message = (
+                f"{domain} field '{schema_field.name}': allowed_values_ref is deprecated; "
+                "list the values in allowed_values instead."
+            )
+            logger.warning(message)
+            warnings.warn(message, DeprecationWarning, stacklevel=2)
 
 
 def normalize_weights(fields: List[SchemaField], parent_effective_weight: float = 1.0) -> None:
@@ -590,3 +602,57 @@ def load_schema_config(
     if schema_config_path is None:
         return DEFAULT_SCHEMA_CONFIG
     return ExtractionSchemaConfig.from_yaml(schema_config_path)
+
+
+# Synthesis field each deprecated runtime list fills when no field references it
+LEGACY_ALLOWED_VALUES_FIELDS = {
+    "allowed_synthesis_methods": "method",
+    "allowed_characterization_techniques": "characterization_techniques",
+}
+
+
+def apply_legacy_allowed_values(
+    schema_config: ExtractionSchemaConfig, legacy_args: Dict[str, List[str]]
+) -> Tuple[ExtractionSchemaConfig, List[str]]:
+    """Copy deprecated runtime allowed-values lists into the matching schema fields.
+
+    A list goes to the synthesis field whose allowed_values_ref names it, else to the field named in LEGACY_ALLOWED_VALUES_FIELDS. A field that already lists allowed_values keeps them.
+
+    Args:
+        schema_config (ExtractionSchemaConfig, required): Loaded extraction schema.
+        legacy_args (dict, required): Deprecated keys from LEGACY_ALLOWED_VALUES_FIELDS with their lists.
+
+    Returns:
+        tuple: two items:
+            - ExtractionSchemaConfig: the schema to use (a copy when anything changed).
+            - list: deprecation messages to report.
+
+    Raises:
+        SchemaValidationError: If the schema has no field for a given list.
+    """
+    if not legacy_args:
+        return schema_config, []
+    schema_config = copy.deepcopy(schema_config)
+    messages = []
+    for arg, values in legacy_args.items():
+        fields = schema_config.synthesis_fields
+        target = next((f for f in fields if f.allowed_values_ref == arg), None) or next(
+            (f for f in fields if f.name == LEGACY_ALLOWED_VALUES_FIELDS[arg]), None
+        )
+        if target is None:
+            raise SchemaValidationError(
+                f"{arg} was given, but the schema has no synthesis field "
+                f"'{LEGACY_ALLOWED_VALUES_FIELDS[arg]}' or field with allowed_values_ref: {arg}; "
+                "list the values in allowed_values of the field they belong to"
+            )
+        if target.allowed_values:
+            messages.append(
+                f"{arg} is deprecated and was ignored because the schema field "
+                f"'{target.name}' sets allowed_values."
+            )
+            continue
+        target.allowed_values = list(values) or None
+        messages.append(
+            f"{arg} is deprecated; list the values in allowed_values of the schema field '{target.name}'."
+        )
+    return schema_config, messages

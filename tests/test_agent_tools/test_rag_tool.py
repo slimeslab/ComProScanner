@@ -96,6 +96,21 @@ def test_run_generates_response_when_docs_found(monkeypatch):
     mock_llm.invoke.assert_called_once()
 
 
+def test_generate_response_uses_custom_prompts(monkeypatch):
+    with patch("comproscanner.extract_flow.tools.rag_tool.VectorDatabaseManager"):
+        tool = RAGTool(rag_config=None, system_prompt="Be brief.", answer_instruction="Answer yes or no.")
+    mock_llm = MagicMock()
+    mock_llm.invoke.return_value = SimpleNamespace(content="yes")
+    monkeypatch.setattr(tool, "_get_llm", lambda: mock_llm)
+
+    tool._generate_response("Is d33 given?", [(_MockDoc("d33 = 193 pC/N"), 0.9)])
+
+    system, human = mock_llm.invoke.call_args.args[0]
+    assert system.content == "Be brief."
+    assert human.content.startswith("Question: Is d33 given?")
+    assert human.content.endswith("Answer yes or no.")
+
+
 # ---------------------------------------------------------------------------
 # _run — edge / error cases
 # ---------------------------------------------------------------------------

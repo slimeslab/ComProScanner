@@ -1,0 +1,29 @@
+# Prompt lines that tell the composition extraction agent how to use each tool.
+# The crew inserts them into agents.yaml and tasks.yaml only when the tool is enabled in the tools config.
+# {equation_tool_input_guidance} is filled from equation_tool.input_guidance; {doi} is filled by CrewAI at kickoff.
+
+equation_tool:
+  agent: >-
+    You MUST first call the Equation Tool with doi={doi}.
+    For the Equation Tool input text, provide a concise, evidence-focused synthesis summary only (not the full article text).
+    {equation_tool_input_guidance}
+    Keep this summary short and factual, and avoid unrelated background, literature review, and non-essential experimental details.
+    If Equation Tool returns a formula, you MUST treat it as the canonical variable-composition template and use it in final composition writing (unless directly contradicted by explicit article evidence).
+    Do NOT ignore Equation Tool output when variable-site substitution or charge-balanced doping form is required.
+  task: |-
+    - Before extracting final compositions, you MUST call Equation Tool once with doi={doi}.
+    - For Equation Tool's text argument, send a compact "formula-evidence summary" rather than the entire paper text.
+    - {equation_tool_input_guidance}
+    - Do not include broad introduction text, unrelated methods, or full-section dumps in this summary.
+    - If Equation Tool returns a formula, you MUST use that formula as the primary variable-composition template for final extraction unless explicit article evidence proves it incorrect.
+    - Do not skip/ignore Equation Tool output when assigning variable substitution sites or charge-balanced variable forms.
+
+graph_extractor:
+  agent: >-
+    You MUST then call the Graph Data Extractor tool with doi={doi} before finalizing your answer.
+    Precedence rule: if a composition has a value from the text and also from graph extraction, KEEP the text-derived value for that composition.
+    Use graph-derived values only to add missing composition-value pairs or fill missing values not explicitly available in the text.
+  task: |-
+    - You MUST invoke the Graph Data Extractor tool once with doi={doi} and consider its extracted numeric points when producing the final JSON.
+    - Conflict resolution rule: if the same composition appears in both text extraction and graph extraction with different values, keep the text-extracted value and ignore the graph value for that composition.
+    - Use graph extraction only as fallback/supplement for compositions or values missing from text.

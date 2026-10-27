@@ -39,6 +39,11 @@ finally:
 
 from comproscanner.utils.error_handler import ValueErrorHandler
 from comproscanner.utils.configs.rag_config import RAGConfig
+from comproscanner.utils.configs.instructions_config import (
+    apply_legacy_instruction_args,
+    load_instructions_config,
+)
+from comproscanner.utils.configs.tools_config import load_tools_config
 
 
 @pytest.fixture
@@ -354,6 +359,7 @@ class TestDataExtractionFlowCore:
             doi=sample_doi,
             llm=mock_llm,
             rag_config=flow.state.rag_config,
+            tools_config=flow.state.tools_config,
             output_log_folder=None,
             task_output_folder=None,
             is_log_json=False,
@@ -390,6 +396,7 @@ class TestDataExtractionFlowCore:
         mock_crew_class.assert_called_once_with(
             doi=sample_doi,
             rag_config=flow.state.rag_config,
+            tools_config=flow.state.tools_config,
             output_log_folder=None,
             task_output_folder=None,
             is_log_json=False,
@@ -497,7 +504,7 @@ class TestDataExtractionFlowCore:
             vlm_model="gemini/gemini-3-flash-preview",
             related_figures_base_path="results/related_figures",
             main_extraction_keyword=sample_main_extraction_keyword,
-            formula_instruction=None,
+            tools_config=flow.state.tools_config,
             equation_model=None,
         )
 
@@ -510,6 +517,7 @@ class TestDataExtractionFlowCore:
             "composition_property_extraction_task_note": flow.state.composition_property_extraction_task_note,
             "expected_composition_property_example": flow.state.expected_composition_property_example,
             "expected_variable_composition_property_example": flow.state.expected_variable_composition_property_example,
+            "formula_notation_rules": flow.state.formula_notation_rules,
         }
         mock_crew_instance.kickoff.assert_called_once_with(inputs=expected_inputs)
 
@@ -753,8 +761,6 @@ class TestDataExtractionFlowCore:
             "extracted_synthesis_data": sample_synthesis_extracted_data,
             "synthesis_formatting_agent_note": flow.state.synthesis_formatting_agent_note,
             "synthesis_formatting_task_note": flow.state.synthesis_formatting_task_note,
-            "allowed_synthesis_methods": flow.state.allowed_synthesis_methods,
-            "allowed_characterization_techniques": flow.state.allowed_characterization_techniques,
         }
         mock_crew_instance.kickoff.assert_called_once_with(inputs=expected_inputs)
 
@@ -821,6 +827,22 @@ class TestDataExtractionFlowCore:
         mock_rag_config,
     ):
         """Test initialization with all optional parameters"""
+        instructions_config, _ = apply_legacy_instruction_args(
+            load_instructions_config(),
+            {
+                "expected_composition_property_example": "Custom example",
+                "expected_variable_composition_property_example": "Variable example",
+                "composition_property_extraction_agent_notes": ["Note 1"],
+                "composition_property_extraction_task_notes": ["Task note 1"],
+                "composition_property_formatting_agent_notes": ["Format note 1"],
+                "composition_property_formatting_task_notes": ["Format task note 1"],
+                "synthesis_extraction_agent_notes": ["Synthesis note 1"],
+                "synthesis_extraction_task_notes": ["Synthesis task note 1"],
+                "synthesis_formatting_agent_notes": ["Synthesis format note 1"],
+                "synthesis_formatting_task_notes": ["Synthesis format task note 1"],
+            },
+        )
+        tools_config = load_tools_config()
         flow = DataExtractionFlow(
             doi=sample_doi,
             main_extraction_keyword=sample_main_extraction_keyword,
@@ -834,18 +856,8 @@ class TestDataExtractionFlowCore:
             task_output_folder="/test/tasks",
             is_log_json=True,
             verbose=False,
-            expected_composition_property_example="Custom example",
-            expected_variable_composition_property_example="Variable example",
-            composition_property_extraction_agent_notes=["Note 1"],
-            composition_property_extraction_task_notes=["Task note 1"],
-            composition_property_formatting_agent_notes=["Format note 1"],
-            composition_property_formatting_task_notes=["Format task note 1"],
-            synthesis_extraction_agent_notes=["Synthesis note 1"],
-            synthesis_extraction_task_notes=["Synthesis task note 1"],
-            synthesis_formatting_agent_notes=["Synthesis format note 1"],
-            synthesis_formatting_task_notes=["Synthesis format task note 1"],
-            allowed_synthesis_methods=["method1", "method2"],
-            allowed_characterization_techniques=["XRD", "SEM"],
+            instructions_config=instructions_config,
+            tools_config=tools_config,
         )
 
         # Verify all state values are set correctly
@@ -864,6 +876,11 @@ class TestDataExtractionFlowCore:
         assert flow.state.task_output_folder == "/test/tasks"
         assert flow.state.is_log_json is True
         assert flow.state.verbose is False
+        assert flow.state.tools_config is tools_config
+        assert flow.state.expected_composition_property_example == "Custom example"
+        assert flow.state.expected_variable_composition_property_example == "Variable example"
+        assert flow.state.composition_property_extraction_agent_note.endswith("- Note 1")
+        assert flow.state.synthesis_formatting_task_note == "**Notes**:\n- Synthesis format task note 1"
 
     def test_route_process_case_insensitive(
         self,
@@ -1367,32 +1384,40 @@ class TestDataExtractionFlowEdgeCases:
 
         assert result == sample_synthesis_extracted_data
 
-    def test_initialization_with_custom_notes_and_methods(
+    def test_initialization_with_instructions_file(
         self,
+        tmp_path,
         sample_doi,
         sample_main_extraction_keyword,
         sample_composition_property_text,
     ):
-        """Test initialization with custom notes and allowed methods"""
-        custom_notes = ["Custom note 1", "Custom note 2"]
-        custom_methods = ["method1", "method2"]
-        custom_techniques = ["XRD", "SEM", "TEM"]
+        """Test initialization with notes and formula notation rules from an instructions file"""
+        path = tmp_path / "instructions.yaml"
+        path.write_text(
+            "composition_extraction:\n"
+            "  agent_notes: [Custom note 1, Custom note 2]\n"
+            "  formula_notation_rules: [Write formulas without spaces.]\n"
+            "synthesis_extraction:\n"
+            "  task_notes: [Custom note 1]\n",
+            encoding="utf-8",
+        )
 
         flow = DataExtractionFlow(
             doi=sample_doi,
             main_extraction_keyword=sample_main_extraction_keyword,
             composition_property_text_data=sample_composition_property_text,
-            composition_property_extraction_agent_notes=custom_notes,
-            synthesis_extraction_task_notes=custom_notes,
-            allowed_synthesis_methods=custom_methods,
-            allowed_characterization_techniques=custom_techniques,
+            instructions_config=load_instructions_config(path),
         )
 
-        # Verify notes are set (they get processed by internal methods)
-        assert isinstance(flow.state.composition_property_extraction_agent_note, str)
-        assert isinstance(flow.state.synthesis_extraction_task_note, str)
-        assert isinstance(flow.state.allowed_synthesis_methods, str)
-        assert isinstance(flow.state.allowed_characterization_techniques, str)
+        # Custom notes follow the built-in unit note
+        assert flow.state.composition_property_extraction_agent_note.startswith(
+            "**Notes**:\n- The unit, given here"
+        )
+        assert flow.state.composition_property_extraction_agent_note.endswith(
+            "- Custom note 1\n- Custom note 2"
+        )
+        assert flow.state.synthesis_extraction_task_note == "**Notes**:\n- Custom note 1"
+        assert flow.state.formula_notation_rules == "- Write formulas without spaces."
 
     def test_initialization_with_custom_graph_extraction_config(
         self,

@@ -127,3 +127,31 @@ def test_run_extracts_data_and_parses_markdown_json(monkeypatch):
     assert parsed["fig1"]["caption"] == "d33 vs composition"
     assert parsed["fig1"]["extracted_data"]["data_points"][0]["composition"] == "BaTiO3"
     assert parsed["fig1"]["extracted_data"]["data_points"][0]["value"] == 193
+
+
+def test_run_sends_custom_extraction_instruction(monkeypatch):
+    tool = _make_tool(base_path="fake/base", vlm_property_name="strain")
+    tool.extraction_instruction = 'Read {keyword} from "{caption}" as {"data_points": []}.'
+
+    monkeypatch.setattr("os.path.isdir", lambda _: True)
+    monkeypatch.setattr("os.path.isfile", lambda path: path.endswith("info.json"))
+    monkeypatch.setattr("os.listdir", lambda _: ["fig1.jpg"])
+
+    def _open(path, mode="r", encoding=None):
+        if path.endswith("info.json"):
+            return io.StringIO(json.dumps({"fig1": "Strain loops"}))
+        if path.endswith("fig1.jpg"):
+            return io.BytesIO(b"fake-jpeg-content")
+        raise FileNotFoundError(path)
+
+    monkeypatch.setattr("builtins.open", _open)
+    sent = []
+    sys.modules["litellm"] = SimpleNamespace(
+        completion=lambda **kwargs: sent.append(kwargs)
+        or SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content='{"data_points": []}'))])
+    )
+
+    tool._run("10.1000/ok")
+    assert sent[0]["messages"][0]["content"][0]["text"] == (
+        'Read strain from "Strain loops" as {"data_points": []}.'
+    )

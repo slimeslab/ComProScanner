@@ -1,0 +1,43 @@
+# Default instructions configuration for ComProScanner.
+#
+# Copy this file, change what you need and pass its path as instructions_config_path to extract_composition_property_data(). Every key is optional: a key left out of your file keeps the value below.
+#
+# examples                 few-shot examples shown to the composition agents, using the field names of your extraction schema
+#   composition            example output; a JSON string or a YAML mapping. Empty means generated from the schema's example values
+#   variable_composition   example output for compositions with variables (x, y, ...); same format
+#
+# composition_extraction, composition_formatting, synthesis_extraction, synthesis_formatting
+#   agent_notes            extra instructions for the agent, added after the built-in prompt
+#   task_notes             extra instructions for the task, added after the built-in prompt
+#
+# composition_extraction
+#   formula_notation_rules  how compositions are written in the output. These replace the built-in rules below; [] removes them
+#
+# Notes may contain any text. formula_notation_rules may not contain {name} placeholders.
+
+version: "1.0"
+
+examples:
+  composition: ""
+  variable_composition: ""
+
+composition_extraction:
+  agent_notes: []
+  task_notes: []
+  formula_notation_rules:
+    - "Formula notation rule: DO NOT use underscore-based subscripts (avoid forms like Ba_0.91, Ti_0.93, O_3)."
+    - "Use plain-text variable notation such as (1-x), x, (0.935+x), Ti(1-x), (Pr1/2Nb1/2)(x)."
+    - "Add disambiguating parentheses whenever variable scope can be misread. Example: write ((Bi1/2Na1/2)(0.935+x))(Ba0.065)(Ti(1-x))(Pr1/2Nb1/2)(x)O3 instead of an ambiguous linear form."
+    - "Wherever single variable is present you MUST WRAP it within a (), For e.g.- (1-x)Na2xBayTi2O3 should be (1-x)Na2(x)Ba(y)TiO3."
+
+composition_formatting:
+  agent_notes: []
+  task_notes: []
+
+synthesis_extraction:
+  agent_notes: []
+  task_notes: []
+
+synthesis_formatting:
+  agent_notes: []
+  task_notes: []

@@ -144,6 +144,26 @@ def test_get_crystal_structure_images_returns_xrd_figure(monkeypatch):
     assert isinstance(result[0]["b64"], str)
 
 
+def test_get_crystal_structure_images_uses_custom_caption_keywords(monkeypatch):
+    monkeypatch.setattr("os.path.isdir", lambda _: True)
+    monkeypatch.setattr("os.path.isfile", lambda path: path.endswith("info.json"))
+    monkeypatch.setattr("os.listdir", lambda _: ["fig1.jpg", "fig2.jpg"])
+
+    def _open(path, mode="r", encoding=None):
+        if path.endswith("info.json"):
+            return io.StringIO(json.dumps({"fig1": "Raman spectra", "fig2": "XRD patterns"}))
+        if path.endswith(".jpg"):
+            return io.BytesIO(b"fake-jpeg")
+        raise FileNotFoundError(path)
+
+    monkeypatch.setattr("builtins.open", _open)
+
+    tool = _make_tool(base_path="fake/base")
+    tool.figure_caption_keywords = ["RAMAN"]
+    result = tool._get_crystal_structure_images("10.1000/test")
+    assert [image["caption"] for image in result] == ["Raman spectra"]
+
+
 def test_get_crystal_structure_images_skips_non_jpg(monkeypatch):
     monkeypatch.setattr("os.path.isdir", lambda _: True)
     monkeypatch.setattr("os.path.isfile", lambda path: path.endswith("info.json"))
