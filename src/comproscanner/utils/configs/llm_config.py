@@ -43,7 +43,7 @@ class LLMConfig:
         self.top_p = top_p or self.DEFAULT_TOP_P
         self.timeout = timeout or self.DEFAULT_TIMEOUT
         self.frequency_penalty = frequency_penalty
-        self.max_tokens = max_tokens
+        self.max_tokens = max_tokens or self.DEFAULT_MAX_TOKENS
 
     def get_llm(self) -> LLM:
         """
